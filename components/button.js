@@ -9,9 +9,10 @@ const Button = ({
     return (
         <button
             className={clsx(
-                "px-4 py-2 shadow-md",
+                "px-4 py-2",
                 "transition-colors duration-100",
                 "disabled:cursor-not-allowed disabled:bg-opacity-50",
+                "rounded",
                 [
                     variant === "primary" && [
                         `bg-blue-600 text-white`,
@@ -28,6 +29,9 @@ const Button = ({
                         `hover:bg-red-600`,
                         `active:bg-red-700`,
                     ],
+                    variant === "outline" && [
+                        `text-blue-`
+                    ] 
                 ],
                 className
             )}

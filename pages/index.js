@@ -2,11 +2,11 @@ import Head from "next/head";
 import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import Navbar from "../components/navbar";
+import Sidebar from "../components/sidebar";
 
 export default function Home() {
     return (
         <div>
-            <Navbar />
             <Head>
                 <title className="text-blue-200">Create Next App</title>
                 <meta
@@ -15,8 +15,13 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+            <Navbar />
+            <main className="flex flex-row h-full">
+                <Sidebar />
+                <content className="flex-grow">
 
-            <h1 className="text-3xl font-bold underline">Hello world!</h1>
+                </content>
+            </main>
         </div>
     );
 }
