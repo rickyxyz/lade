@@ -21,3 +21,23 @@ a {
 *:focus {
   outline: none;
 }
+
+.custom-shape-divider-top-1652322951 {
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow-x: hidden;
+  /* overflow-y: visible; */
+  line-height: 0;
+}
+
+.custom-shape-divider-top-1652322951 svg {
+  position: relative;
+  display: block;
+  width: calc(145% + 1.3px);
+  height: 150px;
+}
+
+.custom-shape-divider-top-1652322951 .shape-fill {
+  fill: #e5e7eb;
+}
