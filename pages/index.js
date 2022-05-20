@@ -7,6 +7,7 @@ import Card from "../components/card";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
 import Landing from "../components/Home/Landing";
+import ShapeDivider from "../components/Generic/ShapeDivider";
 
 const Home = () => {
 	const db = useContext(FirebaseContext);
@@ -24,19 +25,7 @@ const Home = () => {
 			<main className="flex flex-row h-screen mt-12">
 				<article className="flex flex-col h-full z-20">
 					<Landing />
-					<div class="custom-shape-divider-top-1652322951 z-10 h-40">
-						<svg
-							data-name="Layer 1"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 1200 120"
-							preserveAspectRatio="none"
-						>
-							<path
-								d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-								class="shape-fill"
-							></path>
-						</svg>
-					</div>
+					<ShapeDivider />
 					<section className="bg-gray-200 flex-grow px-28 z-20 grid grid-cols-2 gap-14">
 						<div>
 							<h3 className="text-blue-600 font-bold text-2xl mb-2">
@@ -147,6 +136,6 @@ const Home = () => {
 			</main>
 		</>
 	);
-}
+};
 
 export default Home;

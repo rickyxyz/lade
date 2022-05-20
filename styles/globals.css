@@ -9,25 +9,24 @@
 @tailwind base;
 
 @layer components {
-	.custom-shape-divider-top-1652322951 {
-		@apply text-teal-100;
+	.shape-divider {
+		position: relative;
 		top: 0;
 		left: 0;
 		width: 100%;
-		overflow-x: hidden;
-		/* overflow-y: visible; */
+		overflow: hidden;
 		line-height: 0;
 	}
 	
-	.custom-shape-divider-top-1652322951 svg {
+	.shape-divider svg {
 		position: relative;
 		display: block;
-		width: calc(145% + 1.3px);
-		height: 150px;
+		width: calc(100% + 1.3px);
+		height: 128px;
 	}
 	
-	.custom-shape-divider-top-1652322951 .shape-fill {
-		fill: #e5e7eb;
+	.shape-divider .shape-fill {
+		fill: #EFE7EB;
 	}
 }
 @tailwind components;
