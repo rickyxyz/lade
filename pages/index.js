@@ -1,8 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 // import styles from "../styles/Home.module.css";
-import Button from "../components/button";
-import Navbar from "../components/navbar";
+import Button from "../components/Generic/Button";
 import Sidebar from "../components/sidebar";
 import Card from "../components/card";
 import { MdOutlineCheckBox } from "react-icons/md";

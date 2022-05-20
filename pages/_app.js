@@ -5,7 +5,7 @@ import { initializeApp, getApps, getApp, FirebaseError } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, child, get, onValue } from "firebase/database";
 import { FirebaseContext } from "../firebase/FirebaseContext";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Generic/Navbar";
 
 function MyApp({ Component, pageProps }) {
 
