@@ -35,7 +35,9 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<FirebaseContext.Provider value={fb}>
 			<Navbar />
-			<Component {...pageProps} />
+			<div className="mt-16">
+				<Component {...pageProps} />
+			</div>
 		</FirebaseContext.Provider>
 	);
 }
