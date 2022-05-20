@@ -4,17 +4,11 @@ import Image from "next/image";
 import Button from "../components/Generic/Button";
 import Sidebar from "../components/sidebar";
 import Card from "../components/card";
-import { MdOutlineCheckBox } from "react-icons/md";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
+import Landing from "../components/Home/Landing";
 
 const Home = () => {
-	const lists = [
-		"Post your questions",
-		"Answer practice questions",
-		"Send questions to other",
-	];
-
 	const db = useContext(FirebaseContext);
 
 	return (
@@ -29,21 +23,7 @@ const Home = () => {
 			</Head>
 			<main className="flex flex-row h-screen mt-12">
 				<article className="flex flex-col h-full z-20">
-					<section className="pt-4 px-4">
-						<h2 className="text-blue-600 font-extrabold tracking-tighter text-7xl">
-							Practice Makes Perfect
-						</h2>
-						<ul className="mt-3 px-3">
-							{lists.map((list) => {
-								return (
-									<li className="flex flex-row items-center my-1 text-lg font-medium">
-										<MdOutlineCheckBox className="mr-1" />
-										{list}
-									</li>
-								);
-							})}
-						</ul>
-					</section>
+					<Landing />
 					<div class="custom-shape-divider-top-1652322951 z-10 h-40">
 						<svg
 							data-name="Layer 1"
