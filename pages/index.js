@@ -9,7 +9,7 @@ import { MdOutlineCheckBox } from "react-icons/md";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
 
-export default function Home() {
+const Home = () => {
 	const lists = [
 		"Post your questions",
 		"Answer practice questions",
@@ -19,7 +19,7 @@ export default function Home() {
 	const db = useContext(FirebaseContext);
 
 	return (
-		<div>
+		<>
 			<Head>
 				<title className="text-blue-200">Create Next App</title>
 				<meta
@@ -28,7 +28,6 @@ export default function Home() {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Navbar />
 			<main className="flex flex-row h-screen mt-12">
 				<article className="flex flex-col h-full z-20">
 					<section className="pt-4 px-4">
@@ -167,6 +166,8 @@ export default function Home() {
 
                 </content> */}
 			</main>
-		</div>
+		</>
 	);
 }
+
+export default Home;
