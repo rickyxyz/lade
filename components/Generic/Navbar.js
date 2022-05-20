@@ -23,7 +23,7 @@ const Navbar = () => {
 				<MdSearch className="absolute left-6 top-2 w-6 h-6 text-gray-500" />
 			</div>
 			<div id="navbar-right" className="flex flex-row items-center ml-4">
-				<Button variant="outline" className="text-blue-700">
+				<Button variant="ghost" className="text-blue-700">
 					Log In
 				</Button>
 				<span className="border-l-2 mx-2"></span>
