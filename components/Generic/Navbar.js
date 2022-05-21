@@ -2,7 +2,6 @@ import { MdSearch } from "react-icons/md";
 import Image from "next/image";
 import clsx from "clsx";
 import Button from "./Button";
-import LinkButton from "./LinkButton";
 
 const Navbar = () => {
 	return (
@@ -15,14 +14,6 @@ const Navbar = () => {
 		>
 			<div className="flex items-center mr-4">
 				<Image src="/assets/lade.webp" width="96" height="32"  />
-			</div>
-			<div className="flex flex-row items-center mr-4">
-				<LinkButton href="/problems">
-					Problems
-				</LinkButton>
-				<LinkButton href="/">
-					Contests
-				</LinkButton>
 			</div>
 			<div
 				className="flex-grow flex align-center justify-center relative"
