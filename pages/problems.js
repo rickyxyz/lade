@@ -11,7 +11,6 @@ import Folder from "../components/Landing/Folder";
 import Side from "../components/Generic/Side";
 import ProblemCard from "../components/Problem/ProblemCard";
 import clsx from "clsx";
-import ProblemCard2 from "../components/Problem/ProblemCard2";
 
 const Problems = () => {
 	const db = useContext(FirebaseContext);
