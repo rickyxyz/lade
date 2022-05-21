@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Card from "../Card";
+import Card from "../Generic/Card";
 import Button from "../Generic/Button";
 import {
 	BsCheckCircleFill,
