@@ -33,7 +33,12 @@ const Button = ({
 						'text-blue-700',
 						`hover:bg-blue-50`,
 						`active:bg-blue-100`
-                    ]
+                    ],
+					variant === "link" && [
+						'text-blue-700',
+						'hover:underline hover:text-blue-500',
+						'active:underline active:text-blue-500'
+					]
                 ],
                 className
             )}
