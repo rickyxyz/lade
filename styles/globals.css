@@ -5,6 +5,18 @@
 
 
 @layer base {
+	.head-style {
+		@apply text-blue-600 font-semibold;
+	}
+	h1, .h1 {
+		@apply head-style text-7xl;
+	}
+	h2, .h2 {
+		@apply head-style text-5xl;
+	}
+	h3, .h3 {
+		@apply head-style text-3xl;
+	}
 }
 @tailwind base;
 
