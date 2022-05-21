@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Card from "../Card";
+import Card from "../Generic/Card";
 import ProblemCard from "../Problem/ProblemCard";
 
 const Folder = ({ title, cards }) => {
