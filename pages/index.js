@@ -3,7 +3,7 @@ import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import Button from "../components/Generic/Button";
 import Sidebar from "../components/sidebar";
-import Card from "../components/Card";
+import Card from "../components/Generic/Card";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
 import Landing from "../components/Home/Landing";
