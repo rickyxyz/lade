@@ -9,16 +9,17 @@ const ProblemCard = ({
 	id,
 	topic,
 	subtopic,
+	owner,
 	statement,
 	accepted,
 	attempted,
 	comments,
 }) => {
 	return (
-		<Card className={clsx("p-4 flex", className)}>
+		<Card className={clsx("flex p-4", className)}>
 			<div className="flex flex-col">
-				<h2 className="font-semibold text-xl">{topic}</h2>
-				<span className="text-sm">{subtopic}</span>
+				<h3 className="font-semibold text-xl">{topic}</h3>
+				<span className="text-gray-700 text-sm">{subtopic} | Posted by <b>{owner}</b></span>
 				<p className="mt-4">{statement}</p>
 			</div>
 			<div className="flex flex-row items-center justify-between mt-4">
