@@ -3,14 +3,50 @@ import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import Button from "../components/Generic/Button";
 import Sidebar from "../components/sidebar";
-import Card from "../components/card";
+import Card from "../components/Card";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
 import Landing from "../components/Home/Landing";
 import ShapeDivider from "../components/Generic/ShapeDivider";
+import Folder from "../components/Home/Folder";
 
 const Home = () => {
 	const db = useContext(FirebaseContext);
+
+	const topQuestions = [{
+		id: "014f",
+		topic: "Calculus with Differential Equations",
+		subtopic: "Exact Equation",
+		statement: "Solve y' = y.",
+		accepted: 514,
+		attempted: 41946,
+		comments: 31,
+	}, {
+		id: "02gf",
+		topic: "Calculus with Differential Equations",
+		subtopic: "Method of Separation Variables",
+		statement: "Solve y' = y.",
+		accepted: 794,
+		attempted: 4156,
+		comments: 2,
+	}];
+	const newQuestions = [{
+		id: "014f",
+		topic: "Calculus with Differential Equations",
+		subtopic: "Exact Equation",
+		statement: "Solve y' = y.",
+		accepted: 514,
+		attempted: 41946,
+		comments: 31,
+	}, {
+		id: "02gf",
+		topic: "Calculus with Differential Equations",
+		subtopic: "Method of Separation Variables",
+		statement: "Solve y' = y.",
+		accepted: 794,
+		attempted: 4156,
+		comments: 2,
+	}];
 
 	return (
 		<>
@@ -22,113 +58,13 @@ const Home = () => {
 				/>
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<main className="flex flex-row h-screen mt-12">
-				<article className="flex flex-col h-full z-20">
-					<Landing />
-					<ShapeDivider />
-					<section className="bg-gray-200 flex-grow px-28 z-20 grid grid-cols-2 gap-14">
-						<div>
-							<h3 className="text-blue-600 font-bold text-2xl mb-2">
-								New Questions
-							</h3>
-							<div className="flex flex-col w-full bg-blue-200 p-2 border-dashed border-blue-600 border-2 rounded-lg">
-								<Card className="p-4 flex my-1">
-									<div className="text-container flex flex-col">
-										<h2>Calculus 1</h2>
-										<p>
-											Lorem ipsum dolor sit amet
-											consectetur adipisicing elit.
-											Dolorum magnam quidem accusantium
-											ducimus fuga ratione pariatur
-											dolores laboriosam sapiente sed?
-										</p>
-									</div>
-									<div className="button-container flex flex-row-reverse">
-										<Button>Answer</Button>
-										<Button
-											variant=""
-											className="text-blue-700"
-										>
-											Discuss
-										</Button>
-									</div>
-								</Card>
-
-								<Card className="p-4 flex my-1">
-									<div className="text-container flex flex-col">
-										<h2>Calculus 1</h2>
-										<p>
-											Lorem ipsum dolor sit amet
-											consectetur adipisicing elit.
-											Dolorum magnam quidem accusantium
-											ducimus fuga ratione pariatur
-											dolores laboriosam sapiente sed?
-										</p>
-									</div>
-									<div className="button-container flex flex-row-reverse">
-										<Button>Answer</Button>
-										<Button
-											variant=""
-											className="text-blue-700"
-										>
-											Discuss
-										</Button>
-									</div>
-								</Card>
-							</div>
-						</div>
-						<div>
-							<h3 className="text-blue-600 font-bold text-2xl mb-2">
-								Top Questions
-							</h3>
-							<div className="flex flex-col w-full bg-blue-200 p-2 border-dashed border-blue-600 border-2 rounded-lg">
-								<Card className="p-4 flex my-1">
-									<div className="text-container flex flex-col">
-										<h2>Algebra</h2>
-										<p>
-											Lorem ipsum dolor sit amet
-											consectetur adipisicing elit.
-											Dolorum magnam quidem accusantium
-											ducimus fuga ratione pariatur
-											dolores laboriosam sapiente sed?
-										</p>
-									</div>
-									<div className="button-container flex flex-row-reverse">
-										<Button>Answer</Button>
-										<Button
-											variant=""
-											className="text-blue-700"
-										>
-											Discuss
-										</Button>
-									</div>
-								</Card>
-
-								<Card className="p-4 flex my-1">
-									<div className="text-container flex flex-col">
-										<h2>Algebra</h2>
-										<p>
-											Lorem ipsum dolor sit amet
-											consectetur adipisicing elit.
-											Dolorum magnam quidem accusantium
-											ducimus fuga ratione pariatur
-											dolores laboriosam sapiente sed?
-										</p>
-									</div>
-									<div className="button-container flex flex-row-reverse">
-										<Button>Answer</Button>
-										<Button
-											variant=""
-											className="text-blue-700"
-										>
-											Discuss
-										</Button>
-									</div>
-								</Card>
-							</div>
-						</div>
-					</section>
-				</article>
+			<main className="flex flex-col w-full h-screen mt-12">
+				<Landing />
+				<ShapeDivider />
+				<section className="bg-gray-200 flex-grow px-28 z-20 grid grid-cols-2 gap-14">
+					<Folder title="New Questions" cards={newQuestions} />
+					<Folder title="Top Questions" cards={topQuestions} />
+				</section>
 				{/* <Sidebar />
                 <content className="flex-grow">
 
