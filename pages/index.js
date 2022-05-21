@@ -2,13 +2,13 @@ import Head from "next/head";
 import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import Button from "../components/Generic/Button";
-import Sidebar from "../components/sidebar";
+import Sidebar from "../components/Generic/Side";
 import Card from "../components/Generic/Card";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
-import Landing from "../components/Home/Landing";
+import Landing from "../components/Landing/Landing";
 import ShapeDivider from "../components/Generic/ShapeDivider";
-import Folder from "../components/Home/Folder";
+import Folder from "../components/Landing/Folder";
 
 const Home = () => {
 	const db = useContext(FirebaseContext);
