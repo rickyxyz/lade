@@ -26,7 +26,7 @@
 	}
 	
 	.shape-divider .shape-fill {
-		fill: #EFE7EB;
+		fill: rgb(229, 231, 235);
 	}
 }
 @tailwind components;
