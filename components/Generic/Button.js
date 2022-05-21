@@ -30,9 +30,10 @@ const Button = ({
                         `active:bg-red-700`,
                     ],
                     variant === "ghost" && [
+						'text-blue-700',
 						`hover:bg-blue-50`,
 						`active:bg-blue-100`
-                    ] 
+                    ]
                 ],
                 className
             )}
