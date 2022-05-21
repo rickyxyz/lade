@@ -1,9 +1,18 @@
 import clsx from "clsx";
 
-export default function Card({children, className, ...rest}){
-    return (
-        <div className={clsx("bg-white rounded-md border-1 border-gray-200 p-1 w-full flex flex-col", className, {...rest})}>
-            {children}
-        </div>
-    );
+const Card = ({ children, className, ...rest }) => {
+	return (
+		<div
+			{ ...rest }
+			className={clsx(
+				"flex flex-col w-full",
+				"bg-white rounded-md border-1 border-gray-200",
+				className,
+			)}
+		>
+			{children}
+		</div>
+	);
 }
+
+export default Card;
