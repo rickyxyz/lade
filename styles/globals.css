@@ -21,6 +21,14 @@
 @tailwind base;
 
 @layer components {
+	.form-template {
+		width: 32rem;
+	}
+
+	.h-exclude-navbar {
+		height: calc(100vh - 4rem);
+	}
+
 	.shape-divider {
 		position: relative;
 		top: 0;

@@ -1,6 +1,4 @@
-import { MdOutlineHome } from "react-icons/md";
-import { MdOutlineStyle } from "react-icons/md";
-import { MdOutlineGroup } from "react-icons/md";
+import { MdOutlineHome, MdOutlineStyle, MdOutlineGroup } from "react-icons/md";
 import Link from "next/link";
 import clsx from "clsx";
 
@@ -16,7 +14,7 @@ const Side = () => {
 			<ul>
 				{links.map((link) => {
 					return (
-						<Link key={link} href="/">
+						<Link key={link.name} href="/">
 							<a>
 								<li
 									className={clsx(

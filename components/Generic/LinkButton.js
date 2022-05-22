@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Button from "./Button";
 
-const LinkButton = ({ href, children }) => {
+const LinkButton = ({ className, href, variant="link", children }) => {
 	return (
 		<Link href={href} passHref>
 			<a>
-				<Button variant="link">{children}</Button>
+				<Button className={className} variant={variant}>{children}</Button>
 			</a>
 		</Link>
 	);
