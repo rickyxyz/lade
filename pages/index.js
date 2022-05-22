@@ -2,13 +2,13 @@ import Head from "next/head";
 import Image from "next/image";
 // import styles from "../styles/Home.module.css";
 import Button from "../components/Generic/Button";
-import Sidebar from "../components/sidebar";
-import Card from "../components/Card";
+import Sidebar from "../components/Generic/Side";
+import Card from "../components/Generic/Card";
 import { useContext } from "react";
 import { FirebaseContext } from "../firebase/FirebaseContext";
-import Landing from "../components/Home/Landing";
+import Landing from "../components/Landing/Landing";
 import ShapeDivider from "../components/Generic/ShapeDivider";
-import Folder from "../components/Home/Folder";
+import Folder from "../components/Landing/Folder";
 
 const Home = () => {
 	const db = useContext(FirebaseContext);
@@ -17,6 +17,7 @@ const Home = () => {
 		id: "014f",
 		topic: "Calculus with Differential Equations",
 		subtopic: "Exact Equation",
+		owner: "jeffery1941",
 		statement: "Solve y' = y.",
 		accepted: 514,
 		attempted: 41946,
@@ -25,6 +26,7 @@ const Home = () => {
 		id: "02gf",
 		topic: "Calculus with Differential Equations",
 		subtopic: "Method of Separation Variables",
+		owner: "jeffery1941",
 		statement: "Solve y' = y.",
 		accepted: 794,
 		attempted: 4156,
@@ -34,6 +36,7 @@ const Home = () => {
 		id: "014f",
 		topic: "Calculus with Differential Equations",
 		subtopic: "Exact Equation",
+		owner: "jeffery1941",
 		statement: "Solve y' = y.",
 		accepted: 514,
 		attempted: 41946,
@@ -42,6 +45,7 @@ const Home = () => {
 		id: "02gf",
 		topic: "Calculus with Differential Equations",
 		subtopic: "Method of Separation Variables",
+		owner: "jeffery1941",
 		statement: "Solve y' = y.",
 		accepted: 794,
 		attempted: 4156,

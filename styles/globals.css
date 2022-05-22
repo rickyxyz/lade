@@ -5,10 +5,30 @@
 
 
 @layer base {
+	.head-style {
+		@apply text-blue-600 font-semibold;
+	}
+	h1, .h1 {
+		@apply head-style text-7xl;
+	}
+	h2, .h2 {
+		@apply head-style text-5xl;
+	}
+	h3, .h3 {
+		@apply head-style text-3xl;
+	}
 }
 @tailwind base;
 
 @layer components {
+	.form-template {
+		width: 32rem;
+	}
+
+	.h-exclude-navbar {
+		height: calc(100vh - 4rem);
+	}
+
 	.shape-divider {
 		position: relative;
 		top: 0;
@@ -26,7 +46,7 @@
 	}
 	
 	.shape-divider .shape-fill {
-		fill: #EFE7EB;
+		fill: rgb(229, 231, 235);
 	}
 }
 @tailwind components;

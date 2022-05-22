@@ -9,9 +9,9 @@ const Landing = () => {
 
 	return (
 		<section className="pt-16 px-8">
-			<h2 className="text-blue-600 font-semibold text-7xl">
+			<h1>
 				Practice Makes Perfect
-			</h2>
+			</h1>
 			<ul className="mt-4 px-8">
 				{lists.map((list) => {
 					return (
