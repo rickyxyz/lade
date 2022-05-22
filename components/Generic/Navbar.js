@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import { getData } from "../firebase";
 import { getAuth, signOut } from "firebase/auth";
-import { FirebaseContext } from "../../firebase/FirebaseContext";
+import { FirebaseContext } from "../firebase";
 import clsx from "clsx";
 import { MdSearch } from "react-icons/md";
 import Button from "./Button";
@@ -18,31 +18,32 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 	const router = useRouter();
 
 	async function getUserData(uid) {
-		await getData(db, `/user/${uid}/`)
+		await getData(db, `/user/${uid}`)
 			.then((result) => {
 				console.log(result);
 				loginUser(result);
 			})
 			.catch((e) => {
+				console.log(e);
 				console.log("Something went wrong");
 			});
 	}
 
 	async function logout() {
 		await signOut(auth).then(() => {
+			logoutUser();
 			router.push("/");
 		});
 	}
 
 	useEffect(() => {
 		auth.onAuthStateChanged((user) => {
-			if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email)) ) {
+			console.log(loggedIn);
+			if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email))) {
 				getUserData(user.uid);
-			} else if (!user) {
-				logoutUser();
 			}
 		});
-	}, []);
+	}, [ auth ]);
 
 	return (
 		<nav

@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import { initializeApp, getApps, getApp, FirebaseError } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, child, get, onValue } from "firebase/database";
-import { FirebaseContext } from "../firebase/FirebaseContext";
+import { FirebaseContext } from "../components/firebase";
 import Navbar from "../components/Generic/Navbar";
 import { Provider } from "react-redux";
 import { createStore } from "redux";

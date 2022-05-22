@@ -3,8 +3,7 @@ import { useContext } from "react";
 import { useRouter } from "next/router";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set, child, get } from "firebase/database";
-import { getData, getErrorMessage } from "../components/firebase";
-import { FirebaseContext } from "../firebase/FirebaseContext";
+import { FirebaseContext, getData, getErrorMessage, postData } from "../components/firebase";
 import clsx from "clsx";
 import FormTemplate from "../components/FormTemplate";
 import * as Yup from "yup";
@@ -36,7 +35,7 @@ const Register = () => {
 				values["password"]
 			)
 				.then(async (cred) => {
-					await set(ref(db, `user/${cred.user.uid}`), {
+					await postData(db, `user/${cred.user.uid}`, {
 						email: values["email"],
 						username: values["username"],
 					});
@@ -64,11 +63,15 @@ const Register = () => {
 	async function usernameIsUnique(value) {
 		return await getData(db, "/user")
 			.then((result) => {
+				if(!result)
+					return true;
+				
 				let unique = true;
 				for (const [id, user] of Object.entries(result)) {
 					console.log([id, user]);
 					if (user.username === value) {
 						unique = false;
+						break;
 					}
 				}
 				return unique;
