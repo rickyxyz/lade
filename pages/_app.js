@@ -7,6 +7,23 @@ import { getDatabase, ref, child, get, onValue } from "firebase/database";
 import { FirebaseContext } from "../firebase/FirebaseContext";
 import Navbar from "../components/Generic/Navbar";
 
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import { persistStore, persistReducer } from "redux-persist";
+import reducer from "../components/Redux/reducer";
+import storage from "../components/Redux/storage";
+import { PersistGate } from "redux-persist/integration/react";
+
+const persistConfig = {
+	key: "root",
+	storage,
+	whitelist: ['loggedIn']
+};
+
+const persistedReducer = persistReducer(persistConfig, reducer);
+const store = createStore(persistedReducer);
+const persistor = persistStore(store);
+
 function MyApp({ Component, pageProps }) {
 
 	const [fb, setFb] = useState({
@@ -33,12 +50,16 @@ function MyApp({ Component, pageProps }) {
 	}, []);
 
 	return (
-		<FirebaseContext.Provider value={fb}>
-			<Navbar />
-			<div className="mt-16">
-				<Component {...pageProps} />
-			</div>
-		</FirebaseContext.Provider>
+		<Provider store={store}>
+			<PersistGate loading={null} persistor={persistor}>
+				<FirebaseContext.Provider value={fb}>
+					<Navbar />
+					<div className="mt-16">
+						<Component {...pageProps} />
+					</div>
+				</FirebaseContext.Provider>
+			</PersistGate>
+		</Provider>
 	);
 }
 
