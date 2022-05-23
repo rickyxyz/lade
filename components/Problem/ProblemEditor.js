@@ -100,7 +100,7 @@ const ProblemEditor = ({
 		</>
 	) : (
 		<div>
-			<p>You don't have permission.</p>
+			<p>You don&quot;t have permission.</p>
 		</div>
 	);
 };
