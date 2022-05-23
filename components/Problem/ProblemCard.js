@@ -24,7 +24,7 @@ const ProblemCard = ({
 			</div>
 			<div className="flex flex-row items-center justify-between mt-4">
 				<ProblemStats accepted={accepted} attempted={attempted} comments={comments} />
-				<div>
+				<div className="flex flex-row">
 					<Button variant="ghost" className="mr-4">
 						Discuss
 					</Button>
