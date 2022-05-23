@@ -1,12 +1,14 @@
 import { MdOutlineHome, MdOutlineStyle, MdOutlineGroup } from "react-icons/md";
+import { BsHouseDoor, BsQuestionOctagon, BsClipboardPlus, BsClipboardData } from "react-icons/bs";
 import Link from "next/link";
 import clsx from "clsx";
 
 const Side = () => {
 	const links = [
-		{ name: "Home", icon: <MdOutlineHome /> },
-		{ name: "Tags", icon: <MdOutlineStyle /> },
-		{ name: "Groups", icon: <MdOutlineGroup /> },
+		{ name: "Home", href: "/problems", icon: <BsHouseDoor /> },
+		// { name: "Contests", href: "/contests", icon: <BsClipboardData /> },
+		{ name: "New Problem", href: "/problems/new", icon: <BsQuestionOctagon /> },
+		// { name: "New Contest", href: "/contests/new", icon: <BsClipboardPlus /> },
 	];
 	
 	return (
@@ -14,7 +16,7 @@ const Side = () => {
 			<ul>
 				{links.map((link) => {
 					return (
-						<Link key={link.name} href="/">
+						<Link key={link.href} href={link.href}>
 							<a>
 								<li
 									className={clsx(

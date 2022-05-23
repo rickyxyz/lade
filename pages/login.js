@@ -3,8 +3,7 @@ import Head from "next/head";
 import { useContext } from "react";
 import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { FirebaseContext } from "../firebase/FirebaseContext";
-import { getErrorMessage } from "../components/firebase";
+import { getErrorMessage, FirebaseContext } from "../components/firebase";
 import clsx from "clsx";
 import FormTemplate from "../components/FormTemplate";
 import * as Yup from "yup";
@@ -29,7 +28,7 @@ const Login = () => {
 				values["password"]
 			)
 				.then((cred) => {
-					router.push("/problems");
+					// router.push("/problems");
 					res(null);
 				})
 				.catch((error) => {

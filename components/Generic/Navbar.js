@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import { getData } from "../firebase";
 import { getAuth, signOut } from "firebase/auth";
-import { FirebaseContext } from "../../firebase/FirebaseContext";
+import { FirebaseContext } from "../firebase";
 import clsx from "clsx";
 import { MdSearch } from "react-icons/md";
 import Button from "./Button";
@@ -18,31 +18,35 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 	const router = useRouter();
 
 	async function getUserData(uid) {
-		await getData(db, `/user/${uid}/`)
+		await getData(db, `/user/${uid}`)
 			.then((result) => {
 				console.log(result);
 				loginUser(result);
 			})
 			.catch((e) => {
+				console.log(e);
 				console.log("Something went wrong");
 			});
 	}
 
 	async function logout() {
 		await signOut(auth).then(() => {
+			logoutUser();
 			router.push("/");
 		});
 	}
 
+	auth.onAuthStateChanged((user) => {
+		if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email))) {
+			getUserData(user.uid).then(() => {
+				router.push("/problems");
+			});
+		}
+	});
+
 	useEffect(() => {
-		auth.onAuthStateChanged((user) => {
-			if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email)) ) {
-				getUserData(user.uid);
-			} else if (!user) {
-				logoutUser();
-			}
-		});
-	}, []);
+		
+	}, [ ]);
 
 	return (
 		<nav
@@ -62,7 +66,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 			<div className="flex-grow flex align-center justify-center relative">
 				<input
 					placeholder="Search"
-					className=" w-full h-10 pl-16 pr-8 border-2 rounded-lg"
+					className="w-full h-10 pl-16 pr-8 border-2 rounded-lg"
 				/>
 				<MdSearch className="absolute left-6 top-2 w-6 h-6 text-gray-500" />
 			</div>

@@ -1,5 +1,12 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set, child, get } from "firebase/database";
+import { ref, set, child, get } from "firebase/database";
+import { createContext } from "react";
+
+export const FirebaseContext = createContext({
+	app: null,
+	db: null,
+	_topics: null,
+	_subtopics: null,
+});
 
 export async function getData(db, link) {
 	return await new Promise(function (res, rej) {
@@ -14,6 +21,12 @@ export async function getData(db, link) {
 			.catch((error) => {
 				rej(error);
 			});
+	});
+}
+
+export async function postData(db, link, data) {
+	return await new Promise(function (res, rej) {
+		set(ref(db, link), data).then(() => res(null)).catch((error) => rej(error));
 	});
 }
 

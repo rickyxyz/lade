@@ -5,7 +5,7 @@ import Button from "../components/Generic/Button";
 import Sidebar from "../components/Generic/Side";
 import Card from "../components/Generic/Card";
 import { useContext } from "react";
-import { FirebaseContext } from "../firebase/FirebaseContext";
+import { FirebaseContext } from "../components/firebase";
 import Landing from "../components/Landing/Landing";
 import ShapeDivider from "../components/Generic/ShapeDivider";
 import Folder from "../components/Landing/Folder";

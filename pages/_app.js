@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import "../styles/globals.css";
-import { initializeApp, getApps, getApp, FirebaseError } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getDatabase, ref, child, get, onValue } from "firebase/database";
-import { FirebaseContext } from "../firebase/FirebaseContext";
+import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
+import { FirebaseContext, getData } from "../components/firebase";
 import Navbar from "../components/Generic/Navbar";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
@@ -26,7 +25,24 @@ function MyApp({ Component, pageProps }) {
 	const [fb, setFb] = useState({
 		app: null,
 		db: null,
+		_topics: {},
+		_subtopics: {},
 	});
+
+	async function getTopicsAndSubTopics(db) {
+		try {
+			const _topics = await getData(db, "/topic"),
+				_subtopics = await getData(db, "/subtopic");
+				
+			if (db) {
+				setFb({
+					...fb,
+					_topics,
+					_subtopics,
+				});
+			}
+		} catch(e) {}
+	}
 
 	useEffect(() => {
 		const config = {
@@ -45,6 +61,10 @@ function MyApp({ Component, pageProps }) {
 			});
 		}
 	}, []);
+
+	useEffect(() => {
+		getTopicsAndSubTopics(fb.db);
+	}, [fb.db]);
 
 	return (
 		<Provider store={store}>
