@@ -36,14 +36,17 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 		});
 	}
 
+	auth.onAuthStateChanged((user) => {
+		if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email))) {
+			getUserData(user.uid).then(() => {
+				router.push("/problems");
+			});
+		}
+	});
+
 	useEffect(() => {
-		auth.onAuthStateChanged((user) => {
-			console.log(loggedIn);
-			if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email))) {
-				getUserData(user.uid);
-			}
-		});
-	}, [ auth ]);
+		
+	}, [ ]);
 
 	return (
 		<nav
@@ -63,7 +66,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 			<div className="flex-grow flex align-center justify-center relative">
 				<input
 					placeholder="Search"
-					className=" w-full h-10 pl-16 pr-8 border-2 rounded-lg"
+					className="w-full h-10 pl-16 pr-8 border-2 rounded-lg"
 				/>
 				<MdSearch className="absolute left-6 top-2 w-6 h-6 text-gray-500" />
 			</div>

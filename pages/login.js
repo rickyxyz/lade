@@ -28,7 +28,7 @@ const Login = () => {
 				values["password"]
 			)
 				.then((cred) => {
-					router.push("/problems");
+					// router.push("/problems");
 					res(null);
 				})
 				.catch((error) => {

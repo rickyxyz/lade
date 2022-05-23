@@ -2,9 +2,7 @@ import Head from "next/head";
 import { useContext } from "react";
 import { useRouter } from "next/router";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set, child, get } from "firebase/database";
 import { FirebaseContext, getData, getErrorMessage, postData } from "../components/firebase";
-import clsx from "clsx";
 import FormTemplate from "../components/FormTemplate";
 import * as Yup from "yup";
 
@@ -40,15 +38,8 @@ const Register = () => {
 						username: values["username"],
 					});
 				})
-				.then(async () => {
-					await signInWithEmailAndPassword(
-						auth,
-						values["email"],
-						values["password"]
-					);
-				})
 				.then(() => {
-					router.push("/problems");
+					// router.push("/problems");
 					res(null);
 				})
 				.catch((error) => {

@@ -3,8 +3,11 @@
 	src: url("../public/fonts/Inter-VariableFont_slnt,wght.ttf");
 }
 
-
 @layer base {
+	* {
+		font-family: "Inter";
+		font-size: 1rem;
+	}
 	.head-style {
 		@apply text-blue-600 font-semibold;
 	}
@@ -17,6 +20,15 @@
 	h3, .h3 {
 		@apply head-style text-3xl;
 	}
+	h4, .h4 {
+		@apply head-style text-xl;
+	}
+	input, select, .input {
+		@apply h-10 pl-2 pr-2 border-2 rounded-lg;
+	}
+	.frame-content :is(input, select) {
+		@apply input rounded-none;
+	}
 }
 @tailwind base;
 
@@ -27,6 +39,20 @@
 
 	.h-exclude-navbar {
 		height: calc(100vh - 4rem);
+	}
+	
+	.quill > * {
+		@apply !border-gray-200;
+		border-width: 2px!important;
+	}
+
+	.quill > div {
+		@apply border-none border-2;
+	}
+
+	.quill > div:nth-child(2) {
+		height: 10rem;
+		overflow-y: scroll;
 	}
 
 	.shape-divider {
@@ -47,6 +73,14 @@
 	
 	.shape-divider .shape-fill {
 		fill: rgb(229, 231, 235);
+	}
+	
+	.frame-content > div > h2 {
+		@apply mb-4;
+	}
+
+	.frame-content > div {
+		@apply p-8 border-b-2;
 	}
 }
 @tailwind components;

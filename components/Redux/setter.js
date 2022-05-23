@@ -12,13 +12,22 @@ export function logoutUser() {
 	};
 }
 
+export function setProblems(problems) {
+	return {
+		type: "problemsSet",
+		problems: problems
+	};
+}
+
 export function mapStateToProps(state) {
 	return {
 		loggedIn: state.loggedIn,
+		problems: state.problems,
 	};
 }
 
 export const mapDispatchToProps = {
 	loginUser,
 	logoutUser,
+	setProblems,
 };

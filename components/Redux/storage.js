@@ -1,7 +1,4 @@
-/*
-	Source:
-	https://github.com/vercel/next.js/discussions/15687#discussioncomment-45319
-*/
+// https://github.com/vercel/next.js/discussions/15687#discussioncomment-45319
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
 const createNoopStorage = () => {

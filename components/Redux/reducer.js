@@ -1,5 +1,6 @@
 const initialState = {
 	loggedIn: null,
+	problems: []
 };
 
 export const reducer = (state = initialState, action) => {
@@ -13,6 +14,11 @@ export const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				loggedIn: null,
+			};
+		case "problemsSet":
+			return {
+				...state,
+				problems: action.problems,
 			};
 		default:
 			return state;
