@@ -4,49 +4,71 @@ import Frame from "../../components/Generic/Frame";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { Interweave } from "interweave";
+import Comment from "../../components/Comment";
+
+const QuillNoSSRWrapper = dynamic(import("react-quill"), {
+    ssr: false,
+    loading: () => <></>,
+});
 
 const Problems = ({ id }) => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
-	const [problem, setProblem] = useState(null);
+    const { db, _topics, _subtopics } = useContext(FirebaseContext);
+    const [problem, setProblem] = useState(null);
 
-	async function getProblemData() {
-		await getData(db, `/problem/${id}`).then((_problem) => {
-			console.log(_problem);
-			let { topic, subtopic } = _problem;
-			_problem.id = id;
-			_problem.topic = _topics[topic];
-			_problem.subtopic = _subtopics[topic][subtopic];
-			setProblem(_problem);
-		}).catch(e => {});
-	}
+    async function getProblemData() {
+        await getData(db, `/problem/${id}`)
+            .then((_problem) => {
+                console.log(_problem);
+                let { topic, subtopic } = _problem;
+                _problem.id = id;
+                _problem.topic = _topics[topic];
+                _problem.subtopic = _subtopics[topic][subtopic];
+                setProblem(_problem);
+            })
+            .catch((e) => {});
+    }
 
-	useEffect(() => {
-		if (db && _topics && _subtopics && !problem) getProblemData();
-	}, [db, _topics, _subtopics]);
+    useEffect(() => {
+        if (db && _topics && _subtopics && !problem) getProblemData();
+    }, [db, _topics, _subtopics]);
 
-	return (
-		<Frame>
-			{problem ? (
-				<>
-					<div>
-						<h1 className="h2">{problem.topic}</h1>
-						<p className="mt-4">{problem.subtopic}</p>
-					</div>
-					<div>
-						<Interweave content={problem.statement} />
-					</div>
-				</>
-			) : (
-				<div>The problem is not found.</div>
-			)}
-		</Frame>
-	);
+    return (
+        <Frame>
+            {problem ? (
+                <>
+                    <div>
+                        <h1 className="h2">{problem.topic}</h1>
+                        <p className="mt-4">{problem.subtopic}</p>
+                    </div>
+                    <div>
+                        <Interweave content={problem.statement} />
+                    </div>
+                    <div>
+                        <QuillNoSSRWrapper
+                            className="quill mb-12"
+                            placeholder="Post your comment here..."
+                        />
+                        <div>
+                            <Comment problemId = {problem.id}/>
+                            <Comment problemId = {problem.id}/>
+                            <Comment problemId = {problem.id}/>
+                            <Comment problemId = {problem.id}/>
+                            <Comment problemId = {problem.id}/>
+                            <Comment problemId = {problem.id}/>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div>The problem is not found.</div>
+            )}
+        </Frame>
+    );
 };
 
 export async function getServerSideProps({ params }) {
-	const { id } = params;
+    const { id } = params;
 
-	return { props: { id } };
+    return { props: { id } };
 }
 
 export default Problems;
