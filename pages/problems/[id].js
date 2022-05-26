@@ -4,7 +4,8 @@ import Frame from "../../components/Generic/Frame";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { Interweave } from "interweave";
-import Comment from "../../components/Comment";
+import CommentEntry from "../../components/Comment/CommentEntry";
+import CommentEditor from "../../components/Comment/CommentEditor";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
     ssr: false,
@@ -44,18 +45,7 @@ const Problems = ({ id }) => {
                         <Interweave content={problem.statement} />
                     </div>
                     <div>
-                        <QuillNoSSRWrapper
-                            className="quill mb-12"
-                            placeholder="Post your comment here..."
-                        />
-                        <div>
-                            <Comment problemId = {problem.id}/>
-                            <Comment problemId = {problem.id}/>
-                            <Comment problemId = {problem.id}/>
-                            <Comment problemId = {problem.id}/>
-                            <Comment problemId = {problem.id}/>
-                            <Comment problemId = {problem.id}/>
-                        </div>
+                        <CommentEditor problem_id = {problem.id}/>
                     </div>
                 </>
             ) : (

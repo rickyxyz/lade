@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-const Comment = ({problemId}) => {
+const CommentEntry = ({comment_id}) => {
     return (
         <article className= "flex flex-col items-start gap-2 mb-8">
             <div className="flex flex-row items-end gap-2">
@@ -12,4 +12,4 @@ const Comment = ({problemId}) => {
     );
 };
 
-export default Comment;
+export default CommentEntry;
