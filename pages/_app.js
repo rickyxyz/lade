@@ -10,6 +10,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import reducer from "../components/Redux/reducer";
 import storage from "../components/Redux/storage";
 import { PersistGate } from "redux-persist/integration/react";
+import Script from "next/script";
 
 const persistConfig = {
 	key: "root",
@@ -33,7 +34,7 @@ function MyApp({ Component, pageProps }) {
 		try {
 			const _topics = await getData(db, "/topic"),
 				_subtopics = await getData(db, "/subtopic");
-				
+
 			if (db) {
 				setFb({
 					...fb,
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps }) {
 					_subtopics,
 				});
 			}
-		} catch(e) {}
+		} catch (e) {}
 	}
 
 	useEffect(() => {
@@ -71,6 +72,18 @@ function MyApp({ Component, pageProps }) {
 			<PersistGate loading={null} persistor={persistor}>
 				<FirebaseContext.Provider value={fb}>
 					<Navbar />
+					<link
+						rel="stylesheet"
+						href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+						integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
+						crossorigin="anonymous"
+					/>
+					<Script
+						defer
+						src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+						integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
+						crossorigin="anonymous"
+					/>
 					<div className="mt-16">
 						<Component {...pageProps} />
 					</div>
