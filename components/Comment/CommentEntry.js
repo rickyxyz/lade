@@ -1,13 +1,25 @@
-import clsx from "clsx";
+import { Interweave } from "interweave";
+import { BiUpvote, BiDownvote } from "react-icons/bi";
 
-const CommentEntry = ({comment_id}) => {
+const CommentEntry = ({ comment }) => {
     return (
-        <article className= "flex flex-col items-start gap-2 mb-8">
+        <article className="flex flex-col items-start gap-2 mb-8 mt-8">
             <div className="flex flex-row items-end gap-2">
-                <h1 className="text-xl text-black font-semibold">Username</h1>
-                <h2 className="text-xs text-slate-600 font-medium">Posted at dd,MM,yyyy</h2>
+                <h1 className="text-xl text-black font-semibold">
+                    {comment.owner}
+                </h1>
             </div>
-            <p className="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa ipsum, modi earum enim obcaecati atque dolore exercitationem molestias ea. Possimus, molestiae enim! Nobis, reprehenderit sunt. Aut provident dolore voluptatibus expedita.</p>
+            <Interweave content={comment.comment} />
+            <div className="flex flex-row gap-1 items-center">
+                <button>
+                    <BiUpvote />
+                </button>
+                <span className="mr-2">{comment.upvote}</span>
+                <button>
+                    <BiDownvote />
+                </button>
+                <span>{comment.downvote}</span>
+            </div>
         </article>
     );
 };

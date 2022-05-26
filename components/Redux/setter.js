@@ -19,6 +19,13 @@ export function setProblems(problems) {
 	};
 }
 
+export function setComment(comments) {
+    return {
+        type: "commentSet",
+        comments: comments
+    }
+}
+
 export function mapStateToProps(state) {
 	return {
 		loggedIn: state.loggedIn,

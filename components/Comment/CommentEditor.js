@@ -24,12 +24,11 @@ const CommentEditor = ({ loggedIn, problem_id }) => {
         if (comment_content === "") return;
 
         const comment_id = pushid();
-        await postData(db, `/comment/${comment_id}`, {
+        await postData(db, `/comment/${problem_id}/${comment_id}`, {
             comment: comment_content,
-            problem_id: problem_id,
             owner: loggedIn.username,
             upvote: 0,
-            downvote: 0,
+            downvote: 0
         }).catch((e) => {
             console.log(e);
         });

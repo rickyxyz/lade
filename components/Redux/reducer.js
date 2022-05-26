@@ -20,6 +20,11 @@ export const reducer = (state = initialState, action) => {
 				...state,
 				problems: action.problems,
 			};
+        case "commentSet":
+            return {
+                ...state,
+                comments: action.comments,
+            }
 		default:
 			return state;
 	}

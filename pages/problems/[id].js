@@ -15,6 +15,7 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
 const Problems = ({ id }) => {
     const { db, _topics, _subtopics } = useContext(FirebaseContext);
     const [problem, setProblem] = useState(null);
+    const [comments, setComment] = useState(null);
 
     async function getProblemData() {
         await getData(db, `/problem/${id}`)
@@ -27,6 +28,25 @@ const Problems = ({ id }) => {
                 setProblem(_problem);
             })
             .catch((e) => {});
+    }
+
+    async function getCommentData() {
+        await getData(db, `/comment/${id}`)
+            .then((_comments) => {
+                const tempComments = [];
+                for (let [id, _comment] of Object.entries(_comments)) {
+                    _comment.id = id;
+                    tempComments.unshift(_comment);
+                }
+                setComment(tempComments);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }
+
+    if (!comments) {
+        getCommentData();
     }
 
     useEffect(() => {
@@ -45,7 +65,10 @@ const Problems = ({ id }) => {
                         <Interweave content={problem.statement} />
                     </div>
                     <div>
-                        <CommentEditor problem_id = {problem.id}/>
+                        <CommentEditor problem_id={problem.id} />
+                        {comments.map((comment) => (
+                            <CommentEntry comment={comment} />
+                        ))}
                     </div>
                 </>
             ) : (
