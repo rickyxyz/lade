@@ -11,10 +11,7 @@ const Problems = ({ id }) => {
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
 			.then((_problem) => {
-				const { topic, subtopic } = _problem;
 				_problem.id = id;
-				_problem.topic = _topics[topic];
-				_problem.subtopic = _subtopics[topic][subtopic];
 				setProblem(_problem);
 			})
 			.catch((e) => {});
@@ -27,7 +24,7 @@ const Problems = ({ id }) => {
 	return (
 		<Frame>
 			{problem ? (
-				<ProblemEditor purpose="edit" problem={problem} />
+				<ProblemEditor purpose="edit" initialProblem={problem} />
 			) : (
 				<div>The problem is not found.</div>
 			)}

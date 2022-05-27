@@ -4,7 +4,7 @@
 }
 
 @layer base {
-	* {
+	*:not(:is(.base,.mord)) {
 		font-family: "Inter";
 		font-size: 1rem;
 	}
@@ -26,8 +26,11 @@
 	input, select, .input {
 		@apply h-10 pl-2 pr-2 border-2 rounded-lg;
 	}
-	.frame-content :is(input, select) {
-		@apply input rounded-none;
+	:is(input, select):hover {
+		@apply border-blue-200;
+	}
+	:is(input, select):focus {
+		@apply border-blue-400;
 	}
 }
 @tailwind base;
@@ -82,6 +85,18 @@
 	.frame-content > div {
 		@apply p-8 border-b-2;
 	}
+
+	.frame-content :is(input, select) {
+		@apply input rounded-none transition-colors;
+	}
+
+	.ql-formats {
+		position: relative;
+	}
+
+	.frame-content :is(input[type="text"], select) {
+		width: 20rem;
+	}
 }
 @tailwind components;
 
@@ -116,6 +131,11 @@
 }
 
 @tailwind utilities;
+
+.ql-tooltip {
+	top: 1rem!important;
+	left: 8rem!important;
+}
 
 html,
 body {
