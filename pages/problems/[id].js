@@ -67,7 +67,8 @@ const Problems = ({ id }) => {
                     <div>
                         <CommentEditor problem_id={problem.id} />
                         {comments.map((comment) => (
-                            <CommentEntry comment={comment} />
+                            // pass the problem id down to UpvoteDownvote.js
+                            <CommentEntry comment={comment} problem_id={problem.id}/>
                         ))}
                     </div>
                 </>
