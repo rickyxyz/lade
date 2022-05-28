@@ -15,12 +15,12 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
 const Problems = ({ id }) => {
     const { db, _topics, _subtopics } = useContext(FirebaseContext);
     const [problem, setProblem] = useState(null);
-    const [comments, setComment] = useState(null);
+    const [comments, setComments] = useState([]);
+	const [init, setInit] = useState(false);
 
     async function getProblemData() {
         await getData(db, `/problem/${id}`)
             .then((_problem) => {
-                console.log(_problem);
                 let { topic, subtopic } = _problem;
                 _problem.id = id;
                 _problem.topic = _topics[topic];
@@ -38,20 +38,22 @@ const Problems = ({ id }) => {
                     _comment.id = id;
                     tempComments.unshift(_comment);
                 }
-                setComment(tempComments);
+                setComments(tempComments);
             })
-            .catch((e) => {
-                console.log(e);
-            });
-    }
-
-    if (!comments) {
-        getCommentData();
+            .catch((e) => {});
+		setInit(true);
     }
 
     useEffect(() => {
-        if (db && _topics && _subtopics && !problem) getProblemData();
+        if (db && _topics && _subtopics && !problem) {
+			getProblemData();
+		}
     }, [db, _topics, _subtopics]);
+
+	useEffect(() => {
+		if(!init)
+			getCommentData();
+	});
 
     return (
         <Frame>
@@ -65,12 +67,12 @@ const Problems = ({ id }) => {
                         <Interweave content={problem.statement} />
                     </div>
                     <div>
-                        <CommentEditor problem_id={problem.id} />
-                        {comments.map((comment) => (
+                        <CommentEditor problemId={problem.id} />
+						{comments.map((comment) => (
                             // pass the problem id down to UpvoteDownvote.js
-                            <CommentEntry comment={comment} problem_id={problem.id}/>
+                            <CommentEntry comment={comment} problemId={problem.id}/>
                         ))}
-                    </div>
+					</div>
                 </>
             ) : (
                 <div>The problem is not found.</div>

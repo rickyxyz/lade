@@ -2,8 +2,14 @@ import { Interweave } from "interweave";
 import UpvoteDownvote from "./UpvoteDownvote";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import { connect } from "react-redux";
+import { useContext, useEffect, useState } from "react";
+import { onValue, ref } from "firebase/database";
+import { FirebaseContext } from "../firebase";
 
-const CommentEntry = ({ loggedIn, comment, problem_id }) => {
+const CommentEntry = ({ loggedIn, comment, problemId }) => {
+	
+	const { db } = useContext(FirebaseContext);
+	
     return (
         <article className="flex flex-col items-start gap-2 mb-8 mt-8">
             <div className="flex flex-row items-end gap-2">
@@ -12,8 +18,8 @@ const CommentEntry = ({ loggedIn, comment, problem_id }) => {
                 </h1>
             </div>
             <Interweave content={comment.comment} />
-            {/* pass problem_id to UpvoteDownvote.js */}
-            <UpvoteDownvote comment={comment} problem_id={problem_id}/>
+            {/* pass problemId to UpvoteDownvote.js */}
+            <UpvoteDownvote comment={comment} problemId={problemId}/>
         </article>
     );
 };
