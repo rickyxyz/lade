@@ -76,13 +76,13 @@ function MyApp({ Component, pageProps }) {
 						rel="stylesheet"
 						href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
 						integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
-						crossorigin="anonymous"
+						crossOrigin="anonymous"
 					/>
 					<Script
 						defer
 						src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
 						integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
-						crossorigin="anonymous"
+						crossOrigin="anonymous"
 					/>
 					<div className="mt-16">
 						<Component {...pageProps} />
