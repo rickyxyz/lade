@@ -325,6 +325,7 @@ const ProblemEditor = ({
 							>
 								{problem.choices.map((choice, index) => (
 									<Choice
+										key={`choice-${index}`}
 										name={choice}
 										index={index}
 										checked={choice === problem.accept}
