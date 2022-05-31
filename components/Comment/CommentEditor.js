@@ -1,20 +1,12 @@
-import "react-quill/dist/quill.snow.css";
-import dynamic from "next/dynamic";
-
 import { useContext } from "react";
 import { FirebaseContext, postData } from "../../components/firebase";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
-import "react-quill/dist/quill.snow.css";
 import pushid from "pushid";
 import { connect } from "react-redux";
 import Button from "../Generic/Button";
+import QuillNoSSRWrapper from "../QuillWrapper";
 
-const QuillNoSSRWrapper = dynamic(import("react-quill"), {
-    ssr: false,
-    loading: () => <></>,
-});
-
-const CommentEditor = ({ loggedIn, problem_id }) => {
+const CommentEditor = ({ loggedIn, problemId }) => {
     const { db } = useContext(FirebaseContext);
 
     async function postComment() {
@@ -23,8 +15,8 @@ const CommentEditor = ({ loggedIn, problem_id }) => {
 
         if (comment_content === "") return;
 
-        const comment_id = pushid();
-        await postData(db, `/comment/${problem_id}/${comment_id}`, {
+        const commentId = pushid();
+        await postData(db, `/comment/${problemId}/${commentId}`, {
             comment: comment_content,
             owner: loggedIn.username,
             upvote: 0,
@@ -36,10 +28,17 @@ const CommentEditor = ({ loggedIn, problem_id }) => {
 
     return (
         <div>
-            <QuillNoSSRWrapper
-                className="quill mb-8"
-                placeholder="Post your comment here..."
-            />
+			<QuillNoSSRWrapper
+				className="quill mb-8"
+				placeholder="Post your comment here..."
+				modules={{
+				toolbar: [
+					['bold', 'italic', 'underline', 'strike'],
+					[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+					[{ 'script': 'sub'}, { 'script': 'super' }],
+					['link', 'formula']
+				]
+			}} />
             <div>
                 <Button onClick={() => postComment()}>Post Comment</Button>
             </div>

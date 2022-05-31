@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, postData } from "../../components/firebase";
-import "react-quill/dist/quill.snow.css";
-import dynamic from "next/dynamic";
 import Button from "../Generic/Button";
 import { connect } from "react-redux";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
@@ -10,11 +8,7 @@ import Toggle from "../Generic/Toggle";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { BsFillTrashFill } from "react-icons/bs";
-
-const QuillNoSSRWrapper = dynamic(import("react-quill"), {
-	ssr: false,
-	loading: () => <></>,
-});
+import QuillNoSSRWrapper from "../QuillWrapper";
 
 const Property = ({ name, children }) => {
 	return (

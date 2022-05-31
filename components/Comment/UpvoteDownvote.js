@@ -1,103 +1,116 @@
-import { BiUpvote, BiDownvote } from "react-icons/bi";
+import { BsArrowDownCircle, BsArrowUpCircle, BsArrowDownCircleFill, BsArrowUpCircleFill } from "react-icons/bs";
 import "react-quill/dist/quill.snow.css";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, getData, postData } from "../../components/firebase";
+
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import "react-quill/dist/quill.snow.css";
 import { connect } from "react-redux";
 
 import { getAuth } from "firebase/auth";
+import { ref, onValue } from "firebase/database";
+import clsx from "clsx";
 
-const UpvoteDownvote = ({ loggedIn, problem_id, comment }) => {
-    const { db } = useContext(FirebaseContext);
-    const comment_id = comment.id;
+const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
+	const { db } = useContext(FirebaseContext);
 
-    // get UID and upvote record
-    const auth = getAuth();
-    const uid = auth.currentUser.uid;
+	const [record, setRecord] = useState(0);
 
-    const upvoteRecord = null;
-    const downvoteRecord = null;
+	// get UID and upvote record
+	const auth = getAuth();
+	const uid = auth.currentUser.uid;
 
-    let newUpvote = comment.upvote;
-    let newDownvote = comment.downvote;
+	async function react(type) {
+		function pair(t) {
+			return t === "up" ? "down" : "up";
+		}
 
-    async function getUser(){
-        await getData(db, `/user/${uid}`).then((_user) => {
-            upvoteRecord = _user.upvoted;
-            downvoteRecord = _user.downvoted;
-        }).catch(e => console.log(e));
-    }
-    getUser();
+		let aRecord = parseInt(record);
+		if (isNaN(aRecord)) aRecord = 0;
 
-    async function upvote() {
-        // create upvote record if user does not have it
-        if (!upvoteRecord) {
-            upvoteRecord = {};
-        }
-        if(upvoteRecord[comment_id] === true) {
-            upvoteRecord[comment_id] = false;
-            newUpvote = newUpvote - 1;
-        } else{
-            upvoteRecord[comment_id] = true;
-            newUpvote = newUpvote + 1;
-        }
+		type = parseInt(type);
 
-        await postData(db, `/comment/${problem_id}/${comment_id}`, {
-            ...comment,
-            upvote: newUpvote
-        }).catch((e) => {
-            console.log(e);
-        });
+		let change = aRecord === type ? -1 : 1;
+		let change2 = 0;
+		if (aRecord !== type && aRecord !== 0) {
+			change2 = 1;
+		}
 
-        await postData(db, `/user/${uid}`, {
-            ...loggedIn,
-            upvoted: upvoteRecord,
-        }).catch((e) => {
-            console.log(e);
-        });
-    }
+		if (aRecord === 0) change = 1;
 
-    async function downvote() {
-        if (!downvoteRecord) {
-            downvoteRecord = {};
-        }
-        if(downvoteRecord[comment_id] === true) {
-            downvoteRecord[comment_id] = false;
-            newDownvote = newDownvote - 1;
-        } else{
-            downvoteRecord[comment_id] = true;
-            newDownvote = newDownvote + 1;
-        }
+		const wordType = type === 1 ? "up" : "down";
 
-        await postData(db, `/comment/${problem_id}/${comment_id}`, {
-            ...comment,
-            downvote: newDownvote
-        }).catch((e) => {
-            console.log(e);
-        });
+		// For some unknown reason, if I remove this setstate,
+		// the feature won't work properly.
+		setRecord(aRecord === type ? 0 : type);
 
-        await postData(db, `/user/${uid}`, {
-            ...loggedIn,
-            downvote: downvoteRecord,
-        }).catch((e) => {
-            console.log(e);
-        });
-    }
+		await getData(db, `/comment/${problemId}/${comment.id}`).then(
+			async (commentData) => {
+				await postData(db, `/comment/${problemId}/${comment.id}`, {
+					...commentData,
+					[`${wordType}vote`]:
+						commentData[`${wordType}vote`] + change,
+					[`${pair(wordType)}vote`]:
+						commentData[`${pair(wordType)}vote`] - change2,
+				}).catch((e) => {});
+			}
+		);
 
-    return (
-        <div className="flex flex-row gap-1 items-center">
-            <button onClick={() => upvote()}>
-                <BiUpvote />
-            </button>
-            <span className="mr-2">{comment.upvote}</span>
-            <button onClick={() => downvote()}>
-                <BiDownvote />
-            </button>
-            <span>{comment.downvote}</span>
-        </div>
-    );
+		await getData(db, `/user/${uid}`).then(async (userData) => {
+			await postData(db, `/user/${uid}`, {
+				...userData,
+				reaction: {
+					...userData.reaction,
+					[comment.id]: aRecord === type ? null : type,
+				},
+			}).catch((e) => {});
+		});
+	}
+
+	useEffect(() => {
+		onValue(ref(db, `/user/${uid}/reaction`), (snapshot) => {
+			const reaction = snapshot.val();
+			if (reaction !== null && record != reaction[comment.id]) {
+				setRecord(reaction[comment.id] ?? 0);
+			}
+		});
+	}, []);
+
+	return (
+		<div className="flex flex-row gap-1 items-center">
+			<div
+				className={clsx(
+					"flex flex-row items-center w-12",
+					"hover:text-red-500 active:text-red-800 focus:text-red-800",
+					"cursor-pointer ",
+					record === 1 && "text-red-600"
+				)}
+				onClick={() => react(1)}
+			>
+				<BsArrowUpCircle className={clsx(record === 1 && "hidden")} />
+				<BsArrowUpCircleFill className={clsx(record !== 1 && "hidden")} />
+				<span className="ml-2">
+					{comment.upvote + (record === 1 ? 1 : 0)}
+				</span>
+			</div>
+			<div
+				className={clsx(
+					"flex flex-row items-center w-12 ml-4",
+					"hover:text-blue-500 active:text-blue-800 focus:text-blue-800",
+					"cursor-pointer ",
+					record === -1 && "text-blue-600"
+				)}
+				onClick={() => react(-1)}
+			>
+				<BsArrowDownCircle className={clsx(record === -1 && "hidden")} />
+				<BsArrowDownCircleFill className={clsx(record !== -1 && "hidden")} />
+				<span className="ml-2">
+					{comment.downvote + (record === -1 ? 1 : 0)}
+				</span>
+			</div>
+		</div>
+	);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpvoteDownvote);
