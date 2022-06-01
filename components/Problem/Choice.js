@@ -13,6 +13,7 @@ const Choice = ({
 	onDelete,
 	readOnly,
 	triggerWhenInputIsClicked = false,
+	disabled,
 }) => {
 	const [state, setState] = useState(name);
 
@@ -29,6 +30,7 @@ const Choice = ({
 				className="w-10 h-10 rounded-full border-2"
 				onChange={() => triggerWhenInputIsClicked ? () => {} : onCheck(state, index)}
 				checked={checked}
+				disabled={disabled}
 			/>
 			<input
 				type="text"

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { FirebaseContext, getData } from "../../components/firebase";
+import { FirebaseContext, getData, postData } from "../../components/firebase";
 import Frame from "../../components/Generic/Frame";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
@@ -8,25 +8,30 @@ import CommentEntry from "../../components/Comment/CommentEntry";
 import CommentEditor from "../../components/Comment/CommentEditor";
 import Choice from "../../components/Problem/Choice";
 import Button from "../../components/Generic/Button";
-
-const QuillNoSSRWrapper = dynamic(import("react-quill"), {
-	ssr: false,
-	loading: () => <></>,
-});
+import { BsCheckCircleFill } from "react-icons/bs"; 
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from "firebase/compat/app";
+import { getAuth } from "firebase/auth";
+import clsx from "clsx";
 
 const Problems = ({ id }) => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
 	const [state, setState] = useState({
-		answer: null,
-		loading: false,
+		answer: "",
+		loading: true,
+		correct: false,
 		lastAnswered: null,
 		warning:
 			"After you click submit, your answer will be immediately checked.",
 	});
 
 	const [init, setInit] = useState(false);
+
+	const auth = getAuth();
+	const uid = auth.currentUser.uid;
 
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
@@ -51,7 +56,29 @@ const Problems = ({ id }) => {
 				setComments(tempComments);
 			})
 			.catch((e) => {});
-		setInit(true);
+	}
+
+	async function getUserAnswer() {
+		await getData(db, `/answer/${uid}/${id}`)
+			.then((_answer) => {
+				if (_answer) {
+					const correct = _answer.answer === problem.accept;
+					let warning = correct ? { warning: null } : {};
+					setState({
+						...state,
+						...warning,
+						answer: _answer.answer,
+						correct: correct,
+						lastAnswered: _answer.lastAnswered,
+					});
+				}
+				
+				setState({
+					...state,
+					loading: false,
+				});
+			})
+			.catch((e) => {});
 	}
 
 	async function submitAnswer() {
@@ -84,13 +111,39 @@ const Problems = ({ id }) => {
 
 		setState({ ...state, loading: true });
 		setTimeout(() => {
-			if(state.answer === problem.accept) {
-				alert("Correct Answer!!!");
-			} else {
-				alert("Wrong Answer!");
+			try {
+				if (state.answer === problem.accept) {
+					alert("Correct Answer!!!");
+					firebase
+						.database()
+						.ref(`/problem/${id}/`)
+						.child("accepted")
+						.set(firebase.database.ServerValue.increment(1));
+				} else {
+					alert("Wrong Answer!");
+					firebase
+						.database()
+						.ref(`/problem/${id}/`)
+						.child("attempted")
+						.set(firebase.database.ServerValue.increment(1));
+				}
+				postData(db, `/answer/${uid}/${id}`, {
+					answer: state.answer,
+					lastAnswered: now,
+				});
+			} catch (e) {
+				console.log(e);
+				setState({
+					...state,
+					loading: false,
+					warning: null,
+					lastAnswered: now,
+				});
 			}
+
 			setState({
 				...state,
+				correct: state.answer === problem.accept,
 				loading: false,
 				warning: null,
 				lastAnswered: now,
@@ -105,8 +158,16 @@ const Problems = ({ id }) => {
 	}, [db, _topics, _subtopics]);
 
 	useEffect(() => {
-		if (!init) getCommentData();
+		if (!init && problem) {
+			getCommentData();
+			getUserAnswer();
+			setInit(true);
+		}
 	});
+
+	useEffect(() => {
+		console.log(state.correct);
+	}, [ state ]);
 
 	return (
 		<Frame>
@@ -122,10 +183,17 @@ const Problems = ({ id }) => {
 						<div className="mt-8">
 							{[
 								problem.type === 0 && (
-									<input key="short-answer" onChange={(e) => setState({
-										...state,
-										answer: e.target.value,
-									})} />
+									<input
+										key="short-answer"
+										value={state.answer}
+										onChange={(e) =>
+											setState({
+												...state,
+												answer: e.target.value,
+											})
+										}
+										disabled={state.correct}
+									/>
 								),
 								problem.type === 1 && (
 									<div>
@@ -145,6 +213,7 @@ const Problems = ({ id }) => {
 															answer: name,
 														})
 													}
+													disabled={state.correct}
 													triggerWhenInputIsClicked
 													readOnly
 												/>
@@ -156,17 +225,27 @@ const Problems = ({ id }) => {
 						</div>
 						<div className="mt-8">
 							<p className="text-red-500">{state.warning}</p>
-							<Button
-								loading={state.loading}
-								onClick={submitAnswer}
-								className="w-20 mt-4"
-							>
-								Submit
-							</Button>
+							{state.correct ? (
+								<Button
+									variant="success"
+									className={clsx("mt-4")}
+								>
+									<BsCheckCircleFill className="mr-2"/>
+									Correct
+								</Button>
+							) : (
+								<Button
+									loading={state.loading}
+									onClick={submitAnswer}
+									className={clsx("w-20 mt-4")}
+								>
+									Submit
+								</Button>
+							)}
 						</div>
 					</div>
 					<div>
-					<h2 className="h4">Discussion</h2>
+						<h2 className="h4">Discussion</h2>
 						<CommentEditor problemId={problem.id} />
 						{comments.map((comment) => (
 							// pass the problem id down to UpvoteDownvote.js
