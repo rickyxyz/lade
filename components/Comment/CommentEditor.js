@@ -40,7 +40,7 @@ const CommentEditor = ({ loggedIn, problemId }) => {
 				]
 			}} />
             <div>
-                <Button onClick={() => postComment()}>Post Comment</Button>
+                <Button variant="secondary" onClick={() => postComment()}>Post Comment</Button>
             </div>
         </div>
     );
