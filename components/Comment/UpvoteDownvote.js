@@ -16,6 +16,7 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 	const { db } = useContext(FirebaseContext);
 
 	const [record, setRecord] = useState(0);
+	const [eRecord, setERecord] = useState(0);
 
 	// get UID and upvote record
 	const auth = getAuth();
@@ -69,10 +70,13 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 	}
 
 	useEffect(() => {
-		onValue(ref(db, `/user/${uid}/reaction`), (snapshot) => {
-			const reaction = snapshot.val();
+		getData(db, `/user/${uid}/reaction`).then((reaction) => {
 			if (reaction !== null && record != reaction[comment.id]) {
+				// Both record and eRecord indicate the user's reactions to a comment.
+				// "record" will change as soon as user changes their reaction.
+				// "eRecord" will not change as it only serves to show the user's initial reaction.
 				setRecord(reaction[comment.id] ?? 0);
+				setERecord(reaction[comment.id] ?? 0);
 			}
 		});
 	}, []);
@@ -91,7 +95,7 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 				<BsArrowUpCircle className={clsx(record === 1 && "hidden")} />
 				<BsArrowUpCircleFill className={clsx(record !== 1 && "hidden")} />
 				<span className="ml-2">
-					{comment.upvote + (record === 1 ? 1 : 0)}
+					{comment.upvote + (record === 1 ? 1 : 0) - (eRecord === 1 ? 1 : 0)}
 				</span>
 			</div>
 			<div
@@ -106,7 +110,7 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 				<BsArrowDownCircle className={clsx(record === -1 && "hidden")} />
 				<BsArrowDownCircleFill className={clsx(record !== -1 && "hidden")} />
 				<span className="ml-2">
-					{comment.downvote + (record === -1 ? 1 : 0)}
+					{comment.downvote + (record === -1 ? 1 : 0) - (eRecord === -1 ? 1 : 0)}
 				</span>
 			</div>
 		</div>
