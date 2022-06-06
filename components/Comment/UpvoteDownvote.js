@@ -8,8 +8,13 @@ import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import "react-quill/dist/quill.snow.css";
 import { connect } from "react-redux";
 
+
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from 'firebase/compat/app';
 import { getAuth } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
+
 import clsx from "clsx";
 
 const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
@@ -46,17 +51,8 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 		// the feature won't work properly.
 		setRecord(aRecord === type ? 0 : type);
 
-		await getData(db, `/comment/${problemId}/${comment.id}`).then(
-			async (commentData) => {
-				await postData(db, `/comment/${problemId}/${comment.id}`, {
-					...commentData,
-					[`${wordType}vote`]:
-						commentData[`${wordType}vote`] + change,
-					[`${pair(wordType)}vote`]:
-						commentData[`${pair(wordType)}vote`] - change2,
-				}).catch((e) => {});
-			}
-		);
+		firebase.database().ref(`/comment/${problemId}/${comment.id}`).child(`${wordType}vote`).set(firebase.database.ServerValue.increment(change));
+		firebase.database().ref(`/comment/${problemId}/${comment.id}`).child(`${pair(wordType)}vote`).set(firebase.database.ServerValue.increment(-change2));
 
 		await getData(db, `/user/${uid}`).then(async (userData) => {
 			await postData(db, `/user/${uid}`, {

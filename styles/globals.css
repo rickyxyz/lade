@@ -26,10 +26,10 @@
 	input, select, .input {
 		@apply h-10 pl-2 pr-2 border-2 rounded-lg;
 	}
-	:is(input, select):hover {
+	:is(input, select, .input):hover {
 		@apply border-blue-200;
 	}
-	:is(input, select):focus {
+	:is(input, select, .input):focus {
 		@apply border-blue-400;
 	}
 }
@@ -96,6 +96,14 @@
 
 	.frame-content :is(input[type="text"], select) {
 		width: 20rem;
+	}
+
+	.choice:hover :is(input, select, .input) {
+		@apply border-blue-200;
+	}	
+
+	:is(.choice:focus, .choice:active) :is(input, select, .input) {
+		@apply border-blue-400;
 	}
 }
 @tailwind components;

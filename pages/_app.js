@@ -11,6 +11,9 @@ import reducer from "../components/Redux/reducer";
 import storage from "../components/Redux/storage";
 import { PersistGate } from "redux-persist/integration/react";
 import Script from "next/script";
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from 'firebase/compat/app';
 
 const persistConfig = {
 	key: "root",
@@ -54,7 +57,7 @@ function MyApp({ Component, pageProps }) {
 		};
 
 		if (!fb.app) {
-			const app = initializeApp(config);
+			const app = firebase.initializeApp(config);
 			const db = getDatabase(app);
 			setFb({
 				app,
