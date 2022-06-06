@@ -15,6 +15,13 @@ import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
 import clsx from "clsx";
 
+const CooldownWarning = ({ time }) => (
+	<span>
+		You must wait <b>{time}</b> before you can reanswer
+		this question!
+	</span>
+);
+
 const Problems = ({ id }) => {
 	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
 	const [problem, setProblem] = useState(null);
@@ -31,7 +38,8 @@ const Problems = ({ id }) => {
 	const [init, setInit] = useState(false);
 
 	const auth = getAuth();
-	const uid = auth.currentUser.uid;
+	let uid =  auth.currentUser ? auth.currentUser.uid : null;
+
 
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
@@ -58,59 +66,70 @@ const Problems = ({ id }) => {
 			.catch((e) => {});
 	}
 
-	async function getUserAnswer() {
-		await getData(db, `/answer/${uid}/${id}`)
-			.then((_answer) => {
-				if (_answer) {
-					const correct = _answer.answer === problem.accept;
-					let warning = correct ? { warning: null } : {};
-					setState({
-						...state,
-						...warning,
-						answer: _answer.answer,
-						correct: correct,
-						lastAnswered: _answer.lastAnswered,
-					});
-				}
-				
-				setState({
-					...state,
-					loading: false,
-				});
-			})
-			.catch((e) => {});
-	}
-
-	async function submitAnswer() {
-		const now = new Date();
-
+	function checkCooldownForWarning(now, problem, lastAnswered, callback=()=>{}) {
 		let cooldown = 10 * 1000; // 10 seconds
 		if (problem.type === 1) cooldown = 60 * 10 * 1000; // 600 seconds
 
-		const timeElapsed = now - state.lastAnswered;
+		const timeElapsed = now - lastAnswered;
 
-		// Make the user wait if cooldown is still active.
-		if (state.lastAnswered && timeElapsed <= cooldown) {
+		if (lastAnswered && timeElapsed <= cooldown) {
 			const timeWait = (cooldown - timeElapsed) / 1000;
 			const minuteWait = Math.floor(timeWait / 60);
 			const secondWait = parseInt(timeWait - minuteWait * 60);
 			let timeShow = `${minuteWait}m ${secondWait}s`;
 			if (minuteWait === 0) timeShow = `${secondWait}s`;
 
-			setState({
-				...state,
-				warning: (
-					<span>
-						You must wait <b>{timeShow}</b> before you can reanswer
-						this question!
-					</span>
-				),
-			});
-			return;
+			callback(timeShow);
+			return true;
 		}
+
+		return false;
+	}
+
+	async function getUserAnswer() {
+		await getData(db, `/answer/${uid}/${id}`)
+			.then((_answer) => {
+				if (_answer) {
+					const correct = _answer.answer === problem.accept;
+					let warning = { warning: null };
+
+					const now = new Date();
+					const la = new Date(_answer.lastAnswered);
+
+					checkCooldownForWarning(now, problem, la, (timeShow) => {
+						warning.warning = <CooldownWarning time={timeShow} />
+					});
+
+					setState({
+						...state,
+						...warning,
+						answer: _answer.answer,
+						correct: correct,
+						loading: false,
+						lastAnswered: la,
+					});
+				} else {
+					setState({
+						...state,
+						loading: false,
+					});
+				}
+			})
+			.catch((e) => { console.log(e) });
+	}
+
+	async function submitAnswer() {
+		const now = new Date();
+
+		if(checkCooldownForWarning(now, problem, state.lastAnswered, (timeShow) => setState({
+			...state,
+			warning: <CooldownWarning time={timeShow} />,
+		})))
+			return;
 
 		setState({ ...state, loading: true });
 		setTimeout(() => {
+			console.log(now);
 			try {
 				if (state.answer === problem.accept) {
 					alert("Correct Answer!!!");
@@ -129,7 +148,7 @@ const Problems = ({ id }) => {
 				}
 				postData(db, `/answer/${uid}/${id}`, {
 					answer: state.answer,
-					lastAnswered: now,
+					lastAnswered: now.getTime(),
 				});
 			} catch (e) {
 				console.log(e);
@@ -246,7 +265,7 @@ const Problems = ({ id }) => {
 					</div>
 					<div>
 						<h2 className="h4">Discussion</h2>
-						<CommentEditor problemId={problem.id} />
+						<CommentEditor problemId={problem.id} discussion={problem.discussion} />
 						{comments.map((comment) => (
 							// pass the problem id down to UpvoteDownvote.js
 							<CommentEntry
