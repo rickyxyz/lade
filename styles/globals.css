@@ -156,6 +156,46 @@
 			transform: rotate(360deg);
 		}
 	}
+
+	.toast-hidden {
+		right: -8rem;
+		opacity: 0;
+	}
+
+	.toast-die {
+		animation-name: toast-fade-out;
+		animation-duration: 0.8s;
+		animation-iteration-count: 1;
+		animation-fill-mode: forwards;
+
+	}
+	
+	.toast {
+		right: 0;
+		animation-name: toast-fade-in;
+		animation-duration: 0.8s;
+		animation-iteration-count: 1;
+		animation-fill-mode: forwards;
+	}
+	
+	@keyframes toast-fade-in {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 100;
+		}
+	}
+
+	@keyframes toast-fade-out {
+		0% {
+			opacity: 100;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
+	
 }
 @tailwind components;
 

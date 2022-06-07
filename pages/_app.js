@@ -14,6 +14,7 @@ import Script from "next/script";
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from 'firebase/compat/app';
+import { ToastWrapper, ToastContext } from "../components/Generic/Toast";
 
 const persistConfig = {
 	key: "root",
@@ -32,6 +33,8 @@ function MyApp({ Component, pageProps }) {
 		_topics: {},
 		_subtopics: {},
 	});
+
+	const [toasts, setToasts] = useState([]);
 
 	async function getTopicsAndSubTopics(db) {
 		try {
@@ -74,22 +77,29 @@ function MyApp({ Component, pageProps }) {
 		<Provider store={store}>
 			<PersistGate loading={null} persistor={persistor}>
 				<FirebaseContext.Provider value={fb}>
-					<Navbar />
-					<link
-						rel="stylesheet"
-						href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-						integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
-						crossOrigin="anonymous"
-					/>
-					<Script
-						defer
-						src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-						integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
-						crossOrigin="anonymous"
-					/>
-					<div className="mt-16">
-						<Component {...pageProps} />
-					</div>
+					<ToastContext.Provider value={{
+						toasts: toasts,
+						setToasts: setToasts,
+						addToast: (toast) => setToasts([...toasts, toast]),
+					}}>
+						<Navbar />
+						<link
+							rel="stylesheet"
+							href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+							integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
+							crossOrigin="anonymous"
+						/>
+						<Script
+							defer
+							src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+							integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
+							crossOrigin="anonymous"
+						/>
+						<div className="mt-16">
+							<Component {...pageProps} />
+						</div>
+						<ToastWrapper />
+					</ToastContext.Provider>
 				</FirebaseContext.Provider>
 			</PersistGate>
 		</Provider>
