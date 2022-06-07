@@ -8,17 +8,17 @@ import CommentEntry from "../../components/Comment/CommentEntry";
 import CommentEditor from "../../components/Comment/CommentEditor";
 import Choice from "../../components/Problem/Choice";
 import Button from "../../components/Generic/Button";
-import { BsCheckCircleFill } from "react-icons/bs"; 
+import { BsCheckCircleFill } from "react-icons/bs";
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
 import clsx from "clsx";
+import { CircleLoad } from "../../components/Generic/Skeleton";
 
 const CooldownWarning = ({ time }) => (
 	<span>
-		You must wait <b>{time}</b> before you can reanswer
-		this question!
+		You must wait <b>{time}</b> before you can reanswer this question!
 	</span>
 );
 
@@ -35,11 +35,14 @@ const Problems = ({ id }) => {
 			"After you click submit, your answer will be immediately checked.",
 	});
 
+	// Indicate whether comments & user answers have been fetched or not.
 	const [init, setInit] = useState(false);
 
-	const auth = getAuth();
-	let uid =  auth.currentUser ? auth.currentUser.uid : null;
+	// Indicate the situation of the fetching process. -1 means fail whereas 1 means success.
+	const [fetch, setFetch] = useState(0);
 
+	const auth = getAuth();
+	let uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
@@ -49,8 +52,11 @@ const Problems = ({ id }) => {
 				_problem.topic = _topics[topic];
 				_problem.subtopic = _subtopics[topic][subtopic];
 				setProblem(_problem);
+				setFetch(1);
 			})
-			.catch((e) => {});
+			.catch((e) => {
+				setFetch(-1);
+			});
 	}
 
 	async function getCommentData() {
@@ -66,7 +72,12 @@ const Problems = ({ id }) => {
 			.catch((e) => {});
 	}
 
-	function checkCooldownForWarning(now, problem, lastAnswered, callback=()=>{}) {
+	function checkCooldownForWarning(
+		now,
+		problem,
+		lastAnswered,
+		callback = () => {}
+	) {
 		let cooldown = 10 * 1000; // 10 seconds
 		if (problem.type === 1) cooldown = 60 * 10 * 1000; // 600 seconds
 
@@ -97,7 +108,7 @@ const Problems = ({ id }) => {
 					const la = new Date(_answer.lastAnswered);
 
 					checkCooldownForWarning(now, problem, la, (timeShow) => {
-						warning.warning = <CooldownWarning time={timeShow} />
+						warning.warning = <CooldownWarning time={timeShow} />;
 					});
 
 					setState({
@@ -115,16 +126,26 @@ const Problems = ({ id }) => {
 					});
 				}
 			})
-			.catch((e) => { console.log(e) });
+			.catch((e) => {
+				console.log(e);
+			});
 	}
 
 	async function submitAnswer() {
 		const now = new Date();
 
-		if(checkCooldownForWarning(now, problem, state.lastAnswered, (timeShow) => setState({
-			...state,
-			warning: <CooldownWarning time={timeShow} />,
-		})))
+		if (
+			checkCooldownForWarning(
+				now,
+				problem,
+				state.lastAnswered,
+				(timeShow) =>
+					setState({
+						...state,
+						warning: <CooldownWarning time={timeShow} />,
+					})
+			)
+		)
 			return;
 
 		setState({ ...state, loading: true });
@@ -177,7 +198,7 @@ const Problems = ({ id }) => {
 	}, [db, _topics, _subtopics]);
 
 	useEffect(() => {
-		if (!init && problem) {
+		if (!init && problem && auth.currentUser) {
 			getCommentData();
 			getUserAnswer();
 			setInit(true);
@@ -186,11 +207,12 @@ const Problems = ({ id }) => {
 
 	useEffect(() => {
 		console.log(state.correct);
-	}, [ state ]);
+	}, [state]);
 
 	return (
 		<Frame>
-			{problem ? (
+			{fetch === 1 && (
+				//If data fetch is successful.
 				<>
 					<div>
 						<h1 className="h2">{problem.topic}</h1>
@@ -249,7 +271,7 @@ const Problems = ({ id }) => {
 									variant="success"
 									className={clsx("mt-4")}
 								>
-									<BsCheckCircleFill className="mr-2"/>
+									<BsCheckCircleFill className="mr-2" />
 									Correct
 								</Button>
 							) : (
@@ -265,7 +287,10 @@ const Problems = ({ id }) => {
 					</div>
 					<div>
 						<h2 className="h4">Discussion</h2>
-						<CommentEditor problemId={problem.id} discussion={problem.discussion} />
+						<CommentEditor
+							problemId={problem.id}
+							discussion={problem.discussion}
+						/>
 						{comments.map((comment) => (
 							// pass the problem id down to UpvoteDownvote.js
 							<CommentEntry
@@ -276,8 +301,19 @@ const Problems = ({ id }) => {
 						))}
 					</div>
 				</>
-			) : (
-				<div>The problem is not found.</div>
+			)}
+			{fetch === 0 && (
+				//If data fetch is not yet finished.
+				<div className="flex flex-row items-center justify-center">
+					<CircleLoad />
+				</div>
+			)}
+			{fetch === -1 && (
+				//If data fetch fails.
+				<div>
+					<p className="h1 mb-4">Oops!</p>
+					<p>We couldn't get the data. Please try again later.</p>
+				</div>
 			)}
 		</Frame>
 	);

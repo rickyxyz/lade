@@ -4,26 +4,32 @@
 }
 
 @layer base {
-	*:not(:is(.base,.mord)) {
+	*:not(:is(.base, .mord)) {
 		font-family: "Inter";
 		font-size: 1rem;
 	}
 	.head-style {
 		@apply text-blue-600 font-semibold;
 	}
-	h1, .h1 {
+	h1,
+	.h1 {
 		@apply head-style text-7xl;
 	}
-	h2, .h2 {
+	h2,
+	.h2 {
 		@apply head-style text-5xl;
 	}
-	h3, .h3 {
+	h3,
+	.h3 {
 		@apply head-style text-3xl;
 	}
-	h4, .h4 {
+	h4,
+	.h4 {
 		@apply head-style text-xl;
 	}
-	input, select, .input {
+	input,
+	select,
+	.input {
 		@apply h-10 pl-2 pr-2 border-2 rounded-lg;
 	}
 	:is(input, select, .input):hover {
@@ -43,10 +49,10 @@
 	.h-exclude-navbar {
 		height: calc(100vh - 4rem);
 	}
-	
+
 	.quill > * {
 		@apply !border-gray-200;
-		border-width: 2px!important;
+		border-width: 2px !important;
 	}
 
 	.quill > div {
@@ -66,18 +72,18 @@
 		overflow: hidden;
 		line-height: 0;
 	}
-	
+
 	.shape-divider svg {
 		position: relative;
 		display: block;
 		width: calc(100% + 1.3px);
 		height: 128px;
 	}
-	
+
 	.shape-divider .shape-fill {
 		fill: rgb(229, 231, 235);
 	}
-	
+
 	.frame-content > div > h2 {
 		@apply mb-4;
 	}
@@ -100,10 +106,55 @@
 
 	.choice:hover :is(input, select, .input) {
 		@apply border-blue-200;
-	}	
+	}
 
 	:is(.choice:focus, .choice:active) :is(input, select, .input) {
 		@apply border-blue-400;
+	}
+
+	.skeleton {
+		@apply bg-gray-100 rounded-md;
+		animation-name: skeleframe;
+		animation-duration: 0.8s;
+		animation-direction: alternate;
+		animation-iteration-count: infinite;
+	}
+
+	@keyframes skeleframe {
+		from {
+			@apply bg-gray-100;
+		}
+		to {
+			@apply bg-gray-200;
+		}
+	}
+
+	/* https://loading.io/css/ */
+	.lds-dual-ring {
+		display: inline-block;
+		width: 80px;
+		height: 80px;
+	}
+
+	.lds-dual-ring:after {
+		content: " ";
+		display: block;
+		width: 64px;
+		height: 64px;
+		margin: 8px;
+		border-radius: 50%;
+		border: 6px solid #2563eb;
+		border-color: #2563eb transparent #2563eb transparent;
+		animation: lds-dual-ring 1.2s linear infinite;
+	}
+
+	@keyframes lds-dual-ring {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 }
 @tailwind components;
@@ -141,8 +192,8 @@
 @tailwind utilities;
 
 .ql-tooltip {
-	top: 1rem!important;
-	left: 8rem!important;
+	top: 1rem !important;
+	left: 8rem !important;
 }
 
 html,
