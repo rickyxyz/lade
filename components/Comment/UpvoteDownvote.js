@@ -25,7 +25,7 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 
 	// get UID and upvote record
 	const auth = getAuth();
-	const uid = auth.currentUser.uid;
+	const uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	async function react(type) {
 		function pair(t) {
