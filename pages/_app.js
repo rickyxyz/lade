@@ -15,6 +15,7 @@ import "firebase/database";
 import "firebase/compat/database";
 import firebase from 'firebase/compat/app';
 import { ToastWrapper, ToastContext } from "../components/Generic/Toast";
+import pushid from "pushid";
 
 const persistConfig = {
 	key: "root",
@@ -80,7 +81,14 @@ function MyApp({ Component, pageProps }) {
 					<ToastContext.Provider value={{
 						toasts: toasts,
 						setToasts: setToasts,
-						addToast: (toast) => setToasts([...toasts, toast]),
+						addToast: (toast) => {
+							setToasts([...toasts, {
+								id: pushid(),
+								createdAt: new Date(),
+								time: 5,
+								...toast,
+							}]);
+						},
 					}}>
 						<Navbar />
 						<link
@@ -97,8 +105,8 @@ function MyApp({ Component, pageProps }) {
 						/>
 						<div className="mt-16">
 							<Component {...pageProps} />
+							<ToastWrapper />
 						</div>
-						<ToastWrapper />
 					</ToastContext.Provider>
 				</FirebaseContext.Provider>
 			</PersistGate>

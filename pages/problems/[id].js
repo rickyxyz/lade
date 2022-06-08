@@ -15,6 +15,8 @@ import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
 import clsx from "clsx";
 import { CircleLoad } from "../../components/Generic/Skeleton";
+import { genericToast, ToastContext } from "../../components/Generic/Toast";
+import pushid from "pushid";
 
 const CooldownWarning = ({ time }) => (
 	<span>
@@ -40,6 +42,9 @@ const Problems = ({ id }) => {
 
 	// Indicate the situation of the fetching process. -1 means fail whereas 1 means success.
 	const [fetch, setFetch] = useState(0);
+
+	// Contexts to invoke toasts.
+	const { addToast } = useContext(ToastContext);
 
 	const auth = getAuth();
 	let uid = auth.currentUser ? auth.currentUser.uid : null;
@@ -69,7 +74,9 @@ const Problems = ({ id }) => {
 				}
 				setComments(tempComments);
 			})
-			.catch((e) => {});
+			.catch((e) => {
+				addToast(genericToast("get-fail"));
+			});
 	}
 
 	function checkCooldownForWarning(
@@ -107,9 +114,17 @@ const Problems = ({ id }) => {
 					const now = new Date();
 					const la = new Date(_answer.lastAnswered);
 
-					checkCooldownForWarning(now, problem, la, (timeShow) => {
-						warning.warning = <CooldownWarning time={timeShow} />;
-					});
+					if (!correct)
+						checkCooldownForWarning(
+							now,
+							problem,
+							la,
+							(timeShow) => {
+								warning.warning = (
+									<CooldownWarning time={timeShow} />
+								);
+							}
+						);
 
 					setState({
 						...state,
@@ -127,6 +142,7 @@ const Problems = ({ id }) => {
 				}
 			})
 			.catch((e) => {
+				addToast(genericToast("get-fail"));
 				console.log(e);
 			});
 	}
@@ -153,14 +169,22 @@ const Problems = ({ id }) => {
 			console.log(now);
 			try {
 				if (state.answer === problem.accept) {
-					alert("Correct Answer!!!");
+					addToast({
+						title: "Great work!",
+						desc: "Your answer is correct.",
+						variant: "success",
+					});
 					firebase
 						.database()
 						.ref(`/problem/${id}/`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 				} else {
-					alert("Wrong Answer!");
+					addToast({
+						title: "Too bad...",
+						desc: "Your answer is incorrect.",
+						variant: "danger",
+					});
 					firebase
 						.database()
 						.ref(`/problem/${id}/`)
@@ -172,7 +196,7 @@ const Problems = ({ id }) => {
 					lastAnswered: now.getTime(),
 				});
 			} catch (e) {
-				console.log(e);
+				addToast(genericToast("post-fail"));
 				setState({
 					...state,
 					loading: false,

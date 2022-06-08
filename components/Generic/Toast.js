@@ -11,6 +11,35 @@ export const ToastContext = createContext({
 
 const toastIconClass = "w-8 h-8";
 
+export function genericToast(id) {
+	switch(id) {
+		case "form-improper":
+			return {
+				title: "Oops!",
+				desc: "There are errors in the form.",
+				variant: "danger",
+			};
+		case "generic-fail":
+			return {
+				title: "Oops!",
+				desc: "Something went wrong.",
+				variant: "danger",
+			};
+		case "get-fail":
+			return {
+				title: "Oops!",
+				desc: "Data could not be fetched.",
+				variant: "danger",
+			};
+		case "post-fail":
+			return {
+				title: "Too bad...",
+				desc: "Data could not be updated.",
+				variant: "danger",
+			};
+	}
+}
+
 const ToastIcon = ({ variant }) => {
 	return (
 		<div className="flex justify-center items-center mr-4">
@@ -28,6 +57,8 @@ export const ToastWrapper = () => {
 		const toastElements = document.querySelectorAll(".toast-hidden");
 		setTimeout(() => {
 			if(!toastElements)
+				return;
+			if(toastElements.length === 0)
 				return;
 			console.log(toastElements);
 			toastElements.forEach((toast) => {
@@ -66,7 +97,7 @@ export const ToastWrapper = () => {
 		<section
 			className={clsx(
 				"fixed right-16 bottom-16 w-96",
-				"flex flex-col-reverse gap-8 justify-center"
+				"flex flex-col-reverse gap-8 justify-center z-50",
 			)}
 		>
 			{toasts.map(({ id, title, desc, createdAt, time, variant }) => (
@@ -86,7 +117,8 @@ export const ToastWrapper = () => {
 						<h3
 							className={clsx(
 								variant === "danger" && "text-red-600",
-								variant === "success" && "text-green-600"
+								variant === "success" && "text-green-600",
+								"leading-6"
 							)}
 						>
 							{title}

@@ -9,6 +9,7 @@ import {
 } from "../components/Redux/setter";
 import Frame from "../components/Generic/Frame";
 import { ProblemCardSK } from "../components/Generic/Skeleton";
+import { ToastContext } from "../components/Generic/Toast";
 
 const Problems = ({ problems, setProblems }) => {
 	// const [ problems, setProblems ] = useState([]);
@@ -16,6 +17,9 @@ const Problems = ({ problems, setProblems }) => {
 
 	// Indicate the situation of the fetching process. -1 means fail whereas 1 means success.
 	const [fetch, setFetch] = useState(0);
+
+	// Contexts to invoke toasts.
+	const { addToast } = useContext(ToastContext);
 
 	async function getProblems() {
 		await getData(db, `/problem`)
@@ -36,6 +40,7 @@ const Problems = ({ problems, setProblems }) => {
 				setFetch(1);
 			})
 			.catch((e) => {
+				addToast(genericToast("get-fail"));
 				setFetch(-1);
 			});
 	}

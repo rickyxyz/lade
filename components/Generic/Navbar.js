@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,42 +11,30 @@ import clsx from "clsx";
 import { MdSearch } from "react-icons/md";
 import Button from "./Button";
 import LinkButton from "./LinkButton";
+import { genericToast, ToastContext } from "./Toast";
 
 const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 	const auth = getAuth();
 	const { db } = useContext(FirebaseContext);
 	const router = useRouter();
 
-	async function getUserData(uid) {
-		await getData(db, `/user/${uid}`)
-			.then((result) => {
-				console.log(result);
-				loginUser(result);
-			})
-			.catch((e) => {
-				console.log(e);
-				console.log("Something went wrong");
-			});
-	}
+	// Contexts to invoke toasts.
+	const { addToast } = useContext(ToastContext);
 
 	async function logout() {
-		await signOut(auth).then(() => {
+		try {
+			await signOut(auth);
 			logoutUser();
 			router.push("/");
-		});
-	}
-
-	auth.onAuthStateChanged((user) => {
-		if (user && (!loggedIn || (loggedIn && user.email !== loggedIn.email))) {
-			getUserData(user.uid).then(() => {
-				router.push("/problems");
+			addToast({
+				title: "Logout Success!",
+				desc: "See you later!",
+				variant: "success",
 			});
+		} catch(e) {
+			addToast(genericToast("generic-fail"));
 		}
-	});
-
-	useEffect(() => {
-		
-	}, [ ]);
+	}
 
 	return (
 		<nav
