@@ -67,6 +67,8 @@ const Problems = ({ id }) => {
 	async function getCommentData() {
 		await getData(db, `/comment/${id}`)
 			.then((_comments) => {
+				if(!_comments)
+					return;
 				const tempComments = [];
 				for (let [id, _comment] of Object.entries(_comments)) {
 					_comment.id = id;
@@ -105,6 +107,8 @@ const Problems = ({ id }) => {
 	}
 
 	async function getUserAnswer() {
+		if(!uid)
+			return;
 		await getData(db, `/answer/${uid}/${id}`)
 			.then((_answer) => {
 				if (_answer) {
