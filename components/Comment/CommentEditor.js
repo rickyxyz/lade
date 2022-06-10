@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FirebaseContext, postData } from "../../components/firebase";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import pushid from "pushid";
 import { connect } from "react-redux";
 import Button from "../Generic/Button";
 import QuillNoSSRWrapper from "../QuillWrapper";
-
+import { useRouter } from "next/router";
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from 'firebase/compat/app';
@@ -15,14 +15,20 @@ import clsx from "clsx";
 
 const CommentEditor = ({ loggedIn, problemId, discussion }) => {
     const { db } = useContext(FirebaseContext);
+	const [loading, setLoading] = useState(false);
+	const router = useRouter();
 
     async function postComment() {
+		setLoading(true);
+
         const comment_content =
             document.getElementsByClassName("ql-editor")[0].innerHTML;
 
         if (comment_content === "") return;
 
         const commentId = pushid();
+
+		const now = new Date();
 
 		firebase
 		.database()
@@ -33,16 +39,13 @@ const CommentEditor = ({ loggedIn, problemId, discussion }) => {
         await postData(db, `/comment/${problemId}/${commentId}`, {
             comment: comment_content,
             owner: loggedIn.username,
+			createdAt: now.getTime(),
             upvote: 0,
             downvote: 0
         }).catch((e) => {
+			setLoading(false);
             console.log(e);
-        }).then(() => {
-			setTimeout(() => {
-				if(location)
-					location.reload();
-			}, 150)
-		});
+        }).then(() => {});
     }
 
     return (
@@ -59,7 +62,7 @@ const CommentEditor = ({ loggedIn, problemId, discussion }) => {
 			]
 		}} />
 		<div>
-			<Button variant="secondary" onClick={() => postComment()}>Post Comment</Button>
+			<Button loading={loading} variant="secondary" onClick={() => postComment()}>Post Comment</Button>
 		</div>
 	</div> : <div>
 		Discussion is not enabled in this question.
