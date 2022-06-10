@@ -17,6 +17,7 @@ import clsx from "clsx";
 import { CircleLoad } from "../../components/Generic/Skeleton";
 import { genericToast, ToastContext } from "../../components/Generic/Toast";
 import pushid from "pushid";
+import Tag from "../../components/Generic/Tag";
 
 const CooldownWarning = ({ time }) => (
 	<span>
@@ -242,9 +243,10 @@ const Problems = ({ id }) => {
 			{fetch === 1 && (
 				//If data fetch is successful.
 				<>
-					<div>
+					<div className="flex flex-col gap-4">
 						<h1 className="h2">{problem.topic}</h1>
-						<p className="mt-4">{problem.subtopic}</p>
+						<Tag>{problem.subtopic}</Tag>
+						<p>Posted by <b>{problem.owner}</b></p>
 					</div>
 					<div>
 						<h2 className="h4">Problem Statement</h2>
