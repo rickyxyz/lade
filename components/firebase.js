@@ -30,6 +30,26 @@ export async function postData(db, link, data) {
 	});
 }
 
+export function turnProblemsObjectToArray(_problems, _topics, _subtopics) {
+	const tempProblems = [];
+
+	if(!_topics || !_subtopics)
+		return;
+
+	for (let [id, _problem] of Object.entries(_problems)) {
+		let { topic, subtopic } = _problem;
+		const currentSubtopic = _subtopics[topic];
+		console.log(currentSubtopic);
+
+		_problem.id = id;
+		_problem.topic = _topics[topic];
+		_problem.subtopic = currentSubtopic ? currentSubtopic[subtopic] : "Unknown";
+		tempProblems.unshift(_problem);
+	}
+
+	return tempProblems;
+}
+
 export function getErrorMessage(code) {
 	switch (code) {
 		case "auth/email-already-in-use":

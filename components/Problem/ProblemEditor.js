@@ -7,8 +7,8 @@ import pushid from "pushid";
 import Toggle from "../Generic/Toggle";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { BsFillTrashFill } from "react-icons/bs";
 import QuillNoSSRWrapper from "../QuillWrapper";
+import Choice from "./Choice";
 
 const Property = ({ name, children }) => {
 	return (
@@ -17,51 +17,6 @@ const Property = ({ name, children }) => {
 				{name}
 			</span>
 			<div className="flex flex-row items-center h-10">{children}</div>
-		</div>
-	);
-};
-
-const Choice = ({
-	name = "Choice",
-	index,
-	checked = false,
-	removable,
-	onNameChange,
-	onCorrectChange,
-	onDelete,
-}) => {
-	const [state, setState] = useState(name);
-
-	useEffect(() => {
-		onNameChange(state, index);
-	}, [state]);
-
-	return (
-		<div className="flex flex-row mt-4 first:mt-0">
-			<input
-				type="radio"
-				name="multiple-choice"
-				className="w-10 h-10 rounded-full border-2"
-				onChange={() => onCorrectChange(state, index)}
-				checked={checked}
-			/>
-			<input
-				type="text"
-				className="top-0 flex flex-row items-center w-40 h-10 px-4 py-0 ml-8 border-2"
-				value={state}
-				onChange={(e) => {
-					setState((state) => e.target.value);
-				}}
-			/>
-			<Button
-				variant="ghost-danger"
-				className={clsx("ml-8 px-3 rounded-sm", !removable && "hidden")}
-				onClick={() => {
-					if (removable) onDelete(state, index);
-				}}
-			>
-				<BsFillTrashFill className="w-4 h-4" />
-			</Button>
 		</div>
 	);
 };
@@ -89,6 +44,7 @@ const ProblemEditor = ({
 }) => {
 	const [problem, setProblem] = useState(initialProblem);
 	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const [loading, setLoading] = useState(true);
 
 	const router = useRouter();
 
@@ -174,7 +130,7 @@ const ProblemEditor = ({
 			const content =
 				document.getElementsByClassName("ql-editor")[0].innerHTML;
 
-			if (content === "") return;
+			if (content.length < 20) return;
 
 			const id = pushid();
 
@@ -187,6 +143,7 @@ const ProblemEditor = ({
 					return id;
 				})
 				.catch((e) => {
+					setLoading(false);
 					console.log(e);
 				});
 		}
@@ -195,12 +152,15 @@ const ProblemEditor = ({
 			const content =
 				document.getElementsByClassName("ql-editor")[0].innerHTML;
 
-			if (content === "") return;
+			if (content.length < 20) return;
 
 			await postData(db, `/problem/${problem.id}`, problem).catch((e) => {
+				setLoading(false);
 				console.log(e);
 			});
 		}
+
+		setLoading(true);
 
 		let destination;
 		if (purpose === "new") {
@@ -210,7 +170,10 @@ const ProblemEditor = ({
 			destination = problem.id;
 		}
 
-		router.push(`/problems/${destination}`);
+		if(destination)
+			router.push(`/problems/${destination}`);
+		else
+			setLoading(false);
 	}
 
 	async function addChoice() {
@@ -257,6 +220,10 @@ const ProblemEditor = ({
 		purpose === "new" ||
 		(purpose === "edit" && loggedIn && loggedIn.username === problem.owner);
 
+	useEffect(() => {
+		setLoading(false);
+	}, []);
+
 	return (
 		canShowEditor ? (
 			<>
@@ -265,7 +232,7 @@ const ProblemEditor = ({
 						{purpose === "new" ? "Create Problem" : "Edit Problem"}
 					</h1>
 					<div className="mt-6">
-						<Button onClick={() => callback()}>Finish</Button>
+						<Button className="w-20" loading={loading} onClick={() => callback()}>Finish</Button>
 					</div>
 				</div>
 				<div>
@@ -325,11 +292,12 @@ const ProblemEditor = ({
 							>
 								{problem.choices.map((choice, index) => (
 									<Choice
+										key={`choice-${index}`}
 										name={choice}
 										index={index}
 										checked={choice === problem.accept}
 										onNameChange={editChoice}
-										onCorrectChange={editCorrect}
+										onCheck={editCorrect}
 										onDelete={deleteChoice}
 										removable={index > 1}
 									/>

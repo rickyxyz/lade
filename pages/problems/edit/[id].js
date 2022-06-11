@@ -22,7 +22,7 @@ const Problems = ({ id }) => {
 	}, [db, _topics, _subtopics]);
 
 	return (
-		<Frame>
+		<Frame problem={problem}>
 			{problem ? (
 				<ProblemEditor purpose="edit" initialProblem={problem} />
 			) : (

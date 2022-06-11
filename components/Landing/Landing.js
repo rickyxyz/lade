@@ -9,7 +9,7 @@ const Landing = () => {
 
 	return (
 		<section className="pt-16 px-8">
-			<h1>
+			<h1 className="h1">
 				Practice Makes Perfect
 			</h1>
 			<ul className="mt-4 px-8">

@@ -11,6 +11,11 @@ import reducer from "../components/Redux/reducer";
 import storage from "../components/Redux/storage";
 import { PersistGate } from "redux-persist/integration/react";
 import Script from "next/script";
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from 'firebase/compat/app';
+import { ToastWrapper, ToastContext } from "../components/Generic/Toast";
+import pushid from "pushid";
 
 const persistConfig = {
 	key: "root",
@@ -29,6 +34,8 @@ function MyApp({ Component, pageProps }) {
 		_topics: {},
 		_subtopics: {},
 	});
+
+	const [toasts, setToasts] = useState([]);
 
 	async function getTopicsAndSubTopics(db) {
 		try {
@@ -54,7 +61,7 @@ function MyApp({ Component, pageProps }) {
 		};
 
 		if (!fb.app) {
-			const app = initializeApp(config);
+			const app = firebase.initializeApp(config);
 			const db = getDatabase(app);
 			setFb({
 				app,
@@ -71,22 +78,36 @@ function MyApp({ Component, pageProps }) {
 		<Provider store={store}>
 			<PersistGate loading={null} persistor={persistor}>
 				<FirebaseContext.Provider value={fb}>
-					<Navbar />
-					<link
-						rel="stylesheet"
-						href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-						integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
-						crossorigin="anonymous"
-					/>
-					<Script
-						defer
-						src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-						integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
-						crossorigin="anonymous"
-					/>
-					<div className="mt-16">
-						<Component {...pageProps} />
-					</div>
+					<ToastContext.Provider value={{
+						toasts: toasts,
+						setToasts: setToasts,
+						addToast: (toast) => {
+							setToasts([...toasts, {
+								id: pushid(),
+								createdAt: new Date(),
+								time: 5,
+								...toast,
+							}]);
+						},
+					}}>
+						<Navbar />
+						<link
+							rel="stylesheet"
+							href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+							integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs"
+							crossOrigin="anonymous"
+						/>
+						<Script
+							defer
+							src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+							integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx"
+							crossOrigin="anonymous"
+						/>
+						<div className="mt-16">
+							<Component {...pageProps} />
+							<ToastWrapper />
+						</div>
+					</ToastContext.Provider>
 				</FirebaseContext.Provider>
 			</PersistGate>
 		</Provider>
