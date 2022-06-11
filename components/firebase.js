@@ -50,6 +50,19 @@ export function turnProblemsObjectToArray(_problems, _topics, _subtopics) {
 	return tempProblems;
 }
 
+export async function setProblemsFromSnapshot(snapshot, condition, callback) {
+	if (condition) {
+		callback(
+			// Since we get an object (not array) as a result, we convert them to array first.
+			turnProblemsObjectToArray(
+				snapshot.val(),
+				_topics,
+				_subtopics
+			)
+		);
+	}
+}
+
 export function getErrorMessage(code) {
 	switch (code) {
 		case "auth/email-already-in-use":

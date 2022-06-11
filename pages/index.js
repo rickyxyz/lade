@@ -7,6 +7,7 @@ import Card from "../components/Generic/Card";
 import { useContext, useEffect } from "react";
 import {
 	FirebaseContext,
+	setProblemsFromSnapshot,
 	turnProblemsObjectToArray,
 } from "../components/firebase";
 import Landing from "../components/Landing/Landing";
@@ -39,18 +40,7 @@ const Home = () => {
 		try {
 			// Get the 3 newest problems.
 			const _newRef = firebase.database().ref("problem").limitToLast(3);
-			_newRef.on("value", (snapshot) => {
-				if (snapshot.length !== newProblems.length) {
-					setNewProblems(
-						// Since we get an object (not array) as a result, we convert them to array first.
-						turnProblemsObjectToArray(
-							snapshot.val(),
-							_topics,
-							_subtopics
-						)
-					);
-				}
-			});
+			_newRef.on("value", (snapshot) => setProblemsFromSnapshot(snapshot, snapshot.length !== newProblems.length, setNewProblems));
 			setNewRef(_newRef);
 
 			// Get the 3 top problems (most solved).
@@ -59,17 +49,7 @@ const Home = () => {
 				.ref("problem")
 				.orderByChild("accepted")
 				.limitToLast(3);
-			_topRef.on("value", (snapshot) => {
-				if (snapshot.length !== topProblems.length)
-					setTopProblems(
-						// Since we get an object (not array) as a result, we convert them to array first.
-						turnProblemsObjectToArray(
-							snapshot.val(),
-							_topics,
-							_subtopics
-						)
-					);
-			});
+			_topRef.on("value", (snapshot) => setProblemsFromSnapshot(snapshot, snapshot.length !== topProblems.length, setTopProblems));
 			setTopRef(_topRef);
 		} catch (e) {
 			console.log(e);
