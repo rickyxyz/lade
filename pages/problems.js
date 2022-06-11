@@ -38,7 +38,7 @@ const Problems = ({ problems, setProblems }) => {
 	}, [db, _topics, _subtopics]);
 
 	return (
-		<Frame>
+		<Frame page="Problems">
 			<div>
 				<h1 className="h2">Problems</h1>
 			</div>

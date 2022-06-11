@@ -30,11 +30,11 @@ const Problems = ({ id }) => {
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
 	const [state, setState] = useState({
-		answer: "",
-		loading: true,
-		correct: false,
-		lastAnswered: null,
-		warning:
+		answer: "", // Save user's answers.
+		loading: true, // Controls the button's loading state, to prevent users fromm spamming the button.
+		correct: false, // Determines if the user's answers is correct or not.
+		lastAnswered: null, // The time the user last answered, to calculate the cooldown.
+		warning: // Saves the warnig text. Later, used to show remaining cooldown time.
 			"After you click submit, your answer will be immediately checked.",
 	});
 
@@ -107,18 +107,27 @@ const Problems = ({ id }) => {
 		return false;
 	}
 
+	/*
+		This function is executed when user opens the problem page,
+		to check whether if they already answered this problem or not.
+	*/
 	async function getUserAnswer() {
+		// If no one is logged in, stop checking.
 		if(!uid)
 			return;
+	
 		await getData(db, `/answer/${uid}/${id}`)
 			.then((_answer) => {
 				if (_answer) {
+
+					// If answer exists, then check if it is correct or not.
 					const correct = _answer.answer === problem.accept;
 					let warning = { warning: null };
 
 					const now = new Date();
 					const la = new Date(_answer.lastAnswered);
 
+					// If it is not correct, show a warning.
 					if (!correct)
 						checkCooldownForWarning(
 							now,
@@ -131,6 +140,7 @@ const Problems = ({ id }) => {
 							}
 						);
 
+					// Update the state to reflect the user's answers.
 					setState({
 						...state,
 						...warning,
@@ -152,9 +162,13 @@ const Problems = ({ id }) => {
 			});
 	}
 
+	/*
+		This function is executed when user submits their answer.
+	*/
 	async function submitAnswer() {
 		const now = new Date();
 
+		// Check if they have cooldown. If so, warn them and stop checking.
 		if (
 			checkCooldownForWarning(
 				now,
@@ -169,33 +183,48 @@ const Problems = ({ id }) => {
 		)
 			return;
 
+		// Otherwise, make the button disabled to prevent spamming, and continue checking.
 		setState({ ...state, loading: true });
+		
+		// Create a small delay.
 		setTimeout(() => {
-			console.log(now);
 			try {
+				
+				// Check if the answer is the same as the correct answer.
 				if (state.answer === problem.accept) {
+
+					// If so, notify the user.
 					addToast({
 						title: "Great work!",
 						desc: "Your answer is correct.",
 						variant: "success",
 					});
+
+					// Increment the accepted counter of the problem.
 					firebase
 						.database()
 						.ref(`/problem/${id}/`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 				} else {
+					
+					// If it is not correct, notify the user.
 					addToast({
 						title: "Too bad...",
 						desc: "Your answer is incorrect.",
 						variant: "danger",
 					});
+
+					// Increment the attempted counter of the problem.
 					firebase
 						.database()
 						.ref(`/problem/${id}/`)
 						.child("attempted")
 						.set(firebase.database.ServerValue.increment(1));
 				}
+
+				// Afterwards, save the user's answer. Note that this only
+				// saves the last answer of the user.
 				postData(db, `/answer/${uid}/${id}`, {
 					answer: state.answer,
 					lastAnswered: now.getTime(),
@@ -210,6 +239,7 @@ const Problems = ({ id }) => {
 				});
 			}
 
+			// Update the state reflecting the user's latest answer to this problem.
 			setState({
 				...state,
 				correct: state.answer === problem.accept,
@@ -239,7 +269,7 @@ const Problems = ({ id }) => {
 	}, [state]);
 
 	return (
-		<Frame>
+		<Frame problem={problem}>
 			{fetch === 1 && (
 				//If data fetch is successful.
 				<>
