@@ -12,12 +12,12 @@ import Choice from "./Choice";
 
 const Property = ({ name, children }) => {
 	return (
-		<div className="flex flex-row items-center mt-4 first:mt-0">
-			<span className="w-40 font-semibold text-gray-400 tracking-widest uppercase">
+		<article className="flex flex-row items-center mt-4 first:mt-0">
+			<span className="small-head w-40">
 				{name}
 			</span>
 			<div className="flex flex-row items-center h-10">{children}</div>
-		</div>
+		</article>
 	);
 };
 
