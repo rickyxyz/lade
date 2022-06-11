@@ -4,53 +4,76 @@ import Image from "next/image";
 import Button from "../components/Generic/Button";
 import Sidebar from "../components/Generic/Side";
 import Card from "../components/Generic/Card";
-import { useContext } from "react";
-import { FirebaseContext } from "../components/firebase";
+import { useContext, useEffect } from "react";
+import {
+	FirebaseContext,
+	turnProblemsObjectToArray,
+} from "../components/firebase";
 import Landing from "../components/Landing/Landing";
 import ShapeDivider from "../components/Generic/ShapeDivider";
 import Folder from "../components/Landing/Folder";
+import { useState } from "react";
+
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from "firebase/compat/app";
+import { getAuth } from "firebase/auth";
+import {
+	getDatabase,
+	ref,
+	query,
+	limitToFirst,
+	orderByChild,
+} from "firebase/database";
+import clsx from "clsx";
 
 const Home = () => {
-	const db = useContext(FirebaseContext);
+	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const [newRef, setNewRef] = useState(null);
+	const [topRef, setTopRef] = useState(null);
+	const [newProblems, setNewProblems] = useState([]);
+	const [topProblems, setTopProblems] = useState([]);
 
-	const topQuestions = [{
-		id: "014f",
-		topic: "Calculus with Differential Equations",
-		subtopic: "Exact Equation",
-		owner: "jeffery1941",
-		statement: "Solve y' = y.",
-		accepted: 514,
-		attempted: 41946,
-		comments: 31,
-	}, {
-		id: "02gf",
-		topic: "Calculus with Differential Equations",
-		subtopic: "Method of Separation Variables",
-		owner: "jeffery1941",
-		statement: "Solve y' = y.",
-		accepted: 794,
-		attempted: 4156,
-		comments: 2,
-	}];
-	const newQuestions = [{
-		id: "014f",
-		topic: "Calculus with Differential Equations",
-		subtopic: "Exact Equation",
-		owner: "jeffery1941",
-		statement: "Solve y' = y.",
-		accepted: 514,
-		attempted: 41946,
-		comments: 31,
-	}, {
-		id: "02gf",
-		topic: "Calculus with Differential Equations",
-		subtopic: "Method of Separation Variables",
-		owner: "jeffery1941",
-		statement: "Solve y' = y.",
-		accepted: 794,
-		attempted: 4156,
-		comments: 2,
-	}];
+	async function getProblems() {
+		try {
+			const _newRef = firebase.database().ref("problem").limitToLast(3);
+			_newRef.on("value", (snapshot) => {
+				if (snapshot.length !== newProblems.length) {
+					setNewProblems(
+						turnProblemsObjectToArray(
+							snapshot.val(),
+							_topics,
+							_subtopics
+						)
+					);
+				}
+			});
+			setNewRef(_newRef);
+
+			const _topRef = firebase
+				.database()
+				.ref("problem")
+				.orderByChild("accepted")
+				.limitToLast(3);
+			_topRef.on("value", (snapshot) => {
+				if (snapshot.length !== topProblems.length)
+					setTopProblems(
+						turnProblemsObjectToArray(
+							snapshot.val(),
+							_topics,
+							_subtopics
+						)
+					);
+			});
+			setTopRef(_topRef);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	useEffect(() => {
+		if (db && _topics && _subtopics) getProblems();
+	}, [db, _topics, _subtopics]);
 
 	return (
 		<>
@@ -65,9 +88,14 @@ const Home = () => {
 			<main className="flex flex-col w-full h-screen mt-12">
 				<Landing />
 				<ShapeDivider />
-				<section className="bg-gray-200 flex-grow px-28 z-20 grid grid-cols-2 gap-14">
-					<Folder title="New Questions" cards={newQuestions} />
-					<Folder title="Top Questions" cards={topQuestions} />
+				<section
+					className={clsx(
+						"flex flex-col lg:flex-row justify-center",
+						"px-8 py-8 z-20 gap-14 bg-gray-200"
+					)}
+				>
+					<Folder title="New Questions" cards={newProblems} loading={newProblems.length === 0} />
+					<Folder title="Top Questions" cards={topProblems} loading={topProblems.length === 0} />
 				</section>
 				{/* <Sidebar />
                 <content className="flex-grow">

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { FirebaseContext } from "../components/firebase";
+import { FirebaseContext, turnProblemsObjectToArray } from "../components/firebase";
 import ProblemCard from "../components/Problem/ProblemCard";
 import { getData } from "../components/firebase";
 import { connect } from "react-redux";
@@ -24,19 +24,7 @@ const Problems = ({ problems, setProblems }) => {
 	async function getProblems() {
 		await getData(db, `/problem`)
 			.then((_problems) => {
-				const tempProblems = [];
-
-				console.log(_problems);
-
-				for (let [id, _problem] of Object.entries(_problems)) {
-					let { topic, subtopic } = _problem;
-					_problem.id = id;
-					_problem.topic = _topics[topic];
-					_problem.subtopic = _subtopics[topic][subtopic];
-					tempProblems.unshift(_problem);
-				}
-
-				setProblems(tempProblems);
+				setProblems(turnProblemsObjectToArray(_problems, _topics, _subtopics));
 				setFetch(1);
 			})
 			.catch((e) => {
@@ -48,10 +36,6 @@ const Problems = ({ problems, setProblems }) => {
 	useEffect(() => {
 		if (db && _topics && _subtopics) getProblems();
 	}, [db, _topics, _subtopics]);
-
-	useEffect(() => {
-		console.log(problems);
-	}, [problems]);
 
 	return (
 		<Frame>

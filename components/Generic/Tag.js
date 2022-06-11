@@ -26,7 +26,6 @@ const Tag = ({
 				_seed = Math.sqrt(_seed)*_seed+1;
 			}
 			_seed = Math.floor(_seed);
-			console.log(`> ${_seed}`);
 		}
 
 		setCol(colors[Math.floor(_seed % colors.length)]);
