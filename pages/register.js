@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { genericToast, ToastContext } from "../components/Generic/Toast";
 import { connect } from "react-redux";
 import { mapDispatchToProps, mapStateToProps } from "../components/Redux/setter";
+import Meta from "../components/Generic/Meta";
 
 const RegisterSchema = Yup.object().shape({
 	email: Yup.string()

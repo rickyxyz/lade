@@ -16,6 +16,7 @@ import {
 	mapDispatchToProps,
 	mapStateToProps,
 } from "../components/Redux/setter";
+import Meta from "../components/Generic/Meta";
 
 const LoginSchema = Yup.object().shape({
 	email: Yup.string()
