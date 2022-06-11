@@ -44,6 +44,7 @@ const ProblemEditor = ({
 }) => {
 	const [problem, setProblem] = useState(initialProblem);
 	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const [loading, setLoading] = useState(true);
 
 	const router = useRouter();
 
@@ -129,7 +130,7 @@ const ProblemEditor = ({
 			const content =
 				document.getElementsByClassName("ql-editor")[0].innerHTML;
 
-			if (content === "") return;
+			if (content.length < 20) return;
 
 			const id = pushid();
 
@@ -142,6 +143,7 @@ const ProblemEditor = ({
 					return id;
 				})
 				.catch((e) => {
+					setLoading(false);
 					console.log(e);
 				});
 		}
@@ -150,12 +152,15 @@ const ProblemEditor = ({
 			const content =
 				document.getElementsByClassName("ql-editor")[0].innerHTML;
 
-			if (content === "") return;
+			if (content.length < 20) return;
 
 			await postData(db, `/problem/${problem.id}`, problem).catch((e) => {
+				setLoading(false);
 				console.log(e);
 			});
 		}
+
+		setLoading(true);
 
 		let destination;
 		if (purpose === "new") {
@@ -165,7 +170,10 @@ const ProblemEditor = ({
 			destination = problem.id;
 		}
 
-		router.push(`/problems/${destination}`);
+		if(destination)
+			router.push(`/problems/${destination}`);
+		else
+			setLoading(false);
 	}
 
 	async function addChoice() {
@@ -212,6 +220,10 @@ const ProblemEditor = ({
 		purpose === "new" ||
 		(purpose === "edit" && loggedIn && loggedIn.username === problem.owner);
 
+	useEffect(() => {
+		setLoading(false);
+	}, []);
+
 	return (
 		canShowEditor ? (
 			<>
@@ -220,7 +232,7 @@ const ProblemEditor = ({
 						{purpose === "new" ? "Create Problem" : "Edit Problem"}
 					</h1>
 					<div className="mt-6">
-						<Button onClick={() => callback()}>Finish</Button>
+						<Button className="w-20" loading={loading} onClick={() => callback()}>Finish</Button>
 					</div>
 				</div>
 				<div>
