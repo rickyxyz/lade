@@ -372,7 +372,7 @@ const Problems = ({ id }) => {
 				//If data fetch fails.
 				<div>
 					<p className="h1 mb-4">Oops!</p>
-					<p>We couldn't get the data. Please try again later.</p>
+					<p>We couldn&apos;t get the data. Please try again later.</p>
 				</div>
 			)}
 		</Frame>
