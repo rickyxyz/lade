@@ -8,6 +8,12 @@ export const FirebaseContext = createContext({
 	_subtopics: null,
 });
 
+/**
+ * Get data from the database.
+ * @param {Object} db Firebase database instance.
+ * @param {String} link The path to the data.
+ * @returns
+ */
 export async function getData(db, link) {
 	return await new Promise(function (res, rej) {
 		get(child(ref(db), link))
@@ -24,32 +30,75 @@ export async function getData(db, link) {
 	});
 }
 
+/**
+ * Write data to the database.
+ * @param {Object} db Firebase database instance.
+ * @param {String} link The path to the data.
+ * @param {Object} data The data to be written.
+ * @returns
+ */
 export async function postData(db, link, data) {
 	return await new Promise(function (res, rej) {
-		set(ref(db, link), data).then(() => res(null)).catch((error) => rej(error));
+		set(ref(db, link), data)
+			.then(() => res(null))
+			.catch((error) => rej(error));
 	});
 }
-
+/**
+ * Convert objects of problems into an array, and it requires the _topics and _subtopics data too.
+ * @param {Object} _problems Problems object
+ * @param {Object} _topics Topics array
+ * @param {Object} _subtopics Subtopics arrays
+ * @returns
+ */
 export function turnProblemsObjectToArray(_problems, _topics, _subtopics) {
 	const tempProblems = [];
 
-	if(!_topics || !_subtopics)
-		return;
+	if (!_topics || !_subtopics) return;
 
 	for (let [id, _problem] of Object.entries(_problems)) {
 		let { topic, subtopic } = _problem;
 		const currentSubtopic = _subtopics[topic];
-		console.log(currentSubtopic);
 
 		_problem.id = id;
 		_problem.topic = _topics[topic];
-		_problem.subtopic = currentSubtopic ? currentSubtopic[subtopic] : "Unknown";
+		_problem.subtopic = currentSubtopic
+			? currentSubtopic[subtopic]
+			: "Unknown";
 		tempProblems.unshift(_problem);
 	}
 
 	return tempProblems;
 }
 
+/**
+ * Given a snapshot of problems, convert them into an array, then use it with the callback function. Also, requires _topics and _subtopics.
+ * @param {Object} snapshot Snapshot object
+ * @param {Boolean} condition Condition
+ * @param {Function} callback Callback function
+ * @param {Object} _topics Topics array
+ * @param {Object} _subtopics Subtopics arrays
+ */
+export async function setProblemsFromSnapshot(
+	snapshot,
+	condition,
+	callback,
+	_topics,
+	_subtopics
+) {
+	if (condition) {
+		callback(
+			// Since we get an object (not array) as a result, we convert them to array first.
+			turnProblemsObjectToArray(snapshot.val(), _topics, _subtopics)
+		);
+	}
+}
+
+/**
+ * Return an error message given a code.
+ * @param {String} code Firebase error code.
+ * @returns
+ */
 export function getErrorMessage(code) {
 	switch (code) {
 		case "auth/email-already-in-use":

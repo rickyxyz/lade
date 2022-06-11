@@ -1,30 +1,16 @@
-import Head from "next/head";
-import Image from "next/image";
-// import styles from "../styles/Home.module.css";
-import Button from "../components/Generic/Button";
-import Sidebar from "../components/Generic/Side";
-import Card from "../components/Generic/Card";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+
 import {
 	FirebaseContext,
-	turnProblemsObjectToArray,
+	setProblemsFromSnapshot,
 } from "../components/firebase";
-import Landing from "../components/Landing/Landing";
-import ShapeDivider from "../components/Generic/ShapeDivider";
-import Folder from "../components/Landing/Folder";
-import { useState } from "react";
-
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
-import { getAuth } from "firebase/auth";
-import {
-	getDatabase,
-	ref,
-	query,
-	limitToFirst,
-	orderByChild,
-} from "firebase/database";
+
+import Landing from "../components/Landing/Landing";
+import ShapeDivider from "../components/Generic/ShapeDivider";
+import Folder from "../components/Landing/Folder";
 import clsx from "clsx";
 import Meta from "../components/Generic/Meta";
 
@@ -39,18 +25,15 @@ const Home = () => {
 		try {
 			// Get the 3 newest problems.
 			const _newRef = firebase.database().ref("problem").limitToLast(3);
-			_newRef.on("value", (snapshot) => {
-				if (snapshot.length !== newProblems.length) {
-					setNewProblems(
-						// Since we get an object (not array) as a result, we convert them to array first.
-						turnProblemsObjectToArray(
-							snapshot.val(),
-							_topics,
-							_subtopics
-						)
-					);
-				}
-			});
+			_newRef.on("value", (snapshot) =>
+				setProblemsFromSnapshot(
+					snapshot,
+					snapshot.length !== newProblems.length,
+					setNewProblems,
+					_topics,
+					_subtopics
+				)
+			);
 			setNewRef(_newRef);
 
 			// Get the 3 top problems (most solved).
@@ -59,17 +42,15 @@ const Home = () => {
 				.ref("problem")
 				.orderByChild("accepted")
 				.limitToLast(3);
-			_topRef.on("value", (snapshot) => {
-				if (snapshot.length !== topProblems.length)
-					setTopProblems(
-						// Since we get an object (not array) as a result, we convert them to array first.
-						turnProblemsObjectToArray(
-							snapshot.val(),
-							_topics,
-							_subtopics
-						)
-					);
-			});
+			_topRef.on("value", (snapshot) =>
+				setProblemsFromSnapshot(
+					snapshot,
+					snapshot.length !== topProblems.length,
+					setTopProblems,
+					_topics,
+					_subtopics
+				)
+			);
 			setTopRef(_topRef);
 		} catch (e) {
 			console.log(e);
