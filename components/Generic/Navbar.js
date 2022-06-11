@@ -78,7 +78,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 							variant="ghost"
 							href="#"
 						>
-							{ loggedIn.username }
+							{ loggedIn.username } | Level { loggedIn.level }
 						</LinkButton>
 						<Button variant="danger" onClick={() => logout()}>
 							Logout

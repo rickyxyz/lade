@@ -36,6 +36,8 @@ const Register = () => {
 					await postData(db, `user/${cred.user.uid}`, {
 						email: values["email"],
 						username: values["username"],
+                        level: 1,
+                        experience: 0
 					});
 				})
 				.then(() => {

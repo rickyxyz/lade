@@ -138,6 +138,7 @@ const Problems = ({ id }) => {
 						.ref(`/problem/${id}/`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
+                    firebase.database().ref(`/user/${uid}/`).child("experience").set(firebase.database.ServerValue.increment(10));
 				} else {
 					alert("Wrong Answer!");
 					firebase
