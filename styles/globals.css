@@ -84,6 +84,10 @@
 		fill: rgb(229, 231, 235);
 	}
 
+	.small-head {
+		@apply font-semibold text-gray-400 tracking-widest uppercase;
+	}
+
 	.frame-content > div > h2 {
 		@apply mb-4;
 	}
