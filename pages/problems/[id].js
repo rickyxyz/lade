@@ -40,7 +40,6 @@ const Problems = ({ id }) => {
 	const auth = getAuth();
 	let uid =  auth.currentUser ? auth.currentUser.uid : null;
 
-
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
 			.then((_problem) => {
@@ -138,7 +137,16 @@ const Problems = ({ id }) => {
 						.ref(`/problem/${id}/`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
+
+                    // add experience on correct answer
                     firebase.database().ref(`/user/${uid}/`).child("experience").set(firebase.database.ServerValue.increment(10));
+                    // fetch user data to check level up condition
+                    getData(db, `/user/${uid}`).then((_userData)=>{
+                        if(_userData.experience >= _userData.level * 100){
+                            firebase.database().ref(`/user/${uid}/`).child("experience").set(_userData.experience%(_userData.level*100));
+                            firebase.database().ref(`/user/${uid}/`).child("level").set(firebase.database.ServerValue.increment(1));
+                        }
+                    });
 				} else {
 					alert("Wrong Answer!");
 					firebase
