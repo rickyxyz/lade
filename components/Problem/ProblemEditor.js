@@ -1,25 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import { FirebaseContext, postData } from "../../components/firebase";
-import Button from "../Generic/Button";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
 import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import pushid from "pushid";
-import Toggle from "../Generic/Toggle";
-import clsx from "clsx";
-import { useRouter } from "next/router";
-import QuillNoSSRWrapper from "../QuillWrapper";
-import Choice from "./Choice";
 
-const Property = ({ name, children }) => {
-	return (
-		<article className="flex flex-row items-center mt-4 first:mt-0">
-			<span className="small-head w-40">
-				{name}
-			</span>
-			<div className="flex flex-row items-center h-10">{children}</div>
-		</article>
-	);
-};
+import clsx from "clsx";
+import Toggle from "../Generic/Toggle";
+import Choice from "./Choice";
+import Button from "../Generic/Button";
+import Property from "../Generic/Property";
+import { ToastContext } from "../Generic/Toast";
+import QuillNoSSRWrapper from "../QuillWrapper";
+
+import { FirebaseContext, getData, getId2, postData } from "../../components/firebase";
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from "firebase/compat/app";
 
 const ProblemEditor = ({
 	loggedIn,
@@ -47,12 +43,14 @@ const ProblemEditor = ({
 	const [loading, setLoading] = useState(true);
 
 	const router = useRouter();
+	const { addToast } = useContext(ToastContext);
 
 	const properties = [
 		{
 			name: "topic",
 			element: (
 				<select
+					id="input-topic"
 					onChange={(e) =>
 						update({ topic: parseInt(e.target.value) })
 					}
@@ -69,7 +67,7 @@ const ProblemEditor = ({
 			name: "subtopic",
 			element: (
 				<select
-					// className=""
+					id="input-subtopic"
 					value={problem.subtopic}
 					onChange={(e) =>
 						update({ subtopic: parseInt(e.target.value) })
@@ -88,6 +86,7 @@ const ProblemEditor = ({
 			name: "type",
 			element: (
 				<select
+					id="input-type"
 					value={problem.type}
 					onChange={(e) => update({ type: parseInt(e.target.value) })}
 				>
@@ -100,6 +99,7 @@ const ProblemEditor = ({
 			name: "visibility",
 			element: (
 				<select
+					id="input-visibility"
 					onChange={(e) =>
 						update({ visibility: parseInt(e.target.value) })
 					}
@@ -113,7 +113,7 @@ const ProblemEditor = ({
 		{
 			name: "discussion",
 			element: (
-				<Toggle onChange={(value) => update({ discussion: value })} />
+				<Toggle id="input-discussion" onChange={(value) => update({ discussion: value })} />
 			),
 		},
 	];
@@ -130,14 +130,32 @@ const ProblemEditor = ({
 			const content =
 				document.getElementsByClassName("ql-editor")[0].innerHTML;
 
-			if (content.length < 20) return;
+			if (content.length < 20) {
+				addToast({
+					title: "Oops!",
+					desc: "The problem is too short!",
+					variant: "danger",
+				});
+				return;
+			}
 
 			const id = pushid();
+
+			let topicWord = _topics[problem.topic], subTopicWord = _subtopics[problem.topic][problem.subtopic];
+
+			await firebase
+			.database()
+			.ref(`/metrics`)
+			.child(`problems`)
+			.set(firebase.database.ServerValue.increment(1));
+
+			const problemCount = await getData(db, '/metrics/problems');
 
 			return await postData(db, `/problem/${id}`, {
 				...problem,
 				statement: content,
 				owner: loggedIn.username,
+				id2: getId2(topicWord, subTopicWord, problemCount), 
 			})
 				.then(() => {
 					return id;
@@ -222,6 +240,10 @@ const ProblemEditor = ({
 
 	useEffect(() => {
 		setLoading(false);
+
+		if(purpose !== "new") {
+			document.getElementsByClassName("ql-editor")[0].innerHTML = problem.statement;
+		}
 	}, []);
 
 	return (
@@ -258,11 +280,11 @@ const ProblemEditor = ({
 						}}
 						className="quill"
 						placeholder="Write the question here..."
-						value={problem.statement}
 						onBlur={() => {
 							const newStatement =
 								document.getElementsByClassName("ql-editor")[0]
 									.innerHTML;
+
 							setProblem((prob) => ({
 								...prob,
 								statement: newStatement,
