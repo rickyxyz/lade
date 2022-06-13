@@ -12,10 +12,16 @@ import Property from "../Generic/Property";
 import { ToastContext } from "../Generic/Toast";
 import QuillNoSSRWrapper from "../QuillWrapper";
 
-import { FirebaseContext, getData, getId2, postData } from "../../components/firebase";
+import {
+	FirebaseContext,
+	getData,
+	getId2,
+	postData,
+} from "../../components/firebase";
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
+import { properifyMatrix } from "../Utility/matrix";
 
 const ProblemEditor = ({
 	loggedIn,
@@ -27,7 +33,19 @@ const ProblemEditor = ({
 		owner: null,
 		statement: "",
 		choices: ["Correct Answer", "Choice"],
-		accept: "Correct Answer",
+		accept: {
+			string: "Correct Answer",
+			choice: "Correct Answer",
+			matrix: {
+				rows: 3,
+				columns: 3,
+				matrix: [
+					[null, null, null],
+					[null, null, null],
+					[null, null, null],
+				],
+			},
+		},
 		type: 0,
 
 		accepted: 0,
@@ -92,6 +110,7 @@ const ProblemEditor = ({
 				>
 					<option value="0">Short Answer</option>
 					<option value="1">Multiple Choice</option>
+					<option value="2">Matrix</option>
 				</select>
 			),
 		},
@@ -113,7 +132,10 @@ const ProblemEditor = ({
 		{
 			name: "discussion",
 			element: (
-				<Toggle id="input-discussion" onChange={(value) => update({ discussion: value })} />
+				<Toggle
+					id="input-discussion"
+					onChange={(value) => update({ discussion: value })}
+				/>
 			),
 		},
 	];
@@ -141,21 +163,22 @@ const ProblemEditor = ({
 
 			const id = pushid();
 
-			let topicWord = _topics[problem.topic], subTopicWord = _subtopics[problem.topic][problem.subtopic];
+			let topicWord = _topics[problem.topic],
+				subTopicWord = _subtopics[problem.topic][problem.subtopic];
 
 			await firebase
-			.database()
-			.ref(`/metrics`)
-			.child(`problems`)
-			.set(firebase.database.ServerValue.increment(1));
+				.database()
+				.ref(`/metrics`)
+				.child(`problems`)
+				.set(firebase.database.ServerValue.increment(1));
 
-			const problemCount = await getData(db, '/metrics/problems');
+			const problemCount = await getData(db, "/metrics/problems");
 
 			return await postData(db, `/problem/${id}`, {
 				...problem,
 				statement: content,
 				owner: loggedIn.username,
-				id2: getId2(topicWord, subTopicWord, problemCount), 
+				id2: getId2(topicWord, subTopicWord, problemCount),
 			})
 				.then(() => {
 					return id;
@@ -188,10 +211,8 @@ const ProblemEditor = ({
 			destination = problem.id;
 		}
 
-		if(destination)
-			router.push(`/problems/${destination}`);
-		else
-			setLoading(false);
+		if (destination) router.push(`/problems/${destination}`);
+		else setLoading(false);
 	}
 
 	async function addChoice() {
@@ -227,11 +248,22 @@ const ProblemEditor = ({
 		}));
 	}
 
-	async function editCorrect(name) {
+	async function editCorrect(object) {
 		setProblem((prob) => ({
 			...prob,
-			accept: name,
+			accept: {
+				...prob.accept,
+				...object,
+			},
 		}));
+	}
+
+	async function editMatrix() {
+		let matrix = properifyMatrix();
+
+		editCorrect({
+			matrix: matrix,
+		});
 	}
 
 	const canShowEditor =
@@ -241,111 +273,163 @@ const ProblemEditor = ({
 	useEffect(() => {
 		setLoading(false);
 
-		if(purpose !== "new") {
-			document.getElementsByClassName("ql-editor")[0].innerHTML = problem.statement;
+		if (
+			purpose !== "new" &&
+			typeof document !== undefined &&
+			document.getElementsByClassName("ql-editor")[0] !== undefined
+		) {
+			document.getElementsByClassName("ql-editor")[0].innerHTML =
+				problem.statement;
 		}
 	}, []);
 
-	return (
-		canShowEditor ? (
-			<>
-				<div>
-					<h1 className="h2">
-						{purpose === "new" ? "Create Problem" : "Edit Problem"}
-					</h1>
-					<div className="mt-6">
-						<Button className="w-20" loading={loading} onClick={() => callback()}>Finish</Button>
-					</div>
-				</div>
-				<div>
-					<h2 className="h4">Problem Settings</h2>
-					<div className="flex flex-col">
-						{properties.map(({ name, element }) => (
-							<Property key={`property-${name}`} name={name}>
-								{element}
-							</Property>
-						))}
-					</div>
-				</div>
-				<div>
-					<h2 className="h4">Problem Statement</h2>
-					<QuillNoSSRWrapper
-						modules={{
-							toolbar: [
-								["bold", "italic", "underline", "strike"],
-								[{ list: "ordered" }, { list: "bullet" }],
-								[{ script: "sub" }, { script: "super" }],
-								["link", "formula"],
-							],
-						}}
-						className="quill"
-						placeholder="Write the question here..."
-						onBlur={() => {
-							const newStatement =
-								document.getElementsByClassName("ql-editor")[0]
-									.innerHTML;
-
-							setProblem((prob) => ({
-								...prob,
-								statement: newStatement,
-							}));
-						}}
-					/>
-				</div>
-				<div>
-					<h2 className="h4">Problem Answer</h2>
-					{[
-						problem.type === 0 && (
-							<div key="short-answer">
-								<input
-									type="text"
-									placeholder="Type the correct answer here..."
-									value={problem.accept}
-									onChange={(e) => {
-										editCorrect(e.target.value);
-									}}
-								/>
-							</div>
-						),
-						problem.type === 1 && (
-							<div
-								key="multiple-choice"
-								className="flex flex-col h-auto"
-							>
-								{problem.choices.map((choice, index) => (
-									<Choice
-										key={`choice-${index}`}
-										name={choice}
-										index={index}
-										checked={choice === problem.accept}
-										onNameChange={editChoice}
-										onCheck={editCorrect}
-										onDelete={deleteChoice}
-										removable={index > 1}
-									/>
-								))}
-								<Button
-									className={clsx(
-										"mt-4 w-min",
-										problem.choices.length >= 6 && "hidden"
-									)}
-									onClick={() => {
-										if (problem.choices.length < 6)
-											addChoice();
-									}}
-								>
-									Add&nbsp;Choice
-								</Button>
-							</div>
-						),
-					]}
-				</div>
-			</>
-		) : (
+	return canShowEditor ? (
+		<>
 			<div>
-				<p>You don&quot;t have permission.</p>
+				<h1 className="h2">
+					{purpose === "new" ? "Create Problem" : "Edit Problem"}
+				</h1>
+				<div className="mt-6">
+					<Button
+						className="w-20"
+						loading={loading}
+						onClick={() => callback()}
+					>
+						Finish
+					</Button>
+				</div>
 			</div>
-		)
+			<div>
+				<h2 className="h4">Problem Settings</h2>
+				<div className="flex flex-col">
+					{properties.map(({ name, element }) => (
+						<Property key={`property-${name}`} name={name}>
+							{element}
+						</Property>
+					))}
+				</div>
+			</div>
+			<div>
+				<h2 className="h4">Problem Statement</h2>
+				<QuillNoSSRWrapper
+					modules={{
+						toolbar: [
+							["bold", "italic", "underline", "strike"],
+							[{ list: "ordered" }, { list: "bullet" }],
+							[{ script: "sub" }, { script: "super" }],
+							["link", "formula"],
+						],
+					}}
+					className="quill"
+					placeholder="Write the question here..."
+					onBlur={() => {
+						const newStatement =
+							document.getElementsByClassName("ql-editor")[0]
+								.innerHTML;
+
+						setProblem((prob) => ({
+							...prob,
+							statement: newStatement,
+						}));
+					}}
+				/>
+			</div>
+			<div>
+				<h2 className="h4">Problem Answer</h2>
+				{[
+					problem.type === 0 && (
+						<div key="short-answer">
+							<input
+								type="text"
+								placeholder="Type the correct answer here..."
+								value={problem.accept.string}
+								onChange={(e) => {
+									editCorrect({
+										string: e.target.value,
+									});
+								}}
+							/>
+						</div>
+					),
+					problem.type === 1 && (
+						<div
+							key="multiple-choice"
+							className="flex flex-col h-auto"
+						>
+							{problem.choices.map((choice, index) => (
+								<Choice
+									key={`choice-${index}`}
+									name={choice}
+									index={index}
+									checked={choice === problem.accept.choice}
+									onNameChange={editChoice}
+									onCheck={(name, index) => {
+										editCorrect({ choice: choice });
+									}}
+									onDelete={deleteChoice}
+									removable={index > 1}
+								/>
+							))}
+							<Button
+								className={clsx(
+									"mt-4 w-min",
+									problem.choices.length >= 6 && "hidden"
+								)}
+								onClick={() => {
+									if (problem.choices.length < 6) addChoice();
+								}}
+							>
+								Add&nbsp;Choice
+							</Button>
+						</div>
+					),
+					problem.type === 2 && (
+						<div key="matrix" className="flex flex-col h-auto">
+							<div className="flex flex-col gap-2">
+								{[0, 1, 2].map((row) => (
+									<div
+										className="flex flex-row gap-2"
+										key={`row-${row}`}
+									>
+										{[0, 1, 2].map((col) => (
+											<div
+												className="flex w-16"
+												key={`cell-${row}-${col}`}
+											>
+												<input
+													id={`cell-${row}-${col}`}
+													className="!w-16"
+													type="text"
+													defaultValue={
+														problem.accept.matrix
+															.rows > row &&
+														problem.accept.matrix
+															.columns > col
+															? problem.accept
+																	.matrix
+																	.matrix[
+																	row
+															  ][col]
+															: ""
+													}
+													onChange={() =>
+														editMatrix()
+													}
+												/>
+											</div>
+										))}
+									</div>
+								))}
+							</div>
+						</div>
+					),
+				]}
+			</div>
+		</>
+	) : (
+		<div>
+			<p>You don&quot;t have permission.</p>
+		</div>
 	);
 };
 

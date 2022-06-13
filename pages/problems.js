@@ -13,7 +13,7 @@ import {
 } from "../components/Redux/setter";
 import Frame from "../components/Generic/Frame";
 import { ProblemCardSK } from "../components/Generic/Skeleton";
-import { ToastContext } from "../components/Generic/Toast";
+import { genericToast, ToastContext } from "../components/Generic/Toast";
 
 import "firebase/database";
 import "firebase/compat/database";

@@ -18,6 +18,7 @@ import { CircleLoad } from "../../components/Generic/Skeleton";
 import { genericToast, ToastContext } from "../../components/Generic/Toast";
 import pushid from "pushid";
 import Tag from "../../components/Generic/Tag";
+import { properifyMatrix } from "../../components/Utility/matrix";
 
 const CooldownWarning = ({ time }) => (
 	<span>
@@ -30,11 +31,24 @@ const Problems = ({ id }) => {
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
 	const [state, setState] = useState({
-		answer: "", // Save user's answers.
+		answer: {
+			string: "",
+			choice: "",
+			matrix: {
+				rows: 3,
+				columns: 3,
+				matrix: [
+					[null, null, null],
+					[null, null, null],
+					[null, null, null],
+				],
+			},
+		}, // Save user's answers.
 		loading: true, // Controls the button's loading state, to prevent users fromm spamming the button.
 		correct: false, // Determines if the user's answers is correct or not.
 		lastAnswered: null, // The time the user last answered, to calculate the cooldown.
-		warning: // Saves the warnig text. Later, used to show remaining cooldown time.
+		// Saves the warnig text. Later, used to show remaining cooldown time.
+		warning:
 			"After you click submit, your answer will be immediately checked.",
 	});
 
@@ -68,8 +82,7 @@ const Problems = ({ id }) => {
 	async function getCommentData() {
 		await getData(db, `/comment/${id}`)
 			.then((_comments) => {
-				if(!_comments)
-					return;
+				if (!_comments) return;
 				const tempComments = [];
 				for (let [id, _comment] of Object.entries(_comments)) {
 					_comment.id = id;
@@ -88,8 +101,18 @@ const Problems = ({ id }) => {
 		lastAnswered,
 		callback = () => {}
 	) {
-		let cooldown = 10 * 1000; // 10 seconds
-		if (problem.type === 1) cooldown = 60 * 10 * 1000; // 600 seconds
+		let cooldown;
+		switch (problem.type) {
+			case 0:
+				cooldown = 10 * 1000;
+				break;
+			case 1:
+				cooldown = 60 * 10 * 1000;
+				break;
+			case 2:
+				cooldown = 30 * 10 * 1000 * 0;
+				break;
+		}
 
 		const timeElapsed = now - lastAnswered;
 
@@ -113,15 +136,18 @@ const Problems = ({ id }) => {
 	*/
 	async function getUserAnswer() {
 		// If no one is logged in, stop checking.
-		if(!uid)
-			return;
-	
+		if (!uid) return;
+
 		await getData(db, `/answer/${uid}/${id}`)
 			.then((_answer) => {
 				if (_answer) {
-
+					let correct = compareAnswers(
+						problem.type,
+						_answer.answer,
+						problem.accept
+					);
 					// If answer exists, then check if it is correct or not.
-					const correct = _answer.answer === problem.accept;
+					// correct = _answer.answer === problem.accept;
 					let warning = { warning: null };
 
 					const now = new Date();
@@ -163,6 +189,38 @@ const Problems = ({ id }) => {
 	}
 
 	/*
+		Given a question type, compare the user's answers
+		(obj1) with the answer key (obj2).
+	*/
+	function compareAnswers(type, obj1, obj2) {
+		switch (type) {
+			case 0:
+				return obj1.string === obj2.string;
+			case 1:
+				return obj1.choice === obj2.choice;
+			case 2:
+				// If matrix size doesn't match, immediately return false.
+				if (
+					obj1.matrix.rows !== obj2.matrix.rows ||
+					obj1.matrix.columns !== obj2.matrix.columns
+				)
+					return false;
+
+				// Else, compare each element.
+				for (let j = 0; j < obj1.matrix.rows; j++) {
+					for (let i = 0; i < obj1.matrix.columns; i++) {
+						if (
+							obj1.matrix.matrix[j][i] !==
+							obj2.matrix.matrix[j][i]
+						)
+							return false;
+					}
+				}
+				return true;
+		}
+	}
+
+	/*
 		This function is executed when user submits their answer.
 	*/
 	async function submitAnswer() {
@@ -185,14 +243,14 @@ const Problems = ({ id }) => {
 
 		// Otherwise, make the button disabled to prevent spamming, and continue checking.
 		setState({ ...state, loading: true });
-		
+
 		// Create a small delay.
 		setTimeout(() => {
 			try {
-				
 				// Check if the answer is the same as the correct answer.
-				if (state.answer === problem.accept) {
-
+				if (
+					compareAnswers(problem.type, state.answer, problem.accept)
+				) {
 					// If so, notify the user.
 					addToast({
 						title: "Great work!",
@@ -207,7 +265,6 @@ const Problems = ({ id }) => {
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 				} else {
-					
 					// If it is not correct, notify the user.
 					addToast({
 						title: "Too bad...",
@@ -242,7 +299,11 @@ const Problems = ({ id }) => {
 			// Update the state reflecting the user's latest answer to this problem.
 			setState({
 				...state,
-				correct: state.answer === problem.accept,
+				correct: compareAnswers(
+					problem.type,
+					state.answer,
+					problem.accept
+				),
 				loading: false,
 				warning: null,
 				lastAnswered: now,
@@ -263,10 +324,18 @@ const Problems = ({ id }) => {
 			setInit(true);
 		}
 	});
+	
+	//  Helper function to save proper matrix.
+	function setMatrix() {
+		const matrix = properifyMatrix();
 
-	useEffect(() => {
-		console.log(state.correct);
-	}, [state]);
+		setState({
+			...state,
+			answer: {
+				matrix: matrix,
+			},
+		});
+	}
 
 	return (
 		<Frame problem={problem}>
@@ -276,7 +345,9 @@ const Problems = ({ id }) => {
 					<div className="flex flex-col gap-4">
 						<h1 className="h2">{problem.topic}</h1>
 						<Tag>{problem.subtopic}</Tag>
-						<p>Posted by <b>{problem.owner}</b></p>
+						<p>
+							Posted by <b>{problem.owner}</b>
+						</p>
 					</div>
 					<div>
 						<h2 className="h4">Problem Statement</h2>
@@ -286,7 +357,7 @@ const Problems = ({ id }) => {
 								problem.type === 0 && (
 									<input
 										key="short-answer"
-										value={state.answer}
+										value={state.answer.string}
 										onChange={(e) =>
 											setState({
 												...state,
@@ -306,7 +377,8 @@ const Problems = ({ id }) => {
 													index={index}
 													removable={false}
 													checked={
-														state.answer === choice
+														state.answer.choice ===
+														choice
 													}
 													onCheck={(name, index) =>
 														setState({
@@ -320,6 +392,56 @@ const Problems = ({ id }) => {
 												/>
 											)
 										)}
+									</div>
+								),
+								problem.type === 2 && (
+									<div
+										key="matrix"
+										className="flex flex-col h-auto"
+									>
+										<div className="flex flex-col gap-2">
+											{[0, 1, 2].map((row) => (
+												<div
+													className="flex flex-row gap-2"
+													key={`row-${row}`}
+												>
+													{[0, 1, 2].map((col) => (
+														<div
+															className="flex w-16"
+															key={`cell-${row}-${col}`}
+														>
+															<input
+																id={`cell-${row}-${col}`}
+																className="!w-16"
+																type="text"
+																defaultValue={
+																	state.correct &&
+																	state.answer
+																		.matrix
+																		.rows >
+																		row &&
+																	state.answer
+																		.matrix
+																		.columns >
+																		col
+																		? state
+																				.answer
+																				.matrix
+																				.matrix[
+																				row
+																		  ][col]
+																		: ""
+																}
+																onChange={() =>
+																	setMatrix()
+																}
+																disabled={state.correct}
+															/>
+														</div>
+													))}
+												</div>
+											))}
+										</div>
 									</div>
 								),
 							]}
@@ -372,7 +494,9 @@ const Problems = ({ id }) => {
 				//If data fetch fails.
 				<div>
 					<p className="h1 mb-4">Oops!</p>
-					<p>We couldn&apos;t get the data. Please try again later.</p>
+					<p>
+						We couldn&apos;t get the data. Please try again later.
+					</p>
 				</div>
 			)}
 		</Frame>
