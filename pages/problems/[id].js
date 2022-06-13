@@ -142,7 +142,7 @@ const Problems = ({ id }) => {
                     firebase.database().ref(`/user/${uid}/`).child("experience").set(firebase.database.ServerValue.increment(10));
                     // fetch user data to check level up condition
                     getData(db, `/user/${uid}`).then((_userData)=>{
-                        if(_userData.experience >= _userData.level * 100){
+                        if(_userData.experience >= _userData.level * 100 || true){
                             firebase.database().ref(`/user/${uid}/`).child("experience").set(_userData.experience%(_userData.level*100));
                             firebase.database().ref(`/user/${uid}/`).child("level").set(firebase.database.ServerValue.increment(1));
                         }
