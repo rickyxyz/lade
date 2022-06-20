@@ -21,7 +21,7 @@ const CommentEntry = ({ loggedIn, comment, problemId }) => {
 						{comment.owner}
 					</h3>
 					<span className="text-sm leading-4">
-						{getTimeDifference(comment.createdAt)}
+						{getTimeDifference(comment.createdAt)} ago
 					</span>
 				</div>
 				<Interweave content={comment.comment} />
