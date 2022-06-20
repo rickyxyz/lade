@@ -1,6 +1,7 @@
 const initialState = {
 	loggedIn: null,
-	problems: []
+	problems: [],
+	contests: [],
 };
 
 export const reducer = (state = initialState, action) => {
@@ -19,6 +20,11 @@ export const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				problems: action.problems,
+			};
+		case "contestsSet":
+			return {
+				...state,
+				contests: action.contests,
 			};
         case "commentSet":
             return {

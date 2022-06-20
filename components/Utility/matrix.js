@@ -33,6 +33,10 @@ export function properifyMatrix() {
 
 	console.log(properMatrix);
 
+	if(properMatrix.length === 0) {
+		properMatrix.push([ 0 ]);
+	}
+
 	return {
 		matrix: properMatrix,
 		rows: properMatrix.length,

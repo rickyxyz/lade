@@ -38,14 +38,32 @@
 	:is(input, select, .input):focus {
 		@apply border-blue-400;
 	}
+	th,
+	td {
+		@apply px-4 py-2 text-left border-2;
+	}
+	th {
+		@apply small-head text-slate-600 font-medium bg-gray-50;
+	}
+	b {
+		font-size: inherit !important;
+	}
 }
 @tailwind base;
 
 @layer components {
+	.link {
+		@apply text-blue-500;
+	}
+	.link:hover {
+		@apply text-blue-600 underline;
+	}
+	.link:is(:active, :focus) {
+		@apply text-blue-700;
+	}
 	.form-template {
 		width: 32rem;
 	}
-
 	.h-exclude-navbar {
 		height: calc(100vh - 4rem);
 	}
@@ -171,9 +189,8 @@
 		animation-duration: 0.8s;
 		animation-iteration-count: 1;
 		animation-fill-mode: forwards;
-
 	}
-	
+
 	.toast {
 		right: 0;
 		animation-name: toast-fade-in;
@@ -181,7 +198,21 @@
 		animation-iteration-count: 1;
 		animation-fill-mode: forwards;
 	}
-	
+
+	.card-footer button {
+		@apply px-4 py-2 text-sm;
+	}
+
+	.mask-hidden,
+	.mask:hover .mask-show {
+		display: none;
+	}
+
+	.mask-show,
+	.mask:hover .mask-hidden {
+		display: initial;
+	}
+
 	@keyframes toast-fade-in {
 		0% {
 			opacity: 0;
@@ -199,7 +230,6 @@
 			opacity: 0;
 		}
 	}
-	
 }
 @tailwind components;
 
@@ -231,6 +261,22 @@
 	.font-black {
 		font-variation-settings: "wght" 900;
 	}
+	.bar {
+		width: calc(100% - 16rem);
+	}
+	.bar-stripes {
+		background-image: linear-gradient(
+			45deg,
+			rgba(255, 255, 255, 0.15) 25%,
+			transparent 25%,
+			transparent 50%,
+			rgba(255, 255, 255, 0.15) 50%,
+			rgba(255, 255, 255, 0.15) 75%,
+			transparent 75%,
+			transparent
+		);
+		background-size: 1rem 1rem;
+	}
 }
 
 @tailwind utilities;
@@ -247,11 +293,6 @@ body {
 	font-family: -apple-system, BlinkMacSystemFont, Inter, Segoe UI, Roboto,
 		Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
 		sans-serif;
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
 }
 
 * {
