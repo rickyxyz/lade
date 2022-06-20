@@ -52,6 +52,9 @@
 @tailwind base;
 
 @layer components {
+	.featured-questions {
+		min-height: calc(36rem + 4px);
+	}
 	.link {
 		@apply text-blue-500;
 	}
