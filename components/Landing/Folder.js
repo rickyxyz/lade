@@ -10,15 +10,16 @@ const Folder = ({ title, cards, loading }) => {
 			<div className="flex flex-col w-full bg-blue-200 p-4 border-dashed border-blue-600 border-2 rounded-lg">
 				{loading ? (
 					<>
-						<ProblemCardSK className="p-4 bg-white"/>
-						<ProblemCardSK className="p-4 bg-white"/>
-						<ProblemCardSK className="p-4 bg-white"/>
+						<ProblemCardSK className="p-4 bg-white" />
+						<ProblemCardSK className="p-4 bg-white" />
+						<ProblemCardSK className="p-4 bg-white" />
 					</>
 				) : (
-					cards.map((card, index) => (
+					cards.map((problem, index) => (
 						<ProblemCard
-							key={card.id}
-							{...card}
+							key={problem.id}
+							purpose="landing"
+							problem={problem}
 							className={clsx(index !== 0 && "mt-4")}
 						/>
 					))

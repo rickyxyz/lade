@@ -79,7 +79,7 @@ export function turnProblemsObjectToArray(_problems, _topics, _subtopics) {
  * @param {Object} _topics Topics array
  * @param {Object} _subtopics Subtopics arrays
  */
-export async function setProblemsFromSnapshot(
+export function setProblemsFromSnapshot(
 	snapshot,
 	condition,
 	callback,
@@ -92,6 +92,16 @@ export async function setProblemsFromSnapshot(
 			turnProblemsObjectToArray(snapshot.val(), _topics, _subtopics)
 		);
 	}
+}
+
+export function getId2(topic, subtopic, count) {
+	const capsRegex = /[A-Z]/g;
+
+	function caps(word) {
+		return word.match(capsRegex).join("");
+	}
+
+	return `${caps(topic)}-${caps(subtopic)}-${count}`;
 }
 
 /**

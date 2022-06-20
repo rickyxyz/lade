@@ -4,22 +4,14 @@ import {
 	BsFillXCircleFill,
 	BsFillChatLeftDotsFill,
 } from "react-icons/bs";
-
-const Column = ({ className, icon, value }) => {
-	return (
-		<div className={clsx("flex flex-row items-center mr-4", className)}>
-			{icon}
-			<span className="ml-2">{value}</span>
-		</div>
-	);
-};
+import Stat from "../Generic/Stat";
 
 const ProblemStats = ({ accepted, attempted, comments }) => {
 	return (
-		<div className="flex flex-row">
-			<Column icon={<BsCheckCircleFill />} value={accepted} className="text-green-600" />
-			<Column icon={<BsFillXCircleFill />} value={attempted} className="text-red-600" />
-			<Column icon={<BsFillChatLeftDotsFill />} value={comments} />
+		<div className="flex flex-row text-gray-700">
+			<Stat icon={<BsCheckCircleFill />} title="Correct Answers" value={accepted} className="text-green-600" />
+			<Stat icon={<BsFillXCircleFill />} title="Wrong Answers" value={attempted} className="text-red-600" />
+			<Stat icon={<BsFillChatLeftDotsFill />} title="Comments" value={comments} />
 		</div>
 	);
 };

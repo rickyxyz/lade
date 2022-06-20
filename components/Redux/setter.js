@@ -26,10 +26,18 @@ export function setComment(comments) {
     }
 }
 
+export function setContests(contests) {
+	return {
+		type: "contestsSet",
+		contests: contests
+	};
+}
+
 export function mapStateToProps(state) {
 	return {
 		loggedIn: state.loggedIn,
 		problems: state.problems,
+		contests: state.contests,
 	};
 }
 
@@ -37,4 +45,5 @@ export const mapDispatchToProps = {
 	loginUser,
 	logoutUser,
 	setProblems,
+	setContests,
 };

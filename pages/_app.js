@@ -31,8 +31,8 @@ function MyApp({ Component, pageProps }) {
 	const [fb, setFb] = useState({
 		app: null,
 		db: null,
-		_topics: {},
-		_subtopics: {},
+		_topics: [],
+		_subtopics: [],
 	});
 
 	const [toasts, setToasts] = useState([]);
@@ -63,7 +63,9 @@ function MyApp({ Component, pageProps }) {
 		if (!fb.app) {
 			const app = firebase.initializeApp(config);
 			const db = getDatabase(app);
+			getTopicsAndSubTopics(db);
 			setFb({
+				...fb,
 				app,
 				db,
 			});

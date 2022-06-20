@@ -1,16 +1,29 @@
 import { MdOutlineHome, MdOutlineStyle, MdOutlineGroup } from "react-icons/md";
-import { BsHouseDoor, BsQuestionOctagon, BsClipboardPlus, BsClipboardData } from "react-icons/bs";
+import {
+	BsHouseDoor,
+	BsQuestionOctagon,
+	BsClipboardPlus,
+	BsClipboardData,
+} from "react-icons/bs";
 import Link from "next/link";
 import clsx from "clsx";
 
 const Side = () => {
 	const links = [
-		{ name: "Home", href: "/problems", icon: <BsHouseDoor /> },
-		// { name: "Contests", href: "/contests", icon: <BsClipboardData /> },
-		{ name: "New Problem", href: "/problems/new", icon: <BsQuestionOctagon /> },
-		// { name: "New Contest", href: "/contests/new", icon: <BsClipboardPlus /> },
+		{ name: "Problems", href: "/problems", icon: <BsHouseDoor /> },
+		{ name: "Contests", href: "/contests", icon: <BsClipboardData /> },
+		{
+			name: "New Problem",
+			href: "/problems/new",
+			icon: <BsQuestionOctagon />,
+		},
+		{
+			name: "New Contest",
+			href: "/contests/new",
+			icon: <BsClipboardPlus />,
+		},
 	];
-	
+
 	return (
 		<aside className="w-64 border-r-2 h-screen fixed left-0 top-16">
 			<ul>
@@ -26,9 +39,7 @@ const Side = () => {
 									)}
 								>
 									{link.icon}
-									<span className="ml-4">
-										{link.name}
-									</span>
+									<span className="ml-4">{link.name}</span>
 								</li>
 							</a>
 						</Link>

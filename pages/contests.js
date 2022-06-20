@@ -22,6 +22,7 @@ import clsx from "clsx";
 import Button from "../components/Generic/Button";
 import { GoChevronDown, GoChevronUp, GoDash } from "react-icons/go";
 import ViewTemplate from "../components/Generic/ViewTemplate";
+import ContestCard from "../components/Contest/ContestCard";
 
 const problemsPerPage = 5;
 
@@ -73,37 +74,35 @@ const crits = [{
 	type: "Comments"
 }];
 
-const Problems = ({ problems, setProblems }) => {
+const Contests = ({ contests, setContests }) => {
 	const { db, _topics, _subtopics } = useContext(FirebaseContext);
 
 	return (
 		<ViewTemplate 
-			title="Problems"
+			title="Contests"
 			crits={
 				[{
 					id: 1,
 					type: "Time"
 				}, {
 					id: 2,
-					type: "Accepted"
+					type: "Comments"
 				}, {
 					id: 3,
-					type: "Attempted"
-				}, {
-					id: 4,
-					type: "Comments"
+					type: "Questions"
 				}]
 			}
-			dataPath="/problem"
-			objects={problems}
-			setObjects={setProblems}
-			component={(problem) => (
-				<ProblemCard
-					key={problem.id}
-					problem={problem}
+			dataPath="/contest"
+			objects={contests}
+			setObjects={setContests}
+			component={(contest) => (
+				<ContestCard
+					key={contest.id}
+					contest={contest}
 					className={clsx(
-						"relative top-44",
+						"relative p-8",
 						"!rounded-none border-b-2 transition-all",
+						"top-44"
 					)}
 				/>
 			)}
@@ -111,4 +110,4 @@ const Problems = ({ problems, setProblems }) => {
 	);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Problems);
+export default connect(mapStateToProps, mapDispatchToProps)(Contests);

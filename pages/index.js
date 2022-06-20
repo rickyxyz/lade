@@ -21,6 +21,7 @@ const Home = () => {
 	const [topRef, setTopRef] = useState(null);
 	const [newProblems, setNewProblems] = useState([]);
 	const [topProblems, setTopProblems] = useState([]);
+	const [fetch, setFetch] = useState(0);
 
 	async function getProblems() {
 		try {
@@ -53,8 +54,10 @@ const Home = () => {
 				)
 			);
 			setTopRef(_topRef);
+			setFetch(1);
 		} catch (e) {
 			console.log(e);
+			setFetch(-1);
 		}
 	}
 
@@ -65,11 +68,12 @@ const Home = () => {
 	return (
 		<>
 			<Meta />
-			<main className="flex flex-col w-full h-screen mt-12">
+			<main className={clsx("flex flex-col w-full mt-12")}>
 				<Landing />
 				<ShapeDivider />
 				<section
 					className={clsx(
+						"featured-questions",
 						"flex flex-col lg:flex-row justify-center",
 						"px-8 py-8 z-20 gap-14 bg-gray-200"
 					)}
