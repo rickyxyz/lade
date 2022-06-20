@@ -4,7 +4,7 @@
 }
 
 @layer base {
-	*:not(:is(.base, .mord)) {
+	*:not(:is(.base, .mord, .katex *)) {
 		font-family: "Inter";
 		font-size: 1rem;
 	}
