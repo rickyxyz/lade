@@ -9,58 +9,62 @@ import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import { FirebaseContext, postData } from "../firebase";
 import { useContext } from "react";
 import Tag from "../Generic/Tag";
+import ProblemHead from "./ProblemHead";
 
-const ProblemCard = ({
-	className,
-	id,
-	topic,
-	subtopic,
-	owner,
-	statement,
-	accepted,
-	attempted,
-	comments,
-	loggedIn,
-}) => {
-
+const ProblemCard = ({ className, problem, loggedIn, purpose }) => {
+	const { id, id2, topic, subtopic, owner, statement, metrics } = problem;
 	const { db } = useContext(FirebaseContext);
 
 	async function deleteProblem() {
 		await postData(db, `/problem/${id}`, null).then(() => {
 			setTimeout(() => {
-				if(location)
-					location.reload();
-			}, 150)
-		})
+				if (location) location.reload();
+			}, 150);
+		});
 	}
 
 	return (
-		<Card className={clsx("relative flex p-4", className)}>
+		<Card
+			className={clsx(className, "relative")}
+			footer={
+				<>
+					<LinkButton
+						variant="secondary"
+						className="px-4 py-2 text-sm"
+						href={`/problems/${id}`}
+					>
+						View
+					</LinkButton>
+					<ProblemStats {...metrics} />
+				</>
+			}
+		>
 			<div className="flex flex-col gap-2">
-				<div className="flex flex-col xl:flex-row gap-2 xl:gap-4">
-					<h3 className="font-semibold text-xl">{topic}</h3>
-					<Tag>{subtopic}</Tag>
-				</div>
-				<span className="text-gray-700 text-sm">Posted by <b>{owner}</b></span>
+				<ProblemHead
+					{...problem}
+				/>
 				<div className="mt-4">
 					<Interweave content={statement} />
 				</div>
 			</div>
-			<div className="flex flex-col md:flex-row gap-4 md:gap-0 md:items-center md:justify-between mt-4">
-				<ProblemStats accepted={accepted} attempted={attempted} comments={comments} />
-				<div className="flex flex-row">
-					<LinkButton variant="secondary" className="mr-4" href={`/problems/${id}`}>
-						Discuss
+			{loggedIn && purpose !== "landing" && loggedIn.username === owner && (
+				<div className="absolute top-0 right-8 flex flex-row mt-4">
+					<LinkButton
+						href={`/problems/edit/${id}`}
+						variant="ghost"
+						className="mr-4 text-xs"
+					>
+						Edit
 					</LinkButton>
-					<LinkButton variant="primary" href={`/problems/${id}`}>Answer</LinkButton>
+					<Button
+						onClick={() => deleteProblem()}
+						className="text-xs"
+						variant="ghost-danger"
+					>
+						Delete
+					</Button>
 				</div>
-			</div>
-			{loggedIn && loggedIn.username === owner && (
-					<div className="absolute top-0 right-8 flex flex-row mt-6">
-						<LinkButton href={`/problems/edit/${id}`} variant="ghost" className="mr-4 text-xs">Edit</LinkButton>
-						<Button onClick={() => deleteProblem()} className="text-xs" variant="ghost-danger">Delete</Button>
-					</div>
-				)}
+			)}
 		</Card>
 	);
 };

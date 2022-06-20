@@ -19,6 +19,9 @@ import { genericToast, ToastContext } from "../../components/Generic/Toast";
 import pushid from "pushid";
 import Tag from "../../components/Generic/Tag";
 import { properifyMatrix } from "../../components/Utility/matrix";
+import ProblemHead from "../../components/Problem/ProblemHead";
+import ProblemAnswer from "../../components/Problem/ProblemAnswer";
+import { compareAnswers } from "../../components/Problem/compareAnswers";
 
 const CooldownWarning = ({ time }) => (
 	<span>
@@ -189,38 +192,6 @@ const Problems = ({ id }) => {
 	}
 
 	/*
-		Given a question type, compare the user's answers
-		(obj1) with the answer key (obj2).
-	*/
-	function compareAnswers(type, obj1, obj2) {
-		switch (type) {
-			case 0:
-				return obj1.string === obj2.string;
-			case 1:
-				return obj1.choice === obj2.choice;
-			case 2:
-				// If matrix size doesn't match, immediately return false.
-				if (
-					obj1.matrix.rows !== obj2.matrix.rows ||
-					obj1.matrix.columns !== obj2.matrix.columns
-				)
-					return false;
-
-				// Else, compare each element.
-				for (let j = 0; j < obj1.matrix.rows; j++) {
-					for (let i = 0; i < obj1.matrix.columns; i++) {
-						if (
-							obj1.matrix.matrix[j][i] !==
-							obj2.matrix.matrix[j][i]
-						)
-							return false;
-					}
-				}
-				return true;
-		}
-	}
-
-	/*
 		This function is executed when user submits their answer.
 	*/
 	async function submitAnswer() {
@@ -261,7 +232,7 @@ const Problems = ({ id }) => {
 					// Increment the accepted counter of the problem.
 					firebase
 						.database()
-						.ref(`/problem/${id}/`)
+						.ref(`/problem/${id}/metrics`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 				} else {
@@ -275,7 +246,7 @@ const Problems = ({ id }) => {
 					// Increment the attempted counter of the problem.
 					firebase
 						.database()
-						.ref(`/problem/${id}/`)
+						.ref(`/problem/${id}/metrics`)
 						.child("attempted")
 						.set(firebase.database.ServerValue.increment(1));
 				}
@@ -324,7 +295,7 @@ const Problems = ({ id }) => {
 			setInit(true);
 		}
 	});
-	
+
 	//  Helper function to save proper matrix.
 	function setMatrix() {
 		const matrix = properifyMatrix();
@@ -343,109 +314,12 @@ const Problems = ({ id }) => {
 				//If data fetch is successful.
 				<>
 					<div className="flex flex-col gap-4">
-						<h1 className="h2">{problem.topic}</h1>
-						<Tag>{problem.subtopic}</Tag>
-						<p>
-							Posted by <b>{problem.owner}</b>
-						</p>
+						<ProblemHead {...problem} important/>
 					</div>
 					<div>
 						<h2 className="h4">Problem Statement</h2>
 						<Interweave content={problem.statement} />
-						<div className="mt-8">
-							{[
-								problem.type === 0 && (
-									<input
-										key="short-answer"
-										value={state.answer.string}
-										onChange={(e) =>
-											setState({
-												...state,
-												answer: e.target.value,
-											})
-										}
-										disabled={state.correct}
-									/>
-								),
-								problem.type === 1 && (
-									<div>
-										{problem.choices.map(
-											(choice, index) => (
-												<Choice
-													key={`choice-${index}`}
-													name={choice}
-													index={index}
-													removable={false}
-													checked={
-														state.answer.choice ===
-														choice
-													}
-													onCheck={(name, index) =>
-														setState({
-															...state,
-															answer: name,
-														})
-													}
-													disabled={state.correct}
-													triggerWhenInputIsClicked
-													readOnly
-												/>
-											)
-										)}
-									</div>
-								),
-								problem.type === 2 && (
-									<div
-										key="matrix"
-										className="flex flex-col h-auto"
-									>
-										<div className="flex flex-col gap-2">
-											{[0, 1, 2].map((row) => (
-												<div
-													className="flex flex-row gap-2"
-													key={`row-${row}`}
-												>
-													{[0, 1, 2].map((col) => (
-														<div
-															className="flex w-16"
-															key={`cell-${row}-${col}`}
-														>
-															<input
-																id={`cell-${row}-${col}`}
-																className="!w-16"
-																type="text"
-																defaultValue={
-																	state.correct &&
-																	state.answer
-																		.matrix
-																		.rows >
-																		row &&
-																	state.answer
-																		.matrix
-																		.columns >
-																		col
-																		? state
-																				.answer
-																				.matrix
-																				.matrix[
-																				row
-																		  ][col]
-																		: ""
-																}
-																onChange={() =>
-																	setMatrix()
-																}
-																disabled={state.correct}
-															/>
-														</div>
-													))}
-												</div>
-											))}
-										</div>
-									</div>
-								),
-							]}
-						</div>
+						<ProblemAnswer problem={problem} state={state} setState={setState} />
 						<div className="mt-8">
 							<p className="text-red-500">{state.warning}</p>
 							{state.correct ? (
@@ -459,7 +333,7 @@ const Problems = ({ id }) => {
 							) : (
 								<Button
 									loading={state.loading}
-									onClick={submitAnswer}
+									onClick={() => submitAnswer()}
 									className={clsx("w-20 mt-4")}
 								>
 									Submit

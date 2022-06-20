@@ -47,13 +47,15 @@ const ProblemEditor = ({
 			},
 		},
 		type: 0,
-
-		accepted: 0,
-		attempted: 0,
-		comments: 0,
-
-		visibility: 0,
-		discussion: false,
+		metrics: {
+			accepted: 0,
+			attempted: 0,
+			comments: 0,
+		},
+		setting: {
+			visibility: 0,
+			discussion: false,
+		}
 	},
 }) => {
 	const [problem, setProblem] = useState(initialProblem);
@@ -120,7 +122,7 @@ const ProblemEditor = ({
 				<select
 					id="input-visibility"
 					onChange={(e) =>
-						update({ visibility: parseInt(e.target.value) })
+						update({ visibility: parseInt(e.target.value) }, "setting")
 					}
 				>
 					<option value="0">Public</option>
@@ -134,17 +136,27 @@ const ProblemEditor = ({
 			element: (
 				<Toggle
 					id="input-discussion"
-					onChange={(value) => update({ discussion: value })}
+					onChange={(value) => update({ discussion: value }, "setting")}
 				/>
 			),
 		},
 	];
 
-	async function update(data) {
-		setProblem((old) => ({
-			...old,
-			...data,
-		}));
+	async function update(data, specific=null) {
+		if (specific) {
+			setProblem((old) => ({
+				...old,
+				[specific]: {
+					...old[specific],
+					...data,
+				},
+			}));
+		} else {
+			setProblem((old) => ({
+				...old,
+				...data,
+			}));
+		}
 	}
 
 	async function callback() {

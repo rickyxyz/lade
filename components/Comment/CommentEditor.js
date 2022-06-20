@@ -32,7 +32,7 @@ const CommentEditor = ({ loggedIn, problemId, discussion }) => {
 
 		firebase
 		.database()
-		.ref(`/problem/${problemId}/`)
+		.ref(`/problem/${problemId}/metrics`)
 		.child("comments")
 		.set(firebase.database.ServerValue.increment(1));
 
@@ -65,7 +65,7 @@ const CommentEditor = ({ loggedIn, problemId, discussion }) => {
 			<Button loading={loading} variant="secondary" onClick={() => postComment()}>Post Comment</Button>
 		</div>
 	</div> : <div>
-		Discussion is not enabled in this question.
+		Discussion is not enabled.
 	</div>
     );
 };
