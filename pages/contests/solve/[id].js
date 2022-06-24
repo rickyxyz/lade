@@ -5,128 +5,130 @@ import {
 	postData,
 	turnProblemsObjectToArray,
 } from "../../../components/firebase";
-import Frame from "../../../components/Generic/Frame";
-import "react-quill/dist/quill.snow.css";
-import dynamic from "next/dynamic";
-import { Interweave } from "interweave";
-import CommentEntry from "../../../components/Comment/CommentEntry";
-import CommentEditor from "../../../components/Comment/CommentEditor";
-import Button from "../../../components/Generic/Button";
-import { BsCheckCircleFill } from "react-icons/bs";
 import "firebase/database";
 import "firebase/compat/database";
-import firebase from "firebase/compat/app";
+import firebase from 'firebase/compat/app';
+import { Interweave } from "interweave";
+import "react-quill/dist/quill.snow.css";
 import { getAuth } from "firebase/auth";
-import clsx from "clsx";
-import { CircleLoad } from "../../../components/Generic/Skeleton";
-import { genericToast, ToastContext } from "../../../components/Generic/Toast";
-import pushid from "pushid";
-import Tag from "../../../components/Generic/Tag";
-import { properifyMatrix } from "../../../components/Utility/matrix";
-import ContestHead from "../../../components/Contest/ContestHead";
-import ContestStats from "../../../components/Contest/ContestStats";
-import ProblemCard from "../../../components/Problem/ProblemCard";
-import {
-	mapDispatchToProps,
-	mapStateToProps,
-} from "../../../components/Redux/setter";
-import { connect } from "formik";
 import ProblemAnswer from "../../../components/Problem/ProblemAnswer";
 import FrameHead from "../../../components/Generic/FrameHead";
 import Bar from "../../../components/Generic/Bar";
+import { ModalContext } from "../../../components/Generic/Modal";
+import Frame from "../../../components/Generic/Frame";
+import Button from "../../../components/Generic/Button";
+import { CircleLoad } from "../../../components/Generic/Skeleton";
+import { ToastContext } from "../../../components/Generic/Toast";
 import { getTimeDifference } from "../../../components/Utility/date";
-
-const CooldownWarning = ({ time }) => (
-	<span>
-		You must wait <b>{time}</b> before you can reanswer this question!
-	</span>
-);
+import { compareAnswers } from "../../../components/Problem/compareAnswers";
+import clsx from "clsx";
 
 const SolveContest = ({ id }) => {
-	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
+	const [ogContest, setOgContest] = useState(null);
 	const [contest, setContest] = useState(null);
-	const [answers, setAnswers] = useState([]);
-	const [session, setSession] = useState({});
+	const [answers, setAnswers] = useState([]); // The answers in the "answer sheet".
+	const [session, setSession] = useState({}); // Bsaically like the metadata for "answer sheet".
+	const [intv, setIntv] = useState(null); // Interval
+	const [disabled, setDisabled] = useState(true); // Prevent submit button being used after contest ends.
+	const [loading, setLoading] = useState(false); // Prevent submit button spamming.
+	const [init, setInit] = useState(false); // Ensure that initiate session is only run once after db and contest exist.
+	const [fetch, setFetch] = useState(0); // Indicate fetching process. -1 means fail; 1 means success.
 
-	// Indicate whether comments & user answers have been fetched or not.
-	const [init, setInit] = useState(false);
-
-	// Indicate the situation of the fetching process. -1 means fail whereas 1 means success.
-	const [fetch, setFetch] = useState(0);
-
-	// Contexts to invoke toasts.
+	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
 	const { addToast } = useContext(ToastContext);
+	const { setModal } = useContext(ModalContext);
 
 	const auth = getAuth();
-	let uid = auth.currentUser ? auth.currentUser.uid : null;
+	const uid = auth.currentUser ? auth.currentUser.uid : null;
 
-	async function getProblemData(problemIds) {
-		const _problems = [];
+	// Only once if contest doesn't exist, get the contest data.
+	useEffect(() => {
+		if (db && _topics && _subtopics && !contest) {
+			getContestData();
+		}
+	}, [db, _topics, _subtopics]);
 
-		let allProblems = [];
-		allProblems = await getData(db, `/problem`).then((_objects) =>
-			turnProblemsObjectToArray(_objects, _topics, _subtopics)
-		);
-		problemIds.forEach((problemId) => {
-			_problems.push(
-				allProblems.filter((prob) => prob.id2 === problemId)[0]
-			);
-		});
+	// Only once after db and contest exist, initiate the session.
+	useEffect(() => {
+		if (db && contest && !init) {
+			initiateSession();
+			setInit(true);
+		}
+	}, [db, contest]);
 
-		console.log(_problems);
+	// If the time is out, then set the interface to view only.
+	function handleTimeRunOut() {
+		if (session.percentage >= 100) {
+			setSession((prevSession) => ({
+				...prevSession,
+				viewOnly: true,
+			}));
 
-		return _problems;
+			clearInterval(intv);
+
+			// Force submit answers once time h as run out.
+			submitAnswers(Date.now(), true);
+		}
 	}
+
+	// Upon unmount, clear interval.
+	useEffect(() => {
+		return () => {
+			if (intv) clearInterval(intv);
+		};
+	}, []);
 
 	async function getContestData() {
 		await getData(db, `/contest/${id}`)
-			.then(async (_contest) => {
+			.then(async (_contest) => { 
 				let { topic, subtopic } = _contest;
 				_contest.id = id;
-				_contest.topic = _topics[topic];
-				_contest.subtopic = _subtopics[topic][subtopic];
 				_contest.problems = await getProblemData(_contest.problems);
-
 				setContest(_contest);
 				setFetch(1);
 			})
-			.then(() => {})
 			.catch((e) => {
+				console.log(e);
 				setFetch(-1);
 			});
 	}
 
-	async function setNthAnswer(n, answer) {
-		const answersArray = answers.slice(0, answers.length);
-		answersArray[n] = answer.answer;
-		setAnswers(answersArray);
-	}
-
-	async function initiateSession(now) {
-		await postData(db, `answer/${uid}/${id}`, {
-			start: now,
-		});
-	}
-
-	async function getExistingSession() {
+	async function initiateSession() {
+		// Get existing session.
 		const _session = await getData(db, `answer/${uid}/${id}`);
-	}
+		
+		// If there is none, create a new one.
+		// Otherwise, use existing data (start/end time).
+		if (!_session) {
+			await postData(db, `answer/${uid}/${id}`, {
+				start: Date.now(),
+			});
+		} else {
+			setAnswers(_session.answers ?? []);
+			setSession((prevSession) => ({
+				...prevSession,
+				start: _session.start,
+				end: _session.start + contest.time.duration * 60 * 1000,
+			}));
+		}
 
-	useEffect(() => {
 		function adjustValue(value) {
-			if(value < 0) value = 0;
-			if(value >= 100) value = 100;
-			if(isNaN(value)) value = 0;
+			if (value < 0) value = 0;
+			if (value >= 100) value = 100;
+			if (isNaN(value)) value = 0;
 			return value;
 		}
 
 		let interval, _start, _end;
 
-		if(contest && !session.start && !session.end) {
-			const now = Date.now();
+		console.log(_session);
 
-			initiateSession(now);
-
+		const now = Date.now();
+		if (
+			contest.time &&
+			now < contest.time.end &&
+			(!_session || (_session && !_session.submittedAt))
+		) {
 			/*
 				Generally, users can take the contest anytime they like,
 				as long as the contest end time hasn't passed yet.
@@ -144,28 +146,36 @@ const SolveContest = ({ id }) => {
 					-> End time is start time plus the duration of the test.
 				*/
 				_start = now;
-				_end = now + contest.time.duration * 60 * 1000;
+				_end = _start + contest.time.duration * 60 * 1000;
 
-				if(now <= contest.time.end)
-					interval = setInterval(() => {
-						const _now = Date.now();
+				if (now <= contest.time.end)
+					setIntv(
+						setInterval(() => {
+							const _now = Date.now();
 
-						let percentage = Math.ceil(
-							((_now - now) * 10000) /
-								(contest.time.duration * 60 * 1000)
-						) / 100;
+							let __start = _start;
+							if (_session && _session.start)
+								__start = _session.start;
 
-						console.log(percentage);
+							let percentage =
+								Math.ceil(
+									((_now - __start) * 10000) /
+										(contest.time.duration * 60 * 1000)
+								) / 100;
 
-						setSession((prevSession) => ({
-							...prevSession,
-							remaining: getTimeDifference(
-								session.start + contest.time.duration * 60 * 1000,
-								_now
-							),
-							percentage: adjustValue(percentage),
-						}));
-					}, 100);
+							setSession((prevSession) => ({
+								...prevSession,
+								remaining: getTimeDifference(
+									__start + contest.time.duration * 60 * 1000,
+									_now
+								),
+								percentage: adjustValue(percentage),
+							}));
+
+							if(percentage >= 100)
+								handleTimeRunOut();
+						}, 100)
+					);
 			} else {
 				/*
 					Duration-less time contests:
@@ -175,58 +185,156 @@ const SolveContest = ({ id }) => {
 				_start = contest.time.start;
 				_end = contest.time.end;
 
-				if(now <= contest.time.end)
-					interval = setInterval(() => {
-						const _now = Date.now();
-	
-						let percentage = Math.ceil(
-							((_now - contest.time.start) * 10000) /
-								(contest.time.end - contest.time.start)
-						) / 100;
+				if (now <= contest.time.end)
+					setIntv(
+						setInterval(() => {
+							const _now = Date.now();
 
-						console.log(percentage);
+							let percentage =
+								Math.ceil(
+									((_now - contest.time.start) * 10000) /
+										(contest.time.end - contest.time.start)
+								) / 100;
 
-						setSession((prevSession) => ({
-							...prevSession,
-							remaining: getTimeDifference(contest.time.end, _now),
-							percentage: adjustValue(percentage),						
-						}));
-					}, 100);
+							setSession((prevSession) => ({
+								...prevSession,
+								remaining: getTimeDifference(
+									contest.time.end,
+									_now
+								),
+								percentage: adjustValue(percentage),
+							}));
+
+							if(percentage >= 100)
+								handleTimeRunOut();
+						}, 100)
+					);
 			}
 
-			setSession(prevSession => ({
+			let newSession = {
+				remaining: now <= contest.time.end ? session.remaining : "-",
+				percentage: now <= contest.time.end ? 100 : session.percentage,
+			};
+
+			if (!_session) {
+				newSession = {
+					...newSession,
+					start: _start,
+					end: _end,
+				};
+			}
+
+			setDisabled(false);
+			setSession((prevSession) => ({
 				...prevSession,
-				start: _start,
-				end: _end,
-				remaining: (now <= contest.time.end) ? prevSession.remaining : "-",
-				percentage: (now <= contest.time.end) ? 100 : prevSession.percentage
+				...newSession,
+			}));
+		} else {
+			setSession((prevSession) => ({
+				...prevSession,
+				viewOnly: true,
+				remaining: "-",
+				percentage: 100,
+				score: _session.score,
 			}));
 		}
+	}
 
-		return () => {
-			if(interval)
-				clearInterval(interval);
-		};
-	}, [contest]);
+	async function getProblemData(contestProblems) {
+		// _problems are temporary arrays to store the final problem objects.
+		const _problems = [];
 
-	useEffect(() => {
-		if (db && _topics && _subtopics && !contest) {
-			getContestData();
+		// Get all problems from the database.
+		// TODO: definitely not the smartest choice, must think of a better solution.
+		let allProblems = [];
+		allProblems = await getData(db, `/problem`)
+			.then((_objects) =>
+				turnProblemsObjectToArray(_objects, _topics, _subtopics)
+			)
+			.catch((e) => console.log(e));
+
+		// Finally, filter our problems that are actually in the contest.
+		contestProblems.forEach((problem) => {
+			let temp = allProblems.filter(
+				(prob) => prob.id2 === problem.id2
+			)[0];
+			temp.weight = problem.weight;
+			_problems.push(temp);
+		});
+
+		return _problems;
+	}
+
+	async function setNthAnswer(n, answer) {
+		const answersArray = answers.slice(0, answers.length);
+		answersArray[n] = answer.answer;
+		setAnswers(answersArray);
+	}
+
+	async function submitAnswers(now, ignoreTime = false) {
+		setLoading(true);
+
+		// Calculate score
+		let score = 0;
+		contest.problems.forEach((prob, idx) => {
+			if (
+				answers[idx] &&
+				compareAnswers(prob.type, answers[idx], prob.accept)
+			)
+				score += prob.weight;
+		});
+
+		if (now >= session.end && !ignoreTime) {
+			addToast({
+				title: "Oops!",
+				desc: "The time has run out.",
+				variant: "danger",
+			});
+			return;
 		}
-	}, [db, _topics, _subtopics]);
 
-	useEffect(() => {
-		console.log("💎");
-		console.log(answers);
-	}, [answers]);
+		await postData(db, `answer/${uid}/${id}`, {
+			start: session.start,
+			submittedAt: now,
+			score: score,
+			answers: answers,
+		}).then( async () => {
+			firebase
+			.database()
+			.ref(`/contest/${id}/metrics`)
+			.child("participants")
+			.set(firebase.database.ServerValue.increment(1));
 
-	useEffect(() => {
-		if (!init && contest && auth.currentUser) {
-			// getUserAnswer();
-			setInit(true);
-		}
-	});
-	
+			return await postData(db, `contest/${id}`, {
+				...contest,
+				participants: [...contest.participants, uid],
+			})
+		}).catch(e => {});
+
+		setLoading(false);
+	}
+
+	function confirmAnswers() {
+		const now = Date.now();
+
+		setModal(
+			<div className="w-96 flex flex-col">
+				<h2 className="h3">Confirmation</h2>
+				<p className="mt-4">
+					Click confirm to submit your answers. You will be able to
+					see the results immediately.
+				</p>
+				<Button
+					onClick={() => submitAnswers(now)}
+					className="mt-4"
+					loading={loading}
+				>
+					Submit
+				</Button>
+			</div>
+		);
+	}
+
 	return (
 		<Frame contest={contest}>
 			{fetch === 1 && (
@@ -234,37 +342,84 @@ const SolveContest = ({ id }) => {
 				<>
 					<FrameHead height="tall">
 						<h1 className="h2">{contest.title}</h1>
-						<Bar className="mt-4" percentage={session.percentage} color={session.remaining === "-" ? "red" : "green"} />
+						<Bar
+							className="mt-4"
+							percentage={session.percentage}
+							color={session.remaining === "-" ? "red" : "green"}
+						/>
 						<section className="flex bar justify-between mt-4">
 							<span>
 								<b>Start: </b>
-								<time>{new Date(session.start).toLocaleString()}</time>
+								<time>
+									{new Date(session.start).toLocaleString()}
+								</time>
 							</span>
 							<span>
 								<b>Remaining: </b>
-								<span>
-									{session.remaining}
-								</span>
+								<span>{session.remaining}</span>
 							</span>
 							<span>
 								<b>End: </b>
-								<time>{new Date(session.end).toLocaleString()}</time>
+								<time>
+									{new Date(session.end).toLocaleString()}
+								</time>
 							</span>
 						</section>
-						<Button className="mt-4">OK</Button>
+						<div className="flex mt-4">
+							<Button
+								onClick={() => confirmAnswers()}
+								disabled={disabled}
+							>
+								Submit
+							</Button>
+							<div
+								className={clsx(
+									session.viewOnly
+										? "flex items-center ml-4"
+										: "hidden"
+								)}
+							>
+								<span>
+									<b>Score: </b>
+									{`${session.score} / ${contest.weights}`}
+								</span>
+							</div>
+						</div>
 					</FrameHead>
 					{contest.problems &&
 						contest.problems.map((problem, index) => {
 							return (
-								<div className="relative top-64" key={index}>
+								<div
+									className={clsx(
+										"relative top-60 transition-colors",
+										session.viewOnly &&
+											compareAnswers(
+												problem.type,
+												answers[index],
+												problem.accept
+											) &&
+											"bg-green-50",
+										session.viewOnly &&
+											!compareAnswers(
+												problem.type,
+												answers[index],
+												problem.accept
+											) &&
+											"bg-red-50"
+									)}
+									key={`question-${index + 1}`}
+								>
 									<h2 className="h4">Question {index + 1}</h2>
 									<Interweave content={problem.statement} />
 									<ProblemAnswer
 										problem={problem}
-										state={answers[index]}
+										state={{
+											answer: answers[index],
+										}}
 										setState={(ans) =>
 											setNthAnswer(index, ans)
 										}
+										disabled={session.viewOnly}
 									/>
 								</div>
 							);

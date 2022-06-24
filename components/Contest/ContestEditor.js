@@ -325,7 +325,10 @@ const ContestEditor = ({
 		function convertProblems() {
 			let arrayProblems = [];
 			tableProblems.forEach((prob) => {
-				arrayProblems.push(prob.id2);
+				arrayProblems.push({
+					id2: prob.id2,
+					weight: prob.weight,
+				});
 			});
 			return arrayProblems;
 		}
@@ -415,6 +418,7 @@ const ContestEditor = ({
 					start: startProper,
 					end: endProper,
 				},
+				participants: [],
 			})
 				.then(() => {
 					return id;
@@ -510,7 +514,7 @@ const ContestEditor = ({
 						.database()
 						.ref("problem")
 						.orderByChild("id2")
-						.equalTo(prob);
+						.equalTo(prob.id2);
 
 					problemQuery.once("value", (snapshot) => {
 						const value = snapshot.val();
@@ -524,7 +528,7 @@ const ContestEditor = ({
 								_problem.id = Object.keys(value)[0];
 								_problem.topic = _topics[topic];
 								_problem.subtopic = _subtopics[topic][subtopic];
-								_problem.weight = 10;
+								_problem.weight = prob.weight;
 								_problems.push(_problem);
 							});
 						}
