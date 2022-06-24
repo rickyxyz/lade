@@ -14,5 +14,5 @@ export const ProblemCardSK = ({ className }) => (
 );
 
 export const CircleLoad = () => (
-	<div className="lds-dual-ring"></div>
+	<div className="lds-dual-ring mt-1"></div>
 );
