@@ -2,11 +2,10 @@ import clsx from "clsx";
 import { properifyMatrix } from "../Utility/matrix";
 import Choice from "./Choice";
 
-const ProblemAnswer = ({ problem, state, setState }) => {
+const ProblemAnswer = ({ problem, state, setState, disabled = false }) => {
+	// disabled props is only used for solve contest page.
 
 	function setMatrix() {
-		console.log("SET MATRIX");
-
 		const matrix = properifyMatrix();
 
 		setState({
@@ -30,7 +29,7 @@ const ProblemAnswer = ({ problem, state, setState }) => {
 								answer: e.target.value,
 							})
 						}
-						disabled={state.correct}
+						disabled={disabled || state.correct}
 					/>
 				),
 				problem.type === 1 && (
@@ -41,14 +40,16 @@ const ProblemAnswer = ({ problem, state, setState }) => {
 								name={choice}
 								index={index}
 								removable={false}
-								checked={state && state.answer.choice === choice}
+								checked={
+									state && state.answer.choice === choice
+								}
 								onCheck={(name, index) =>
 									setState({
 										...state,
 										answer: name,
 									})
 								}
-								disabled={state && state.correct}
+								disabled={disabled || (state && state.correct)}
 								triggerWhenInputIsClicked
 								readOnly
 							/>
@@ -73,21 +74,23 @@ const ProblemAnswer = ({ problem, state, setState }) => {
 												className={clsx("!w-16")}
 												type="text"
 												defaultValue={
-													state &&
-													state.correct &&
-													state.answer.matrix
-														.rows > row &&
-													state.answer.matrix
-														.columns > col
-														? state.answer
-																.matrix
-																.matrix[
-																row
-															][col]
+													(state &&
+														state.answer &&
+														state.answer.matrix.rows >
+															row &&
+														state.answer.matrix
+															.columns > col)
+														? (state.answer.matrix
+																.matrix[row][
+																col
+														  ])
 														: ""
 												}
 												onBlur={() => setMatrix()}
-												disabled={state && state.correct}
+												disabled={
+													disabled ||
+													(state && state.correct)
+												}
 												autoComplete="off"
 											/>
 										</div>

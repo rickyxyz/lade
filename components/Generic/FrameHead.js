@@ -2,9 +2,9 @@ import clsx from "clsx";
 
 const FrameHead = ({ height = "small", children }) => {
 	return (
-		<div className={clsx(`fixed top-16 w-full z-50 bg-white`, [
+		<div className={clsx(`fixed top-16 w-full z-20 bg-white`, [
 			height === "small" && "h-44",
-			height === "tall" && "h-64" ,
+			height === "tall" && "h-60" ,
 		])}>
 			{ children }
 		</div>

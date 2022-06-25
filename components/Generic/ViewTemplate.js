@@ -108,7 +108,8 @@ const ViewTemplate = ({ title, crits, dataPath, objects, setObjects, component }
 
 		// Other criteria are properties, so we define a custom sort function for it.
 		setDisplayObjects(() => {
-			const sortedObjects = objects.sort(
+			const _objects = [...objects];
+			const sortedObjects = _objects.sort(
 				(a, b) => (b.metrics[_criteria] - a.metrics[_criteria]) * Math.sign(criteriaId)
 			);
 			const limitedObjects = limitObjects(sortedObjects);

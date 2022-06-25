@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-const Bar = ({ color = "green", className, percentage }) => {
+const Bar = ({ color = "green", className, percentage = 0 }) => {
 	return (
 		<div
 			className={clsx(
