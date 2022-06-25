@@ -8,17 +8,24 @@ import CommentEntry from "../../components/Comment/CommentEntry";
 import CommentEditor from "../../components/Comment/CommentEditor";
 import Choice from "../../components/Problem/Choice";
 import Button from "../../components/Generic/Button";
-import { BsCheckCircleFill } from "react-icons/bs"; 
+import { BsCheckCircleFill } from "react-icons/bs";
 import "firebase/database";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
 import clsx from "clsx";
+import { CircleLoad } from "../../components/Generic/Skeleton";
+import { genericToast, ToastContext } from "../../components/Generic/Toast";
+import pushid from "pushid";
+import Tag from "../../components/Generic/Tag";
+import { properifyMatrix } from "../../components/Utility/matrix";
+import ProblemHead from "../../components/Problem/ProblemHead";
+import ProblemAnswer from "../../components/Problem/ProblemAnswer";
+import { compareAnswers } from "../../components/Problem/compareAnswers";
 
 const CooldownWarning = ({ time }) => (
 	<span>
-		You must wait <b>{time}</b> before you can reanswer
-		this question!
+		You must wait <b>{time}</b> before you can reanswer this question!
 	</span>
 );
 
@@ -27,18 +34,38 @@ const Problems = ({ id }) => {
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
 	const [state, setState] = useState({
-		answer: "",
-		loading: true,
-		correct: false,
-		lastAnswered: null,
+		answer: {
+			string: "",
+			choice: "",
+			matrix: {
+				rows: 3,
+				columns: 3,
+				matrix: [
+					[null, null, null],
+					[null, null, null],
+					[null, null, null],
+				],
+			},
+		}, // Save user's answers.
+		loading: true, // Controls the button's loading state, to prevent users fromm spamming the button.
+		correct: false, // Determines if the user's answers is correct or not.
+		lastAnswered: null, // The time the user last answered, to calculate the cooldown.
+		// Saves the warnig text. Later, used to show remaining cooldown time.
 		warning:
 			"After you click submit, your answer will be immediately checked.",
 	});
 
+	// Indicate whether comments & user answers have been fetched or not.
 	const [init, setInit] = useState(false);
 
+	// Indicate the situation of the fetching process. -1 means fail whereas 1 means success.
+	const [fetch, setFetch] = useState(0);
+
+	// Contexts to invoke toasts.
+	const { addToast } = useContext(ToastContext);
+
 	const auth = getAuth();
-	let uid =  auth.currentUser ? auth.currentUser.uid : null;
+	let uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
@@ -48,13 +75,17 @@ const Problems = ({ id }) => {
 				_problem.topic = _topics[topic];
 				_problem.subtopic = _subtopics[topic][subtopic];
 				setProblem(_problem);
+				setFetch(1);
 			})
-			.catch((e) => {});
+			.catch((e) => {
+				setFetch(-1);
+			});
 	}
 
 	async function getCommentData() {
 		await getData(db, `/comment/${id}`)
 			.then((_comments) => {
+				if (!_comments) return;
 				const tempComments = [];
 				for (let [id, _comment] of Object.entries(_comments)) {
 					_comment.id = id;
@@ -62,12 +93,29 @@ const Problems = ({ id }) => {
 				}
 				setComments(tempComments);
 			})
-			.catch((e) => {});
+			.catch((e) => {
+				addToast(genericToast("get-fail"));
+			});
 	}
 
-	function checkCooldownForWarning(now, problem, lastAnswered, callback=()=>{}) {
-		let cooldown = 10 * 1000; // 10 seconds
-		if (problem.type === 1) cooldown = 60 * 10 * 1000; // 600 seconds
+	function checkCooldownForWarning(
+		now,
+		problem,
+		lastAnswered,
+		callback = () => {}
+	) {
+		let cooldown;
+		switch (problem.type) {
+			case 0:
+				cooldown = 10 * 1000;
+				break;
+			case 1:
+				cooldown = 60 * 10 * 1000;
+				break;
+			case 2:
+				cooldown = 30 * 10 * 1000 * 0;
+				break;
+		}
 
 		const timeElapsed = now - lastAnswered;
 
@@ -85,20 +133,43 @@ const Problems = ({ id }) => {
 		return false;
 	}
 
+	/*
+		This function is executed when user opens the problem page,
+		to check whether if they already answered this problem or not.
+	*/
 	async function getUserAnswer() {
+		// If no one is logged in, stop checking.
+		if (!uid) return;
+
 		await getData(db, `/answer/${uid}/${id}`)
 			.then((_answer) => {
 				if (_answer) {
-					const correct = _answer.answer === problem.accept;
+					let correct = compareAnswers(
+						problem.type,
+						_answer.answer,
+						problem.accept
+					);
+					// If answer exists, then check if it is correct or not.
+					// correct = _answer.answer === problem.accept;
 					let warning = { warning: null };
 
 					const now = new Date();
 					const la = new Date(_answer.lastAnswered);
 
-					checkCooldownForWarning(now, problem, la, (timeShow) => {
-						warning.warning = <CooldownWarning time={timeShow} />
-					});
+					// If it is not correct, show a warning.
+					if (!correct)
+						checkCooldownForWarning(
+							now,
+							problem,
+							la,
+							(timeShow) => {
+								warning.warning = (
+									<CooldownWarning time={timeShow} />
+								);
+							}
+						);
 
+					// Update the state to reflect the user's answers.
 					setState({
 						...state,
 						...warning,
@@ -114,27 +185,54 @@ const Problems = ({ id }) => {
 					});
 				}
 			})
-			.catch((e) => { console.log(e) });
+			.catch((e) => {
+				addToast(genericToast("get-fail"));
+				console.log(e);
+			});
 	}
 
+	/*
+		This function is executed when user submits their answer.
+	*/
 	async function submitAnswer() {
 		const now = new Date();
 
-		if(checkCooldownForWarning(now, problem, state.lastAnswered, (timeShow) => setState({
-			...state,
-			warning: <CooldownWarning time={timeShow} />,
-		})))
+		// Check if they have cooldown. If so, warn them and stop checking.
+		if (
+			checkCooldownForWarning(
+				now,
+				problem,
+				state.lastAnswered,
+				(timeShow) =>
+					setState({
+						...state,
+						warning: <CooldownWarning time={timeShow} />,
+					})
+			)
+		)
 			return;
 
+		// Otherwise, make the button disabled to prevent spamming, and continue checking.
 		setState({ ...state, loading: true });
+
+		// Create a small delay.
 		setTimeout(() => {
-			console.log(now);
 			try {
-				if (state.answer === problem.accept) {
-					alert("Correct Answer!!!");
+				// Check if the answer is the same as the correct answer.
+				if (
+					compareAnswers(problem.type, state.answer, problem.accept)
+				) {
+					// If so, notify the user.
+					addToast({
+						title: "Great work!",
+						desc: "Your answer is correct.",
+						variant: "success",
+					});
+
+					// Increment the accepted counter of the problem.
 					firebase
 						.database()
-						.ref(`/problem/${id}/`)
+						.ref(`/problem/${id}/metrics`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 
@@ -148,19 +246,29 @@ const Problems = ({ id }) => {
                         }
                     });
 				} else {
-					alert("Wrong Answer!");
+					// If it is not correct, notify the user.
+					addToast({
+						title: "Too bad...",
+						desc: "Your answer is incorrect.",
+						variant: "danger",
+					});
+
+					// Increment the attempted counter of the problem.
 					firebase
 						.database()
-						.ref(`/problem/${id}/`)
+						.ref(`/problem/${id}/metrics`)
 						.child("attempted")
 						.set(firebase.database.ServerValue.increment(1));
 				}
+
+				// Afterwards, save the user's answer. Note that this only
+				// saves the last answer of the user.
 				postData(db, `/answer/${uid}/${id}`, {
 					answer: state.answer,
 					lastAnswered: now.getTime(),
 				});
 			} catch (e) {
-				console.log(e);
+				addToast(genericToast("post-fail"));
 				setState({
 					...state,
 					loading: false,
@@ -169,9 +277,14 @@ const Problems = ({ id }) => {
 				});
 			}
 
+			// Update the state reflecting the user's latest answer to this problem.
 			setState({
 				...state,
-				correct: state.answer === problem.accept,
+				correct: compareAnswers(
+					problem.type,
+					state.answer,
+					problem.accept
+				),
 				loading: false,
 				warning: null,
 				lastAnswered: now,
@@ -186,71 +299,37 @@ const Problems = ({ id }) => {
 	}, [db, _topics, _subtopics]);
 
 	useEffect(() => {
-		if (!init && problem) {
+		if (!init && problem && auth.currentUser) {
 			getCommentData();
 			getUserAnswer();
 			setInit(true);
 		}
 	});
 
-	useEffect(() => {
-		console.log(state.correct);
-	}, [ state ]);
+	//  Helper function to save proper matrix.
+	function setMatrix() {
+		const matrix = properifyMatrix();
+
+		setState({
+			...state,
+			answer: {
+				matrix: matrix,
+			},
+		});
+	}
 
 	return (
-		<Frame>
-			{problem ? (
+		<Frame problem={problem}>
+			{fetch === 1 && (
+				//If data fetch is successful.
 				<>
-					<div>
-						<h1 className="h2">{problem.topic}</h1>
-						<p className="mt-4">{problem.subtopic}</p>
+					<div className="flex flex-col gap-4">
+						<ProblemHead {...problem} important/>
 					</div>
 					<div>
 						<h2 className="h4">Problem Statement</h2>
 						<Interweave content={problem.statement} />
-						<div className="mt-8">
-							{[
-								problem.type === 0 && (
-									<input
-										key="short-answer"
-										value={state.answer}
-										onChange={(e) =>
-											setState({
-												...state,
-												answer: e.target.value,
-											})
-										}
-										disabled={state.correct}
-									/>
-								),
-								problem.type === 1 && (
-									<div>
-										{problem.choices.map(
-											(choice, index) => (
-												<Choice
-													key={`choice-${index}`}
-													name={choice}
-													index={index}
-													removable={false}
-													checked={
-														state.answer === choice
-													}
-													onCheck={(name, index) =>
-														setState({
-															...state,
-															answer: name,
-														})
-													}
-													disabled={state.correct}
-													triggerWhenInputIsClicked
-													readOnly
-												/>
-											)
-										)}
-									</div>
-								),
-							]}
-						</div>
+						<ProblemAnswer problem={problem} state={state} setState={setState} />
 						<div className="mt-8">
 							<p className="text-red-500">{state.warning}</p>
 							{state.correct ? (
@@ -258,13 +337,13 @@ const Problems = ({ id }) => {
 									variant="success"
 									className={clsx("mt-4")}
 								>
-									<BsCheckCircleFill className="mr-2"/>
+									<BsCheckCircleFill className="mr-2" />
 									Correct
 								</Button>
 							) : (
 								<Button
 									loading={state.loading}
-									onClick={submitAnswer}
+									onClick={() => submitAnswer()}
 									className={clsx("w-20 mt-4")}
 								>
 									Submit
@@ -274,7 +353,10 @@ const Problems = ({ id }) => {
 					</div>
 					<div>
 						<h2 className="h4">Discussion</h2>
-						<CommentEditor problemId={problem.id} discussion={problem.discussion} />
+						<CommentEditor
+							problemId={problem.id}
+							discussion={problem.discussion}
+						/>
 						{comments.map((comment) => (
 							// pass the problem id down to UpvoteDownvote.js
 							<CommentEntry
@@ -285,8 +367,21 @@ const Problems = ({ id }) => {
 						))}
 					</div>
 				</>
-			) : (
-				<div>The problem is not found.</div>
+			)}
+			{fetch === 0 && (
+				//If data fetch is not yet finished.
+				<div className="flex flex-row items-center justify-center">
+					<CircleLoad />
+				</div>
+			)}
+			{fetch === -1 && (
+				//If data fetch fails.
+				<div>
+					<p className="h1 mb-4">Oops!</p>
+					<p>
+						We couldn&apos;t get the data. Please try again later.
+					</p>
+				</div>
 			)}
 		</Frame>
 	);

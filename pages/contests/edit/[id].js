@@ -3,30 +3,31 @@ import { FirebaseContext, getData } from "../../../components/firebase";
 import Frame from "../../../components/Generic/Frame";
 import "react-quill/dist/quill.snow.css";
 import ProblemEditor from "../../../components/Problem/ProblemEditor";
+import ContestEditor from "../../../components/Contest/ContestEditor";
 
-const Problems = ({ id }) => {
+const Contests = ({ id }) => {
 	const { db, _topics, _subtopics } = useContext(FirebaseContext);
-	const [problem, setProblem] = useState(null);
+	const [contest, setContest] = useState(null);
 
-	async function getProblemData() {
-		await getData(db, `/problem/${id}`)
-			.then((_problem) => {
-				_problem.id = id;
-				setProblem(_problem);
+	async function getContestData() {
+		await getData(db, `/contest/${id}`)
+			.then((_contest) => {
+				_contest.id = id;
+				setContest(_contest);
 			})
 			.catch((e) => {});
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics && !problem) getProblemData();
+		if (db && _topics && _subtopics && !contest) getContestData();
 	}, [db, _topics, _subtopics]);
 
 	return (
-		<Frame problem={problem}>
-			{problem ? (
-				<ProblemEditor purpose="edit" initialProblem={problem} />
+		<Frame contest={contest}>
+			{contest ? (
+				<ContestEditor purpose="edit" initialContest={contest} />
 			) : (
-				<div>The problem is not found.</div>
+				<div>The contest is not found.</div>
 			)}
 		</Frame>
 	);
@@ -38,4 +39,4 @@ export async function getServerSideProps({ params }) {
 	return { props: { id } };
 }
 
-export default Problems;
+export default Contests;

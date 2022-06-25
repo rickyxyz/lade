@@ -33,6 +33,11 @@ const Button = ({
                         `hover:bg-green-600`,
                         `active:bg-green-700`,
                     ],
+					variant === "warning" && [
+                        `bg-yellow-500 text-white`,
+                        `hover:bg-yellow-600`,
+                        `active:bg-yellow-700`,
+                    ],
                     variant === "danger" && [
                         `bg-red-500 text-white`,
                         `hover:bg-red-600`,

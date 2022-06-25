@@ -1,4 +1,9 @@
-import { BsArrowDownCircle, BsArrowUpCircle, BsArrowDownCircleFill, BsArrowUpCircleFill } from "react-icons/bs";
+import {
+	BsArrowDownCircle,
+	BsArrowUpCircle,
+	BsArrowDownCircleFill,
+	BsArrowUpCircleFill,
+} from "react-icons/bs";
 import "react-quill/dist/quill.snow.css";
 
 import { useContext, useEffect, useState } from "react";
@@ -8,14 +13,51 @@ import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import "react-quill/dist/quill.snow.css";
 import { connect } from "react-redux";
 
-
 import "firebase/database";
 import "firebase/compat/database";
-import firebase from 'firebase/compat/app';
+import firebase from "firebase/compat/app";
 import { getAuth } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
 
 import clsx from "clsx";
+
+const Reaction = ({
+	type,
+	record,
+	className,
+	onClick,
+}) => {
+	return (
+		<div
+			className={clsx(
+				"flex flex-row justify-center items-center",
+				"cursor-pointer ",
+				className
+			)}
+			onClick={onClick}
+		>
+			{type === 1 ? (
+				<>
+					<BsArrowUpCircle
+						className={clsx(record === 1 && "hidden")}
+					/>
+					<BsArrowUpCircleFill
+						className={clsx(record !== 1 && "hidden")}
+					/>
+				</>
+			) : (
+				<>
+					<BsArrowDownCircle
+						className={clsx(record === -1 && "hidden")}
+					/>
+					<BsArrowDownCircleFill
+						className={clsx(record !== -1 && "hidden")}
+					/>
+				</>
+			)}
+		</div>
+	);
+};
 
 const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 	const { db } = useContext(FirebaseContext);
@@ -25,7 +67,13 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 
 	// get UID and upvote record
 	const auth = getAuth();
-	const uid = auth.currentUser.uid;
+	const uid = auth.currentUser ? auth.currentUser.uid : null;
+
+	// up and downvote
+	const upvote = comment.upvote + (record === 1 ? 1 : 0) - (eRecord === 1 ? 1 : 0);
+	const downvote =  comment.downvote +
+	(record === -1 ? 1 : 0) -
+	(eRecord === -1 ? 1 : 0);
 
 	async function react(type) {
 		function pair(t) {
@@ -51,8 +99,16 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 		// the feature won't work properly.
 		setRecord(aRecord === type ? 0 : type);
 
-		firebase.database().ref(`/comment/${problemId}/${comment.id}`).child(`${wordType}vote`).set(firebase.database.ServerValue.increment(change));
-		firebase.database().ref(`/comment/${problemId}/${comment.id}`).child(`${pair(wordType)}vote`).set(firebase.database.ServerValue.increment(-change2));
+		firebase
+			.database()
+			.ref(`/comment/${problemId}/${comment.id}`)
+			.child(`${wordType}vote`)
+			.set(firebase.database.ServerValue.increment(change));
+		firebase
+			.database()
+			.ref(`/comment/${problemId}/${comment.id}`)
+			.child(`${pair(wordType)}vote`)
+			.set(firebase.database.ServerValue.increment(-change2));
 
 		await getData(db, `/user/${uid}`).then(async (userData) => {
 			await postData(db, `/user/${uid}`, {
@@ -78,37 +134,28 @@ const UpvoteDownvote = ({ loggedIn, problemId, comment }) => {
 	}, []);
 
 	return (
-		<div className="flex flex-row gap-1 items-center">
-			<div
+		<div className="flex flex-col gap-1 items-center">
+			<Reaction
 				className={clsx(
-					"flex flex-row items-center w-12",
-					"hover:text-red-500 active:text-red-800 focus:text-red-800",
-					"cursor-pointer ",
-					record === 1 && "text-red-600"
+					"hover:text-orange-500 active:text-orange-800 focus:text-orange-800",
+					record === 1 && "text-orange-600"
 				)}
+				type={1}
+				record={record}
 				onClick={() => react(1)}
-			>
-				<BsArrowUpCircle className={clsx(record === 1 && "hidden")} />
-				<BsArrowUpCircleFill className={clsx(record !== 1 && "hidden")} />
-				<span className="ml-2">
-					{comment.upvote + (record === 1 ? 1 : 0) - (eRecord === 1 ? 1 : 0)}
+			/>
+				<span className="w-8 text-center">
+					{ upvote - downvote }
 				</span>
-			</div>
-			<div
+			<Reaction
 				className={clsx(
-					"flex flex-row items-center w-12 ml-4",
 					"hover:text-blue-500 active:text-blue-800 focus:text-blue-800",
-					"cursor-pointer ",
 					record === -1 && "text-blue-600"
 				)}
+				type={-1}
+				record={record}
 				onClick={() => react(-1)}
-			>
-				<BsArrowDownCircle className={clsx(record === -1 && "hidden")} />
-				<BsArrowDownCircleFill className={clsx(record !== -1 && "hidden")} />
-				<span className="ml-2">
-					{comment.downvote + (record === -1 ? 1 : 0) - (eRecord === -1 ? 1 : 0)}
-				</span>
-			</div>
+			/>
 		</div>
 	);
 };
