@@ -45,7 +45,7 @@ const Register = ({ loginUser }) => {
 						username: values["username"],
                         level: 1,
                         experience: 0
-					});
+					};
 					
 					await postData(db, `user/${cred.user.uid}`, userData);
 					loginUser(userData);
