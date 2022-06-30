@@ -235,6 +235,16 @@ const Problems = ({ id }) => {
 						.ref(`/problem/${id}/metrics`)
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
+
+                    // add experience on correct answer
+                    firebase.database().ref(`/user/${uid}/`).child("experience").set(firebase.database.ServerValue.increment(10));
+                    // fetch user data to check level up condition
+                    getData(db, `/user/${uid}`).then((_userData)=>{
+                        if(_userData.experience >= _userData.level * 100 || true){
+                            firebase.database().ref(`/user/${uid}/`).child("experience").set(_userData.experience%(_userData.level*100));
+                            firebase.database().ref(`/user/${uid}/`).child("level").set(firebase.database.ServerValue.increment(1));
+                        }
+                    });
 				} else {
 					// If it is not correct, notify the user.
 					addToast({
