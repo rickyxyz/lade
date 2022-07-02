@@ -22,6 +22,7 @@ import "firebase/database";
 import "firebase/compat/database";
 import firebase from "firebase/compat/app";
 import { properifyMatrix } from "../Utility/matrix";
+import Time from "../Generic/Date";
 
 const ProblemEditor = ({
 	loggedIn,
@@ -55,6 +56,9 @@ const ProblemEditor = ({
 		setting: {
 			visibility: 0,
 			discussion: false,
+		},
+		time: {
+			createdAt: 0,
 		}
 	},
 }) => {
@@ -188,6 +192,9 @@ const ProblemEditor = ({
 
 			return await postData(db, `/problem/${id}`, {
 				...problem,
+				time: {
+					createdAt: new Date().getTime()
+				},
 				statement: content,
 				owner: loggedIn.username,
 				id2: getId2(topicWord, subTopicWord, problemCount),
