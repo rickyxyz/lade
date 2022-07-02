@@ -1,7 +1,10 @@
 import clsx from "clsx";
+import { HiLockClosed } from "react-icons/hi";
+import { CgPlayListRemove } from "react-icons/cg";
 import Tag from "../Generic/Tag";
+import Visibility from "../Generic/Visibility";
 
-const ProblemHead = ({ important = false, id2, owner, topic, subtopic }) => {
+const ProblemHead = ({ important = false, id2, owner, topic, subtopic, setting }) => {
 
 	const smallFont = important ? "" : "text-xs";
 
@@ -25,7 +28,10 @@ const ProblemHead = ({ important = false, id2, owner, topic, subtopic }) => {
 				</span>{" "}
 				⦁ Posted by <b>{owner}</b>
 			</div>
-			{ important ? (<h1 className="h2">{topic}</h1>) : (<h3 className="h4">{topic}</h3>) }
+			<div className="flex items-center">
+				<Visibility visibility={setting.visibility} important={important} />
+				{ important ? (<h1 className="h2">{topic}</h1>) : (<h3 className="h4">{topic}</h3>) }
+			</div>
 			<Tag className={clsx(smallFont)}>{subtopic}</Tag>
 		</div>
 	);
