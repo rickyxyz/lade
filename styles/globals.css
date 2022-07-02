@@ -52,6 +52,18 @@
 @tailwind base;
 
 @layer components {
+	.pagination li * {
+		@apply px-4 py-2 border-l-2 border-y-2 transition-colors;
+	}
+	.pagination li:last-child * {
+		@apply border-r-2;
+	}
+	.pagination li button:hover {
+		@apply bg-blue-100;
+	}
+	.pagination li button:disabled {
+		@apply bg-gray-200 text-gray-700;
+	}
 	.featured-questions {
 		min-height: calc(36rem + 4px);
 	}
@@ -279,6 +291,9 @@
 			transparent
 		);
 		background-size: 1rem 1rem;
+	}
+	.top-58 {
+		top: 14.5rem;
 	}
 }
 
