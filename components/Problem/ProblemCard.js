@@ -40,9 +40,7 @@ const ProblemCard = ({ className, problem, loggedIn, purpose }) => {
 			}
 		>
 			<div className="flex flex-col gap-2">
-				<ProblemHead
-					{...problem}
-				/>
+				<ProblemHead {...problem} />
 				<div className="mt-4">
 					<Interweave content={statement} />
 				</div>

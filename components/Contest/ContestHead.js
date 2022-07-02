@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import Time from "../Generic/Date";
 import Tag from "../Generic/Tag";
+import Visibility from "../Generic/Visibility";
 import { getTimeDifference, getUTCDateWithoutDay } from "../Utility/date";
 
 const ContestHead = ({
@@ -12,6 +13,7 @@ const ContestHead = ({
 	subtopic,
 	addon,
 	time = {},
+	setting,
 }) => {
 	const smallFont = important ? "" : "text-xs";
 
@@ -45,11 +47,10 @@ const ContestHead = ({
 				Posted by <b>{owner}</b> ⦁ {timeDetail.prefix}
 				<Time className={clsx(smallFont)} time={timeDetail.time} />
 			</span>
-			{important ? (
-				<h1 className="h2">{title}</h1>
-			) : (
-				<h3 className="h4">{title}</h3>
-			)}
+			<div className="flex items-center">
+				<Visibility visibility={setting.visibility} important={important} />
+				{ important ? (<h1 className="h2">{topic}</h1>) : (<h3 className="h4">{topic}</h3>) }
+			</div>
 			<Tag className={clsx(smallFont)}>{topic}</Tag>
 			{addon}
 		</div>
