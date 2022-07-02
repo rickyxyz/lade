@@ -42,8 +42,10 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
     const levelRef = ref(dbRef, "user/" + uid + "/level");
     onValue(levelRef, (snapshot) => {
         const newLevel = snapshot.val();
-        if(newLevel != loggedIn.level){
-            loginUser({...loggedIn, level:newLevel});
+        if(loggedIn){
+            if(newLevel != loggedIn.level){
+                loginUser({...loggedIn, level:newLevel});
+            }
         }
     });
 
@@ -73,7 +75,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
             <div className="flex flex-row items-center ml-4">
                 {loggedIn ? (
                     <>
-                        <LinkButton className="mr-4" variant="ghost" href="#">
+                        <LinkButton className="mr-4" variant="ghost" href="profile">
                             {loggedIn.username} | Level {loggedIn.level}
                         </LinkButton>
                         <Button variant="danger" onClick={() => logout()}>
