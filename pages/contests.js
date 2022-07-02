@@ -29,6 +29,7 @@ const Contests = ({ contests, setContests }) => {
 
 	return (
 		<ViewTemplate 
+			purpose="contest"
 			title="Contests"
 			crits={
 				[{

@@ -78,6 +78,7 @@ const Problems = ({ problems, setProblems }) => {
 
 	return (
 		<ViewTemplate 
+			purpose="problem"
 			title="Problems"
 			crits={
 				[{

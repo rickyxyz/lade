@@ -51,15 +51,19 @@ export async function postData(db, link, data) {
  * @param {Object} _subtopics Subtopics arrays
  * @returns
  */
-export function turnProblemsObjectToArray(_problems, _topics, _subtopics) {
+export function turnProblemsObjectToArray(_problems, _topics, _subtopics, reversed = false) {
 	const tempProblems = [];
 
 	if (!_topics || !_subtopics) return;
 
-	for (let [id, _problem] of Object.entries(_problems)) {
+	const entryProblems = Object.entries(_problems);
+	if(reversed) {
+		entryProblems.reverse();
+	}
+		
+	for (let [id, _problem] of entryProblems) {
 		let { topic, subtopic } = _problem;
 		const currentSubtopic = _subtopics[topic];
-
 		_problem.id = id;
 		_problem.topic = _topics[topic];
 		_problem.subtopic = currentSubtopic
@@ -84,12 +88,13 @@ export function setProblemsFromSnapshot(
 	condition,
 	callback,
 	_topics,
-	_subtopics
+	_subtopics,
+	reversed = false,
 ) {
 	if (condition) {
 		callback(
 			// Since we get an object (not array) as a result, we convert them to array first.
-			turnProblemsObjectToArray(snapshot.val(), _topics, _subtopics)
+			turnProblemsObjectToArray(snapshot.val(), _topics, _subtopics, reversed)
 		);
 	}
 }
