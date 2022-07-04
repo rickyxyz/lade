@@ -1,10 +1,10 @@
-export function properifyMatrix() {
+export function properifyMatrix(id = "") {
 	let matrix = [[null, null, null], [null, null, null], [null, null, null]];
 	let rows = 0, cols = 0;
 
 	[0, 1, 2].forEach((row) => {
 		[0, 1, 2].forEach((col) => {
-			const value = document.getElementById(`cell-${row}-${col}`).value;
+			const value = document.getElementById(`cell-${row}-${col}-${id}`).value;
 			if(value !== "") {
 				if(col + 1 > cols)
 					cols = col + 1;
