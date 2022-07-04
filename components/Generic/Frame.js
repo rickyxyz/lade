@@ -1,7 +1,7 @@
 import Meta from "./Meta";
 import Side from "./Side";
 
-const Frame = ({ title, page, problem, desc, children }) => {
+const Frame = ({ uid, title, page, problem, desc, children }) => {
 	const meta = problem ? {
 		page: `Edit - ${problem.statement.replace(/\<[^\>]*\>/g, '').slice(0, 24)}...`,
 		desc: desc,
@@ -15,7 +15,7 @@ const Frame = ({ title, page, problem, desc, children }) => {
 		<>
 			<Meta {...meta} />
 			<main className="relative w-full mt-12 pl-64">
-				<Side />
+				<Side uid={uid} />
 				<div className="frame-content relative top-0">
 					{ children }
 				</div>
