@@ -34,6 +34,7 @@ function MyApp({ Component, pageProps }) {
 		db: null,
 		_topics: [],
 		_subtopics: [],
+		topicGet: false,
 	});
 
 	const [toasts, setToasts] = useState([]);
@@ -49,6 +50,7 @@ function MyApp({ Component, pageProps }) {
 					...fb,
 					_topics,
 					_subtopics,
+					topicGet: true,
 				});
 			}
 		} catch (e) {}
