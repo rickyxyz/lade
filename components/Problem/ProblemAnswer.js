@@ -2,11 +2,11 @@ import clsx from "clsx";
 import { properifyMatrix } from "../Utility/matrix";
 import Choice from "./Choice";
 
-const ProblemAnswer = ({ problem, state, setState, disabled = false }) => {
+const ProblemAnswer = ({ id="", problem, state, setState, disabled = false }) => {
 	// disabled props is only used for solve contest page.
 
 	function setMatrix() {
-		const matrix = properifyMatrix();
+		const matrix = properifyMatrix(id);
 
 		setState({
 			...state,
@@ -26,7 +26,9 @@ const ProblemAnswer = ({ problem, state, setState, disabled = false }) => {
 						onChange={(e) =>
 							setState({
 								...state,
-								answer: e.target.value,
+								answer: {
+									string: e.target.value
+								},
 							})
 						}
 						disabled={disabled || state.correct}
@@ -46,7 +48,9 @@ const ProblemAnswer = ({ problem, state, setState, disabled = false }) => {
 								onCheck={(name, index) =>
 									setState({
 										...state,
-										answer: name,
+										answer: {
+											choice: name
+										},
 									})
 								}
 								disabled={disabled || (state && state.correct)}
@@ -62,15 +66,15 @@ const ProblemAnswer = ({ problem, state, setState, disabled = false }) => {
 							{[0, 1, 2].map((row) => (
 								<div
 									className="flex flex-row gap-2"
-									key={`row-${row}`}
+									key={`row-${row}-${id}`}
 								>
 									{[0, 1, 2].map((col) => (
 										<div
 											className="flex w-16"
-											key={`cell-${row}-${col}`}
+											key={`cell-${row}-${col}-${id}`}
 										>
 											<input
-												id={`cell-${row}-${col}`}
+												id={`cell-${row}-${col}-${id}`}
 												className={clsx("!w-16")}
 												type="text"
 												defaultValue={

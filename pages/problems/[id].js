@@ -22,6 +22,7 @@ import { properifyMatrix } from "../../components/Utility/matrix";
 import ProblemHead from "../../components/Problem/ProblemHead";
 import ProblemAnswer from "../../components/Problem/ProblemAnswer";
 import { compareAnswers } from "../../components/Problem/compareAnswers";
+import { setExperience } from "../../components/Profile/experience";
 
 const CooldownWarning = ({ time }) => (
 	<span>
@@ -216,7 +217,7 @@ const Problems = ({ id }) => {
 		setState({ ...state, loading: true });
 
 		// Create a small delay.
-		setTimeout(() => {
+		setTimeout(async () => {
 			try {
 				// Check if the answer is the same as the correct answer.
 				if (
@@ -236,15 +237,17 @@ const Problems = ({ id }) => {
 						.child("accepted")
 						.set(firebase.database.ServerValue.increment(1));
 
-                    // add experience on correct answer
-                    firebase.database().ref(`/user/${uid}/`).child("experience").set(firebase.database.ServerValue.increment(10));
-                    // fetch user data to check level up condition
-                    getData(db, `/user/${uid}`).then((_userData)=>{
-                        if(_userData.experience >= _userData.level * 100 || true){
-                            firebase.database().ref(`/user/${uid}/`).child("experience").set(_userData.experience%(_userData.level*100));
-                            firebase.database().ref(`/user/${uid}/`).child("level").set(firebase.database.ServerValue.increment(1));
-                        }
-                    });
+					// Adapt to users that signed up before experience was added.
+					await getData(db, `/user/${uid}`).then((_userData) => {
+						if(!_userData.experience) {
+							setExperience(uid, 0);
+						}
+					});
+
+                    // Add experience on correct answer
+					
+					setExperience(uid, firebase.database.ServerValue.increment(10));
+
 				} else {
 					// If it is not correct, notify the user.
 					addToast({
@@ -268,6 +271,7 @@ const Problems = ({ id }) => {
 					lastAnswered: now.getTime(),
 				});
 			} catch (e) {
+				console.log(e);
 				addToast(genericToast("post-fail"));
 				setState({
 					...state,
