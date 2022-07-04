@@ -447,6 +447,7 @@ const ContestEditor = ({
 				title: title,
 				description: description,
 				problems: arrayProblems,
+				weights: getWeights(),
 				metrics: {
 					...contest.metrics,
 					questions: arrayProblems.length,
@@ -548,15 +549,6 @@ const ContestEditor = ({
 			}
 		}
 	}, [_topics, _subtopics]);
-
-	useEffect(() => {
-		// Each time tableProblem updates,
-		// update the total score/weight of the contest.
-		setContest((_contest) => ({
-			..._contest,
-			weights: getWeights(),
-		}));
-	}, [tableProblems]);
 
 	/*
 		Some specific helper functions to update specific contest states.
