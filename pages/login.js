@@ -42,7 +42,10 @@ const Login = ({ loginUser }) => {
 			)
 				.then(async (cred) => {
 					const result = await getData(db, `/user/${cred.user.uid}`);
-					loginUser(result);
+					loginUser({
+						...result,
+						id: cred.user.uid,
+					});
 				})
 				.then(() => {
 					router.push("/problems");

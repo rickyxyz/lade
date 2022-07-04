@@ -22,6 +22,8 @@ import clsx from "clsx";
 import Button from "../components/Generic/Button";
 import { GoChevronDown, GoChevronUp, GoDash } from "react-icons/go";
 import ViewTemplate from "../components/Generic/ViewTemplate";
+import Bar from "../components/Generic/Bar";
+import { getLevelFromExperience, getProgressToNextLevel } from "../components/Profile/experience";
 
 const Profile = ({ loggedIn }) => {
     console.log(loggedIn);
@@ -41,8 +43,9 @@ const Profile = ({ loggedIn }) => {
             <section className="flex flex-col gap-4">
                 <span className="flex items-end gap-4">
                     <h1 className="text-2xl">{ loggedIn.username }</h1>
-                    <h2 className="text-sm">Level: { loggedIn.level }</h2>
+                    <h2 className="text-sm">Level: { getLevelFromExperience(loggedIn.experience) }</h2>
                 </span>
+				<Bar className="!w-full" percentage={getProgressToNextLevel(loggedIn.experience)} />
                 <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                     <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: loggedIn.experience+"%"}}></div>
                 </div>

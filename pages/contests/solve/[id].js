@@ -22,6 +22,8 @@ import { ToastContext } from "../../../components/Generic/Toast";
 import { getTimeDifference } from "../../../components/Utility/date";
 import { compareAnswers } from "../../../components/Problem/compareAnswers";
 import clsx from "clsx";
+import { setExperience } from "../../../components/Profile/experience";
+import { useRouter } from "next/router";
 
 const SolveContest = ({ id }) => {
 	const [ogContest, setOgContest] = useState(null);
@@ -38,6 +40,7 @@ const SolveContest = ({ id }) => {
 	const { addToast } = useContext(ToastContext);
 	const { setModal } = useContext(ModalContext);
 
+	const router = useRouter();
 	const auth = getAuth();
 	const uid = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -298,24 +301,49 @@ const SolveContest = ({ id }) => {
 			submittedAt: now,
 			score: score,
 			answers: answers,
-		}).then( async () => {
+		}).then(async () => {
 			firebase
 			.database()
 			.ref(`/contest/${id}/metrics`)
 			.child("participants")
 			.set(firebase.database.ServerValue.increment(1));
 
+			// Adapt to users that signed up before experience was added.
+			await getData(db, `/user/${uid}`).then((_userData) => {
+				if(!_userData.experience) {
+					setExperience(uid, 0);
+				}
+			});
+
+			// Add experience on completing a contest.
+			setExperience(uid, firebase.database.ServerValue.increment(Math.ceil(100 * (score / contest.weights))));
+
+			const participants = contest.participants ? [...contest.participants] : [];
+
+			if(!participants.includes(uid))
+				participants = [...participants, uid];
+
 			return await postData(db, `contest/${id}`, {
 				...contest,
-				participants: [...contest.participants, uid],
+				participants: participants,
 			})
-		}).catch(e => {});
+		}).catch(e => { console.log(e) });
 
 		setLoading(false);
 	}
 
 	function confirmAnswers() {
 		const now = Date.now();
+
+		async function clickConfirm() {
+			await submitAnswers(now).then(() => {
+				setModal(null);
+				router.push("/contests");
+				setTimeout(() => {
+					router.push(`/contests/${id}`);
+				}, 100);
+			});
+		}
 
 		setModal(
 			<div className="w-96 flex flex-col">
@@ -325,7 +353,7 @@ const SolveContest = ({ id }) => {
 					see the results immediately.
 				</p>
 				<Button
-					onClick={() => submitAnswers(now)}
+					onClick={() => clickConfirm()}
 					className="mt-4"
 					loading={loading}
 				>
@@ -412,6 +440,7 @@ const SolveContest = ({ id }) => {
 									<h2 className="h4">Question {index + 1}</h2>
 									<Interweave content={problem.statement} />
 									<ProblemAnswer
+										id={problem.id2}
 										problem={problem}
 										state={{
 											answer: answers[index],
