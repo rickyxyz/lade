@@ -97,7 +97,7 @@ const User = ({ id }) => {
 				//If data fetch is successful.
 				<>
 					<div className="flex flex-col gap-4">
-						<h1 className="h2">{user.username}'s Profile</h1>
+						<h1 className="h2">{user.username}&apos;s Profile</h1>
 						<div className="w-fit grid grid-cols-3 gap-2 mt-6">
 							<Stat
 								title="Level"
