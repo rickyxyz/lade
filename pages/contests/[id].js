@@ -15,6 +15,7 @@ import ContestHead from "../../components/Contest/ContestHead";
 import ContestStats from "../../components/Contest/ContestStats";
 import clsx from "clsx";
 import { getTimeDifference } from "../../components/Utility/date";
+import Link from "next/link";
 
 const Contests = ({ id }) => {
 	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
@@ -52,7 +53,10 @@ const Contests = ({ id }) => {
 		if (fetchParticipants === 0 && contest) {
 			getContestParticipants()
 				.then(() => setFetchParticipants(1))
-				.catch((e) => setFetchParticipants(-1));
+				.catch((e) => {
+					console.log(e);
+					setFetchParticipants(-1);
+				});
 		}
 	}, [contest]);
 
@@ -172,7 +176,10 @@ const Contests = ({ id }) => {
 
 	// Get all participants of the contest for the top participants table.
 	async function getContestParticipants() {
+		console.log(contest.participants);
 		const _participants = []; // Temporary variable that will be set to state.
+
+		if (!contest.participants) return;
 
 		for (const participantId of contest.participants) {
 			const _participant = await getData(
@@ -181,6 +188,7 @@ const Contests = ({ id }) => {
 			);
 			const _user = await getData(db, `/user/${participantId}`);
 			_participant.username = _user.username;
+			_participant.id = participantId;
 			delete _participant.answers;
 			_participants.push(_participant);
 		}
@@ -265,10 +273,26 @@ const Contests = ({ id }) => {
 									(participants.length > 0 ? (
 										participants.map(
 											(participant, index) => (
-												<tr key={participant.username}>
+												<tr
+													key={participant.username}
+													className={clsx(
+														participant.id ===
+															uid &&
+															"bg-yellow-100"
+													)}
+												>
 													<td>{index + 1}</td>
 													<td>
-														{participant.username}
+														<Link
+															href={`/user/${participant.id}`}
+															passHref
+														>
+															<a className="link">
+																{
+																	participant.username
+																}
+															</a>
+														</Link>
 													</td>
 													<td>{participant.score}</td>
 													<td>

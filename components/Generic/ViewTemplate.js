@@ -100,16 +100,12 @@ const ViewTemplate = ({
 		const lastIdxCalculated = objectsPerPage * (page + 1),
 			lastIdxReal = _objects.length;
 		const lastIdx = Math.min(lastIdxCalculated, lastIdxReal);
-		console.log(lastIdxCalculated);
-		console.log(lastIdxReal);
 		
 		const objectsInPage = Array.prototype.slice.call(
 			_objects.filter((object, idx) => {
 
 				if(!object.setting)
 					return false;
-					
-				console.log(object.id2 + " >> " + object.setting.visibility);
 
 				if(object.setting.visibility === 0)
 					return true;
@@ -185,7 +181,6 @@ const ViewTemplate = ({
 				setFetch(1);
 			})
 			.catch((e) => {
-				////console.log(e);
 				addToast(genericToast("get-fail"));
 				setFetch(-1);
 			});
@@ -223,7 +218,7 @@ const ViewTemplate = ({
 	}, [db, _topics, _subtopics]);
 
 	return (
-		<Frame page={title}>
+		<Frame uid={loggedIn.id} page={title}>
 			<FrameHead>
 				<h1 className="h2">{title}</h1>
 				<article className="flex mt-4 gap-8">
