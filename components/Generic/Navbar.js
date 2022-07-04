@@ -96,7 +96,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 							</div>
 							<div className="flex items-center justify-center rounded-sm overflow-hidden">
 								<Bar
-									className="!w-16"
+									widthClass="!w-16"
 									variant="thin"
 									color="blue"
 									percentage={getProgressToNextLevel(
