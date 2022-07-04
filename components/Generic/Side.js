@@ -4,11 +4,14 @@ import {
 	BsQuestionOctagon,
 	BsClipboardPlus,
 	BsClipboardData,
+	BsFillPersonFill,
+	BsTrophyFill,
 } from "react-icons/bs";
 import Link from "next/link";
 import clsx from "clsx";
+import { getAuth } from "firebase/auth";
 
-const Side = () => {
+const Side = ({ uid }) => {
 	const links = [
 		{ name: "Problems", href: "/problems", icon: <BsHouseDoor /> },
 		{ name: "Contests", href: "/contests", icon: <BsClipboardData /> },
@@ -21,6 +24,11 @@ const Side = () => {
 			name: "New Contest",
 			href: "/contests/new",
 			icon: <BsClipboardPlus />,
+		},
+		{
+			name: "Leaderboard",
+			href: `/leaderboard`,
+			icon: <BsTrophyFill />,
 		},
 	];
 

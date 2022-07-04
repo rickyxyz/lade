@@ -4,6 +4,7 @@ const Bar = ({
 	color = "green",
 	variant = "thick",
 	className,
+	widthClass,
 	percentage = 0,
 }) => {
 	return (
@@ -12,7 +13,8 @@ const Bar = ({
 				"relative bar",
 				variant === "thick" && "h-4 rounded-sm",
 				variant === "thin" && "h-2.5 rounded-full",
-				className
+				className,
+				widthClass,
 			)}
 		>
 			{/* Progress bar background */}
@@ -21,7 +23,8 @@ const Bar = ({
 					"absolute top-0 left-0 w-full",
 					variant === "thick" &&
 						"h-4 bg-gray-600 border-b-2 border-gray-700",
-					variant === "thin" && "h-2.5 bg-gray-600 border-0 rounded-full"
+					variant === "thin" && "h-2.5 bg-gray-600 border-0 rounded-full",
+					widthClass
 				)}
 			></div>
 
@@ -57,7 +60,8 @@ const Bar = ({
 							variant === "thick" && "border-b-2 border-blue-700",
 						],
 					],
-					"bar-stripes"
+					"bar-stripes",
+					widthClass
 				)}
 				style={{
 					width: `${percentage}%`,
