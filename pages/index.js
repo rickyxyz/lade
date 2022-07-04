@@ -16,44 +16,30 @@ import clsx from "clsx";
 import Meta from "../components/Generic/Meta";
 
 const Home = () => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
-	const [newRef, setNewRef] = useState(null);
-	const [topRef, setTopRef] = useState(null);
+	const { db, _topics, _subtopics, topicGet } = useContext(FirebaseContext);
+	const [problems, setProblems] = useState([]);
 	const [newProblems, setNewProblems] = useState([]);
 	const [topProblems, setTopProblems] = useState([]);
 	const [fetch, setFetch] = useState(0);
 
 	async function getProblems() {
 		try {
-			// Get the 3 newest problems.
-			const _newRef = firebase.database().ref("problem").limitToLast(3);
-			_newRef.on("value", (snapshot) =>
+			const _newRef = firebase
+				.database()
+				.ref("problem")
+				.orderByChild("setting/visibility")
+				.equalTo(0)
+			
+			_newRef.once("value", (snapshot) =>
 				setProblemsFromSnapshot(
 					snapshot,
 					snapshot.length !== newProblems.length,
-					setNewProblems,
+					setProblems,
 					_topics,
 					_subtopics
 				)
 			);
-			setNewRef(_newRef);
 
-			// Get the 3 top problems (most solved).
-			const _topRef = firebase
-				.database()
-				.ref("problem")
-				.orderByChild("accepted")
-				.limitToLast(3);
-			_topRef.on("value", (snapshot) =>
-				setProblemsFromSnapshot(
-					snapshot,
-					snapshot.length !== topProblems.length,
-					setTopProblems,
-					_topics,
-					_subtopics
-				)
-			);
-			setTopRef(_topRef);
 			setFetch(1);
 		} catch (e) {
 			console.log(e);
@@ -61,9 +47,36 @@ const Home = () => {
 		}
 	}
 
+	function assortProblems() {
+		// Sort based on time, then get only three.
+		let _problems1 = [...problems].sort((a, b) => -1*(a.time.createdAt - b.time.createdAt))
+		_problems1 = _problems1.slice(0, Math.min(3, _problems1.length));
+
+		// Sort based on problem activity, then get only three.
+		let _problems2 = [...problems].sort((a, b) => (problemActivity(b.metrics) - problemActivity(a.metrics)));
+		_problems2 = _problems2.slice(0, Math.min(3, _problems2.length));
+
+		setNewProblems(_problems1);
+		setTopProblems(_problems2);
+		
+		setFetch(2);
+	}
+
+	function problemActivity(problem) {
+		const result = problem.accepted + problem.attempted + problem.comments;
+		console.log(result);
+		return problem.accepted + problem.attempted + problem.comments;
+	}
+
 	useEffect(() => {
-		if (db && _topics && _subtopics) getProblems();
-	}, [db, _topics, _subtopics]);
+		if(fetch === 1) {
+			assortProblems();
+		}
+	}, [ problems ]);
+
+	useEffect(() => {
+		if (db && _topics && _subtopics && topicGet && fetch === 0) getProblems();
+	}, [db, _topics, _subtopics, topicGet]);
 
 	return (
 		<>
@@ -81,12 +94,12 @@ const Home = () => {
 					<Folder
 						title="New Questions"
 						cards={newProblems}
-						loading={newProblems.length === 0}
+						loading={1 >= fetch && fetch >= 0}
 					/>
 					<Folder
 						title="Top Questions"
 						cards={topProblems}
-						loading={topProblems.length === 0}
+						loading={1 >= fetch && fetch >= 0}
 					/>
 				</section>
 				{/* <Sidebar />
