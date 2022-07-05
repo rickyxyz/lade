@@ -5,7 +5,7 @@ import "react-quill/dist/quill.snow.css";
 import ProblemEditor from "../../../components/Problem/ProblemEditor";
 
 const Problems = ({ id }) => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db } = useContext(FirebaseContext);
 	const [problem, setProblem] = useState(null);
 
 	async function getProblemData() {
@@ -18,8 +18,8 @@ const Problems = ({ id }) => {
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics && !problem) getProblemData();
-	}, [db, _topics, _subtopics]);
+		if (db && !problem) getProblemData();
+	}, [db]);
 
 	return (
 		<Frame problem={problem}>

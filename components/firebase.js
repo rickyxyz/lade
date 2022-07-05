@@ -6,6 +6,8 @@ export const FirebaseContext = createContext({
 	db: null,
 	_topics: null,
 	_subtopics: null,
+	topicGet: false,
+	uid: null,
 });
 
 /**

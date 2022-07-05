@@ -31,7 +31,8 @@ const CooldownWarning = ({ time }) => (
 );
 
 const Problems = ({ id }) => {
-	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db, fd, _topics, _subtopics, topicGet } =
+		useContext(FirebaseContext);
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
 	const [state, setState] = useState({
@@ -239,15 +240,17 @@ const Problems = ({ id }) => {
 
 					// Adapt to users that signed up before experience was added.
 					await getData(db, `/user/${uid}`).then((_userData) => {
-						if(!_userData.experience) {
+						if (!_userData.experience) {
 							setExperience(uid, 0);
 						}
 					});
 
-                    // Add experience on correct answer
-					
-					setExperience(uid, firebase.database.ServerValue.increment(10));
+					// Add experience on correct answer
 
+					setExperience(
+						uid,
+						firebase.database.ServerValue.increment(10)
+					);
 				} else {
 					// If it is not correct, notify the user.
 					addToast({
@@ -297,10 +300,10 @@ const Problems = ({ id }) => {
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics && !problem) {
+		if (db && topicGet && !problem) {
 			getProblemData();
 		}
-	}, [db, _topics, _subtopics]);
+	}, [db, topicGet]);
 
 	useEffect(() => {
 		if (!init && problem && auth.currentUser) {
@@ -328,12 +331,16 @@ const Problems = ({ id }) => {
 				//If data fetch is successful.
 				<>
 					<div className="flex flex-col gap-4">
-						<ProblemHead {...problem} important/>
+						<ProblemHead {...problem} important />
 					</div>
 					<div>
 						<h2 className="h4">Problem Statement</h2>
 						<Interweave content={problem.statement} />
-						<ProblemAnswer problem={problem} state={state} setState={setState} />
+						<ProblemAnswer
+							problem={problem}
+							state={state}
+							setState={setState}
+						/>
 						<div className="mt-8">
 							<p className="text-red-500">{state.warning}</p>
 							{state.correct ? (
@@ -359,7 +366,7 @@ const Problems = ({ id }) => {
 						<h2 className="h4">Discussion</h2>
 						<CommentEditor
 							problemId={problem.id}
-							discussion={problem.discussion}
+							discussion={problem.setting.discussion}
 						/>
 						{comments.map((comment) => (
 							// pass the problem id down to UpvoteDownvote.js

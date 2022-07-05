@@ -80,7 +80,7 @@ const ViewTemplate = ({
 	purpose,
 }) => {
 	const [displayObjects, setDisplayObjects] = useState([]);
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db, _topics, _subtopics, topicGet } = useContext(FirebaseContext);
 	const [lastPage, setLastPage] = useState(null);
 	const [move, setMove] = useState(0);
 	const [page, setPage] = useState(0);
@@ -214,8 +214,8 @@ const ViewTemplate = ({
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics) getObjects();
-	}, [db, _topics, _subtopics]);
+		if (db && topicGet && fetch === 0) getObjects();
+	}, [db, topicGet]);
 
 	return (
 		<Frame uid={loggedIn.id} page={title}>

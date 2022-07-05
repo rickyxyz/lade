@@ -22,11 +22,11 @@ import {
 import ProblemCard from "../../components/Problem/ProblemCard";
 
 const User = ({ id }) => {
-	const { db, fd, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db, _topics, _subtopics, topicGet } =
+		useContext(FirebaseContext);
 	const [user, setUser] = useState(null);
 	const [ref, setRef] = useState(null);
 	const [problems, setProblems] = useState([]);
-	const [comments, setComments] = useState([]);
 
 	// Indicate whether comments & user answers have been fetched or not.
 	const [init, setInit] = useState(false);
@@ -42,8 +42,6 @@ const User = ({ id }) => {
 	let uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	function filterAttemptedProblems(_answers, _problems) {
-		console.log(_answers);
-		console.log(_problems);
 		return _problems.filter((problem) => problem.id in _answers);
 	}
 
@@ -78,10 +76,10 @@ const User = ({ id }) => {
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics && fetch === 0) {
+		if (db && topicGet && fetch === 0) {
 			getUserAndProblemData();
 		}
-	}, [db, _topics, _subtopics]);
+	}, [db, topicGet]);
 
 	useEffect(() => {
 		return () => {

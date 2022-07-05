@@ -6,7 +6,7 @@ import ProblemEditor from "../../../components/Problem/ProblemEditor";
 import ContestEditor from "../../../components/Contest/ContestEditor";
 
 const Contests = ({ id }) => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db } = useContext(FirebaseContext);
 	const [contest, setContest] = useState(null);
 
 	async function getContestData() {
@@ -19,8 +19,8 @@ const Contests = ({ id }) => {
 	}
 
 	useEffect(() => {
-		if (db && _topics && _subtopics && !contest) getContestData();
-	}, [db, _topics, _subtopics]);
+		if (db && !contest) getContestData();
+	}, [db]);
 
 	return (
 		<Frame contest={contest}>

@@ -58,7 +58,7 @@ const ContestEditor = ({
 	});
 	const [loading, setLoading] = useState(true);
 
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
+	const { db, _topics, _subtopics, topicGet } = useContext(FirebaseContext);
 	const { addToast } = useContext(ToastContext);
 
 	const router = useRouter();
@@ -491,8 +491,8 @@ const ContestEditor = ({
 		if (
 			contest &&
 			loading &&
-			_topics &&
-			_subtopics &&
+			db &&
+			topicGet &&
 			typeof document !== undefined &&
 			document.getElementsByClassName("ql-editor")[0] !== undefined
 		) {
@@ -548,7 +548,7 @@ const ContestEditor = ({
 				});
 			}
 		}
-	}, [_topics, _subtopics]);
+	}, [db, topicGet]);
 
 	/*
 		Some specific helper functions to update specific contest states.
