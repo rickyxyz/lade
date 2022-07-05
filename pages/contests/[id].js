@@ -16,6 +16,8 @@ import ContestStats from "../../components/Contest/ContestStats";
 import clsx from "clsx";
 import { getTimeDifference } from "../../components/Utility/date";
 import Link from "next/link";
+import ContestDetails from "../../components/Contest/ContestDetails";
+import ContestTopParticipants from "../../components/Contest/ContestTopParticipants";
 
 const Contests = ({ id }) => {
 	const { db, fd, _topics, _subtopics, uid, topicGet } =
@@ -233,103 +235,17 @@ const Contests = ({ id }) => {
 						addon={<ContestStats {...contest.metrics} />}
 						important
 					/>
-					<div>
-						<h2 className="h4">Contest Details</h2>
-						<Interweave content={contest.description} />
-						<div className="mt-16 text-red-600">
-							{warning.message}
-						</div>
-						<div className="mt-4">
-							<Button
-								variant={clsx(
-									status === 1 ? "warning" : "primary"
-								)}
-								onClick={() => participate()}
-								disabled={disabled}
-							>
-								{status === 1
-									? "Continue"
-									: status === 2
-									? "View Results"
-									: "Participate"}
-							</Button>
-						</div>
-					</div>
-					<div>
-						<h2 className="h4">Top Participants</h2>
-						<table className="mt-8">
-							<thead>
-								<tr>
-									<th>No.</th>
-									<th>Username</th>
-									<th>Score</th>
-									<th>Completion Time</th>
-								</tr>
-							</thead>
-							<tbody>
-								{fetchParticipants === 1 &&
-									(participants.length > 0 ? (
-										participants.map(
-											(participant, index) => (
-												<tr
-													key={participant.username}
-													className={clsx(
-														participant.id ===
-															uid &&
-															"bg-yellow-100"
-													)}
-												>
-													<td>{index + 1}</td>
-													<td>
-														<Link
-															href={`/user/${participant.id}`}
-															passHref
-														>
-															<a className="link">
-																{
-																	participant.username
-																}
-															</a>
-														</Link>
-													</td>
-													<td>{participant.score}</td>
-													<td>
-														{new Date(
-															participant.submittedAt
-														).toLocaleString()}
-													</td>
-												</tr>
-											)
-										)
-									) : (
-										<tr>
-											<td
-												className="text-center"
-												colSpan="4"
-											>
-												No one has done this contest
-												yet.
-											</td>
-										</tr>
-									))}
-								{fetchParticipants === 0 && (
-									<tr>
-										<td className="text-center" colSpan="4">
-											<CircleLoad />
-										</td>
-									</tr>
-								)}
-								{fetchParticipants === -1 && (
-									<tr>
-										<td className="text-center" colSpan="4">
-											We couldn&apos;t get the data.
-											Please try again later.
-										</td>
-									</tr>
-								)}
-							</tbody>
-						</table>
-					</div>
+					<ContestDetails
+						contest={contest}
+						warning={warning}
+						status={status}
+						disabled={disabled}
+					/>
+					<ContestTopParticipants
+						participants={participants}
+						fetchParticipants={fetchParticipants}
+						uid={uid}
+					/>
 					<div>
 						<h2 className="h4">Discussion</h2>
 						<CommentEditor
