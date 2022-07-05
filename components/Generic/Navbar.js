@@ -7,6 +7,10 @@ import { mapDispatchToProps, mapStateToProps } from "../Redux/setter";
 import { getData, FirebaseContext } from "../firebase";
 import { getAuth, signOut } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
+
+import "firebase/database";
+import "firebase/compat/database";
+import firebase from "firebase/compat/app";
 import clsx from "clsx";
 import { MdSearch } from "react-icons/md";
 import Button from "./Button";
@@ -18,10 +22,8 @@ import {
 } from "../Profile/experience";
 import Bar from "./Bar";
 
-const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
+const Navbar = ({ fb, setFb, loggedIn, loginUser, logoutUser }) => {
 	const auth = getAuth();
-	let uid = auth.currentUser ? auth.currentUser.uid : null;
-	const { db } = useContext(FirebaseContext);
 	const router = useRouter();
 
 	// Contexts to invoke toasts.
@@ -42,17 +44,31 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 		}
 	}
 
-	// listen for changes in user's level and update loggedIn object
-	const dbRef = getDatabase();
-	const expRef = ref(dbRef, "user/" + uid + "/experience");
-	onValue(expRef, (snapshot) => {
-		const experience = snapshot.val();
-		if (loggedIn) {
-			if (experience !== loggedIn.experience) {
-				loginUser({ ...loggedIn, experience: experience });
+	useEffect(() => {
+		// listen for changes in user's level and update loggedIn object
+		const expRef = firebase
+			.database()
+			.ref(`user/${loggedIn.id}/experience`);
+
+		expRef.on("value", (snapshot) => {
+			const experience = snapshot.val();
+			if (loggedIn) {
+				if (experience !== loggedIn.experience) {
+					loginUser({ ...loggedIn, experience: experience });
+				}
 			}
+		});
+
+		return () => {
+			expRef.off();
+		};
+	}, [fb.db]);
+
+	useEffect(() => {
+		if (loggedIn && fb.uid !== loggedIn.id) {
+			setFb((prevFb) => ({ ...prevFb, uid: loggedIn.id }));
 		}
-	});
+	}, [loggedIn]);
 
 	return (
 		<nav
@@ -82,7 +98,7 @@ const Navbar = ({ loggedIn, loginUser, logoutUser }) => {
 						<LinkButton
 							className="mr-4"
 							variant="ghost"
-							href={`/user/${uid}`}
+							href={`/user/${loggedIn.id}`}
 						>
 							{loggedIn.username}
 						</LinkButton>
