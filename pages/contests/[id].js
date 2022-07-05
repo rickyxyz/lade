@@ -18,7 +18,7 @@ import { getTimeDifference } from "../../components/Utility/date";
 import Link from "next/link";
 
 const Contests = ({ id }) => {
-	const { db, fd, _topics, _subtopics, topicGet } =
+	const { db, fd, _topics, _subtopics, uid, topicGet } =
 		useContext(FirebaseContext);
 	const [contest, setContest] = useState(null);
 	const [comments, setComments] = useState([]);
@@ -32,9 +32,6 @@ const Contests = ({ id }) => {
 	const { addToast } = useContext(ToastContext);
 	const router = useRouter();
 
-	const auth = getAuth();
-	const uid = auth.currentUser ? auth.currentUser.uid : null;
-
 	// Only once if contest doesn't exist, get the contest data.
 	useEffect(() => {
 		if (db && topicGet && !contest) {
@@ -44,7 +41,7 @@ const Contests = ({ id }) => {
 
 	// Only once after contest exists, get comment data.
 	useEffect(() => {
-		if (!init && contest && auth.currentUser) {
+		if (!init && contest && uid) {
 			getCommentData();
 			setInit(true);
 		}

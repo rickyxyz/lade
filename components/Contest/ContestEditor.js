@@ -58,7 +58,7 @@ const ContestEditor = ({
 	});
 	const [loading, setLoading] = useState(true);
 
-	const { db, _topics, _subtopics, topicGet } = useContext(FirebaseContext);
+	const { db, _topics, _subtopics, uid, topicGet } = useContext(FirebaseContext);
 	const { addToast } = useContext(ToastContext);
 
 	const router = useRouter();

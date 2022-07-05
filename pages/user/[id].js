@@ -38,9 +38,6 @@ const User = ({ id }) => {
 	// Contexts to invoke toasts.
 	const { addToast } = useContext(ToastContext);
 
-	const auth = getAuth();
-	let uid = auth.currentUser ? auth.currentUser.uid : null;
-
 	function filterAttemptedProblems(_answers, _problems) {
 		return _problems.filter((problem) => problem.id in _answers);
 	}

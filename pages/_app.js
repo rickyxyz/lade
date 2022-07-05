@@ -35,6 +35,7 @@ function MyApp({ Component, pageProps }) {
 		_topics: [],
 		_subtopics: [],
 		topicGet: false,
+		uid: null,
 	});
 
 	const [toasts, setToasts] = useState([]);
@@ -108,7 +109,7 @@ function MyApp({ Component, pageProps }) {
 							}}
 						>
 							<Modal />
-							<Navbar />
+							<Navbar fb={fb} setFb={setFb} />
 							<link
 								rel="stylesheet"
 								href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"

@@ -31,7 +31,7 @@ const CooldownWarning = ({ time }) => (
 );
 
 const Problems = ({ id }) => {
-	const { db, fd, _topics, _subtopics, topicGet } =
+	const { db, fd, _topics, _subtopics, uid, topicGet } =
 		useContext(FirebaseContext);
 	const [problem, setProblem] = useState(null);
 	const [comments, setComments] = useState([]);
@@ -65,9 +65,6 @@ const Problems = ({ id }) => {
 
 	// Contexts to invoke toasts.
 	const { addToast } = useContext(ToastContext);
-
-	const auth = getAuth();
-	let uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	async function getProblemData() {
 		await getData(db, `/problem/${id}`)
@@ -306,7 +303,7 @@ const Problems = ({ id }) => {
 	}, [db, topicGet]);
 
 	useEffect(() => {
-		if (!init && problem && auth.currentUser) {
+		if (!init && problem && uid) {
 			getCommentData();
 			getUserAnswer();
 			setInit(true);

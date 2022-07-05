@@ -36,13 +36,11 @@ const SolveContest = ({ id }) => {
 	const [init, setInit] = useState(false); // Ensure that initiate session is only run once after db and contest exist.
 	const [fetch, setFetch] = useState(0); // Indicate fetching process. -1 means fail; 1 means success.
 
-	const { db, _topics, _subtopics, topicGet } = useContext(FirebaseContext);
+	const { db, _topics, _subtopics, uid, topicGet } = useContext(FirebaseContext);
 	const { addToast } = useContext(ToastContext);
 	const { setModal } = useContext(ModalContext);
 
 	const router = useRouter();
-	const auth = getAuth();
-	const uid = auth.currentUser ? auth.currentUser.uid : null;
 
 	// Only once if contest doesn't exist, get the contest data.
 	useEffect(() => {
