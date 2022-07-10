@@ -26,10 +26,10 @@ import { setExperience } from "../../../components/Profile/experience";
 import { useRouter } from "next/router";
 
 const SolveContest = ({ id }) => {
-	const [ogContest, setOgContest] = useState(null);
 	const [contest, setContest] = useState(null);
 	const [answers, setAnswers] = useState([]); // The answers in the "answer sheet".
 	const [session, setSession] = useState({}); // Bsaically like the metadata for "answer sheet".
+
 	const [intv, setIntv] = useState(null); // Interval
 	const [disabled, setDisabled] = useState(true); // Prevent submit button being used after contest ends.
 	const [loading, setLoading] = useState(false); // Prevent submit button spamming.
@@ -49,29 +49,6 @@ const SolveContest = ({ id }) => {
 		}
 	}, [db, topicGet]);
 
-	// Only once after db and contest exist, initiate the session.
-	useEffect(() => {
-		if (db && contest && !init) {
-			initiateSession();
-			setInit(true);
-		}
-	}, [db, contest]);
-
-	// If the time is out, then set the interface to view only.
-	function handleTimeRunOut() {
-		if (session.percentage >= 100) {
-			setSession((prevSession) => ({
-				...prevSession,
-				viewOnly: true,
-			}));
-
-			clearInterval(intv);
-
-			// Force submit answers once time h as run out.
-			submitAnswers(Date.now(), true);
-		}
-	}
-
 	// Upon unmount, clear interval.
 	useEffect(() => {
 		return () => {
@@ -79,21 +56,52 @@ const SolveContest = ({ id }) => {
 		};
 	}, []);
 
+	// PROMISE CHAIN: Get contest data and start session.
 	async function getContestData() {
 		await getData(db, `/contest/${id}`)
 			.then(async (_contest) => { 
-				let { topic, subtopic } = _contest;
+				// [1] Assign id and problems object.
 				_contest.id = id;
 				_contest.problems = await getProblemData(_contest.problems);
 				setContest(_contest);
+			})
+			.then(async () => {
+				// [2] Initialize contest session for the user.
+				await initiateSession();
 				setFetch(1);
 			})
 			.catch((e) => {
-				console.log(e);
 				setFetch(-1);
 			});
 	}
 
+	// Helper function for getContestData.
+	async function getProblemData(contestProblems) {
+		// _problems are temporary arrays to store the final problem objects.
+		const _problems = [];
+
+		// Get all problems from the database.
+		// TODO: definitely not the smartest choice, must think of a better solution.
+		let allProblems = [];
+		allProblems = await getData(db, `/problem`)
+			.then((_objects) =>
+				turnProblemsObjectToArray(_objects, _topics, _subtopics)
+			)
+			.catch((e) => console.log(e));
+
+		// Finally, filter our problems that are actually in the contest.
+		contestProblems.forEach((problem) => {
+			let temp = allProblems.filter(
+				(prob) => prob.id2 === problem.id2
+			)[0];
+			temp.weight = problem.weight;
+			_problems.push(temp);
+		});
+
+		return _problems;
+	}
+
+	// Helper function for getContestData.
 	async function initiateSession() {
 		// Get existing session.
 		const _session = await getData(db, `answer/${uid}/${id}`);
@@ -241,37 +249,22 @@ const SolveContest = ({ id }) => {
 		}
 	}
 
-	async function getProblemData(contestProblems) {
-		// _problems are temporary arrays to store the final problem objects.
-		const _problems = [];
+	// If the time is out, then set the interface to view only.
+	function handleTimeRunOut() {
+		if (session.percentage >= 100) {
+			setSession((prevSession) => ({
+				...prevSession,
+				viewOnly: true,
+			}));
 
-		// Get all problems from the database.
-		// TODO: definitely not the smartest choice, must think of a better solution.
-		let allProblems = [];
-		allProblems = await getData(db, `/problem`)
-			.then((_objects) =>
-				turnProblemsObjectToArray(_objects, _topics, _subtopics)
-			)
-			.catch((e) => console.log(e));
+			clearInterval(intv);
 
-		// Finally, filter our problems that are actually in the contest.
-		contestProblems.forEach((problem) => {
-			let temp = allProblems.filter(
-				(prob) => prob.id2 === problem.id2
-			)[0];
-			temp.weight = problem.weight;
-			_problems.push(temp);
-		});
-
-		return _problems;
+			// Force submit answers once time h as run out.
+			submitAnswers(Date.now(), true);
+		}
 	}
 
-	async function setNthAnswer(n, answer) {
-		const answersArray = answers.slice(0, answers.length);
-		answersArray[n] = answer.answer;
-		setAnswers(answersArray);
-	}
-
+	// PROMISE CHAIN: Submit answer sheet.
 	async function submitAnswers(now, ignoreTime = false) {
 		setLoading(true);
 
@@ -330,6 +323,14 @@ const SolveContest = ({ id }) => {
 		setLoading(false);
 	}
 
+	// Set the answer for the n-th problem of the contest.
+	function setNthAnswer(n, answer) {
+		const answersArray = answers.slice(0, answers.length);
+		answersArray[n] = answer.answer;
+		setAnswers(answersArray);
+	}
+
+	// Show confirmation modal for the answers.
 	function confirmAnswers() {
 		const now = Date.now();
 

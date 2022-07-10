@@ -46,6 +46,7 @@ export async function postData(db, link, data) {
 			.catch((error) => rej(error));
 	});
 }
+
 /**
  * Convert objects of problems into an array, and it requires the _topics and _subtopics data too.
  * @param {Object} _problems Problems object
@@ -53,24 +54,20 @@ export async function postData(db, link, data) {
  * @param {Object} _subtopics Subtopics arrays
  * @returns
  */
-export function turnProblemsObjectToArray(_problems, _topics, _subtopics, reversed = false) {
+export function turnProblemsObjectToArray(
+	_problems,
+	_topics,
+	_subtopics,
+) {
 	const tempProblems = [];
 
 	if (!_topics || !_subtopics) return;
 
 	const entryProblems = Object.entries(_problems);
-	if(reversed) {
-		entryProblems.reverse();
-	}
-		
+
 	for (let [id, _problem] of entryProblems) {
-		let { topic, subtopic } = _problem;
-		const currentSubtopic = _subtopics[topic];
-		_problem.id = id;
-		_problem.topic = _topics[topic];
-		_problem.subtopic = currentSubtopic
-			? currentSubtopic[subtopic]
-			: "Unknown";
+		console.log(_problem);
+		_problem = assignIdAndTopic(_problem, id, _topics, _subtopics);
 		tempProblems.unshift(_problem);
 	}
 
@@ -91,12 +88,17 @@ export function setProblemsFromSnapshot(
 	callback,
 	_topics,
 	_subtopics,
-	reversed = false,
+	reversed = false
 ) {
 	if (condition) {
 		callback(
 			// Since we get an object (not array) as a result, we convert them to array first.
-			turnProblemsObjectToArray(snapshot.val(), _topics, _subtopics, reversed)
+			turnProblemsObjectToArray(
+				snapshot.val(),
+				_topics,
+				_subtopics,
+				reversed
+			)
 		);
 	}
 }
@@ -134,4 +136,22 @@ export function getErrorMessage(code) {
 				message: "Something went wrong. Please try again later.",
 			};
 	}
+}
+
+/**
+ * Pass id and the text version of topics and subtopics to the object.
+ * @param {Object} object The object to give the topics and subtopics.
+ * @param {String} id The id of the object.
+ * @param {String} _topics The topics dictionary.
+ * @param {String} _subtopics The subtopics dictionary.
+ *
+ * @returns
+ */
+export function assignIdAndTopic(object, id, _topics, _subtopics) {
+	let { topic, subtopic } = object;
+	object.id = id;
+	object.topic = _topics[topic];
+	object.subtopic = _subtopics[topic][subtopic];
+
+	return object;
 }

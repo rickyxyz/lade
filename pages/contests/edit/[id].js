@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { FirebaseContext, getData } from "../../../components/firebase";
 import Frame from "../../../components/Generic/Frame";
 import "react-quill/dist/quill.snow.css";
-import ProblemEditor from "../../../components/Problem/ProblemEditor";
 import ContestEditor from "../../../components/Contest/ContestEditor";
 
 const Contests = ({ id }) => {

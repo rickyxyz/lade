@@ -19,7 +19,7 @@ import Button from "./Button";
 import { GoChevronDown, GoChevronUp, GoDash } from "react-icons/go";
 import FrameHead from "./FrameHead";
 
-const objectsPerPage = 3;
+const objectsPerPage = 5;
 
 const Criteria = ({ children, thisCrit, criteria, onClick }) => {
 	const [state, setState] = useState(null);
@@ -181,6 +181,7 @@ const ViewTemplate = ({
 				setFetch(1);
 			})
 			.catch((e) => {
+				console.log(e);
 				addToast(genericToast("get-fail"));
 				setFetch(-1);
 			});

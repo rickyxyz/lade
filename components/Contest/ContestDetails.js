@@ -1,8 +1,21 @@
 import clsx from "clsx";
 import { Interweave } from "interweave";
+import { useRouter } from "next/router";
 import Button from "../Generic/Button";
 
-const ContestDetails = ({ contest, warning, status, disabled }) => {
+const ContestDetails = ({
+	contest,
+	warning,
+	status,
+	disabled,
+	participate,
+}) => {
+	const router = useRouter();
+	
+	function participate() {
+		router.push(`/contests/solve/${id}`);
+	}
+
 	return (
 		<div>
 			<h2 className="h4">Contest Details</h2>
