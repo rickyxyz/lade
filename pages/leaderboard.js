@@ -19,59 +19,7 @@ import { GoChevronDown, GoChevronUp, GoDash } from "react-icons/go";
 import { getLevelFromExperience } from "../components/Profile/experience";
 import Link from "next/link";
 
-const problemsPerPage = 5;
-
-const Criteria = ({ children, thisCrit, criteria, onClick }) => {
-	const [state, setState] = useState(null);
-
-	useEffect(() => {
-		if (Math.abs(criteria) !== thisCrit) {
-			setState(<GoDash />);
-			return;
-		}
-
-		if (criteria === thisCrit) {
-			setState(<GoChevronUp />);
-		} else {
-			setState(<GoChevronDown />);
-		}
-	}, [criteria]);
-
-	return (
-		<Button
-			className={clsx("flex flex-row justify-between py-1 gap-4")}
-			variant={Math.abs(criteria) === thisCrit ? "primary" : "ghost"}
-			onClick={onClick}
-		>
-			<span>{state}</span>
-			<span>{children}</span>
-		</Button>
-	);
-};
-
-// List of all criterias
-const crits = [
-	{
-		id: 1,
-		type: "Time",
-	},
-	{
-		id: 2,
-		type: "Accepted",
-	},
-	{
-		id: 3,
-		type: "Attempted",
-	},
-	{
-		id: 4,
-		type: "Comments",
-	},
-];
-
 const Problems = ({ loggedIn, }) => {
-	const { db, _topics, _subtopics } = useContext(FirebaseContext);
-
 	const [users, setUsers] = useState([]);
 	const [fetch, setFetch] = useState(0);
 	const [ref, setRef] = useState(false);
