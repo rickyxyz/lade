@@ -1,3 +1,4 @@
+import { Card } from "@/components";
 import clsx from "clsx";
 import Link from "next/link";
 import { ReactNode } from "react";
@@ -8,6 +9,7 @@ import {
   BsClipboardData,
   BsFillPersonFill,
   BsTrophyFill,
+  BsTrophy,
 } from "react-icons/bs";
 
 interface SideLinkType {
@@ -32,13 +34,13 @@ const LINKS: SideLinkType[] = [
   {
     name: "Leaderboard",
     href: `/leaderboard`,
-    icon: <BsTrophyFill />,
+    icon: <BsTrophy />,
   },
 ];
 
 export function Sidebar() {
   return (
-    <aside className="w-fit h-fit mt-16 bg-gray-50 shadow-md">
+    <Card as="aside" className="!p-0 w-fit h-fit mt-8">
       <ul>
         {LINKS.map((link) => {
           return (
@@ -47,7 +49,7 @@ export function Sidebar() {
                 className={clsx(
                   "flex flex-row items-center",
                   "h-12 py-2 px-8",
-                  "hover:bg-blue-100 border-r-4 border-transparent hover:border-blue-400"
+                  "hover:bg-teal-100 border-transparent hover:border-teal-400"
                 )}
               >
                 {link.icon}
@@ -57,6 +59,6 @@ export function Sidebar() {
           );
         })}
       </ul>
-    </aside>
+    </Card>
   );
 }

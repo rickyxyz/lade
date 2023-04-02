@@ -1,4 +1,8 @@
 @layer base {
+  p,
+  span {
+    @apply text-zinc-800;
+  }
   *:focus {
     outline: none;
   }
@@ -8,7 +12,7 @@
     height: 100%;
   }
   .head-style {
-    @apply text-blue-600 font-semibold;
+    @apply font-semibold;
   }
   h1,
   .h1 {
@@ -16,7 +20,7 @@
   }
   h2,
   .h2 {
-    @apply head-style text-3xl;
+    @apply head-style text-2xl;
   }
   h3,
   .h3 {
@@ -33,9 +37,39 @@
 }
 @tailwind base;
 @layer components {
+  mjx-container svg {
+    display: inline;
+  }
 }
 @tailwind components;
 @layer utilites {
+  .font-thin {
+    font-variation-settings: "wght" 100;
+  }
+  .font-extralight {
+    font-variation-settings: "wght" 200;
+  }
+  .font-light {
+    font-variation-settings: "wght" 300;
+  }
+  .font-normal {
+    font-variation-settings: "wght" 400;
+  }
+  .font-medium {
+    font-variation-settings: "wght" 500;
+  }
+  .font-semibold {
+    font-variation-settings: "wght" 600;
+  }
+  .font-bold {
+    font-variation-settings: "wght" 700;
+  }
+  .font-extrabold {
+    font-variation-settings: "wght" 800;
+  }
+  .font-black {
+    font-variation-settings: "wght" 900;
+  }
   .w-adaptive {
     width: 1024px;
   }
