@@ -29,7 +29,7 @@ export function Navbar() {
   );
 
   return (
-    <nav className={NAVBAR_OUTER_STYLE}>
+    <nav className={NAVBAR_OUTER_STYLE} style={{ minHeight: "4rem" }}>
       <div className={NAVBAR_INNER_STYLE}>
         <Image src="/lade.svg" alt="LADE Logo" width={120} height={56} />
         {renderSearchField}

@@ -1,9 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, CSSProperties } from "react";
 import clsx from "clsx";
 
 export interface CardProps {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
   as?: "header" | "footer" | "aside";
 }
 

@@ -20,12 +20,21 @@ export default function App({ Component, pageProps }: AppProps) {
           font-family: ${inter.style.fontFamily}!important;
         }
       `}</style>
-      <div className="h-full flex flex-col flex-auto">
+      <div className="h-full flex flex-col flex-auto overflow-hidden">
         <Navbar />
-        <div className="h-full flex w-adaptive mx-auto">
-          <Sidebar />
-          <div className="w-full h-full p-8 pt-8">
-            <Component {...pageProps} />
+        <div className="w-full h-full overflow-y-scroll">
+          <div className="h-full flex-reverse relative w-adaptive mx-auto">
+            <Sidebar />
+            <div
+              className="w-full relative p-8 pt-8"
+              style={{
+                position: "absolute",
+                width: "calc(100% - 16rem)",
+                right: 0,
+              }}
+            >
+              <Component {...pageProps} />
+            </div>
           </div>
         </div>
       </div>

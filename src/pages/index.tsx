@@ -35,6 +35,10 @@ export default function Home() {
       <div className="mt-8 flex flex-col gap-8">
         <ProblemCard problem={PROBLEM_SAMPLE} />
         <ProblemCard problem={PROBLEM_SAMPLE_2} />
+        <ProblemCard problem={PROBLEM_SAMPLE} />
+        <ProblemCard problem={PROBLEM_SAMPLE_2} />
+        <ProblemCard problem={PROBLEM_SAMPLE} />
+        <ProblemCard problem={PROBLEM_SAMPLE_2} />
       </div>
     ),
     []
