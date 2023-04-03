@@ -1,8 +1,7 @@
+import { useMemo } from "react";
+import Image from "next/image";
 import { Button, Input } from "@/components";
 import clsx from "clsx";
-import Image from "next/image";
-import { NavbarSearch } from "./NavbarSearch";
-import { useMemo } from "react";
 
 export interface NavbarProps {}
 

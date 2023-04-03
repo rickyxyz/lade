@@ -1,10 +1,9 @@
-import { Inter } from "next/font/google";
 import type { AppProps } from "next/app";
-import { Navbar } from "@/components";
-import "@/styles/globals.css";
-import { Sidebar } from "@/components/Layout/Sidebar/Sidebar";
 import { useEffect } from "react";
+import { Navbar, Sidebar } from "@/components";
 import { mathjax3, md } from "@/utils";
+import "@/styles/globals.css";
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,11 +25,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <div className="h-full flex-reverse relative w-adaptive mx-auto">
             <Sidebar />
             <div
-              className="w-full relative p-8 pt-8"
+              className="w-full absolute right-0 p-8 pt-8"
               style={{
-                position: "absolute",
-                width: "calc(100% - 16rem)",
-                right: 0,
+                width: "calc(100% - 14rem)",
               }}
             >
               <Component {...pageProps} />

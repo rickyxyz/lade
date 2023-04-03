@@ -1,7 +1,7 @@
-import { Card, PageGenericTemplate, ProblemCard } from "@/components";
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { ProblemType } from "@/types";
 import { crudData, populateProblems } from "@/firebase";
+import { Card, PageGenericTemplate, ProblemCard } from "@/components";
+import { ProblemType } from "@/types";
 
 export default function Home() {
   const [problems, setProblems] = useState<ProblemType[]>([]);

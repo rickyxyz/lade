@@ -1,7 +1,7 @@
-import { ICONS } from "@/consts";
-import { IconNameType } from "@/types";
-import clsx from "clsx";
 import { ComponentType, useMemo } from "react";
+import { IconNameType } from "@/types";
+import { ICONS } from "@/consts";
+import clsx from "clsx";
 
 type Base = { className: string };
 

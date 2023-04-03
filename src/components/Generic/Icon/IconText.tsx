@@ -1,5 +1,5 @@
-import { IconNameType } from "@/types";
 import { Icon } from "./Icon";
+import { IconNameType } from "@/types";
 import clsx from "clsx";
 
 export interface IconTextProps {

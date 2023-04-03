@@ -1,16 +1,14 @@
-import { Card } from "@/components";
-import clsx from "clsx";
-import Link from "next/link";
 import { ReactNode } from "react";
+import Link from "next/link";
+import { Card } from "@/components";
 import {
   BsHouseDoor,
   BsQuestionOctagon,
   BsClipboardPlus,
   BsClipboardData,
-  BsFillPersonFill,
-  BsTrophyFill,
   BsTrophy,
 } from "react-icons/bs";
+import clsx from "clsx";
 
 interface SideLinkType {
   name: string;

@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Card, Tag, IconText } from "@/components";
-import { ProblemType } from "@/types";
-import { BsCheck, BsEye } from "react-icons/bs";
-import { ProblemStats, ProblemStatsProps } from "../Stats";
+import { Card, Tag } from "@/components";
+import { ProblemStats } from "../Stats";
 import { md } from "@/utils";
+import { ProblemType } from "@/types";
 
 export interface ProblemCardProps {
   problem: ProblemType;
