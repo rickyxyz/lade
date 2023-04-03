@@ -6,3 +6,5 @@ export interface ProblemType {
   solved?: number;
   views?: number;
 }
+
+export type ProblemWithoutIdType = Omit<ProblemType, "id">;
