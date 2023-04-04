@@ -27,7 +27,12 @@ export async function getDataFromPath(group: string, id: string) {
   const docRef = doc(db, group, id);
   const docSnap = await getDoc(docRef);
 
-  return docSnap.exists() ? docSnap.data() : undefined;
+  return docSnap.exists()
+    ? {
+        id,
+        ...docSnap.data()[group],
+      }
+    : undefined;
 }
 
 export async function setDataToPath(group: string, data: object) {
@@ -51,7 +56,8 @@ export async function crudData<K extends CrudPathType>(
         readResult = await getAllDataFromPath(collection);
       } else if (id) {
         readResult = await getDataFromPath(collection, data.id);
-        if (path === "get_problem") (readResult as ProblemType).id = id;
+        if (readResult && path === "get_problem")
+          (readResult as ProblemType).id = id;
       }
       return readResult as CrudMapPathToReturnTypes[K];
     case "update":
