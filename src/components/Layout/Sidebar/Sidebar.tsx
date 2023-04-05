@@ -17,7 +17,7 @@ interface SideLinkType {
 }
 
 const LINKS: SideLinkType[] = [
-  { name: "Problems", href: "/problems", icon: <BsHouseDoor /> },
+  { name: "Problems", href: "/", icon: <BsHouseDoor /> },
   { name: "Contests", href: "/contests", icon: <BsClipboardData /> },
   {
     name: "New Problem",

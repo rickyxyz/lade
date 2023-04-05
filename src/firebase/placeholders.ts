@@ -20,7 +20,7 @@ export const PROBLEM_SAMPLE_2: ProblemWithoutIdType = {
 
 export const PROBLEM_SAMPLE_3: ProblemWithoutIdType = {
   statement:
-    "A coffee pot that has the shape of a circular cylinder of radius $8 \\text{ cm}$ is being filled with water flowing at a export constant rate. At what rate, in $\\text{cm}^3\\text{/sec}$, is the water flowing into the coffee pot when the water level is rising at the rate of $1 \\text{ cm/sec}$? Express your answer in terms of $\\pi$",
+    "A coffee pot that has the shape of a circular cylinder of radius $8 \\text{ cm}$ is being filled with water flowing at a export constant rate. At what rate, in $\\text{cm}^3\\text{/sec}$, is the water flowing into the coffee pot when the water level is rising at the rate of $1 \\text{ cm/sec}$? Express your answer in terms of $\\pi$.",
   title: "Filling Water",
   topics: ["Calculus", "Applications of Derivative"],
   type: "short_answer",
@@ -34,4 +34,19 @@ export const PROBLEM_SAMPLE_4: ProblemWithoutIdType = {
   topics: ["Calculus", "Applications of Derivative"],
   type: "short_answer",
   answer: 20,
+};
+
+export const PROBLEM_SAMPLE_5: ProblemWithoutIdType = {
+  statement:
+    "Provided $A=\\begin{bmatrix} -1 & 7 & -1\\\\ 0 & 1 & 0\\\\ 0 & 15 & 2 \\end{bmatrix}$, calculate $A^{11}$.",
+  title: "Eleventh Power",
+  topics: ["Linear Algebra", "Eigenvalues and Eigenvectors"],
+  type: "matrix",
+  matrixHeight: 3,
+  matrixWidth: 3,
+  answer: [
+    [-1, -10223, -683],
+    [0, 1, 0],
+    [0, 30705, 2048],
+  ],
 };

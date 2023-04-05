@@ -1,17 +1,14 @@
-import { Icon } from "./Icon";
-import { IconNameType } from "@/types";
+import { Icon, IconProps } from "./Icon";
 import clsx from "clsx";
 
-export interface IconTextProps {
-  icon: IconNameType;
+export interface IconTextProps extends IconProps {
   text: string;
-  className?: string;
 }
 
-export function IconText({ icon, text, className }: IconTextProps) {
+export function IconText({ icon, size, text, className }: IconTextProps) {
   return (
     <div className={clsx("flex items-center text-sm", className)}>
-      <Icon icon={icon} className={clsx("mr-2", className)} />
+      <Icon icon={icon} size={size} className={clsx("mr-2", className)} />
       {text}
     </div>
   );

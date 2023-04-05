@@ -3,6 +3,7 @@ import { Card, Tag } from "@/components";
 import { ProblemStats } from "../Stats";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
+import Link from "next/link";
 
 export interface ProblemCardProps {
   problem: ProblemType;
@@ -16,11 +17,13 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <h2>{title}</h2>
+        <Link href={`/problem/${id}`}>
+          <h2 className="text-teal-700 hover:text-teal-800">{title}</h2>
+        </Link>
         <article className="mb-2" ref={statementRef}></article>
       </>
     ),
-    [title]
+    [id, title]
   );
 
   const renderTags = useMemo(
@@ -36,7 +39,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
 
   const renderStats = useMemo(
     () => (
-      <div className="flex items-center text-sm text-gray-600 gap-8">
+      <div className="flex items-center text-sm text-gray-600 gap-6">
         <ProblemStats type="view" value={views} />
         <ProblemStats type="solved" value={solved} />
       </div>

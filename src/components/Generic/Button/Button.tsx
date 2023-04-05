@@ -1,5 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
-
+import { DetailedHTMLProps, ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -13,7 +12,11 @@ export type ButtonVariantType =
   | "ghost-danger"
   | "link";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   children: ReactNode;
   variant?: ButtonVariantType;
   className?: string;

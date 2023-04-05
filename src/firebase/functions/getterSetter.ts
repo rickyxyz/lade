@@ -7,7 +7,7 @@ import {
   CrudMapPathToReturnTypes,
   CrudPathType,
 } from "../types";
-import { ProblemType } from "@/types";
+import { ProblemAnswerType, ProblemType } from "@/types";
 
 export async function getAllDataFromPath(group: string) {
   const querySnapshot = await getDocs(collection(db, group));
@@ -47,17 +47,32 @@ export async function crudData<K extends CrudPathType>(
 
   switch (type) {
     case "create":
-      await setDataToPath(collection, data);
+      if (path === "set_problem" && data.problem.type === "matrix") {
+        await setDataToPath(collection, {
+          ...data,
+          problem: {
+            ...data.problem,
+            answer: JSON.stringify(data.problem.answer),
+          },
+        });
+      } else {
+        await setDataToPath(collection, data);
+      }
       break;
     case "read":
-      let readResult: unknown = undefined;
+      let readResult: any = undefined;
       const { id } = data;
       if (group) {
         readResult = await getAllDataFromPath(collection);
       } else if (id) {
         readResult = await getDataFromPath(collection, data.id);
-        if (readResult && path === "get_problem")
+        if (readResult && path === "get_problem") {
           (readResult as ProblemType).id = id;
+
+          if ((readResult as ProblemType).type === "matrix") {
+            (readResult as any).answer = JSON.parse((readResult as any).answer);
+          }
+        }
       }
       return readResult as CrudMapPathToReturnTypes[K];
     case "update":

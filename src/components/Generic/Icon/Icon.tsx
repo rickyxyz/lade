@@ -5,10 +5,13 @@ import clsx from "clsx";
 
 type Base = { className: string };
 
+type IconSizeType = "md" | "sm";
+
 export interface IconProps {
   className?: string;
   icon: IconNameType;
   filled?: boolean;
+  size?: IconSizeType;
 }
 
 export const injectPropsToIcon = <TProps extends Base>(
@@ -22,12 +25,15 @@ export const injectPropsToIcon = <TProps extends Base>(
 
 const IconBase = (any: any) => injectPropsToIcon(any);
 
-export function Icon({ className = "", icon, filled }: IconProps) {
+export function Icon({ className = "", icon, size = "md" }: IconProps) {
   const component = useMemo(() => ICONS[icon], [icon]);
 
   const IconComponent = useMemo(() => IconBase(component), [component]);
 
-  return <IconComponent className={clsx(ICON_STYLE, className)} />;
+  return <IconComponent className={clsx(ICON_SIZE_STYLE[size], className)} />;
 }
 
-const ICON_STYLE = "h-6 w-6";
+const ICON_SIZE_STYLE: Record<IconSizeType, string> = {
+  md: "h-6 w-6",
+  sm: "h-4 w-4",
+};
