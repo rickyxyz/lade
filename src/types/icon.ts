@@ -1,1 +1,6 @@
-export type IconNameType = "eye" | "eyeFill" | "check" | "clipboardCheckFill";
+export type IconNameType =
+  | "eye"
+  | "eyeFill"
+  | "check"
+  | "clipboardCheckFill"
+  | "X";

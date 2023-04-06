@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Input, Tag } from "@/components";
+import { Button, Card, Icon, Input, Tag } from "@/components";
 import { ProblemStats } from "../Stats";
 import { md } from "@/utils";
 import { ProblemToAnswerType, ProblemType } from "@/types";
@@ -23,10 +23,20 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   } = problem;
 
   const [userAnswer, setUserAnswer] = useState<any>();
+  const [userSolved, setUserSolved] = useState(false);
+  const [submitted, setSubmitted] = useState<number>();
+  const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
+  const [cooldown, setCooldown] = useState(0);
 
   const statementRef = useRef<HTMLDivElement>(null);
 
   const handleCheckAnswer = useCallback(() => {
+    const now = new Date().getTime();
+
+    if (submitted && now - submitted <= 1000 * 5) {
+      return;
+    }
+
     const verdict = (() => {
       switch (type) {
         case "matrix":
@@ -36,10 +46,22 @@ export function ProblemMain({ problem }: ProblemMainProps) {
         case "short_answer":
           return userAnswer === String(answer);
       }
+      return false;
     })();
 
-    console.log("Verdict: ", verdict);
-  }, [answer, type, userAnswer]);
+    if (cooldownIntv) clearInterval(cooldownIntv);
+
+    setCooldown(5000);
+
+    const interval = setInterval(() => {
+      setCooldown((prev) => Math.max(0, prev - 100));
+    }, 100);
+
+    setSubmitted(now);
+    setUserSolved(verdict);
+
+    if (!verdict) setCooldownIntv(interval);
+  }, [answer, cooldownIntv, submitted, type, userAnswer]);
 
   const renderTags = useMemo(
     () => (
@@ -81,6 +103,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   );
 
   const renderAnswerInputs = useMemo(() => {
+    if (userAnswer === undefined) return;
+
     switch (type) {
       case "matrix":
         const { matrixHeight, matrixWidth } = problem;
@@ -95,6 +119,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
                   {horizontal.map((_, i) => (
                     <Input
                       key={`${id}-Matrix-${j}-${i}`}
+                      variant="solid"
                       className="w-24 text-center"
                       value={userAnswer[j][i]}
                       onChange={(e: any) => {
@@ -124,20 +149,46 @@ export function ProblemMain({ problem }: ProblemMainProps) {
             onChange={(e: any) => {
               setUserAnswer(e.target.value);
             }}
+            disabled={userSolved}
           />
         );
     }
-  }, [id, problem, type, userAnswer]);
+  }, [id, problem, type, userAnswer, userSolved]);
+
+  const renderAnswerVerdict = useMemo(() => {
+    if (submitted) {
+      return userSolved ? (
+        <Icon icon="check" size="lg" className="text-green-600" />
+      ) : (
+        <Icon icon="X" size="lg" className="text-red-600" />
+      );
+    }
+  }, [submitted, userSolved]);
 
   const renderAnswer = useMemo(
     () => (
       <>
-        <h2 className="mb-3">Your Answer</h2>
+        <div className="flex items-center mb-3">
+          <h2>Your Answer</h2>
+          {renderAnswerVerdict}
+        </div>
         {renderAnswerInputs}
-        <Button onClick={handleCheckAnswer}>Check</Button>
+        <Button
+          className="w-20"
+          disabled={cooldown > 0 || userSolved}
+          onClick={handleCheckAnswer}
+        >
+          {cooldown > 0 && !userSolved ? Math.ceil(cooldown / 1000) : "Submit"}
+        </Button>
       </>
     ),
-    [handleCheckAnswer, renderAnswerInputs]
+    [
+      cooldown,
+      handleCheckAnswer,
+      renderAnswerInputs,
+      renderAnswerVerdict,
+      userSolved,
+    ]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -146,11 +197,16 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   }, [statement]);
 
   const handleInitDefaultAnswer = useCallback(() => {
-    if (type === "matrix") {
-      const vertical = Array.from({ length: 3 });
-      const horizontal = Array.from({ length: 3 });
+    switch (type) {
+      case "matrix":
+        const vertical = Array.from({ length: 3 });
+        const horizontal = Array.from({ length: 3 });
 
-      setUserAnswer(vertical.map((_) => horizontal.map((_) => "")));
+        setUserAnswer(vertical.map((_) => horizontal.map((_) => "")));
+        break;
+      case "short_answer":
+        setUserAnswer("");
+        break;
     }
   }, [type]);
 

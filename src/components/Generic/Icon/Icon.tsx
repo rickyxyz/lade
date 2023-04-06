@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 type Base = { className: string };
 
-type IconSizeType = "md" | "sm";
+type IconSizeType = "lg" | "md" | "sm";
 
 export interface IconProps {
   className?: string;
@@ -34,6 +34,7 @@ export function Icon({ className = "", icon, size = "md" }: IconProps) {
 }
 
 const ICON_SIZE_STYLE: Record<IconSizeType, string> = {
+  lg: "h-8 w-8",
   md: "h-6 w-6",
   sm: "h-4 w-4",
 };
