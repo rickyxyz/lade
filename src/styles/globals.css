@@ -40,6 +40,22 @@
   mjx-container svg {
     display: inline;
   }
+  .skeleton {
+    @apply bg-gray-100 rounded-full;
+    animation-name: skeleframe;
+    animation-duration: 0.8s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes skeleframe {
+    from {
+      @apply bg-gray-100;
+    }
+    to {
+      @apply bg-gray-200;
+    }
+  }
 }
 @tailwind components;
 @layer utilites {

@@ -1,8 +1,11 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { crudData, db, populateProblems } from "@/firebase";
-import { Card, PageGenericTemplate, ProblemMain } from "@/components";
+import { crudData } from "@/firebase";
+import {
+  PageGenericTemplate,
+  ProblemMain,
+  ProblemMainSkeleton,
+} from "@/components";
 import { ProblemType } from "@/types";
-import { deleteDoc, doc } from "firebase/firestore";
 
 interface ProblemProps {
   id: string;
@@ -13,8 +16,13 @@ export function Problem({ id }: ProblemProps) {
   const [loading, setLoading] = useState(true);
 
   const renderQuestion = useMemo(
-    () => problem && <ProblemMain problem={problem} />,
-    [problem]
+    () =>
+      !loading && problem ? (
+        <ProblemMain problem={problem} />
+      ) : (
+        <ProblemMainSkeleton />
+      ),
+    [loading, problem]
   );
 
   const handleGetProblems = useCallback(async () => {
@@ -26,9 +34,8 @@ export function Problem({ id }: ProblemProps) {
       id,
     }).then((result) => {
       if (result) {
-        console.log(result);
         setProblem(result);
-        setLoading(true);
+        setLoading(false);
       }
     });
   }, [id, loading]);

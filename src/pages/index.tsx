@@ -1,6 +1,12 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData, db, populateProblems } from "@/firebase";
-import { Button, Card, PageGenericTemplate, ProblemCard } from "@/components";
+import {
+  Button,
+  Card,
+  PageGenericTemplate,
+  ProblemCard,
+  ProblemCardSkeleton,
+} from "@/components";
 import { ProblemType } from "@/types";
 import { deleteDoc, doc } from "firebase/firestore";
 
@@ -31,14 +37,17 @@ export default function Home() {
   );
 
   const renderProblems = useMemo(
-    () => (
-      <div className="mt-8 flex flex-col gap-8">
-        {problems.map((problem) => (
-          <ProblemCard key={problem.id} problem={problem} />
-        ))}
-      </div>
-    ),
-    [problems]
+    () =>
+      loading ? (
+        <ProblemCardSkeleton className="mt-8" />
+      ) : (
+        <div className="mt-8 flex flex-col gap-8">
+          {problems.map((problem) => (
+            <ProblemCard key={problem.id} problem={problem} />
+          ))}
+        </div>
+      ),
+    [loading, problems]
   );
 
   const handleGetProblems = useCallback(async () => {
@@ -48,8 +57,9 @@ export default function Home() {
 
     await crudData("get_problems", {}).then((results) => {
       if (results) {
+        console.log("Get Problems OK!!");
         setProblems(results);
-        setLoading(true);
+        setLoading(false);
       }
     });
   }, [loading]);
