@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Icon, Input, Tag } from "@/components";
-import { ProblemStats } from "../Stats";
+import {
+  Button,
+  Card,
+  Icon,
+  Input,
+  ProblemStats,
+  ProblemTopics,
+} from "@/components";
 import { md } from "@/utils";
-import { ProblemToAnswerType, ProblemType } from "@/types";
+import { ProblemType } from "@/types";
 import clsx from "clsx";
-import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 
 export interface ProblemMainProps {
   problem: ProblemType;
@@ -15,7 +20,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     id,
     statement,
     title,
-    topics,
+    topic,
+    subtopic,
     solved = 0,
     views = 0,
     type,
@@ -64,14 +70,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   }, [answer, cooldownIntv, submitted, type, userAnswer]);
 
   const renderTags = useMemo(
-    () => (
-      <div className="flex flex-wrap gap-4 mb-3">
-        {topics.map((topic) => (
-          <Tag key={`${id}-${topic}`}>{topic}</Tag>
-        ))}
-      </div>
-    ),
-    [id, topics]
+    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-3" />,
+    [subtopic, topic]
   );
 
   const renderStats = useMemo(

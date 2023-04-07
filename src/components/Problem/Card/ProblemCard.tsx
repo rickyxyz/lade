@@ -1,16 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Card, Tag } from "@/components";
-import { ProblemStats } from "../Stats";
+import Link from "next/link";
+import { Card, ProblemStats, ProblemTopics } from "@/components";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
-import Link from "next/link";
 
 export interface ProblemCardProps {
   problem: ProblemType;
 }
 
 export function ProblemCard({ problem }: ProblemCardProps) {
-  const { id, statement, title, topics, solved = 0, views = 0 } = problem;
+  const {
+    id,
+    statement,
+    title,
+    topic,
+    subtopic,
+    solved = 0,
+    views = 0,
+  } = problem;
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -27,14 +34,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   );
 
   const renderTags = useMemo(
-    () => (
-      <div className="flex flex-wrap gap-4 mb-2">
-        {topics.map((topic) => (
-          <Tag key={`${id}-${topic}`}>{topic}</Tag>
-        ))}
-      </div>
-    ),
-    [id, topics]
+    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-2" />,
+    [subtopic, topic]
   );
 
   const renderStats = useMemo(

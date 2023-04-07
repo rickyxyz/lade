@@ -1,3 +1,21 @@
+import { PROBLEM_TOPICS_RELATIONSHIP_OBJECT } from "@/consts";
+
+export type ProblemTopicNameType = "calculus" | "linear-algebra";
+
+export type ProblemSubtopicNameType =
+  | "limits"
+  | "derivatives"
+  | "applications-of-derivative"
+  | "integral"
+  | "first-order-differential-equations"
+  | "vectors"
+  | "lines-planes"
+  | "eigenvalues-eigenvectors";
+
+export type ProblemAllTopicNameType =
+  | ProblemTopicNameType
+  | ProblemSubtopicNameType;
+
 export interface ProblemToAnswerType {
   short_answer: string | number;
   matrix: (string | number)[][];
@@ -23,16 +41,36 @@ type ProblemMapTypeToAnswerType<
   } & AnswerSpecificProblemType[P];
 }[K];
 
-export type ProblemType = ProblemMapTypeToAnswerType & {
-  id: string;
-  topics: string[];
-  title: string;
-  statement: string;
-  solved?: number;
-  views?: number;
-};
+type ProblemTopicSpecificType<K extends ProblemTopicNameType> =
+  (typeof PROBLEM_TOPICS_RELATIONSHIP_OBJECT)[K][number];
+
+type ProblemMapTypeTopicType<
+  K extends ProblemTopicNameType = ProblemTopicNameType
+> = {
+  [P in K]: { topic: P } & {
+    subtopic: ProblemTopicSpecificType<P>;
+  };
+}[K];
+
+export type ProblemType = ProblemMapTypeToAnswerType &
+  ProblemMapTypeTopicType & {
+    id: string;
+    title: string;
+    statement: string;
+    solved?: number;
+    views?: number;
+  };
 
 export interface ProblemMandatoryAnswerType {}
 
 export type ProblemWithoutIdType = Omit<ProblemType, "id" | "type" | "answer"> &
-  ProblemMapTypeToAnswerType;
+  ProblemMapTypeToAnswerType &
+  ProblemMapTypeTopicType;
+
+export interface ProblemTopicType {
+  name: string;
+}
+
+export interface ProblemMainTopicType extends ProblemTopicType {
+  subtopics: ProblemTopicType[];
+}
