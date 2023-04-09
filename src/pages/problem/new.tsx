@@ -24,9 +24,11 @@ import dynamic from "next/dynamic";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import {
+  PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
+import { ProblemAnswer } from "@/components/Problem/Answer/ProblemAnswer";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -50,7 +52,6 @@ export default function Problem() {
     () => [
       { key: "short_answer", text: "Short Answer" },
       { key: "matrix", text: "Matrix" },
-      { key: "true_or_false", text: "True or False" },
     ],
     []
   );
@@ -82,6 +83,7 @@ export default function Problem() {
   );
 
   const stateProblemType = useState(optionsProblemType[0]);
+  const [problemType, setProblemType] = stateProblemType;
   const stateProblemTopic = useState(optionsProblemTopic[0]);
   const problemTopicName = useMemo(
     () => stateProblemTopic[0].key,
@@ -92,9 +94,21 @@ export default function Problem() {
   );
   const [problemTopic, setProblemTopic] = stateProblemTopic;
   const setProblemSubTopic = stateProblemSubTopic[1];
+
+  const stateAnswer = useState<any>();
+  const [answer, setAnswer] = stateAnswer;
+
   const optionsSpecificProblemSubTopic = useMemo(
     () => optionsProblemSubTopic[problemTopicName],
     [optionsProblemSubTopic, problemTopicName]
+  );
+
+  const handleUpdateProblemType = useCallback(
+    (newType: SelectOptionType<ProblemAnswerType>) => {
+      setProblemType(newType);
+      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType.key]);
+    },
+    [setAnswer, setProblemType]
   );
 
   const handleUpdateProblemTopic = useCallback(
@@ -117,7 +131,7 @@ export default function Problem() {
         <div className="flex flex-col gap-4">
           <ProblemSettingSelect
             name="Problem Type"
-            stateObject={stateProblemType}
+            stateObject={[problemType, handleUpdateProblemType]}
             options={optionsProblemType}
           />
           <ProblemSettingSelect
@@ -135,20 +149,25 @@ export default function Problem() {
     ),
     [
       handleUpdateProblemTopic,
+      handleUpdateProblemType,
       optionsProblemSubTopic,
       optionsProblemTopic,
       optionsProblemType,
       problemTopic,
       problemTopicName,
+      problemType,
       stateProblemSubTopic,
-      stateProblemType,
     ]
   );
 
   const renderProblemEditor = useMemo(
     () => (
-      <section className="border-transparent" data-color-mode="light">
+      <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Problem Statement</h2>
+        <Input
+          wrapperClassName="w-full mb-4"
+          placeholder="Enter problem title here..."
+        />
         <MarkdownEditor
           value={statement}
           renderPreview={(props) => {
@@ -164,12 +183,23 @@ export default function Problem() {
     [statement]
   );
 
+  const renderProblemAnswer = useMemo(
+    () => (
+      <section>
+        <h2 className="mb-4">Problem Answer</h2>
+        <ProblemAnswer type={problemType.key} stateAnswer={stateAnswer} />
+      </section>
+    ),
+    [problemType.key, stateAnswer]
+  );
+
   return (
     <PageGenericTemplate>
       <Card>
         {renderHead}
         {renderProblemSettings}
         {renderProblemEditor}
+        {renderProblemAnswer}
       </Card>
     </PageGenericTemplate>
   );

@@ -56,7 +56,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   return (
     <div
       className={clsx(
-        "flex flex-row-reverse relative overflow-visible",
+        "flex flex-row-reverse relative overflow-visible cursor-pointer",
         className
       )}
       onFocus={() => setVisible(true)}

@@ -1,3 +1,4 @@
+export * from "./Answer";
 export * from "./Card";
 export * from "./Main";
 export * from "./Setting";

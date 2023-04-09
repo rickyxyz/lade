@@ -4,12 +4,15 @@ import {
   Card,
   Icon,
   Input,
+  ProblemAnswer,
   ProblemStats,
   ProblemTopics,
 } from "@/components";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
 import clsx from "clsx";
+import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
+import { validateAnswer } from "@/utils/answer";
 
 export interface ProblemMainProps {
   problem: ProblemType;
@@ -28,7 +31,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     answer,
   } = problem;
 
-  const [userAnswer, setUserAnswer] = useState<any>();
+  const stateUserAnswer = useState<any>();
+  const [userAnswer, setUserAnswer] = stateUserAnswer;
   const [userSolved, setUserSolved] = useState(false);
   const [submitted, setSubmitted] = useState<number>();
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
@@ -43,17 +47,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
       return;
     }
 
-    const verdict = (() => {
-      switch (type) {
-        case "matrix":
-          return !answer.some((column, j) =>
-            column.some((cell, i) => String(cell) !== userAnswer[j][i])
-          );
-        case "short_answer":
-          return userAnswer === String(answer);
-      }
-      return false;
-    })();
+    const verdict = validateAnswer(type, answer, userAnswer);
 
     if (cooldownIntv) clearInterval(cooldownIntv);
 
@@ -103,57 +97,16 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   );
 
   const renderAnswerInputs = useMemo(() => {
-    if (userAnswer === undefined) return;
+    if (userAnswer === undefined || !problem) return;
 
-    switch (type) {
-      case "matrix":
-        const { matrixHeight, matrixWidth } = problem;
-        const vertical = Array.from({ length: matrixHeight });
-        const horizontal = Array.from({ length: matrixWidth });
-
-        return (
-          <div className="flex flex-col gap-2 mb-4">
-            {userAnswer &&
-              vertical.map((_, j) => (
-                <div key={`${id}-Matrix-${j}`} className="flex gap-2">
-                  {horizontal.map((_, i) => (
-                    <Input
-                      key={`${id}-Matrix-${j}-${i}`}
-                      variant="solid"
-                      className="w-24 text-center"
-                      value={userAnswer[j][i]}
-                      onChange={(e: any) => {
-                        setUserAnswer((prev: any) => {
-                          const temp = JSON.parse(JSON.stringify(prev));
-                          temp[j][i] = e.target.value;
-                          for (let y = 0; y <= j; y++) {
-                            for (let x = 0; x <= i; x++) {
-                              if (temp[y][x] === "" && e.target.value !== "")
-                                temp[y][x] = "0";
-                            }
-                          }
-                          return temp;
-                        });
-                      }}
-                    />
-                  ))}
-                </div>
-              ))}
-          </div>
-        );
-      case "short_answer":
-        return (
-          <Input
-            className="mb-4"
-            value={userAnswer}
-            onChange={(e: any) => {
-              setUserAnswer(e.target.value);
-            }}
-            disabled={userSolved}
-          />
-        );
-    }
-  }, [id, problem, type, userAnswer, userSolved]);
+    return (
+      <ProblemAnswer
+        type={type}
+        stateAnswer={stateUserAnswer}
+        disabled={userSolved}
+      />
+    );
+  }, [problem, stateUserAnswer, type, userAnswer, userSolved]);
 
   const renderAnswerVerdict = useMemo(() => {
     if (submitted) {
@@ -197,18 +150,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   }, [statement]);
 
   const handleInitDefaultAnswer = useCallback(() => {
-    switch (type) {
-      case "matrix":
-        const vertical = Array.from({ length: 3 });
-        const horizontal = Array.from({ length: 3 });
-
-        setUserAnswer(vertical.map((_) => horizontal.map((_) => "")));
-        break;
-      case "short_answer":
-        setUserAnswer("");
-        break;
-    }
-  }, [type]);
+    setUserAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
+  }, [setUserAnswer, type]);
 
   useEffect(() => {
     handleInitDefaultAnswer();

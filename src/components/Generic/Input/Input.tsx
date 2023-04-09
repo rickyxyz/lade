@@ -15,6 +15,7 @@ export interface InputProps
   iconLeftClassName?: string;
   iconRight?: IconNameType;
   iconRightClassName?: string;
+  wrapperClassName?: string;
 }
 
 export function Input({
@@ -24,10 +25,11 @@ export function Input({
   iconLeftClassName,
   iconRight,
   iconRightClassName,
+  wrapperClassName,
   ...rest
 }: InputProps) {
   return (
-    <div className="relative w-fit">
+    <div className={clsx("relative w-fit", wrapperClassName)}>
       {iconLeft && (
         <Icon
           icon={iconLeft}
@@ -53,7 +55,7 @@ export function Input({
   );
 }
 
-const INPUT_BASE_STYLE = "h-10 px-4 rounded-md";
+const INPUT_BASE_STYLE = "w-full h-10 px-4 rounded-md";
 
 const INPUT_BASIC_STYLE = [
   "border border-gray-300",

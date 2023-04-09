@@ -6,7 +6,9 @@ import {
 } from "@/types";
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: ProblemToAnswerType = {
-  matrix: [[0]],
+  matrix: Array.from({ length: 3 }).map((_) =>
+    Array.from({ length: 3 }).map((_) => "")
+  ),
   short_answer: "",
   true_or_false: [false],
 };
