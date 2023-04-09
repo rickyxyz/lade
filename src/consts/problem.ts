@@ -40,7 +40,7 @@ export const PROBLEM_TOPICS_DETAIL_OBJECT: Record<
     name: "Vectors",
   },
   "lines-planes": {
-    name: "Lines and PLanes",
+    name: "Lines and Planes",
   },
   "eigenvalues-eigenvectors": {
     name: "Eigenvalues and Eigenvectors",

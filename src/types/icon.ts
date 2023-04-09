@@ -3,4 +3,6 @@ export type IconNameType =
   | "eyeFill"
   | "check"
   | "clipboardCheckFill"
-  | "X";
+  | "X"
+  | "chevronDown"
+  | "loaderAlt";

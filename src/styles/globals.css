@@ -34,6 +34,18 @@
   .h5 {
     @apply head-style;
   }
+  *:not(a) > h2 {
+    @apply text-teal-700;
+  }
+  .markdown ul {
+    list-style-type: disc;
+  }
+  .markdown li {
+    margin-left: 2rem;
+  }
+  .markdown li:last-child {
+    margin-bottom: 1rem;
+  }
 }
 @tailwind base;
 @layer components {
@@ -96,3 +108,7 @@
   }
 }
 @tailwind utilities;
+
+.cm-scroller {
+  height: 16rem !important;
+}

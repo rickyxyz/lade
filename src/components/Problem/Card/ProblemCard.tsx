@@ -25,7 +25,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     () => (
       <>
         <Link href={`/problem/${id}`}>
-          <h2 className="text-teal-700 hover:text-teal-800">{title}</h2>
+          <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
         </Link>
         <article className="mb-2" ref={statementRef}></article>
       </>

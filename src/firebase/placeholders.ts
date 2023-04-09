@@ -68,7 +68,7 @@ export const PROBLEM_SAMPLE_6: ProblemWithoutIdType = {
 
 export const PROBLEM_SAMPLE_7: ProblemWithoutIdType = {
   statement:
-    "Determine the distance between the given planes:  \n\n $$ \\begin{matrix} 2x-y+z&= 1\\\\ -2x + y - z&= 1 \\end{matrix} $$  \nRound the answer to the 5th decimal place.",
+    "Determine the distance between the given planes:  \n\n $$ \\begin{matrix} 2x-y+z&= 1\\\\ -2x + y - z&= 1 \\end{matrix} $$  \nRound the answer to the 6th decimal place.",
   title: "Distance of Two Planes",
   topic: "linear-algebra",
   subtopic: "lines-planes",

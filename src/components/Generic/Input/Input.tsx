@@ -1,5 +1,7 @@
 import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 import clsx from "clsx";
+import { IconNameType } from "@/types";
+import { Icon } from "../Icon";
 
 export type InputVariantType = "basic" | "solid";
 
@@ -9,19 +11,45 @@ export interface InputProps
     HTMLInputElement
   > {
   variant?: InputVariantType;
+  iconLeft?: IconNameType;
+  iconLeftClassName?: string;
+  iconRight?: IconNameType;
+  iconRightClassName?: string;
 }
 
-export function Input({ variant = "basic", className, ...rest }: InputProps) {
+export function Input({
+  variant = "basic",
+  className,
+  iconLeft,
+  iconLeftClassName,
+  iconRight,
+  iconRightClassName,
+  ...rest
+}: InputProps) {
   return (
-    <input
-      {...rest}
-      className={clsx(
-        INPUT_BASE_STYLE,
-        variant === "basic" && INPUT_BASIC_STYLE,
-        variant === "solid" && INPUT_SOLID_STYLE,
-        className
+    <div className="relative w-fit">
+      {iconLeft && (
+        <Icon
+          icon={iconLeft}
+          className={clsx("absolute top-2 left-2", iconLeftClassName)}
+        />
       )}
-    />
+      <input
+        {...rest}
+        className={clsx(
+          INPUT_BASE_STYLE,
+          variant === "basic" && INPUT_BASIC_STYLE,
+          variant === "solid" && INPUT_SOLID_STYLE,
+          className
+        )}
+      />
+      {iconRight && (
+        <Icon
+          icon={iconRight}
+          className={clsx("absolute top-2 right-2", iconRightClassName)}
+        />
+      )}
+    </div>
   );
 }
 

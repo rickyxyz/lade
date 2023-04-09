@@ -41,7 +41,7 @@ type ProblemMapTypeToAnswerType<
   } & AnswerSpecificProblemType[P];
 }[K];
 
-type ProblemTopicSpecificType<K extends ProblemTopicNameType> =
+export type ProblemTopicSpecificType<K extends ProblemTopicNameType> =
   (typeof PROBLEM_TOPICS_RELATIONSHIP_OBJECT)[K][number];
 
 type ProblemMapTypeTopicType<
