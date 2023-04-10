@@ -21,12 +21,12 @@ const LINKS: SideLinkType[] = [
   { name: "Contests", href: "/contests", icon: <BsClipboardData /> },
   {
     name: "New Problem",
-    href: "/problems/new",
+    href: "/problem/new",
     icon: <BsQuestionOctagon />,
   },
   {
     name: "New Contest",
-    href: "/contests/new",
+    href: "/contest/new",
     icon: <BsClipboardPlus />,
   },
   {

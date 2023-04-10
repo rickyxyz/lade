@@ -4,5 +4,6 @@ export * from "./Icon";
 export * from "./Input";
 export * from "./Loader";
 export * from "./Markdown";
+export * from "./Quote";
 export * from "./Select";
 export * from "./Tag";

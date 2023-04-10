@@ -5,4 +5,5 @@ export type IconNameType =
   | "clipboardCheckFill"
   | "X"
   | "chevronDown"
-  | "loaderAlt";
+  | "loaderAlt"
+  | "infoCircleFill";

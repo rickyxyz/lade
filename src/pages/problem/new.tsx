@@ -10,6 +10,7 @@ import {
   ProblemMainSkeleton,
   ProblemSettingSelect,
   Select,
+  Button,
 } from "@/components";
 import {
   ProblemAnswerType,
@@ -29,6 +30,7 @@ import {
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
 import { ProblemAnswer } from "@/components/Problem/Answer/ProblemAnswer";
+import { Quote } from "@/components/Generic/Quote";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -169,11 +171,10 @@ export default function Problem() {
           placeholder="Enter problem title here..."
         />
         <MarkdownEditor
+          className="mb-4"
           value={statement}
-          renderPreview={(props) => {
-            const test = props;
-            test.source;
-            return <Markdown markdown={test.source ?? ""} />;
+          renderPreview={({ source }) => {
+            return <Markdown markdown={source ?? ""} />;
           }}
           onChange={(e) => setStatement(e)}
           toolbars={["bold", "italic", "strike", "ulist", "olist"]}
@@ -185,9 +186,13 @@ export default function Problem() {
 
   const renderProblemAnswer = useMemo(
     () => (
-      <section>
+      <section className="mb-4">
         <h2 className="mb-4">Problem Answer</h2>
         <ProblemAnswer type={problemType.key} stateAnswer={stateAnswer} />
+        <Quote icon="infoCircleFill">
+          If the answer is a non-integer number, you should indicate the user to
+          which place the answer should be accurate to.
+        </Quote>
       </section>
     ),
     [problemType.key, stateAnswer]
@@ -200,6 +205,7 @@ export default function Problem() {
         {renderProblemSettings}
         {renderProblemEditor}
         {renderProblemAnswer}
+        <Button>Submit</Button>
       </Card>
     </PageGenericTemplate>
   );
