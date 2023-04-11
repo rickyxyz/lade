@@ -46,7 +46,6 @@ export function Quote({
             variant === "warning" && "text-yellow-700",
             variant === "danger" && "text-red-700",
           ])}
-          size="lg"
           icon={icon}
         />
       )}

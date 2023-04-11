@@ -9,7 +9,7 @@ export interface SelectProps<
   X extends string,
   Y extends SelectOptionType<X>[]
 > {
-  stateObject: [SelectOptionType<X>, (newValue: SelectOptionType<X>) => void];
+  stateObject: [X, (newValue: X) => void];
   variant?: SelectVariant;
   className?: string;
   options: Y;
@@ -39,7 +39,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           <div
             className="px-4 py-2 hover:bg-gray-50"
             onClick={(e) => {
-              setState(option);
+              setState(option.key);
               setVisible(false);
               selectRef.current?.blur();
             }}
@@ -73,7 +73,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           variant === "solid" && INPUT_SOLID_STYLE
         )}
       >
-        <span>{state.text}</span>
+        <span>{options.filter((option) => option.key === state)[0].text}</span>
         <Icon icon="chevronDown" size="sm" className="mr-2" />
       </div>
     </div>

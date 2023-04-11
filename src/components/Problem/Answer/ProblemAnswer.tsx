@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { Input } from "@/components";
 import { ProblemAnswerType, StateType } from "@/types";
 
@@ -6,12 +6,14 @@ interface ProblemAnswerProps {
   type: ProblemAnswerType;
   stateAnswer: StateType<any>;
   disabled?: boolean;
+  caption?: ReactNode;
 }
 
 export function ProblemAnswer({
   type,
   stateAnswer,
   disabled,
+  caption,
 }: ProblemAnswerProps) {
   const [answer, setAnswer] = stateAnswer;
 
@@ -20,8 +22,6 @@ export function ProblemAnswer({
 
     let maxLength = 0;
     let maxHeight = 0;
-
-    console.log(answer);
 
     const castedAnswer = answer as (string | number)[][];
 
@@ -78,18 +78,21 @@ export function ProblemAnswer({
               Matrix Size: {matrixSize[0]} x {matrixSize[1]}
             </span>
           )}
+          {caption}
         </div>
       );
     case "short_answer":
       return (
-        <Input
-          className="mb-4"
-          value={answer}
-          onChange={(e: any) => {
-            setAnswer(e.target.value);
-          }}
-          disabled={disabled}
-        />
+        <div className="mb-4">
+          <Input
+            value={answer}
+            onChange={(e: any) => {
+              setAnswer(e.target.value);
+            }}
+            disabled={disabled}
+          />
+          {caption}
+        </div>
       );
   }
 

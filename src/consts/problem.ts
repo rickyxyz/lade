@@ -3,7 +3,18 @@ import {
   ProblemMainTopicType,
   ProblemToAnswerType,
   ProblemTopicType,
+  ProblemType,
+  ProblemWithoutIdType,
 } from "@/types";
+
+export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
+  statement: "1 + 1 = ?",
+  title: "Problem Statement",
+  topic: "calculus",
+  subtopic: "derivatives",
+  type: "short_answer",
+  answer: "2",
+};
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: ProblemToAnswerType = {
   matrix: Array.from({ length: 3 }).map((_) =>

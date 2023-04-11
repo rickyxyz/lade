@@ -18,19 +18,22 @@ import {
   ProblemTopicNameType,
   ProblemTopicSpecificType,
   ProblemType,
+  ProblemWithoutIdType,
   SelectOptionType,
 } from "@/types";
-import { md } from "@/utils";
+import { md, parseMatrixSize } from "@/utils";
 import dynamic from "next/dynamic";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
+  PROBLEM_DEFAULT,
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
 import { ProblemAnswer } from "@/components/Problem/Answer/ProblemAnswer";
 import { Quote } from "@/components/Generic/Quote";
+import { validateErrors } from "@/utils/problem";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -46,9 +49,18 @@ const MarkdownEditor = dynamic(
 );
 
 export default function Problem() {
-  const [problem, setProblem] = useState<ProblemType>();
+  const [problem, setProblem] = useState<ProblemWithoutIdType>(PROBLEM_DEFAULT);
+
   const [loading, setLoading] = useState(true);
-  const [statement, setStatement] = useState("");
+  const stateAnswer = useState<any>("");
+  const [answer, setAnswer] = stateAnswer;
+  const problemComplete = useMemo<ProblemWithoutIdType>(
+    () => ({
+      ...problem,
+      answer,
+    }),
+    [answer, problem]
+  );
 
   const optionsProblemType = useMemo<SelectOptionType<ProblemAnswerType>[]>(
     () => [
@@ -79,47 +91,69 @@ export default function Problem() {
         {}
       ) as Record<
         ProblemTopicNameType,
-        SelectOptionType<ProblemTopicNameType>[]
+        SelectOptionType<ProblemSubtopicNameType>[]
       >,
     []
   );
 
-  const stateProblemType = useState(optionsProblemType[0]);
-  const [problemType, setProblemType] = stateProblemType;
-  const stateProblemTopic = useState(optionsProblemTopic[0]);
-  const problemTopicName = useMemo(
-    () => stateProblemTopic[0].key,
-    [stateProblemTopic]
-  );
-  const stateProblemSubTopic = useState(
-    optionsProblemSubTopic[problemTopicName][0]
-  );
-  const [problemTopic, setProblemTopic] = stateProblemTopic;
-  const setProblemSubTopic = stateProblemSubTopic[1];
+  const [errors, setErrors] = useState<any>({});
 
-  const stateAnswer = useState<any>();
-  const [answer, setAnswer] = stateAnswer;
-
-  const optionsSpecificProblemSubTopic = useMemo(
-    () => optionsProblemSubTopic[problemTopicName],
-    [optionsProblemSubTopic, problemTopicName]
-  );
-
-  const handleUpdateProblemType = useCallback(
-    (newType: SelectOptionType<ProblemAnswerType>) => {
-      setProblemType(newType);
-      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType.key]);
+  const handleUpdateProblemState = useCallback(
+    (overrideProperties: (problem: ProblemType) => ProblemType) => {
+      setProblem((prev) => {
+        const temp: ProblemType = JSON.parse(JSON.stringify(prev));
+        return overrideProperties(temp);
+      });
     },
-    [setAnswer, setProblemType]
+    []
   );
 
-  const handleUpdateProblemTopic = useCallback(
-    (newTopic: SelectOptionType<ProblemTopicNameType>) => {
-      setProblemTopic(newTopic);
-      setProblemSubTopic(optionsProblemSubTopic[newTopic.key][0]);
+  const handleUpdateType = useCallback(
+    (newType: ProblemAnswerType) => {
+      handleUpdateProblemState((input) => {
+        input.type = newType;
+        input.answer = PROBLEM_ANSWER_DEFAULT_VALUES[newType];
+        return input;
+      });
+      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType] as any);
     },
-    [optionsProblemSubTopic, setProblemSubTopic, setProblemTopic]
+    [handleUpdateProblemState, setAnswer]
   );
+
+  const handleUpdateTopic = useCallback(
+    (newTopic: ProblemTopicNameType) => {
+      handleUpdateProblemState((input) => {
+        input.topic = newTopic;
+        input.subtopic = optionsProblemSubTopic[newTopic][0].key;
+        return input;
+      });
+    },
+    [handleUpdateProblemState, optionsProblemSubTopic]
+  );
+
+  const handleUpdateSubTopic = useCallback(
+    (newTopic: ProblemSubtopicNameType) => {
+      handleUpdateProblemState((input) => {
+        input.subtopic = newTopic;
+        return input;
+      });
+    },
+    [handleUpdateProblemState]
+  );
+
+  const handleUpdateStatement = useCallback(
+    (newStatement: any) => {
+      handleUpdateProblemState((input) => {
+        input.statement = newStatement;
+        return input;
+      });
+    },
+    [handleUpdateProblemState]
+  );
+
+  const handleValidate = useCallback(() => {
+    setErrors(validateErrors(problemComplete));
+  }, [problemComplete]);
 
   const renderHead = useMemo(
     () => <h1 className="mb-8">Create Problem</h1>,
@@ -133,32 +167,30 @@ export default function Problem() {
         <div className="flex flex-col gap-4">
           <ProblemSettingSelect
             name="Problem Type"
-            stateObject={[problemType, handleUpdateProblemType]}
+            stateObject={[problem.type, handleUpdateType]}
             options={optionsProblemType}
           />
           <ProblemSettingSelect
             name="Problem Topic"
-            stateObject={[problemTopic, handleUpdateProblemTopic]}
+            stateObject={[problem.topic, handleUpdateTopic]}
             options={optionsProblemTopic}
           />
           <ProblemSettingSelect
             name="Problem Subtopic"
-            stateObject={stateProblemSubTopic}
-            options={optionsProblemSubTopic[problemTopicName]}
+            stateObject={[problem.subtopic, handleUpdateSubTopic]}
+            options={optionsProblemSubTopic[problem.topic]}
           />
         </div>
       </section>
     ),
     [
-      handleUpdateProblemTopic,
-      handleUpdateProblemType,
+      handleUpdateTopic,
+      handleUpdateType,
+      handleUpdateSubTopic,
       optionsProblemSubTopic,
       optionsProblemTopic,
       optionsProblemType,
-      problemTopic,
-      problemTopicName,
-      problemType,
-      stateProblemSubTopic,
+      problem,
     ]
   );
 
@@ -167,36 +199,62 @@ export default function Problem() {
       <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Problem Statement</h2>
         <Input
-          wrapperClassName="w-full mb-4"
+          externalWrapperClassName="mb-4"
+          wrapperClassName="w-full"
           placeholder="Enter problem title here..."
-        />
-        <MarkdownEditor
-          className="mb-4"
-          value={statement}
-          renderPreview={({ source }) => {
-            return <Markdown markdown={source ?? ""} />;
+          value={problem.title}
+          onChange={(e) => {
+            setProblem((prev) => {
+              const temp: ProblemType = JSON.parse(JSON.stringify(prev));
+              temp.title = e.target.value;
+              return temp;
+            });
           }}
-          onChange={(e) => setStatement(e)}
-          toolbars={["bold", "italic", "strike", "ulist", "olist"]}
+          errorText={errors["title"]}
         />
+        <div className="mb-4">
+          <MarkdownEditor
+            value={problem.statement}
+            renderPreview={({ source }) => {
+              return <Markdown markdown={source ?? ""} />;
+            }}
+            onChange={(e) => handleUpdateStatement(e)}
+            toolbars={["bold", "italic", "strike", "ulist", "olist"]}
+          />
+          {errors["statement"] && (
+            <div className="text-red-600 mt-2">{errors["statement"]}</div>
+          )}
+        </div>
       </section>
     ),
-    [statement]
+    [problem.title, problem.statement, errors, handleUpdateStatement]
   );
 
   const renderProblemAnswer = useMemo(
     () => (
       <section className="mb-4">
         <h2 className="mb-4">Problem Answer</h2>
-        <ProblemAnswer type={problemType.key} stateAnswer={stateAnswer} />
+        <ProblemAnswer
+          type={problem.type}
+          stateAnswer={stateAnswer}
+          caption={
+            errors["answer"] && (
+              <div className="text-red-600 mt-2">{errors["answer"]}</div>
+            )
+          }
+        />
         <Quote icon="infoCircleFill">
           If the answer is a non-integer number, you should indicate the user to
           which place the answer should be accurate to.
         </Quote>
       </section>
     ),
-    [problemType.key, stateAnswer]
+    [errors, problem.type, stateAnswer]
   );
+
+  useEffect(() => {
+    setErrors(validateErrors(problemComplete));
+  }, [problem, problemComplete]);
 
   return (
     <PageGenericTemplate>
@@ -205,7 +263,7 @@ export default function Problem() {
         {renderProblemSettings}
         {renderProblemEditor}
         {renderProblemAnswer}
-        <Button>Submit</Button>
+        <Button onClick={handleValidate}>Submit</Button>
       </Card>
     </PageGenericTemplate>
   );
