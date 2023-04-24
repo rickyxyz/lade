@@ -22,7 +22,7 @@ export async function populateProblems() {
 
   for (const problem of sampleProblems) {
     await crudData("set_problem", {
-      problem,
+      data: problem,
     });
   }
 

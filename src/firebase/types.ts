@@ -55,5 +55,5 @@ interface GetProblemType {
 interface GetProblemsType {}
 
 interface SetProblemType {
-  problem: ProblemWithoutIdType;
+  data: ProblemWithoutIdType;
 }

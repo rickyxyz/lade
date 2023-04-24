@@ -1,39 +1,35 @@
-import { useMemo, useEffect, useCallback, useState, useRef } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { crudData } from "@/firebase";
+import "@uiw/react-markdown-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 import {
   Card,
   Input,
   Markdown,
   PageGenericTemplate,
   Loader,
-  ProblemMain,
-  ProblemMainSkeleton,
+  ProblemAnswer,
   ProblemSettingSelect,
-  Select,
+  Quote,
   Button,
 } from "@/components";
+import { validateErrors } from "@/utils";
 import {
   ProblemAnswerType,
   ProblemSubtopicNameType,
   ProblemTopicNameType,
-  ProblemTopicSpecificType,
   ProblemType,
   ProblemWithoutIdType,
   SelectOptionType,
 } from "@/types";
-import { md, parseMatrixSize } from "@/utils";
-import dynamic from "next/dynamic";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_DEFAULT,
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
-import { ProblemAnswer } from "@/components/Problem/Answer/ProblemAnswer";
-import { Quote } from "@/components/Generic/Quote";
-import { validateErrors } from "@/utils/problem";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -50,10 +46,12 @@ const MarkdownEditor = dynamic(
 
 export default function Problem() {
   const [problem, setProblem] = useState<ProblemWithoutIdType>(PROBLEM_DEFAULT);
-
-  const [loading, setLoading] = useState(true);
-  const stateAnswer = useState<any>("");
+  const stateAnswer = useState<any>(problem.answer);
   const [answer, setAnswer] = stateAnswer;
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<any>({});
+  const router = useRouter();
+
   const problemComplete = useMemo<ProblemWithoutIdType>(
     () => ({
       ...problem,
@@ -95,8 +93,6 @@ export default function Problem() {
       >,
     []
   );
-
-  const [errors, setErrors] = useState<any>({});
 
   const handleUpdateProblemState = useCallback(
     (overrideProperties: (problem: ProblemType) => ProblemType) => {
@@ -151,9 +147,23 @@ export default function Problem() {
     [handleUpdateProblemState]
   );
 
-  const handleValidate = useCallback(() => {
-    setErrors(validateErrors(problemComplete));
-  }, [problemComplete]);
+  const handleValidate = useCallback(async () => {
+    const errors = validateErrors(problemComplete);
+
+    if (Object.keys(errors).length === 0) {
+      setLoading(true);
+
+      await crudData("set_problem", {
+        data: problemComplete,
+      })
+        .then(() => {
+          router.replace("/");
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
+  }, [problemComplete, router]);
 
   const renderHead = useMemo(
     () => <h1 className="mb-8">Create Problem</h1>,
@@ -263,7 +273,9 @@ export default function Problem() {
         {renderProblemSettings}
         {renderProblemEditor}
         {renderProblemAnswer}
-        <Button onClick={handleValidate}>Submit</Button>
+        <Button loading={loading} onClick={handleValidate}>
+          Submit
+        </Button>
       </Card>
     </PageGenericTemplate>
   );
