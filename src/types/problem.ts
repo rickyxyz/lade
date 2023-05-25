@@ -16,13 +16,21 @@ export type ProblemAllTopicNameType =
   | ProblemTopicNameType
   | ProblemSubtopicNameType;
 
-export interface ProblemToAnswerType {
+export interface ProblemTopicType {
+  name: string;
+}
+
+export interface ProblemMainTopicType extends ProblemTopicType {
+  subtopics: ProblemTopicType[];
+}
+
+export interface MapProblemTypeToAnswerType {
   short_answer: string | number;
   matrix: (string | number)[][];
   true_or_false: boolean[];
 }
 
-export interface AnswerSpecificProblemType {
+export interface MapProblemTypeToTypeSpecificParams {
   short_answer: {};
   matrix: {
     matrixWidth: number;
@@ -31,46 +39,51 @@ export interface AnswerSpecificProblemType {
   true_or_false: {};
 }
 
-export type ProblemAnswerType = keyof ProblemToAnswerType;
+export type ProblemAnswerType = keyof MapProblemTypeToAnswerType;
 
-type ProblemMapTypeToAnswerType<
-  K extends keyof ProblemToAnswerType = keyof ProblemToAnswerType
+type ProblemAnswerTypeMap<
+  K extends keyof MapProblemTypeToAnswerType = keyof MapProblemTypeToAnswerType
 > = {
   [P in K]: { type: P } & {
-    answer: ProblemToAnswerType[P];
-  } & AnswerSpecificProblemType[P];
+    answer: MapProblemTypeToAnswerType[P];
+  };
 }[K];
 
-export type ProblemTopicSpecificType<K extends ProblemTopicNameType> =
+type ProblemExtraParamsMapType<
+  K extends keyof MapProblemTypeToAnswerType = keyof MapProblemTypeToAnswerType
+> = {
+  [P in K]: { type: P } & MapProblemTypeToTypeSpecificParams[P];
+}[K];
+
+export type ProblemSubtopicMapType<K extends ProblemTopicNameType> =
   (typeof PROBLEM_TOPICS_RELATIONSHIP_OBJECT)[K][number];
 
 type ProblemMapTypeTopicType<
   K extends ProblemTopicNameType = ProblemTopicNameType
 > = {
   [P in K]: { topic: P } & {
-    subtopic: ProblemTopicSpecificType<P>;
+    subtopic: ProblemSubtopicMapType<P>;
   };
 }[K];
 
-export type ProblemType = ProblemMapTypeToAnswerType &
+export interface ProblemBaseType {
+  title: string;
+  statement: string;
+  solved?: number;
+  views?: number;
+}
+
+export type ProblemType = ProblemBaseType &
+  ProblemAnswerTypeMap &
+  ProblemExtraParamsMapType &
   ProblemMapTypeTopicType & {
     id: string;
-    title: string;
-    statement: string;
-    solved?: number;
-    views?: number;
   };
 
-export interface ProblemMandatoryAnswerType {}
+export type ProblemDatabaseType = ProblemBaseType &
+  ProblemExtraParamsMapType &
+  ProblemMapTypeTopicType & {
+    answer: string;
+  };
 
-export type ProblemWithoutIdType = Omit<ProblemType, "id" | "type" | "answer"> &
-  ProblemMapTypeToAnswerType &
-  ProblemMapTypeTopicType;
-
-export interface ProblemTopicType {
-  name: string;
-}
-
-export interface ProblemMainTopicType extends ProblemTopicType {
-  subtopics: ProblemTopicType[];
-}
+export type ProblemWithoutIdType = Omit<ProblemType, "id">;

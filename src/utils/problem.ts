@@ -1,7 +1,7 @@
-import { ProblemWithoutIdType } from "@/types";
+import { ProblemDatabaseType } from "@/types";
 import { parseMatrixSize } from "./matrix";
 
-export function validateErrors(problem: ProblemWithoutIdType) {
+export function validateErrors(problem: ProblemDatabaseType) {
   const { title, statement, answer } = problem;
 
   const newErrors: any = {};

@@ -1,7 +1,7 @@
 import {
   ProblemAllTopicNameType,
   ProblemMainTopicType,
-  ProblemToAnswerType,
+  MapProblemTypeToAnswerType,
   ProblemTopicType,
   ProblemType,
   ProblemWithoutIdType,
@@ -16,7 +16,7 @@ export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
   answer: "2",
 };
 
-export const PROBLEM_ANSWER_DEFAULT_VALUES: ProblemToAnswerType = {
+export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {
   matrix: Array.from({ length: 3 }).map((_) =>
     Array.from({ length: 3 }).map((_) => "")
   ),

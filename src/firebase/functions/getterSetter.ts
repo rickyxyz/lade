@@ -64,12 +64,6 @@ export async function crudData<K extends CrudPathType>(
         readResult = await getAllDataFromPath(collection);
       } else if (id) {
         readResult = await getDataFromPath(collection, params.id);
-        if (readResult && path === "get_problem") {
-          (readResult as ProblemType).id = id;
-          if ((readResult as ProblemType).type === "matrix") {
-            (readResult as any).answer = JSON.parse((readResult as any).answer);
-          }
-        }
       }
       return readResult as CrudMapPathToReturnTypes[K];
     case "update":

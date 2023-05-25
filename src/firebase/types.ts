@@ -1,4 +1,8 @@
-import { ProblemType, ProblemWithoutIdType } from "@/types";
+import {
+  ProblemDatabaseType,
+  ProblemType,
+  ProblemWithoutIdType,
+} from "@/types";
 
 export type OperationType = "read" | "create" | "update" | "delete";
 
@@ -55,5 +59,5 @@ interface GetProblemType {
 interface GetProblemsType {}
 
 interface SetProblemType {
-  data: ProblemWithoutIdType;
+  data: ProblemDatabaseType;
 }

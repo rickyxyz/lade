@@ -18,6 +18,7 @@ import {
 import { validateErrors } from "@/utils";
 import {
   ProblemAnswerType,
+  ProblemDatabaseType,
   ProblemSubtopicNameType,
   ProblemTopicNameType,
   ProblemType,
@@ -52,11 +53,12 @@ export default function Problem() {
   const [errors, setErrors] = useState<any>({});
   const router = useRouter();
 
-  const problemComplete = useMemo<ProblemWithoutIdType>(
-    () => ({
-      ...problem,
-      answer,
-    }),
+  const problemComplete = useMemo<ProblemDatabaseType>(
+    () =>
+      ({
+        ...problem,
+        answer: JSON.stringify(answer) as any,
+      } as unknown as ProblemDatabaseType),
     [answer, problem]
   );
 

@@ -34,7 +34,12 @@ export function Problem({ id }: ProblemProps) {
       id,
     }).then((result) => {
       if (result) {
-        setProblem(result);
+        setProblem({
+          ...result,
+          answer: JSON.parse(result.answer as any),
+        });
+
+        console.log(JSON.parse(result.answer as any));
         setLoading(false);
       }
     });
