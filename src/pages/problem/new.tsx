@@ -31,6 +31,7 @@ import {
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
+import { FormulaToolbar } from "@/components/Markdown";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -231,7 +232,14 @@ export default function Problem() {
               return <Markdown markdown={source ?? ""} />;
             }}
             onChange={(e) => handleUpdateStatement(e)}
-            toolbars={["bold", "italic", "strike", "ulist", "olist"]}
+            toolbars={[
+              "bold",
+              "italic",
+              "strike",
+              "ulist",
+              "olist",
+              FormulaToolbar,
+            ]}
           />
           {errors["statement"] && (
             <div className="text-red-600 mt-2">{errors["statement"]}</div>
