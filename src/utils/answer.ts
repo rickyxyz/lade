@@ -1,4 +1,4 @@
-import { ProblemAnswerType, ProblemToAnswerType } from "@/types";
+import { ProblemAnswerType } from "@/types";
 
 export function validateAnswer(
   type: ProblemAnswerType,
@@ -7,7 +7,8 @@ export function validateAnswer(
 ) {
   switch (type) {
     case "matrix":
-      return !correct.some((column: any[], j: string | number) =>
+      const parsed = JSON.parse(correct);
+      return !parsed.some((column: any[], j: string | number) =>
         column.some((cell, i) => String(cell) !== input[j][i])
       );
     case "short_answer":

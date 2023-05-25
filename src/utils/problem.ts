@@ -24,7 +24,7 @@ export function validateErrors(problem: ProblemDatabaseType) {
     newErrors.answer = "Answer must not be empty.";
   }
   if (problem.type === "matrix") {
-    const sizes = parseMatrixSize(answer as any);
+    const sizes = parseMatrixSize(JSON.parse(answer));
     if (sizes[0] === 0 && sizes[1] === 0) {
       newErrors.answer = "Answer must not be empty.";
     }

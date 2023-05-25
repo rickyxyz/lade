@@ -113,7 +113,7 @@ export default function Problem() {
         input.answer = PROBLEM_ANSWER_DEFAULT_VALUES[newType];
         return input;
       });
-      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType] as any);
+      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType]);
     },
     [handleUpdateProblemState, setAnswer]
   );
