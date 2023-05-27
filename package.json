@@ -17,6 +17,7 @@
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
     "firebase": "^9.19.1",
+    "formik": "^2.3.2",
     "markdown-it": "^13.0.1",
     "markdown-it-mathjax3": "^4.3.2",
     "next": "13.2.4",
@@ -24,7 +25,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
-    "typescript": "5.0.3"
+    "typescript": "5.0.3",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@types/markdown-it": "^12.2.3",
