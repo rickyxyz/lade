@@ -1,4 +1,5 @@
 import { PROBLEM_TOPICS_RELATIONSHIP_OBJECT } from "@/consts";
+import { SelectOptionType } from "./select";
 
 export type ProblemTopicNameType = "calculus" | "linear-algebra";
 
@@ -71,6 +72,7 @@ export interface ProblemBaseType {
   statement: string;
   solved?: number;
   views?: number;
+  postDate?: number;
 }
 
 export type ProblemType = ProblemBaseType &
@@ -87,3 +89,16 @@ export type ProblemDatabaseType = ProblemBaseType &
   };
 
 export type ProblemWithoutIdType = Omit<ProblemType, "id">;
+
+export type ProblemSortByType =
+  | "least-solved"
+  | "least-viewed"
+  | "oldest"
+  | "most-solved"
+  | "most-viewed"
+  | "newest";
+
+export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
+  key: keyof ProblemType;
+  descending?: boolean;
+};

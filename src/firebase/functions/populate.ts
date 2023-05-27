@@ -21,8 +21,19 @@ export async function populateProblems() {
   ];
 
   for (const problem of sampleProblems) {
+    const date = new Date();
+
+    const seed = Math.ceil(1 / (Math.pow(Math.random(), 2) + 0.01));
+
+    date.setDate(seed % 27);
+    date.setMonth(date.getMonth() - 1);
+
     await crudData("set_problem", {
-      data: problem,
+      data: {
+        ...problem,
+        solved: Math.floor(seed / 2 - seed / 3),
+        views: seed,
+      },
     });
   }
 

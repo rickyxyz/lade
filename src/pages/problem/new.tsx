@@ -27,9 +27,12 @@ import {
 } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
+  PROBLEM_ANSWER_TYPE_OPTIONS,
   PROBLEM_DEFAULT,
+  PROBLEM_SUBTOPIC_OPTIONS,
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
+  PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
 import { FormulaToolbar } from "@/components/Markdown";
 
@@ -63,40 +66,6 @@ export default function Problem() {
     [answer, problem]
   );
 
-  const optionsProblemType = useMemo<SelectOptionType<ProblemAnswerType>[]>(
-    () => [
-      { key: "short_answer", text: "Short Answer" },
-      { key: "matrix", text: "Matrix" },
-    ],
-    []
-  );
-
-  const optionsProblemTopic = useMemo<SelectOptionType<ProblemTopicNameType>[]>(
-    () => [
-      { key: "calculus", text: "Calculus" },
-      { key: "linear-algebra", text: "Linear Algebra" },
-    ],
-    []
-  );
-
-  const optionsProblemSubTopic = useMemo(
-    () =>
-      Object.entries(PROBLEM_TOPICS_RELATIONSHIP_OBJECT).reduce(
-        (prev, [key, value]) => ({
-          ...prev,
-          [key]: value.map((subtopic) => ({
-            key: subtopic,
-            text: PROBLEM_TOPICS_DETAIL_OBJECT[subtopic].name,
-          })),
-        }),
-        {}
-      ) as Record<
-        ProblemTopicNameType,
-        SelectOptionType<ProblemSubtopicNameType>[]
-      >,
-    []
-  );
-
   const handleUpdateProblemState = useCallback(
     (overrideProperties: (problem: ProblemType) => ProblemType) => {
       setProblem((prev) => {
@@ -123,11 +92,11 @@ export default function Problem() {
     (newTopic: ProblemTopicNameType) => {
       handleUpdateProblemState((input) => {
         input.topic = newTopic;
-        input.subtopic = optionsProblemSubTopic[newTopic][0].key;
+        input.subtopic = PROBLEM_SUBTOPIC_OPTIONS[newTopic][0].id;
         return input;
       });
     },
-    [handleUpdateProblemState, optionsProblemSubTopic]
+    [handleUpdateProblemState]
   );
 
   const handleUpdateSubTopic = useCallback(
@@ -181,30 +150,22 @@ export default function Problem() {
           <ProblemSettingSelect
             name="Problem Type"
             stateObject={[problem.type, handleUpdateType]}
-            options={optionsProblemType}
+            options={PROBLEM_ANSWER_TYPE_OPTIONS}
           />
           <ProblemSettingSelect
             name="Problem Topic"
             stateObject={[problem.topic, handleUpdateTopic]}
-            options={optionsProblemTopic}
+            options={PROBLEM_TOPIC_OPTIONS}
           />
           <ProblemSettingSelect
             name="Problem Subtopic"
             stateObject={[problem.subtopic, handleUpdateSubTopic]}
-            options={optionsProblemSubTopic[problem.topic]}
+            options={PROBLEM_SUBTOPIC_OPTIONS[problem.topic]}
           />
         </div>
       </section>
     ),
-    [
-      handleUpdateTopic,
-      handleUpdateType,
-      handleUpdateSubTopic,
-      optionsProblemSubTopic,
-      optionsProblemTopic,
-      optionsProblemType,
-      problem,
-    ]
+    [handleUpdateTopic, handleUpdateType, handleUpdateSubTopic, problem]
   );
 
   const renderProblemEditor = useMemo(

@@ -8,6 +8,9 @@ export const PROBLEM_SAMPLE_1: ProblemDatabaseType = {
   subtopic: "applications-of-derivative",
   type: "short_answer",
   answer: "400",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_2: ProblemDatabaseType = {
@@ -18,6 +21,9 @@ export const PROBLEM_SAMPLE_2: ProblemDatabaseType = {
   subtopic: "applications-of-derivative",
   type: "short_answer",
   answer: "-2.5",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_3: ProblemDatabaseType = {
@@ -28,6 +34,9 @@ export const PROBLEM_SAMPLE_3: ProblemDatabaseType = {
   subtopic: "applications-of-derivative",
   type: "short_answer",
   answer: "64",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_4: ProblemDatabaseType = {
@@ -38,6 +47,9 @@ export const PROBLEM_SAMPLE_4: ProblemDatabaseType = {
   subtopic: "applications-of-derivative",
   type: "short_answer",
   answer: "20",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_5: ProblemDatabaseType = {
@@ -54,6 +66,9 @@ export const PROBLEM_SAMPLE_5: ProblemDatabaseType = {
     [0, 1, 0],
     [0, 30705, 2048],
   ]),
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_6: ProblemDatabaseType = {
@@ -64,6 +79,9 @@ export const PROBLEM_SAMPLE_6: ProblemDatabaseType = {
   subtopic: "first-order-differential-equations",
   type: "short_answer",
   answer: "2",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
 
 export const PROBLEM_SAMPLE_7: ProblemDatabaseType = {
@@ -74,4 +92,7 @@ export const PROBLEM_SAMPLE_7: ProblemDatabaseType = {
   subtopic: "lines-planes",
   type: "short_answer",
   answer: "0.816497",
+  postDate: 0,
+  solved: 0,
+  views: 0,
 };
