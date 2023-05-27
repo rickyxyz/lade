@@ -101,18 +101,7 @@ export const PROBLEM_SUBTOPIC_OPTIONS = Object.entries(
 
 export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[] =
   [
-    {
-      id: "least-solved",
-      text: "Least Solved",
-      key: "solved",
-      descending: false,
-    },
-    {
-      id: "least-viewed",
-      text: "Least Viewed",
-      key: "views",
-      descending: false,
-    },
+    { id: "newest", text: "Newest", key: "postDate", descending: true },
     { id: "oldest", text: "Oldest", key: "postDate", descending: false },
     {
       id: "most-solved",
@@ -120,6 +109,17 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
       key: "solved",
       descending: true,
     },
+    {
+      id: "least-solved",
+      text: "Least Solved",
+      key: "solved",
+      descending: false,
+    },
     { id: "most-viewed", text: "Most Viewed", key: "views", descending: true },
-    { id: "newest", text: "Newest", key: "postDate", descending: true },
+    {
+      id: "least-viewed",
+      text: "Least Viewed",
+      key: "views",
+      descending: false,
+    },
   ];

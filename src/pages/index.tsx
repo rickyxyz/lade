@@ -55,10 +55,7 @@ export default function Home() {
   const renderHeader = useMemo(
     () => (
       <Card>
-        <h1>Problems</h1>
-        <Button onClick={resetDatabase}>
-          Populate with Placeholder Questions
-        </Button>
+        <h1 className="mb-4">Problems</h1>
         <div className="grid grid-cols-3 gap-4">
           <div className="flex flex-col max-w-1/3">
             <h3 className="!text-sm">Topics</h3>
@@ -98,7 +95,7 @@ export default function Home() {
         </div>
       </Card>
     ),
-    [resetDatabase, setSubtopic, stateSortBy, stateSubtopic, stateTopic, topic]
+    [setSubtopic, stateSortBy, stateSubtopic, stateTopic, topic]
   );
 
   const renderProblems = useMemo(
@@ -115,73 +112,53 @@ export default function Home() {
     [loading, problems]
   );
 
-  const handleGetProblems = useCallback(
-    async ({
-      onSuccess,
-      onFail,
-    }: {
-      onSuccess?: (results: ProblemType[]) => void;
-      onFail?: () => void;
-    }) => {
-      setLoading(true);
-      const topicConstraint = topic ? where("topic", "==", topic) : undefined;
-      const subtopicConstraint =
-        topic && subtopic ? where("subtopic", "==", subtopic) : undefined;
-      const sortByProps = PROBLEM_SORT_BY_OPTIONS.filter(
-        (option) => option.id === sortBy
-      )[0];
-      const sortByConstraint = orderBy(
-        sortByProps.key,
-        sortByProps.descending ? "desc" : "asc"
-      );
-      const constraints = [
-        topicConstraint,
-        subtopicConstraint,
-        sortByConstraint,
-      ].filter((constraint) => constraint) as QueryConstraint[];
+  const handleGetProblems = useCallback(async () => {
+    setLoading(true);
+    const topicConstraint = topic ? where("topic", "==", topic) : undefined;
+    const subtopicConstraint =
+      topic && subtopic ? where("subtopic", "==", subtopic) : undefined;
+    const sortByProps = PROBLEM_SORT_BY_OPTIONS.filter(
+      (option) => option.id === sortBy
+    )[0];
+    const sortByConstraint = orderBy(
+      sortByProps.key,
+      sortByProps.descending ? "desc" : "asc"
+    );
+    const constraints = [
+      topicConstraint,
+      subtopicConstraint,
+      sortByConstraint,
+    ].filter((constraint) => constraint) as QueryConstraint[];
 
-      const q = query(collection(db, "problem"), ...constraints);
+    const q = query(collection(db, "problem"), ...constraints);
 
-      await sleep(200);
+    await sleep(200);
 
-      await getDocs(q)
-        .then((snap) => {
-          let results: ProblemType[] = [];
+    await getDocs(q)
+      .then((snap) => {
+        let results: ProblemType[] = [];
 
-          snap.forEach((doc) => {
-            results = [
-              ...results,
-              {
-                id: doc.id,
-                ...doc.data(),
-              } as ProblemType,
-            ];
-          });
-
-          setLoading(false);
-          setProblems(results);
-          onSuccess && onSuccess(results);
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-          onFail && onFail();
+        snap.forEach((doc) => {
+          results = [
+            ...results,
+            {
+              id: doc.id,
+              ...doc.data(),
+            } as ProblemType,
+          ];
         });
-    },
-    [sortBy, subtopic, topic]
-  );
 
-  const handleInitialize = useCallback(() => {
-    handleGetProblems({});
-  }, [handleGetProblems]);
-
-  // useEffect(() => {
-  //   handleInitialize();
-  // }, [handleInitialize]);
+        setLoading(false);
+        setProblems(results);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  }, [sortBy, subtopic, topic]);
 
   useEffect(() => {
-    console.log("Query: ", topic, ", ", subtopic, ", ", sortBy);
-    handleGetProblems({});
+    handleGetProblems();
   }, [topic, subtopic, sortBy, handleGetProblems]);
 
   return (
