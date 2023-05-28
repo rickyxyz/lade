@@ -8,7 +8,6 @@ type SelectVariant = "basic" | "solid";
 
 export type SelectProps<X extends string, Y extends SelectOptionType<X>[]> = {
   selectedOption?: X;
-  onSelectOption: (option?: SelectOptionType<X>) => void;
   variant?: SelectVariant;
   className?: string;
   inputClassName?: string;
@@ -19,6 +18,8 @@ export type SelectProps<X extends string, Y extends SelectOptionType<X>[]> = {
   disabled?: boolean;
   optionWidth?: number;
   direction?: "left" | "right";
+  onSelectOption: (option?: SelectOptionType<X>) => void;
+  onBlur?: () => void;
 };
 
 export function Select<X extends string, Y extends SelectOptionType<X>[]>({
@@ -34,6 +35,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   optionWidth = 300,
   direction = "right",
   onSelectOption,
+  onBlur,
 }: SelectProps<X, Y>) {
   const [visible, setVisible] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -117,7 +119,10 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       onFocus={() => {
         !disabled && setVisible(true);
       }}
-      onBlur={() => setVisible(false)}
+      onBlur={() => {
+        onBlur && onBlur();
+        setVisible(false);
+      }}
       ref={selectRef}
       tabIndex={0}
     >

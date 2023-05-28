@@ -7,6 +7,7 @@ interface ProblemAnswerProps {
   stateAnswer: StateType<any>;
   disabled?: boolean;
   caption?: ReactNode;
+  onBlur?: () => void;
 }
 
 export function ProblemAnswer({
@@ -14,6 +15,7 @@ export function ProblemAnswer({
   stateAnswer,
   disabled,
   caption,
+  onBlur,
 }: ProblemAnswerProps) {
   const [answer, setAnswer] = stateAnswer;
 
@@ -55,6 +57,7 @@ export function ProblemAnswer({
                     variant="solid"
                     className="!w-24 text-center"
                     value={(answer as (string | number)[][])[j][i]}
+                    onBlur={onBlur}
                     onChange={(e: any) => {
                       setAnswer((prev: any) => {
                         const temp = JSON.parse(JSON.stringify(prev));
@@ -89,6 +92,7 @@ export function ProblemAnswer({
             onChange={(e: any) => {
               setAnswer(e.target.value);
             }}
+            onBlur={onBlur}
             disabled={disabled}
           />
           {caption}

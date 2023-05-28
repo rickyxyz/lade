@@ -66,6 +66,9 @@ export function ProblemEditForm({
                 setAnswer(defaultAnswer);
               }
             }}
+            onBlur={() => {
+              setFieldTouched("type", true);
+            }}
             optional
             allowClearSelection={false}
             disabled={!initialized}
@@ -78,6 +81,9 @@ export function ProblemEditForm({
             onSelectOption={(option) => {
               setFieldValue("topic", option ? option.id : undefined);
               setFieldValue("subtopic", "");
+            }}
+            onBlur={() => {
+              setFieldTouched("topic", true);
             }}
             optional
             allowClearSelection={false}
@@ -92,13 +98,24 @@ export function ProblemEditForm({
               setFieldValue("subtopic", option ? option.id : undefined);
             }}
             disabled={!initialized || !topic}
+            onBlur={() => {
+              setFieldTouched("subtopic", true);
+            }}
             optional
             allowClearSelection={false}
           />
         </div>
       </section>
     ),
-    [type, initialized, topic, subtopic, setFieldValue, setAnswer]
+    [
+      type,
+      initialized,
+      topic,
+      subtopic,
+      setFieldValue,
+      setAnswer,
+      setFieldTouched,
+    ]
   );
 
   const renderProblemEditor = useMemo(
@@ -159,6 +176,7 @@ export function ProblemEditForm({
                 <div className="text-red-600 mt-2">{errors["answer"]}</div>
               )
             }
+            onBlur={() => setFieldTouched("answer", true)}
             disabled={!initialized}
           />
           <Quote icon="infoCircleFill">
@@ -167,7 +185,7 @@ export function ProblemEditForm({
           </Quote>
         </section>
       ),
-    [errors, initialized, stateAnswer, touched, type]
+    [errors, initialized, setFieldTouched, stateAnswer, touched, type]
   );
 
   useEffect(() => {
