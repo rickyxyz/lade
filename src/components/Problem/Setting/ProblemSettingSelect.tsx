@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Field } from "formik";
+import { Field, useFormikContext } from "formik";
 import { Select, SelectProps } from "@/components";
-import { SelectOptionType } from "@/types";
+import { ProblemWithoutIdType, SelectOptionType } from "@/types";
 
 interface ProblemSettingSelectProps<
   X extends string,
@@ -14,11 +14,22 @@ interface ProblemSettingSelectProps<
 export function ProblemSettingSelect<
   X extends string,
   Y extends SelectOptionType<X>[]
->({ formName, name, ...rest }: ProblemSettingSelectProps<X, Y>) {
+>({ formName, name, onBlur, ...rest }: ProblemSettingSelectProps<X, Y>) {
+  const { setFieldTouched } = useFormikContext<ProblemWithoutIdType>();
+
   return (
     <div className="grid grid-cols-3 gap-2 items-center">
       <span className="w-40">{name}</span>
-      <Select className="col-span-2" {...rest} />
+      <Select
+        className="col-span-2"
+        {...rest}
+        onBlur={() => {
+          onBlur && onBlur();
+          setFieldTouched(formName, true);
+        }}
+        optional
+        allowClearSelection={false}
+      />
       <Field name={formName}>
         {({ field, meta }: any) => (
           <>

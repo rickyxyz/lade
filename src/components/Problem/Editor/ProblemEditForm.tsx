@@ -42,7 +42,7 @@ export function ProblemEditForm({
     setFieldTouched,
   } = useFormikContext<ProblemWithoutIdType>();
 
-  const { statement, subtopic, title, topic, type } = values;
+  const { statement, subtopic, topic, type } = values;
 
   const [answer, setAnswer] = stateAnswer;
   const loading = stateLoading[0];
@@ -66,11 +66,6 @@ export function ProblemEditForm({
                 setAnswer(defaultAnswer);
               }
             }}
-            onBlur={() => {
-              setFieldTouched("type", true);
-            }}
-            optional
-            allowClearSelection={false}
             disabled={!initialized}
           />
           <ProblemSettingSelect
@@ -82,11 +77,6 @@ export function ProblemEditForm({
               setFieldValue("topic", option ? option.id : undefined);
               setFieldValue("subtopic", "");
             }}
-            onBlur={() => {
-              setFieldTouched("topic", true);
-            }}
-            optional
-            allowClearSelection={false}
             disabled={!initialized}
           />
           <ProblemSettingSelect
@@ -98,24 +88,11 @@ export function ProblemEditForm({
               setFieldValue("subtopic", option ? option.id : undefined);
             }}
             disabled={!initialized || !topic}
-            onBlur={() => {
-              setFieldTouched("subtopic", true);
-            }}
-            optional
-            allowClearSelection={false}
           />
         </div>
       </section>
     ),
-    [
-      type,
-      initialized,
-      topic,
-      subtopic,
-      setFieldValue,
-      setAnswer,
-      setFieldTouched,
-    ]
+    [type, initialized, topic, subtopic, setFieldValue, setAnswer]
   );
 
   const renderProblemEditor = useMemo(
@@ -131,7 +108,6 @@ export function ProblemEditForm({
                 externalWrapperClassName="mb-4"
                 wrapperClassName="w-full"
                 placeholder="Enter problem title here..."
-                defaultValue={title}
                 errorText={touched["title"] ? errors["title"] : undefined}
                 disabled={!initialized}
               />
@@ -146,6 +122,9 @@ export function ProblemEditForm({
             }}
             onChange={(newValue) => {
               setFieldValue("statement", newValue);
+            }}
+            onBlur={() => {
+              setFieldTouched("statement", true);
             }}
             toolbars={[
               "bold",
@@ -162,7 +141,7 @@ export function ProblemEditForm({
         </div>
       </section>
     ),
-    [statement, errors, touched, title, initialized, setFieldValue]
+    [statement, errors, touched, initialized, setFieldValue, setFieldTouched]
   );
 
   const renderProblemAnswer = useMemo(
