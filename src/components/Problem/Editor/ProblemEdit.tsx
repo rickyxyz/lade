@@ -13,7 +13,6 @@ import { useRouter } from "next/router";
 interface ProblemEditProps extends Partial<ProblemEditFormProps> {}
 
 export function ProblemEdit(props: ProblemEditProps) {
-  const [initialized, setInitialized] = useState(false);
   const stateLoading = useState(false);
   const [loading, setLoading] = stateLoading;
   const stateAnswer = useState<any>();
@@ -49,15 +48,11 @@ export function ProblemEdit(props: ProblemEditProps) {
       onSubmit={handleSubmit}
       validateOnChange
     >
-      <ProblemEditInitializedContext.Provider
-        value={[initialized, setInitialized]}
-      >
-        <ProblemEditForm
-          stateAnswer={stateAnswer}
-          stateLoading={stateLoading}
-          {...props}
-        />
-      </ProblemEditInitializedContext.Provider>
+      <ProblemEditForm
+        stateAnswer={stateAnswer}
+        stateLoading={stateLoading}
+        {...props}
+      />
     </Formik>
   );
 }

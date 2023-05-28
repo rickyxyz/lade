@@ -22,7 +22,7 @@ export function ProblemSettingSelect<
         {({ field, meta }: any) => (
           <>
             <input className="hidden" type="text" {...field} />
-            {meta.touched && (
+            {meta.touched && meta.error && (
               <span className="pl-4 col-start-2 text-red-500">
                 {meta.error}
               </span>

@@ -5,7 +5,7 @@ export function parseMatrixSize(matrix: (string | number)[][]) {
   console.log("Check Matrix");
   console.log(matrix);
 
-  if (!matrix) return [0, 0];
+  if (!matrix || typeof matrix !== "object") return [0, 0];
 
   for (let y = 0; y < 3; y++) {
     if (matrix[y].some((cell) => cell !== "")) {

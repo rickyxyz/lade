@@ -4,27 +4,8 @@ import { useRouter } from "next/router";
 import { crudData } from "@/firebase";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import {
-  Card,
-  Input,
-  Markdown,
-  PageGenericTemplate,
-  Loader,
-  ProblemAnswer,
-  ProblemSettingSelect,
-  Quote,
-  Button,
-} from "@/components";
-import { validateErrors } from "@/utils";
-import {
-  ProblemAnswerType,
-  ProblemDatabaseType,
-  ProblemSubtopicNameType,
-  ProblemTopicNameType,
-  ProblemType,
-  ProblemWithoutIdType,
-  SelectOptionType,
-} from "@/types";
+import { Card, PageGenericTemplate, Loader } from "@/components";
+import { ProblemWithoutIdType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
