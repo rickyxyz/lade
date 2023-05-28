@@ -49,7 +49,7 @@ export function Button({
         className
       )}
       type={type}
-      onClick={!loading && !disabled ? onClick : () => {}}
+      onClick={!loading && !disabled ? onClick : undefined}
       disabled={disabled || loading}
     >
       {!loading ? (

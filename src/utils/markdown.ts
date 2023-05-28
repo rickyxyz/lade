@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 export const md = require("markdown-it")({
   html: false,
 }).disable(["link", "image", "heading"]);

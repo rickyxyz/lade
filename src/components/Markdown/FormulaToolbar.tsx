@@ -15,7 +15,7 @@ export const FormulaToolbar: Commands = {
       changes: {
         from: lineInfo.from,
         to: lineInfo.to,
-        insert: `${title}\$\$`,
+        insert: `${title}$$`,
       },
       selection: { anchor: lineInfo.to + 1 },
     });

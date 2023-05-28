@@ -38,7 +38,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   onBlur,
 }: SelectProps<X, Y>) {
   const [visible, setVisible] = useState(false);
-  const [touched, setTouched] = useState(false);
   const selectRef = createRef<HTMLDivElement>();
 
   const renderRemoveOption = useMemo(() => {
@@ -167,5 +166,3 @@ const INPUT_FOCUS_STYLE = [
 ];
 
 const INPUT_SOLID_STYLE = ["bg-gray-100 focus:bg-gray-200"];
-
-const OPTION_BASE_STYLE = ["px-4 py-2 hover:bg-gray-100", "flex"];

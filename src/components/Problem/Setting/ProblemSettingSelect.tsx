@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Field } from "formik";
 import { Select, SelectProps } from "@/components";
 import { SelectOptionType } from "@/types";
-import { Field } from "formik";
 
 interface ProblemSettingSelectProps<
   X extends string,

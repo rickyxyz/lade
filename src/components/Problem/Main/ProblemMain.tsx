@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Icon,
-  Input,
   ProblemAnswer,
   ProblemStats,
   ProblemTopics,
@@ -20,7 +19,6 @@ export interface ProblemMainProps {
 
 export function ProblemMain({ problem }: ProblemMainProps) {
   const {
-    id,
     statement,
     title,
     topic,
@@ -31,6 +29,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     answer,
   } = problem;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stateUserAnswer = useState<any>();
   const [userAnswer, setUserAnswer] = stateUserAnswer;
   const [userSolved, setUserSolved] = useState(false);

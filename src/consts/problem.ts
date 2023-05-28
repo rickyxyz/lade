@@ -34,8 +34,8 @@ export const PROBLEM_BLANK: ProblemBlankType = {
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {
-  matrix: Array.from({ length: 3 }).map((_) =>
-    Array.from({ length: 3 }).map((_) => "")
+  matrix: Array.from({ length: 3 }).map(() =>
+    Array.from({ length: 3 }).map(() => "")
   ),
   short_answer: "",
   true_or_false: [false],

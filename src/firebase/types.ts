@@ -1,8 +1,4 @@
-import {
-  ProblemDatabaseType,
-  ProblemType,
-  ProblemWithoutIdType,
-} from "@/types";
+import { ProblemDatabaseType, ProblemType } from "@/types";
 
 export type OperationType = "read" | "create" | "update" | "delete";
 
@@ -18,6 +14,7 @@ export type CrudPathType =
   | "set_problem"
   | "update_problem";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CrudMapType = Record<CrudPathType, any>;
 
 export const CRUD_PATH_PROPERTIES: Record<CrudPathType, CrudPathPropertyType> =
@@ -56,6 +53,7 @@ interface GetProblemType {
   id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface GetProblemsType {}
 
 interface SetProblemType {

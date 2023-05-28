@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { crudData, db, populateProblems } from "@/firebase";
+import { db, populateProblems } from "@/firebase";
 import {
   collection,
   query,
@@ -9,7 +9,6 @@ import {
   QueryConstraint,
 } from "firebase/firestore";
 import {
-  Button,
   Card,
   PageGenericTemplate,
   ProblemCard,
@@ -33,7 +32,6 @@ import { sleep } from "@/utils";
 export default function Home() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fetching, setFetching] = useState(false);
 
   const stateTopic = useState<ProblemTopicNameType | undefined>();
   const [topic, setTopic] = stateTopic;
@@ -42,6 +40,7 @@ export default function Home() {
   const stateSortBy = useState<ProblemSortByType>("newest");
   const [sortBy, setSortBy] = stateSortBy;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const resetDatabase = useCallback(async () => {
     console.log("Reset Database!");
 

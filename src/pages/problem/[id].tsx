@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData } from "@/firebase";
 import {

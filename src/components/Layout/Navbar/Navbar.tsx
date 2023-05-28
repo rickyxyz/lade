@@ -3,8 +3,6 @@ import Image from "next/image";
 import { Button, Input } from "@/components";
 import clsx from "clsx";
 
-export interface NavbarProps {}
-
 export function Navbar() {
   const renderSearchField = useMemo(
     () => (

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-case-declarations */
 import { db } from "../config";
 import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore";
 import {
@@ -6,7 +8,6 @@ import {
   CrudMapPathToReturnTypes,
   CrudPathType,
 } from "../types";
-import { ProblemType } from "@/types";
 
 export async function getAllDataFromPath(group: string) {
   const querySnapshot = await getDocs(collection(db, group));

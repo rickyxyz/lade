@@ -22,6 +22,7 @@ import { useProblemEditInitialized } from "@/hooks";
 
 export interface ProblemEditFormProps {
   defaultProblem?: ProblemWithoutIdType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;
 }
@@ -38,14 +39,13 @@ export function ProblemEditForm({
     values,
     errors,
     touched,
-    setFieldError,
     setFieldTouched,
   } = useFormikContext<ProblemWithoutIdType>();
 
   const { statement, subtopic, title, topic, type } = values;
 
   const [answer, setAnswer] = stateAnswer;
-  const [loading, setLoading] = stateLoading;
+  const loading = stateLoading[0];
 
   const renderProblemSettings = useMemo(
     () => (
@@ -123,17 +123,20 @@ export function ProblemEditForm({
       <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Problem Statement</h2>
         <Field name="title">
-          {({ field, form: { touched, errors }, meta }: any) => (
-            <Input
-              {...field}
-              externalWrapperClassName="mb-4"
-              wrapperClassName="w-full"
-              placeholder="Enter problem title here..."
-              defaultValue={title}
-              errorText={touched["title"] ? errors["title"] : undefined}
-              disabled={!initialized}
-            />
-          )}
+          {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ({ field, form: { touched, errors } }: any) => (
+              <Input
+                {...field}
+                externalWrapperClassName="mb-4"
+                wrapperClassName="w-full"
+                placeholder="Enter problem title here..."
+                defaultValue={title}
+                errorText={touched["title"] ? errors["title"] : undefined}
+                disabled={!initialized}
+              />
+            )
+          }
         </Field>
         <div className="mb-4">
           <MarkdownEditor

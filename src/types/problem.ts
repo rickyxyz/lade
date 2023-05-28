@@ -32,12 +32,12 @@ export interface MapProblemTypeToAnswerType {
 }
 
 export interface MapProblemTypeToTypeSpecificParams {
-  short_answer: {};
+  short_answer: unknown;
   matrix: {
     matrixWidth: number;
     matrixHeight: number;
   };
-  true_or_false: {};
+  true_or_false: unknown;
 }
 
 export type ProblemAnswerType = keyof MapProblemTypeToAnswerType;

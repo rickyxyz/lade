@@ -37,18 +37,3 @@ export function ProblemStats({ type, value }: ProblemStatsProps) {
 
   return <IconText {...props} className="text-slate-600" />;
 }
-
-const PROBLEM_STATS_PROPS: Record<
-  ProblemStatsType,
-  Partial<ProblemStatsDetailProps>
-> = {
-  date: {
-    icon: "check",
-  },
-  solved: {
-    icon: "check",
-  },
-  view: {
-    icon: "eyeFill",
-  },
-};

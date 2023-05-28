@@ -2,9 +2,6 @@ export function parseMatrixSize(matrix: (string | number)[][]) {
   let maxLength = 0;
   let maxHeight = 0;
 
-  console.log("Check Matrix");
-  console.log(matrix);
-
   if (!matrix || typeof matrix !== "object") return [0, 0];
 
   for (let y = 0; y < 3; y++) {
