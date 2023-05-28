@@ -102,3 +102,7 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
   key: keyof ProblemType;
   descending?: boolean;
 };
+
+export type ProblemBlankType = {
+  [P in keyof ProblemWithoutIdType]: string;
+};

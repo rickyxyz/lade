@@ -28,6 +28,7 @@ import {
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
+  PROBLEM_BLANK,
   PROBLEM_DEFAULT,
   PROBLEM_SUBTOPIC_OPTIONS,
   PROBLEM_TOPICS_DETAIL_OBJECT,
@@ -35,6 +36,8 @@ import {
   PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
 import { FormulaToolbar } from "@/components/Markdown";
+import { ProblemEditForm } from "@/components/Problem/Editor";
+import { ProblemEdit } from "@/components/Problem/Editor/ProblemEdit";
 
 const MarkdownEditor = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -50,203 +53,20 @@ const MarkdownEditor = dynamic(
 );
 
 export default function Problem() {
-  const [problem, setProblem] = useState<ProblemWithoutIdType>(PROBLEM_DEFAULT);
-  const stateAnswer = useState<any>(problem.answer);
-  const [answer, setAnswer] = stateAnswer;
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<any>({});
-  const router = useRouter();
-
-  const problemComplete = useMemo<ProblemDatabaseType>(
-    () =>
-      ({
-        ...problem,
-        answer: JSON.stringify(answer) as any,
-      } as unknown as ProblemDatabaseType),
-    [answer, problem]
+  const [problem, setProblem] = useState<ProblemWithoutIdType>(
+    PROBLEM_BLANK as unknown as ProblemWithoutIdType
   );
-
-  const handleUpdateProblemState = useCallback(
-    (overrideProperties: (problem: ProblemType) => ProblemType) => {
-      setProblem((prev) => {
-        const temp: ProblemType = JSON.parse(JSON.stringify(prev));
-        return overrideProperties(temp);
-      });
-    },
-    []
-  );
-
-  const handleUpdateType = useCallback(
-    (newType: ProblemAnswerType) => {
-      handleUpdateProblemState((input) => {
-        input.type = newType;
-        input.answer = PROBLEM_ANSWER_DEFAULT_VALUES[newType];
-        return input;
-      });
-      setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[newType]);
-    },
-    [handleUpdateProblemState, setAnswer]
-  );
-
-  const handleUpdateTopic = useCallback(
-    (newTopic: ProblemTopicNameType) => {
-      handleUpdateProblemState((input) => {
-        input.topic = newTopic;
-        input.subtopic = PROBLEM_SUBTOPIC_OPTIONS[newTopic][0].id;
-        return input;
-      });
-    },
-    [handleUpdateProblemState]
-  );
-
-  const handleUpdateSubTopic = useCallback(
-    (newTopic: ProblemSubtopicNameType) => {
-      handleUpdateProblemState((input) => {
-        input.subtopic = newTopic;
-        return input;
-      });
-    },
-    [handleUpdateProblemState]
-  );
-
-  const handleUpdateStatement = useCallback(
-    (newStatement: any) => {
-      handleUpdateProblemState((input) => {
-        input.statement = newStatement;
-        return input;
-      });
-    },
-    [handleUpdateProblemState]
-  );
-
-  const handleValidate = useCallback(async () => {
-    const errors = validateErrors(problemComplete);
-
-    if (Object.keys(errors).length === 0) {
-      setLoading(true);
-
-      await crudData("set_problem", {
-        data: problemComplete,
-      })
-        .then(() => {
-          router.replace("/");
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-    }
-  }, [problemComplete, router]);
 
   const renderHead = useMemo(
     () => <h1 className="mb-8">Create Problem</h1>,
     []
   );
 
-  const renderProblemSettings = useMemo(
-    () => (
-      <section className="mb-8">
-        <h2 className="mb-4">Problem Settings</h2>
-        <div className="flex flex-col gap-4">
-          <ProblemSettingSelect
-            name="Problem Type"
-            stateObject={[problem.type, handleUpdateType]}
-            options={PROBLEM_ANSWER_TYPE_OPTIONS}
-          />
-          <ProblemSettingSelect
-            name="Problem Topic"
-            stateObject={[problem.topic, handleUpdateTopic]}
-            options={PROBLEM_TOPIC_OPTIONS}
-          />
-          <ProblemSettingSelect
-            name="Problem Subtopic"
-            stateObject={[problem.subtopic, handleUpdateSubTopic]}
-            options={PROBLEM_SUBTOPIC_OPTIONS[problem.topic]}
-          />
-        </div>
-      </section>
-    ),
-    [handleUpdateTopic, handleUpdateType, handleUpdateSubTopic, problem]
-  );
-
-  const renderProblemEditor = useMemo(
-    () => (
-      <section className="border-transparent mb-8" data-color-mode="light">
-        <h2 className="mb-4">Problem Statement</h2>
-        <Input
-          externalWrapperClassName="mb-4"
-          wrapperClassName="w-full"
-          placeholder="Enter problem title here..."
-          value={problem.title}
-          onChange={(e) => {
-            setProblem((prev) => {
-              const temp: ProblemType = JSON.parse(JSON.stringify(prev));
-              temp.title = e.target.value;
-              return temp;
-            });
-          }}
-          errorText={errors["title"]}
-        />
-        <div className="mb-4">
-          <MarkdownEditor
-            value={problem.statement}
-            renderPreview={({ source }) => {
-              return <Markdown markdown={source ?? ""} />;
-            }}
-            onChange={(e) => handleUpdateStatement(e)}
-            toolbars={[
-              "bold",
-              "italic",
-              "strike",
-              "ulist",
-              "olist",
-              FormulaToolbar,
-            ]}
-          />
-          {errors["statement"] && (
-            <div className="text-red-600 mt-2">{errors["statement"]}</div>
-          )}
-        </div>
-      </section>
-    ),
-    [problem.title, problem.statement, errors, handleUpdateStatement]
-  );
-
-  const renderProblemAnswer = useMemo(
-    () => (
-      <section className="mb-4">
-        <h2 className="mb-4">Problem Answer</h2>
-        <ProblemAnswer
-          type={problem.type}
-          stateAnswer={stateAnswer}
-          caption={
-            errors["answer"] && (
-              <div className="text-red-600 mt-2">{errors["answer"]}</div>
-            )
-          }
-        />
-        <Quote icon="infoCircleFill">
-          If the answer is a non-integer number, you should indicate the user to
-          which place the answer should be accurate to.
-        </Quote>
-      </section>
-    ),
-    [errors, problem.type, stateAnswer]
-  );
-
-  useEffect(() => {
-    setErrors(validateErrors(problemComplete));
-  }, [problem, problemComplete]);
-
   return (
     <PageGenericTemplate>
       <Card>
         {renderHead}
-        {renderProblemSettings}
-        {renderProblemEditor}
-        {renderProblemAnswer}
-        <Button loading={loading} onClick={handleValidate}>
-          Submit
-        </Button>
+        <ProblemEdit defaultProblem={problem} />
       </Card>
     </PageGenericTemplate>
   );

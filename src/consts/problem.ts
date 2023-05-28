@@ -9,6 +9,7 @@ import {
   ProblemSubtopicNameType,
   ProblemSortByType,
   ProblemSortOptionType,
+  ProblemBlankType,
 } from "@/types";
 
 export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
@@ -18,6 +19,18 @@ export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
   subtopic: "derivatives",
   type: "short_answer",
   answer: "2",
+  postDate: 0,
+  solved: 0,
+  views: 0,
+};
+
+export const PROBLEM_BLANK: ProblemBlankType = {
+  statement: "",
+  title: "",
+  topic: "",
+  subtopic: "",
+  type: "",
+  answer: "",
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {

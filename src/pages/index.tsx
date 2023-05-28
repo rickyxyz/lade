@@ -40,7 +40,7 @@ export default function Home() {
   const stateSubtopic = useState<ProblemSubtopicNameType | undefined>();
   const [subtopic, setSubtopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>("newest");
-  const sortBy = stateSortBy[0];
+  const [sortBy, setSortBy] = stateSortBy;
 
   const resetDatabase = useCallback(async () => {
     console.log("Reset Database!");
@@ -63,8 +63,9 @@ export default function Home() {
               className="w-full"
               inputClassName="w-full"
               options={PROBLEM_TOPIC_OPTIONS}
-              stateObject={stateTopic}
-              onSelectOption={() => {
+              selectedOption={topic}
+              onSelectOption={(option) => {
+                option && setTopic(option.id);
                 setSubtopic(undefined);
               }}
               unselectedText="Any"
@@ -77,7 +78,10 @@ export default function Home() {
               className="w-full"
               inputClassName="w-full"
               options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-              stateObject={stateSubtopic}
+              selectedOption={subtopic}
+              onSelectOption={(option) => {
+                option && setSubtopic(option.id);
+              }}
               disabled={!topic}
               unselectedText="Any"
               optional
@@ -89,13 +93,16 @@ export default function Home() {
               className="w-full"
               inputClassName="w-full"
               options={PROBLEM_SORT_BY_OPTIONS}
-              stateObject={stateSortBy}
+              selectedOption={sortBy}
+              onSelectOption={(option) => {
+                option && setSortBy(option.id);
+              }}
             />
           </div>
         </div>
       </Card>
     ),
-    [setSubtopic, stateSortBy, stateSubtopic, stateTopic, topic]
+    [setSortBy, setSubtopic, setTopic, sortBy, subtopic, topic]
   );
 
   const renderProblems = useMemo(

@@ -7,55 +7,64 @@ import { SelectOption } from "./SelectOption";
 type SelectVariant = "basic" | "solid";
 
 export type SelectProps<X extends string, Y extends SelectOptionType<X>[]> = {
-  stateObject: [X | undefined, (newValue: any) => void];
+  selectedOption?: X;
+  onSelectOption: (option?: SelectOptionType<X>) => void;
   variant?: SelectVariant;
   className?: string;
   inputClassName?: string;
   options: Y;
   optional?: boolean;
+  allowClearSelection?: boolean;
   unselectedText?: string;
   disabled?: boolean;
   optionWidth?: number;
-  onSelectOption?: () => void;
   direction?: "left" | "right";
 };
 
 export function Select<X extends string, Y extends SelectOptionType<X>[]>({
-  stateObject,
+  selectedOption,
   variant = "basic",
   className,
   inputClassName,
   options,
   optional,
+  allowClearSelection = true,
   unselectedText = "None",
   disabled,
   optionWidth = 300,
-  onSelectOption,
   direction = "right",
+  onSelectOption,
 }: SelectProps<X, Y>) {
-  const [state, setState] = stateObject;
   const [visible, setVisible] = useState(false);
   const [touched, setTouched] = useState(false);
   const selectRef = createRef<HTMLDivElement>();
 
   const renderRemoveOption = useMemo(() => {
     return (
-      optional && (
+      optional &&
+      allowClearSelection && (
         <SelectOption
           option={{
             id: "",
             text: unselectedText,
           }}
           onSelect={() => {
-            setState(undefined);
+            onSelectOption(undefined);
             setVisible(false);
             selectRef.current?.blur();
           }}
-          selected={state === undefined}
+          selected={selectedOption === undefined}
         />
       )
     );
-  }, [optional, unselectedText, state, setState, selectRef]);
+  }, [
+    allowClearSelection,
+    onSelectOption,
+    optional,
+    selectRef,
+    selectedOption,
+    unselectedText,
+  ]);
 
   const renderOptions = useMemo(
     () => (
@@ -77,26 +86,24 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             key={option.id}
             option={option}
             onSelect={() => {
-              onSelectOption && onSelectOption();
-              setState && setState(option.id);
+              onSelectOption(option);
               setVisible(false);
               selectRef.current?.blur();
             }}
-            selected={state === option.id}
+            selected={selectedOption === option.id}
           />
         ))}
       </div>
     ),
     [
       className,
-      direction,
-      onSelectOption,
       optionWidth,
-      options,
+      direction,
       renderRemoveOption,
+      options,
+      selectedOption,
+      onSelectOption,
       selectRef,
-      setState,
-      state,
     ]
   );
 
@@ -132,8 +139,8 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             width: "calc(100% - 2rem)!important",
           }}
         >
-          {state && options.length > 0
-            ? options.filter((option) => option.id === state)[0].text
+          {selectedOption && options.length > 0
+            ? options.filter((option) => option.id === selectedOption)[0].text
             : unselectedText}
         </span>
         <Icon icon="chevronDown" className="absolute right-2" size="sm" />
