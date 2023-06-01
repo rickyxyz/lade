@@ -7,6 +7,8 @@ import {
   ProblemMainSkeleton,
 } from "@/components";
 import { ProblemType } from "@/types";
+import { ProblemEdit } from "@/components/Problem/Editor";
+import { deconstructAnswerString } from "@/utils";
 
 interface ProblemProps {
   id: string;
@@ -15,16 +17,26 @@ interface ProblemProps {
 export function Problem({ id }: ProblemProps) {
   const [problem, setProblem] = useState<ProblemType>();
   const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState<"view" | "edit">("view");
 
-  const renderQuestion = useMemo(
-    () =>
-      !loading && problem ? (
-        <ProblemMain problem={problem} />
-      ) : (
-        <ProblemMainSkeleton />
-      ),
-    [loading, problem]
+  const renderEditHeader = useMemo(
+    () => <h1 className="mb-8">Edit Problem</h1>,
+    []
   );
+
+  const renderQuestion = useMemo(() => {
+    if (loading || !problem) return <ProblemMainSkeleton />;
+
+    return mode === "view" ? (
+      <ProblemMain problem={problem} />
+    ) : (
+      <ProblemEdit
+        headElement={renderEditHeader}
+        problem={problem}
+        mode="edit"
+      />
+    );
+  }, [problem, loading, mode, renderEditHeader]);
 
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;
@@ -37,10 +49,9 @@ export function Problem({ id }: ProblemProps) {
       if (result) {
         setProblem({
           ...result,
-          answer: JSON.parse(result.answer as any),
-        });
+          answer: deconstructAnswerString(result.type, result.answer),
+        } as ProblemType);
 
-        console.log(JSON.parse(result.answer as any));
         setLoading(false);
       }
     });

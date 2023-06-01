@@ -46,6 +46,9 @@ export function ProblemMain({ problem }: ProblemMainProps) {
       return;
     }
 
+    console.log("This Is The Correct Answer");
+    console.log(answer);
+
     const verdict = validateAnswer(type, answer, userAnswer);
 
     if (cooldownIntv) clearInterval(cooldownIntv);
@@ -60,7 +63,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     setUserSolved(verdict);
 
     if (!verdict) setCooldownIntv(interval);
-  }, [answer, cooldownIntv, submitted, type, userAnswer]);
+  }, [cooldownIntv, answer, submitted, type, userAnswer]);
 
   const renderTags = useMemo(
     () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-3" />,

@@ -49,8 +49,10 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             id: "",
             text: unselectedText,
           }}
-          onSelect={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             onSelectOption(undefined);
+            onBlur && onBlur();
             setVisible(false);
             selectRef.current?.blur();
           }}
@@ -60,6 +62,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     );
   }, [
     allowClearSelection,
+    onBlur,
     onSelectOption,
     optional,
     selectRef,
@@ -86,8 +89,10 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           <SelectOption
             key={option.id}
             option={option}
-            onSelect={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onSelectOption(option);
+              onBlur && onBlur();
               setVisible(false);
               selectRef.current?.blur();
             }}
@@ -104,6 +109,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       options,
       selectedOption,
       onSelectOption,
+      onBlur,
       selectRef,
     ]
   );

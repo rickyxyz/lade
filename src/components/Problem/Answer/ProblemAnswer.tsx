@@ -21,10 +21,12 @@ export function ProblemAnswer({
   const [answer, setAnswer] = stateAnswer;
 
   const matrixSize = useMemo(() => {
-    if (type !== "matrix") return null;
+    if (type !== "matrix" || !answer) return null;
 
     let maxLength = 0;
     let maxHeight = 0;
+
+    console.log(answer);
 
     const castedAnswer = answer as (string | number)[][];
 
@@ -61,10 +63,10 @@ export function ProblemAnswer({
   const renderMatrixInput = useMemo(() => {
     const vertical = Array.from({ length: 3 });
     const horizontal = Array.from({ length: 3 });
-
     return (
       <div className="flex flex-col gap-2 mb-4">
         {answer &&
+          matrixSize &&
           vertical.map((_, j) => (
             <div key={`Matrix-${j}`} className="flex gap-2">
               {horizontal.map((_, i) => (

@@ -45,7 +45,7 @@ export default function Home() {
     console.log("Reset Database!");
 
     for (const problem of problems) {
-      await deleteDoc(doc(db, "problem", problem.id));
+      await deleteDoc(doc(db, "problems", problem.id));
     }
 
     populateProblems();
@@ -136,7 +136,7 @@ export default function Home() {
       sortByConstraint,
     ].filter((constraint) => constraint) as QueryConstraint[];
 
-    const q = query(collection(db, "problem"), ...constraints);
+    const q = query(collection(db, "problems"), ...constraints);
 
     await sleep(200);
 

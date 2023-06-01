@@ -6,11 +6,10 @@ import { BsCheck } from "react-icons/bs";
 interface SelectOptionProps extends HTMLProps<HTMLDivElement> {
   option: SelectOptionType<string>;
   selected?: boolean;
-  onSelect: () => void;
 }
 
 export function SelectOption({
-  onSelect,
+  onClick,
   className,
   option,
   selected,
@@ -18,7 +17,7 @@ export function SelectOption({
   return (
     <div
       className={clsx(OPTION_BASE_STYLE, className)}
-      onClick={onSelect}
+      onClick={onClick}
       key={option.id}
     >
       <span className={clsx("w-8", !selected && "invisible")}>

@@ -43,9 +43,10 @@ export function validateFormProblem(problem: ProblemWithoutIdType) {
 }
 
 export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
+  console.log(problem.answer);
   if (
     problem.type === "short_answer" &&
-    (problem.answer === undefined || JSON.parse(problem.answer) === "")
+    (problem.answer === undefined || String(problem.answer) === "")
   ) {
     return "Answer must not be empty.";
   }

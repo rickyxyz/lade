@@ -19,9 +19,10 @@ import {
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useProblemEditInitialized } from "@/hooks";
+import { constructAnswerString } from "@/utils";
 
 export interface ProblemEditFormProps {
-  defaultProblem?: ProblemWithoutIdType;
+  problem?: ProblemWithoutIdType;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;
@@ -62,7 +63,10 @@ export function ProblemEditForm({
 
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
-                setFieldValue("answer", JSON.stringify(defaultAnswer));
+                setFieldValue(
+                  "answer",
+                  constructAnswerString(type, defaultAnswer)
+                );
                 setAnswer(defaultAnswer);
               }
             }}
@@ -171,8 +175,8 @@ export function ProblemEditForm({
   );
 
   useEffect(() => {
-    setFieldValue("answer", JSON.stringify(answer));
-  }, [answer, setFieldValue]);
+    setFieldValue("answer", constructAnswerString(type, answer));
+  }, [answer, setFieldValue, type]);
 
   useEffect(() => {
     console.log(touched);

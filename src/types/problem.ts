@@ -25,11 +25,14 @@ export interface ProblemMainTopicType extends ProblemTopicType {
   subtopics: ProblemTopicType[];
 }
 
-export interface MapProblemTypeToAnswerType {
+export type MapProblemTypeToAnswerType = {
   short_answer: string | number;
   matrix: (string | number)[][];
   true_or_false: boolean[];
-}
+};
+
+export type TestType<X extends keyof MapProblemTypeToAnswerType> =
+  MapProblemTypeToAnswerType[X];
 
 export interface MapProblemTypeToTypeSpecificParams {
   short_answer: unknown;
@@ -73,6 +76,7 @@ export interface ProblemBaseType {
   solved?: number;
   views?: number;
   postDate?: number;
+  updateDate?: number;
 }
 
 export type ProblemType = ProblemBaseType &
@@ -85,6 +89,7 @@ export type ProblemType = ProblemBaseType &
 export type ProblemDatabaseType = ProblemBaseType &
   ProblemExtraParamsMapType &
   ProblemMapTypeTopicType & {
+    id?: string;
     answer: string;
   };
 

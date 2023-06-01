@@ -1,6 +1,4 @@
-import { ProblemDatabaseType, ProblemType } from "@/types";
-
-export type OperationType = "read" | "create" | "update" | "delete";
+import { ProblemDatabaseType } from "@/types";
 
 export interface CrudPathPropertyType {
   type: OperationType;
@@ -8,54 +6,70 @@ export interface CrudPathPropertyType {
   group?: boolean;
 }
 
-export type CrudPathType =
-  | "get_problem"
-  | "get_problems"
-  | "set_problem"
-  | "update_problem";
+export interface CrudMapPathToParams {
+  get_problem: GetDataType;
+  get_problems: Record<string, never>;
+  set_problem: SetDataType<ProblemDatabaseType>;
+  update_problem: UpdateDataType<ProblemDatabaseType>;
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type CrudMapType = Record<CrudPathType, any>;
+export interface CrudMapOperationToParams<X = unknown> {
+  create: SetDataType<X>;
+  read: GetDataType;
+  update: UpdateDataType<X>;
+  delete: unknown;
+}
+
+export type OperationType = keyof CrudMapOperationToParams;
+
+export interface CrudMapPathToReturnTypes {
+  get_problem: ProblemDatabaseType;
+  get_problems: ProblemDatabaseType[];
+  set_problem: { id: string };
+}
+
+export type CrudParamsType<K extends keyof CrudMapPathToParams> =
+  CrudMapPathToParams[K];
+
+export type CrudReturnType<K extends keyof CrudMapPathToParams> =
+  K extends keyof CrudMapPathToReturnTypes
+    ? CrudMapPathToReturnTypes[K]
+    : never;
+
+export type CrudPathType =
+  | keyof CrudMapPathToParams
+  | keyof CrudMapPathToReturnTypes;
 
 export const CRUD_PATH_PROPERTIES: Record<CrudPathType, CrudPathPropertyType> =
   {
     get_problem: {
       type: "read",
-      collection: "problem",
+      collection: "problems",
     },
     get_problems: {
       type: "read",
-      collection: "problem",
+      collection: "problems",
       group: true,
     },
     set_problem: {
       type: "create",
-      collection: "problem",
+      collection: "problems",
     },
     update_problem: {
       type: "update",
-      collection: "problem",
+      collection: "problems",
     },
   };
 
-export interface CrudMapPathToParams extends CrudMapType {
-  get_problem: GetProblemType;
-  get_problems: GetProblemsType;
-  set_problem: SetProblemType;
-}
-
-export interface CrudMapPathToReturnTypes extends CrudMapType {
-  get_problem: ProblemType;
-  get_problems: ProblemType[];
-}
-
-interface GetProblemType {
+interface GetDataType {
   id: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface GetProblemsType {}
+export type SetDataType<X> = {
+  data: X;
+};
 
-interface SetProblemType {
-  data: ProblemDatabaseType;
-}
+export type UpdateDataType<X> = {
+  id: string;
+  data: X;
+};
