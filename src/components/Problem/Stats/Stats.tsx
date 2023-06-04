@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { IconText } from "@/components";
 import { IconNameType } from "@/types";
+import clsx from "clsx";
 
 type ProblemStatsType = "view" | "solved" | "date";
 
@@ -25,15 +26,16 @@ export function ProblemStats({ type, value }: ProblemStatsProps) {
       case "solved":
         return {
           icon: "clipboardCheckFill",
-          text: `${value} Solved`,
+          text: `${value} solved`,
         };
       case "view":
         return {
           icon: "eyeFill",
-          text: `${value} Views`,
+          text: `${value} views`,
         };
     }
   }, [type, value]);
 
+  return <span>{props.text}</span>;
   return <IconText {...props} className="text-slate-600" />;
 }

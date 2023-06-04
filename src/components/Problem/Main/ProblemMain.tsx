@@ -6,6 +6,7 @@ import {
   ProblemAnswer,
   ProblemStats,
   ProblemTopics,
+  User,
 } from "@/components";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
@@ -88,6 +89,9 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
+        <div>
+          <User name="John Doe" caption="3h" />
+        </div>
         <h1 className="mb-3">{title}</h1>
         {renderTags}
         {renderStats}

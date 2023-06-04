@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { Card, ProblemStats, ProblemTopics } from "@/components";
+import { Card, ProblemStats, ProblemTopics, User } from "@/components";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
 
@@ -24,23 +24,26 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
+        <div>
+          <User name="John Doe" caption="3h" />
+        </div>
         <Link href={`/problem/${id}`}>
-          <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
+          <h2 className="text-teal-600 hover:text-teal-700 mb-4">{title}</h2>
         </Link>
-        <article className="mb-2" ref={statementRef}></article>
+        <article className="mb-5" ref={statementRef}></article>
       </>
     ),
     [id, title]
   );
 
   const renderTags = useMemo(
-    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-2" />,
+    () => <ProblemTopics className="mb-2" topic={topic} subtopic={subtopic} />,
     [subtopic, topic]
   );
 
   const renderStats = useMemo(
     () => (
-      <div className="flex items-center text-sm text-gray-600 gap-6">
+      <div className="flex items-center text-sm text-gray-600 gap-4">
         <ProblemStats type="view" value={views} />
         <ProblemStats type="solved" value={solved} />
       </div>
@@ -59,8 +62,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
 
   return (
     <Card>
-      {renderTags}
       {renderMain}
+      {renderTags}
       {renderStats}
     </Card>
   );
