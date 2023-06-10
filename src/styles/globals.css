@@ -101,8 +101,14 @@
   .w-adaptive {
     width: 1024px;
   }
+  .w-adaptive-2 {
+    width: 640px;
+  }
   @media (max-width: 1024px) {
     .w-adaptive {
+      width: 100%;
+    }
+    .w-adaptive-2 {
       width: 100%;
     }
   }

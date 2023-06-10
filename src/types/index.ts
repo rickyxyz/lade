@@ -13,4 +13,5 @@ export type Either<T, U> = Only<T, U> | Only<U, T>;
 
 export * from "./icon";
 export * from "./problem";
+export * from "./layout";
 export * from "./select";

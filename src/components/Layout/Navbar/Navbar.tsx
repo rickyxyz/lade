@@ -8,7 +8,7 @@ export function Navbar() {
     () => (
       <Input
         variant="solid"
-        style={{ width: "480px" }}
+        style={{ minWidth: "min(480px, 100%)" }}
         placeholder="Search a question"
       />
     ),
@@ -37,9 +37,9 @@ export function Navbar() {
 }
 
 const NAVBAR_OUTER_STYLE = clsx(
-  "flex justify-between items-center h-16",
+  "sticky top-0 flex justify-between items-center h-16",
   "bg-gray-50",
-  "border-t-4 border-t-teal-500 border-b border-gray-200"
+  "border-t-4 border-t-teal-500 border-b border-gray-200 z-20"
 );
 
 const NAVBAR_INNER_STYLE = clsx(

@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import {
   Card,
-  PageGenericTemplate,
+  GenericPageTemplate,
   ProblemCard,
   ProblemCardSkeleton,
   Select,
@@ -168,8 +168,8 @@ export default function Home() {
   }, [topic, subtopic, sortBy, handleGetProblems]);
 
   return (
-    <PageGenericTemplate header={renderHeader}>
+    <GenericPageTemplate header={renderHeader}>
       {renderProblems}
-    </PageGenericTemplate>
+    </GenericPageTemplate>
   );
 }
