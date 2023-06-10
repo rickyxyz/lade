@@ -1,10 +1,7 @@
-import { ReactNode, CSSProperties } from "react";
+import { HTMLProps } from "react";
 import clsx from "clsx";
 
-export interface CardProps {
-  children: ReactNode;
-  className?: string;
-  style?: CSSProperties;
+export interface CardProps extends Omit<HTMLProps<HTMLDivElement>, "as"> {
   as?: "header" | "footer" | "aside";
 }
 

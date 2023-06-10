@@ -1,5 +1,5 @@
 export type SelectOptionType<K = string> = {
-  key: K;
+  id: K;
   text: string;
   disabled?: boolean;
 };

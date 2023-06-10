@@ -1,7 +1,6 @@
 import { CSSProperties, ComponentType, useMemo } from "react";
 import { IconNameType } from "@/types";
 import { ICONS } from "@/consts";
-import clsx from "clsx";
 
 type Base = { className: string };
 
@@ -23,6 +22,7 @@ export const injectPropsToIcon = <TProps extends Base>(
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IconBase = (any: any) => injectPropsToIcon(any);
 
 export function Icon({ className = "", icon, size = "md" }: IconProps) {

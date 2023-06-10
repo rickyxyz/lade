@@ -3,10 +3,10 @@ import {
   Button,
   Card,
   Icon,
-  Input,
   ProblemAnswer,
   ProblemStats,
   ProblemTopics,
+  User,
 } from "@/components";
 import { md } from "@/utils";
 import { ProblemType } from "@/types";
@@ -20,7 +20,6 @@ export interface ProblemMainProps {
 
 export function ProblemMain({ problem }: ProblemMainProps) {
   const {
-    id,
     statement,
     title,
     topic,
@@ -31,6 +30,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     answer,
   } = problem;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stateUserAnswer = useState<any>();
   const [userAnswer, setUserAnswer] = stateUserAnswer;
   const [userSolved, setUserSolved] = useState(false);
@@ -47,6 +47,9 @@ export function ProblemMain({ problem }: ProblemMainProps) {
       return;
     }
 
+    console.log("This Is The Correct Answer");
+    console.log(answer);
+
     const verdict = validateAnswer(type, answer, userAnswer);
 
     if (cooldownIntv) clearInterval(cooldownIntv);
@@ -61,7 +64,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     setUserSolved(verdict);
 
     if (!verdict) setCooldownIntv(interval);
-  }, [answer, cooldownIntv, submitted, type, userAnswer]);
+  }, [cooldownIntv, answer, submitted, type, userAnswer]);
 
   const renderTags = useMemo(
     () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-3" />,
@@ -86,6 +89,9 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
+        <div>
+          <User name="John Doe" caption="3h" />
+        </div>
         <h1 className="mb-3">{title}</h1>
         {renderTags}
         {renderStats}
