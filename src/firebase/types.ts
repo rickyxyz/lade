@@ -1,4 +1,4 @@
-import { ProblemDatabaseType } from "@/types";
+import { ProblemDatabaseType, UserType } from "@/types";
 
 export interface CrudPathPropertyType {
   type: OperationType;
@@ -11,6 +11,9 @@ export interface CrudMapPathToParams {
   get_problems: Record<string, never>;
   set_problem: SetDataType<ProblemDatabaseType>;
   update_problem: UpdateDataType<ProblemDatabaseType>;
+  get_user: GetDataType;
+  set_user: SetDataType<UserType>;
+  update_user: UpdateDataType<UserType>;
 }
 
 export interface CrudMapOperationToParams<X = unknown> {
@@ -26,6 +29,8 @@ export interface CrudMapPathToReturnTypes {
   get_problem: ProblemDatabaseType;
   get_problems: ProblemDatabaseType[];
   set_problem: { id: string };
+  get_user: UserType;
+  set_user: { id: string };
 }
 
 export type CrudParamsType<K extends keyof CrudMapPathToParams> =
@@ -59,6 +64,18 @@ export const CRUD_PATH_PROPERTIES: Record<CrudPathType, CrudPathPropertyType> =
       type: "update",
       collection: "problems",
     },
+    get_user: {
+      type: "read",
+      collection: "users",
+    },
+    set_user: {
+      type: "create",
+      collection: "users",
+    },
+    update_user: {
+      type: "update",
+      collection: "users",
+    },
   };
 
 interface GetDataType {
@@ -66,6 +83,7 @@ interface GetDataType {
 }
 
 export type SetDataType<X> = {
+  id?: string;
   data: X;
 };
 

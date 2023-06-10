@@ -2,7 +2,7 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData } from "@/firebase";
 import {
-  PageGenericTemplate,
+  GenericPageTemplate,
   ProblemMain,
   ProblemMainSkeleton,
 } from "@/components";
@@ -61,7 +61,7 @@ export function Problem({ id }: ProblemProps) {
     handleGetProblems();
   }, [handleGetProblems]);
 
-  return <PageGenericTemplate>{renderQuestion}</PageGenericTemplate>;
+  return <GenericPageTemplate>{renderQuestion}</GenericPageTemplate>;
 }
 
 export async function getServerSideProps({ params }: { params: ProblemProps }) {

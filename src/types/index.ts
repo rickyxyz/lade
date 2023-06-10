@@ -11,6 +11,7 @@ export type Only<T, U> = {
 
 export type Either<T, U> = Only<T, U> | Only<U, T>;
 
+export * from "./auth";
 export * from "./icon";
 export * from "./problem";
 export * from "./layout";

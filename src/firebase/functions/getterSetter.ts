@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import {
@@ -42,7 +43,11 @@ export async function getDataFromPath(group: string, id: string) {
     : undefined;
 }
 
-export async function setDataToPath(group: string, data: object) {
+export async function setDataToPath(group: string, data: object, id?: string) {
+  if (id) {
+    setDoc(doc(db, group, id), data);
+    return { id };
+  }
   return addDoc(collection(db, group), data);
 }
 
@@ -64,11 +69,11 @@ export async function crudData<K extends keyof CrudMapPathToParams>(
 
   switch (type) {
     case "create":
-      const { data: setData } =
+      const { data: setData, id } =
         params as CrudMapOperationToParams<any>[typeof type];
-      const dataRef = await setDataToPath(collection, setData);
+      const dataRef = await setDataToPath(collection, setData, id);
       return {
-        id: dataRef.id,
+        id: id ?? dataRef.id,
       } as CrudReturnType<K>;
     case "read":
       let readResult: any = undefined;
