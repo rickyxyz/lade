@@ -12,6 +12,10 @@ import {
   LAYOUT_THRESHOLD_DESKTOP,
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useAppDispatch } from "@/redux/dispatch";
+import { Provider } from "react-redux";
+import { store } from "@/redux";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,16 +58,18 @@ export default function App({ Component, pageProps }: AppProps) {
           font-family: ${inter.style.fontFamily}!important;
         }
       `}</style>
-      <ProblemEditInitializedContext.Provider
-        value={[initialized, setInitialized]}
-      >
-        <LayoutContext.Provider value={layout}>
-          <div className="relative h-full flex flex-col flex-auto overflow-x-hidden">
-            <Navbar />
-            <Component {...pageProps} />
-          </div>
-        </LayoutContext.Provider>
-      </ProblemEditInitializedContext.Provider>
+      <Provider store={store}>
+        <ProblemEditInitializedContext.Provider
+          value={[initialized, setInitialized]}
+        >
+          <LayoutContext.Provider value={layout}>
+            <div className="relative h-full flex flex-col flex-auto overflow-x-hidden">
+              <Navbar />
+              <Component {...pageProps} />
+            </div>
+          </LayoutContext.Provider>
+        </ProblemEditInitializedContext.Provider>
+      </Provider>
     </>
   );
 }

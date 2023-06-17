@@ -6,4 +6,6 @@ export type IconNameType =
   | "X"
   | "chevronDown"
   | "loaderAlt"
-  | "infoCircleFill";
+  | "infoCircleFill"
+  | "caretDownFill"
+  | "logout";

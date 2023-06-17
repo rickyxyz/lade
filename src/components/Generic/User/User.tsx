@@ -1,19 +1,22 @@
 import clsx from "clsx";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
+import { Icon } from "../Icon";
 
 interface UserProps {
   name: string;
   caption?: string;
+  captionElement?: ReactNode;
+  className?: string;
 }
 
-export function User({ name, caption }: UserProps) {
+export function User({ name, className, caption, captionElement }: UserProps) {
   const userInitials = useMemo(() => {
     const words = name.split(" ").slice(0, 2);
     return words.map((word) => word[0]).join("");
   }, [name]);
 
   return (
-    <div className="flex items-center text-xs mb-4">
+    <div className={clsx("flex items-center text-xs", className)}>
       <div
         className={clsx(
           "flex items-center justify-center",
@@ -32,6 +35,7 @@ export function User({ name, caption }: UserProps) {
           <span>{caption}</span>
         </>
       )}
+      {captionElement}
     </div>
   );
 }

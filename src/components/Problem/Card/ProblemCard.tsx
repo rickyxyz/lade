@@ -24,9 +24,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <div>
-          <User name="John Doe" caption="3h" />
-        </div>
+        <User name="John Doe" caption="3h" className="mb-4" />
         <Link href={`/problem/${id}`}>
           <h2 className="text-teal-600 hover:text-teal-700 mb-4">{title}</h2>
         </Link>

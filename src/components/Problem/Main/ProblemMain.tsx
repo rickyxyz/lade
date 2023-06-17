@@ -89,9 +89,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <div>
-          <User name="John Doe" caption="3h" />
-        </div>
+        <User name="John Doe" caption="3h" className="mb-4" />
         <h1 className="mb-3">{title}</h1>
         {renderTags}
         {renderStats}
