@@ -1,26 +1,23 @@
-import { createRef, useMemo, useState } from "react";
+import { ReactNode, createRef, useMemo, useState } from "react";
 import clsx from "clsx";
 import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
+import { Tooltip, TooltipProps } from "../Tooltip";
 
 type SelectVariant = "basic" | "solid";
 
-export type SelectProps<X extends string, Y extends SelectOptionType<X>[]> = {
+export interface SelectProps<X extends string, Y extends SelectOptionType<X>[]>
+  extends TooltipProps {
   selectedOption?: X;
   variant?: SelectVariant;
-  className?: string;
   inputClassName?: string;
   options: Y;
   optional?: boolean;
   allowClearSelection?: boolean;
   unselectedText?: string;
-  disabled?: boolean;
-  optionWidth?: number;
-  direction?: "left" | "right";
   onSelectOption: (option?: SelectOptionType<X>) => void;
-  onBlur?: () => void;
-};
+}
 
 export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   selectedOption,
@@ -37,7 +34,8 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   onSelectOption,
   onBlur,
 }: SelectProps<X, Y>) {
-  const [visible, setVisible] = useState(false);
+  const stateVisible = useState(false);
+  const [visible, setVisible] = stateVisible;
   const selectRef = createRef<HTMLDivElement>();
 
   const renderRemoveOption = useMemo(() => {
@@ -67,23 +65,13 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     optional,
     selectRef,
     selectedOption,
+    setVisible,
     unselectedText,
   ]);
 
   const renderOptions = useMemo(
     () => (
-      <div
-        className={clsx(
-          "absolute h-fit top-12 flex flex-col",
-          "border border-gray-100 bg-white shadow-md z-10",
-          className
-        )}
-        style={{
-          minWidth: optionWidth,
-          left: direction === "left" ? undefined : 0,
-          right: direction === "right" ? 0 : undefined,
-        }}
-      >
+      <>
         {renderRemoveOption}
         {options.map((option) => (
           <SelectOption
@@ -99,39 +87,21 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             selected={selectedOption === option.id}
           />
         ))}
-      </div>
+      </>
     ),
     [
-      className,
-      optionWidth,
-      direction,
       renderRemoveOption,
       options,
       selectedOption,
       onSelectOption,
       onBlur,
+      setVisible,
       selectRef,
     ]
   );
 
-  return (
-    <div
-      className={clsx(
-        "flex flex-row-reverse relative overflow-visible",
-        !disabled && "cursor-pointer",
-        className
-      )}
-      onFocus={() => {
-        !disabled && setVisible(true);
-      }}
-      onBlur={() => {
-        onBlur && onBlur();
-        setVisible(false);
-      }}
-      ref={selectRef}
-      tabIndex={0}
-    >
-      {visible && renderOptions}
+  const renderTrigger = useMemo(
+    () => (
       <div
         className={clsx(
           INPUT_BASE_STYLE,
@@ -155,7 +125,26 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         </span>
         <Icon icon="chevronDown" className="absolute right-2" size="sm" />
       </div>
-    </div>
+    ),
+    [
+      disabled,
+      inputClassName,
+      options,
+      selectedOption,
+      unselectedText,
+      variant,
+      visible,
+    ]
+  );
+
+  return (
+    <Tooltip
+      triggerElement={renderTrigger}
+      hiddenElement={renderOptions}
+      ref={selectRef}
+      className={className}
+      stateVisible={stateVisible}
+    />
   );
 }
 
