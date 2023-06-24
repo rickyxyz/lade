@@ -64,7 +64,7 @@ export default function Home() {
               options={PROBLEM_TOPIC_OPTIONS}
               selectedOption={topic}
               onSelectOption={(option) => {
-                option && setTopic(option.id);
+                option ? setTopic(option.id) : setTopic(undefined);
                 setSubtopic(undefined);
               }}
               unselectedText="Any"
@@ -79,7 +79,7 @@ export default function Home() {
               options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
               selectedOption={subtopic}
               onSelectOption={(option) => {
-                option && setSubtopic(option.id);
+                option ? setSubtopic(option.id) : setTopic(undefined);
               }}
               disabled={!topic}
               unselectedText="Any"

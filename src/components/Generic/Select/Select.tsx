@@ -1,4 +1,4 @@
-import { createRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import clsx from "clsx";
 import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
@@ -34,7 +34,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
 }: SelectProps<X, Y>) {
   const stateVisible = useState(false);
   const [visible, setVisible] = stateVisible;
-  const selectRef = createRef<HTMLDivElement>();
 
   const renderRemoveOption = useMemo(() => {
     return (
@@ -50,7 +49,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             onSelectOption(undefined);
             onBlur && onBlur();
             setVisible(false);
-            selectRef.current?.blur();
           }}
           selected={selectedOption === undefined}
         />
@@ -61,7 +59,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     onBlur,
     onSelectOption,
     optional,
-    selectRef,
     selectedOption,
     setVisible,
     unselectedText,
@@ -80,7 +77,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
               onSelectOption(option);
               onBlur && onBlur();
               setVisible(false);
-              selectRef.current?.blur();
             }}
             selected={selectedOption === option.id}
           />
@@ -94,7 +90,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       onSelectOption,
       onBlur,
       setVisible,
-      selectRef,
     ]
   );
 
@@ -139,7 +134,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     <Tooltip
       triggerElement={renderTrigger}
       hiddenElement={renderOptions}
-      ref={selectRef}
       className={className}
       stateVisible={stateVisible}
       disabled={disabled}

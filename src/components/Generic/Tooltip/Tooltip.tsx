@@ -61,6 +61,9 @@ export function Tooltip({
       onFocus={() => {
         !disabled && setVisible(true);
       }}
+      onClick={() => {
+        if (!visible) setVisible(true);
+      }}
       onBlur={() => {
         onBlur && onBlur();
         setVisible(false);
