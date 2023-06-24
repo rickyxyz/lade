@@ -17,6 +17,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     subtopic,
     solved = 0,
     views = 0,
+    authorId,
   } = problem;
 
   const statementRef = useRef<HTMLDivElement>(null);
@@ -24,14 +25,14 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <User name="John Doe" caption="3h" className="mb-4" />
+        <User id={authorId} caption="3h" className="mb-4" />
         <Link href={`/problem/${id}`}>
           <h2 className="text-teal-600 hover:text-teal-700 mb-4">{title}</h2>
         </Link>
         <article className="mb-5" ref={statementRef}></article>
       </>
     ),
-    [id, title]
+    [authorId, id, title]
   );
 
   const renderTags = useMemo(

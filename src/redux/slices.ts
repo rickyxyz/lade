@@ -1,4 +1,4 @@
-import { UserType } from "@/types";
+import { UserMapType, UserType } from "@/types";
 import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
@@ -15,6 +15,11 @@ interface UserActionMapType {
   reset_user: undefined | null;
 }
 
+interface UsersActionMapType {
+  update_users: UserMapType;
+  reset_users: undefined | Record<string, never>;
+}
+
 type ReducerRawType<X> = {
   [Y in keyof X]: (
     state: X[Y],
@@ -26,7 +31,7 @@ type ReducerRawType<X> = {
 };
 
 export const userReducer: ReducerRawType<UserActionMapType> = {
-  update_user: (state, action) => {
+  update_user(state, action) {
     state = action.payload;
     return state;
   },
@@ -37,23 +42,45 @@ export const userReducer: ReducerRawType<UserActionMapType> = {
   },
 };
 
+export const usersReducer: ReducerRawType<UsersActionMapType> = {
+  update_users: (state, action) => {
+    const value = {
+      ...(state ?? {}),
+      ...action.payload,
+    };
+    state = value;
+    return value;
+  },
+  reset_users(state) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    state = {};
+    return state;
+  },
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState: null as UserType | null,
   reducers: userReducer as unknown as ReducerType<UserType>,
 });
 
+const usersSlice = createSlice({
+  name: "users",
+  initialState: {} as UserMapType | null,
+  reducers: usersReducer as unknown as ReducerType<UserMapType>,
+});
+
 const reducer = {
   user: userSlice.reducer,
+  users: usersSlice.reducer,
 };
 
 export const action = {
   ...userSlice.actions,
+  ...usersSlice.actions,
 };
 
-const reducerNames = {};
-
-export type ActionTypes = UserActionMapType;
+export type ActionTypes = UserActionMapType & UsersActionMapType;
 
 export type ActionKeyTypes = keyof ActionTypes;
 

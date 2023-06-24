@@ -34,8 +34,10 @@
   .h5 {
     @apply head-style;
   }
-  a,
   *:not(a) > h2 {
+    @apply text-teal-600;
+  }
+  a {
     @apply text-teal-600 hover:text-teal-500 active:text-teal-400 focus:text-teal-400;
   }
   .markdown ul {

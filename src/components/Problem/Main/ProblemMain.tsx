@@ -28,6 +28,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     views = 0,
     type,
     answer,
+    authorId,
   } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +90,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <User name="John Doe" caption="3h" className="mb-4" />
+        <User id={authorId} caption="3h" className="mb-4" />
         <h1 className="mb-3">{title}</h1>
         {renderTags}
         {renderStats}
@@ -97,7 +98,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
         <article className="mb-9" ref={statementRef}></article>
       </>
     ),
-    [renderStats, renderTags, title]
+    [authorId, renderStats, renderTags, title]
   );
 
   const renderAnswerInputs = useMemo(() => {

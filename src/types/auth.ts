@@ -1,7 +1,10 @@
 export interface UserType {
+  id: string;
   username: string;
   joinDate: number;
 }
+
+export type UserMapType = Record<string, UserType>;
 
 export interface SignUpFormType {
   email: string;

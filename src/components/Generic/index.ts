@@ -7,4 +7,5 @@ export * from "./Markdown";
 export * from "./Quote";
 export * from "./Select";
 export * from "./Tag";
+export * from "./Tooltip";
 export * from "./User";

@@ -1,14 +1,14 @@
-import { ReactNode, createRef, useMemo, useState } from "react";
+import { createRef, useMemo, useState } from "react";
 import clsx from "clsx";
 import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
-import { Tooltip, TooltipProps } from "../Tooltip";
+import { Tooltip, TooltipBaseProps } from "../Tooltip";
 
 type SelectVariant = "basic" | "solid";
 
 export interface SelectProps<X extends string, Y extends SelectOptionType<X>[]>
-  extends TooltipProps {
+  extends TooltipBaseProps {
   selectedOption?: X;
   variant?: SelectVariant;
   inputClassName?: string;
@@ -29,8 +29,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   allowClearSelection = true,
   unselectedText = "None",
   disabled,
-  optionWidth = 300,
-  direction = "right",
   onSelectOption,
   onBlur,
 }: SelectProps<X, Y>) {
@@ -144,6 +142,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       ref={selectRef}
       className={className}
       stateVisible={stateVisible}
+      disabled={disabled}
     />
   );
 }

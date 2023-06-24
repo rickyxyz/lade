@@ -1,18 +1,21 @@
-import { ReactNode, RefObject, createRef, useMemo, useState } from "react";
+import { ReactNode, RefObject, useMemo, useState } from "react";
 import clsx from "clsx";
 import { StateType } from "@/types";
 
-export type TooltipProps = {
+export type TooltipBaseProps = {
   className?: string;
   optionWidth?: number;
   direction?: "left" | "right";
-  triggerElement: ReactNode;
-  hiddenElement: ReactNode;
   disabled?: boolean;
   ref?: RefObject<HTMLDivElement>;
   stateVisible?: StateType<boolean>;
   onBlur?: () => void;
 };
+
+export type TooltipProps = {
+  triggerElement: ReactNode;
+  hiddenElement: ReactNode;
+} & TooltipBaseProps;
 
 export function Tooltip({
   className,

@@ -77,6 +77,7 @@ export interface ProblemBaseType {
   views?: number;
   postDate?: number;
   updateDate?: number;
+  authorId?: string;
 }
 
 export type ProblemType = ProblemBaseType &

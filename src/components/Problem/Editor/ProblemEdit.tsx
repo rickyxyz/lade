@@ -9,6 +9,7 @@ import { ProblemEditForm, ProblemEditFormProps } from "./ProblemEditForm";
 import { crudData } from "@/firebase";
 import { useRouter } from "next/router";
 import { Card } from "@/components/Generic";
+import { useAppSelector } from "@/redux/dispatch";
 
 interface ProblemEditProps extends Partial<ProblemEditFormProps> {
   headElement?: ReactNode;
@@ -27,23 +28,28 @@ export function ProblemEdit({
   const stateAnswer = useState<any>();
   const [answer, setAnswer] = stateAnswer;
   const router = useRouter();
+  const user = useAppSelector("user");
 
   const handleSubmit = useCallback(
     async (values: ProblemWithoutIdType) => {
       setLoading(true);
+
+      const common: Partial<ProblemWithoutIdType> = {
+        answer: constructAnswerString(values.type, answer),
+        postDate: new Date().getTime(),
+        authorId: user?.id,
+      };
 
       const completeValues =
         mode === "create"
           ? {
               ...PROBLEM_DEFAULT,
               ...values,
-              answer: constructAnswerString(values.type, answer),
-              postDate: new Date().getTime(),
+              ...common,
             }
           : {
               ...values,
-              answer: constructAnswerString(values.type, answer),
-              updateDate: new Date().getTime(),
+              ...common,
             };
 
       console.log("Creating Events:");
@@ -53,10 +59,10 @@ export function ProblemEdit({
         await crudData("set_problem", {
           data: completeValues as unknown as ProblemDatabaseType,
         })
-          .then(async (id) => {
+          .then(async (res) => {
             await sleep(200);
             setLoading(false);
-            router.replace(`/problem/${id}`);
+            if (res && res.id) router.replace(`/problem/${res.id}`);
           })
           .catch(() => {
             setLoading(false);
@@ -77,7 +83,7 @@ export function ProblemEdit({
           });
       }
     },
-    [answer, mode, problem, router, setLoading]
+    [answer, mode, problem, router, setLoading, user?.id]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {

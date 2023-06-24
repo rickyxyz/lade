@@ -1,23 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { Button, Icon, Input, Select, User } from "@/components";
+import {
+  Button,
+  Icon,
+  Input,
+  User,
+  Tooltip,
+  TooltipOption,
+} from "@/components";
 import clsx from "clsx";
-import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "@/redux/dispatch";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { crudData, logout } from "@/firebase";
-import { Tooltip } from "@/components/Generic/Tooltip";
-import { SelectOption } from "@/components/Generic/Select/SelectOption";
-import { TooltipOption } from "@/components/Generic/Tooltip/TooltipOption";
 
 export function Navbar() {
   const auth = getAuth();
   const user = useAppSelector("user");
   const router = useRouter();
   const dispatch = useAppDispatch();
-
-  const [open, setOpen] = useState(false);
 
   const renderSearchField = useMemo(
     () => (
@@ -30,8 +31,6 @@ export function Navbar() {
     []
   );
 
-  const renderUserDropdown = useMemo(() => <div className=""></div>, []);
-
   const renderAuthButtons = useMemo(
     () =>
       user ? (
@@ -41,7 +40,7 @@ export function Navbar() {
           triggerElement={
             <User
               className="relative"
-              name={user.username}
+              username={user.username}
               captionElement={
                 <Icon className="ml-2" icon="caretDownFill" size="xs" />
               }
@@ -73,20 +72,9 @@ export function Navbar() {
           >
             Sign Up
           </Button>
-          <Button
-            onClick={() => {
-              dispatch("update_user", {
-                username: "Test",
-                joinDate: 0,
-              });
-            }}
-            variant="ghost"
-          >
-            Test
-          </Button>
         </div>
       ),
-    [dispatch, router, user]
+    [router, user]
   );
 
   const handleInitialize = useCallback(() => {
