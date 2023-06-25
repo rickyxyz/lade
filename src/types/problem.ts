@@ -1,5 +1,5 @@
 import { PROBLEM_TOPICS_RELATIONSHIP_OBJECT } from "@/consts";
-import { SelectOptionType } from "./select";
+import { SelectOptionType } from "./component";
 
 export type ProblemTopicNameType = "calculus" | "linear-algebra";
 

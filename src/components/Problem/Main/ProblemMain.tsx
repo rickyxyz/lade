@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   Card,
+  Dropdown,
   Icon,
   ProblemAnswer,
   ProblemStats,
@@ -90,7 +91,27 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <User id={authorId} caption="3h" className="mb-4" />
+        <div className="flex justify-between mb-4">
+          <User id={authorId} caption="3h" />
+          <Dropdown
+            optionWidth={100}
+            direction="left"
+            options={[
+              {
+                id: "edit",
+                element: "Edit",
+                onClick: () => {
+                  console.log("Edit");
+                },
+              },
+            ]}
+            triggerElement={
+              <Button className="!w-8 !h-8" variant="ghost">
+                <Icon size="sm" icon="threeDots" />
+              </Button>
+            }
+          />
+        </div>
         <h1 className="mb-3">{title}</h1>
         {renderTags}
         {renderStats}

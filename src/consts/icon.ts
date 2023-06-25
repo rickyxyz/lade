@@ -7,6 +7,7 @@ import {
   BsFillClipboardCheckFill,
   BsFillEyeFill,
   BsInfoCircleFill,
+  BsThreeDotsVertical,
   BsX,
 } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
@@ -24,4 +25,5 @@ export const ICONS: Record<IconNameType, IconType> = {
   infoCircleFill: BsInfoCircleFill,
   caretDownFill: BsCaretDownFill,
   logout: MdLogout,
+  threeDots: BsThreeDotsVertical,
 };

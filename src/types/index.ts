@@ -15,4 +15,4 @@ export * from "./auth";
 export * from "./icon";
 export * from "./problem";
 export * from "./layout";
-export * from "./select";
+export * from "./component";

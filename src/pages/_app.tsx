@@ -12,8 +12,6 @@ import {
   LAYOUT_THRESHOLD_DESKTOP,
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useAppDispatch } from "@/redux/dispatch";
 import { Provider } from "react-redux";
 import { store } from "@/redux";
 

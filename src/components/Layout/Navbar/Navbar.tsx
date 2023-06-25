@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
-import {
-  Button,
-  Icon,
-  Input,
-  User,
-  Tooltip,
-  TooltipOption,
-} from "@/components";
+import { Button, Icon, Input, User, Dropdown } from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/redux/dispatch";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -34,9 +27,23 @@ export function Navbar() {
   const renderAuthButtons = useMemo(
     () =>
       user ? (
-        <Tooltip
+        <Dropdown
           direction="left"
           optionWidth={200}
+          classNameOption="flex gap-4"
+          options={[
+            {
+              id: "Logout",
+              className: "text-red-500",
+              element: (
+                <>
+                  <Icon icon="logout" />
+                  <span>Logout</span>
+                </>
+              ),
+              onClick: logout,
+            },
+          ]}
           triggerElement={
             <User
               className="relative"
@@ -46,16 +53,29 @@ export function Navbar() {
               }
             />
           }
-          hiddenElement={
-            <>
-              <TooltipOption className="justify-between" onClick={logout}>
-                <span>Logout</span>
-                <Icon icon="logout" />
-              </TooltipOption>
-            </>
-          }
         />
       ) : (
+        // <Tooltip
+        //   direction="left"
+        //   optionWidth={200}
+        //   triggerElement={
+        //     <User
+        //       className="relative"
+        //       username={user.username}
+        //       captionElement={
+        //         <Icon className="ml-2" icon="caretDownFill" size="xs" />
+        //       }
+        //     />
+        //   }
+        //   hiddenElement={
+        //     <>
+        //       <TooltipOption className="justify-between" onClick={logout}>
+        //         <span>Logout</span>
+        //         <Icon icon="logout" />
+        //       </TooltipOption>
+        //     </>
+        //   }
+        // />
         <div className="flex flex-row gap-4 mr-6 w-fit">
           <Button
             onClick={() => {

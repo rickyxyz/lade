@@ -8,4 +8,5 @@ export type IconNameType =
   | "loaderAlt"
   | "infoCircleFill"
   | "caretDownFill"
-  | "logout";
+  | "logout"
+  | "threeDots";
