@@ -41,6 +41,7 @@ export function ProblemEditForm({
     errors,
     touched,
     setFieldTouched,
+    validateForm,
   } = useFormikContext<ProblemWithoutIdType>();
 
   const { statement, subtopic, topic, type } = values;
@@ -60,7 +61,6 @@ export function ProblemEditForm({
             selectedOption={type}
             onSelectOption={(option) => {
               setFieldValue("type", option ? option.id : undefined);
-
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
                 setFieldValue(
@@ -179,8 +179,8 @@ export function ProblemEditForm({
   }, [answer, setFieldValue, type]);
 
   useEffect(() => {
-    console.log(touched);
-  }, [touched]);
+    validateForm();
+  }, [validateForm, values]);
 
   return (
     <>

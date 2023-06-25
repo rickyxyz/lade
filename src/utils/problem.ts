@@ -51,9 +51,13 @@ export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
     return "Answer must not be empty.";
   }
   if (problem.type === "matrix" && problem.answer) {
-    const sizes = parseMatrixSize(JSON.parse(problem.answer));
-    if (sizes[0] === 0 && sizes[1] === 0) {
-      return "Answer must not be empty.";
+    try {
+      const sizes = parseMatrixSize(JSON.parse(problem.answer));
+      if (sizes[0] === 0 && sizes[1] === 0) {
+        return "Answer must not be empty.";
+      }
+    } catch (e) {
+      return "Invalid Format";
     }
   }
 }

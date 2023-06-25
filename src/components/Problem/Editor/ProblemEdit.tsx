@@ -103,7 +103,8 @@ export function ProblemEdit({
         }
         validate={validateFormProblem}
         onSubmit={handleSubmit}
-        validateOnChange
+        validateOnChange={false}
+        validateOnBlur={false}
       >
         <ProblemEditForm
           stateAnswer={stateAnswer}
