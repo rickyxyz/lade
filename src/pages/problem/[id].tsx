@@ -15,9 +15,11 @@ interface ProblemProps {
 }
 
 export function Problem({ id }: ProblemProps) {
-  const [problem, setProblem] = useState<ProblemType>();
+  const stateProblem = useState<ProblemType>();
+  const [problem, setProblem] = stateProblem;
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState<"view" | "edit">("view");
+  const stateMode = useState<"view" | "edit">("view");
+  const [mode, setMode] = stateMode;
 
   const renderEditHeader = useMemo(
     () => <h1 className="mb-8">Edit Problem</h1>,
@@ -28,15 +30,17 @@ export function Problem({ id }: ProblemProps) {
     if (loading || !problem) return <ProblemMainSkeleton />;
 
     return mode === "view" ? (
-      <ProblemMain problem={problem} />
+      <ProblemMain problem={problem} stateMode={stateMode} />
     ) : (
       <ProblemEdit
         headElement={renderEditHeader}
+        stateProblem={stateProblem}
         problem={problem}
-        mode="edit"
+        stateMode={stateMode}
+        purpose="edit"
       />
     );
-  }, [problem, loading, mode, renderEditHeader]);
+  }, [loading, problem, mode, stateMode, renderEditHeader, stateProblem]);
 
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;
@@ -55,7 +59,7 @@ export function Problem({ id }: ProblemProps) {
         setLoading(false);
       }
     });
-  }, [id, loading]);
+  }, [id, loading, setProblem]);
 
   useEffect(() => {
     handleGetProblems();

@@ -1,8 +1,18 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { constructAnswerString, sleep, validateFormProblem } from "@/utils";
-import { ProblemDatabaseType, ProblemWithoutIdType } from "@/types";
+import {
+  constructAnswerString,
+  deconstructAnswerString,
+  sleep,
+  validateFormProblem,
+} from "@/utils";
+import {
+  ProblemDatabaseType,
+  ProblemType,
+  ProblemWithoutIdType,
+  StateType,
+} from "@/types";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
 import { ProblemEditForm, ProblemEditFormProps } from "./ProblemEditForm";
@@ -13,13 +23,17 @@ import { useAppSelector } from "@/redux/dispatch";
 
 interface ProblemEditProps extends Partial<ProblemEditFormProps> {
   headElement?: ReactNode;
-  mode: "edit" | "create";
+  stateMode?: StateType<"edit" | "view">;
+  stateProblem?: StateType<ProblemType | undefined>;
+  purpose: "edit" | "create";
 }
 
 export function ProblemEdit({
   headElement,
+  stateMode,
+  stateProblem,
   problem,
-  mode,
+  purpose,
   ...rest
 }: ProblemEditProps) {
   const stateLoading = useState(false);
@@ -41,7 +55,7 @@ export function ProblemEdit({
       };
 
       const completeValues =
-        mode === "create"
+        purpose === "create"
           ? {
               ...PROBLEM_DEFAULT,
               ...values,
@@ -55,7 +69,7 @@ export function ProblemEdit({
       console.log("Creating Events:");
       console.log(completeValues);
 
-      if (mode === "create") {
+      if (purpose === "create") {
         await crudData("set_problem", {
           data: completeValues as unknown as ProblemDatabaseType,
         })
@@ -77,13 +91,38 @@ export function ProblemEdit({
             setLoading(false);
             await sleep(200);
             router.replace(`/problem/${id}`);
+
+            if (stateMode && stateProblem) {
+              const setMode = stateMode[1];
+              const setProblem = stateProblem[1];
+              setMode("view");
+              setProblem((prev) => ({
+                ...prev,
+                ...{
+                  ...(completeValues as unknown as ProblemType),
+                  answer: deconstructAnswerString(
+                    completeValues.type,
+                    completeValues.answer
+                  ),
+                },
+              }));
+            }
           })
           .catch(() => {
             setLoading(false);
           });
       }
     },
-    [answer, mode, problem, router, setLoading, user?.id]
+    [
+      answer,
+      problem,
+      purpose,
+      router,
+      setLoading,
+      stateMode,
+      stateProblem,
+      user?.id,
+    ]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {
@@ -107,6 +146,7 @@ export function ProblemEdit({
         validateOnBlur={false}
       >
         <ProblemEditForm
+          stateMode={stateMode}
           stateAnswer={stateAnswer}
           stateLoading={stateLoading}
           {...rest}

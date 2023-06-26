@@ -18,7 +18,11 @@ export default function CreateProblem() {
 
   return (
     <GenericPageTemplate>
-      <ProblemEdit headElement={renderHead} problem={problem} mode="create" />
+      <ProblemEdit
+        headElement={renderHead}
+        problem={problem}
+        purpose="create"
+      />
     </GenericPageTemplate>
   );
 }

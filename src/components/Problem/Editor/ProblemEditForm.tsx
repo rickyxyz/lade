@@ -23,6 +23,7 @@ import { constructAnswerString } from "@/utils";
 
 export interface ProblemEditFormProps {
   problem?: ProblemWithoutIdType;
+  stateMode?: StateType<"edit" | "view">;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;
@@ -31,6 +32,7 @@ export interface ProblemEditFormProps {
 export function ProblemEditForm({
   stateAnswer,
   stateLoading,
+  stateMode,
 }: ProblemEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
@@ -187,14 +189,27 @@ export function ProblemEditForm({
       {renderProblemSettings}
       {renderProblemEditor}
       {renderProblemAnswer}
-      <Button
-        loading={loading}
-        disabled={!initialized}
-        type="submit"
-        onClick={submitForm}
-      >
-        Submit
-      </Button>
+      <div className="flex gap-4">
+        <Button
+          loading={loading}
+          disabled={!initialized}
+          type="submit"
+          onClick={submitForm}
+        >
+          Update
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            if (!stateMode) return;
+
+            const setMode = stateMode[1];
+            setMode("view");
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
     </>
   );
 }

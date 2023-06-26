@@ -48,7 +48,7 @@ export function Dropdown({
     if (visible && ref.current) ref.current.focus();
   }, [visible]);
 
-  return (
+  return options.length > 0 ? (
     <Tooltip
       {...rest}
       triggerElement={triggerElement}
@@ -58,5 +58,7 @@ export function Dropdown({
       disabled={disabled}
       ref={ref}
     />
+  ) : (
+    <></>
   );
 }

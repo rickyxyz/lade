@@ -10,16 +10,18 @@ import {
   User,
 } from "@/components";
 import { md } from "@/utils";
-import { ProblemType } from "@/types";
+import { ProblemType, StateType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { validateAnswer } from "@/utils/answer";
+import { useAppSelector } from "@/redux";
 
 export interface ProblemMainProps {
   problem: ProblemType;
+  stateMode: StateType<"edit" | "view">;
 }
 
-export function ProblemMain({ problem }: ProblemMainProps) {
+export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
   const {
     statement,
     title,
@@ -39,6 +41,8 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const [submitted, setSubmitted] = useState<number>();
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
+  const user = useAppSelector("user");
+  const setMode = stateMode[1];
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -96,15 +100,20 @@ export function ProblemMain({ problem }: ProblemMainProps) {
           <Dropdown
             optionWidth={100}
             direction="left"
-            options={[
-              {
-                id: "edit",
-                element: "Edit",
-                onClick: () => {
-                  console.log("Edit");
-                },
-              },
-            ]}
+            options={
+              user && user.id === authorId
+                ? [
+                    {
+                      id: "edit",
+                      element: "Edit",
+                      onClick: () => {
+                        console.log("Edit");
+                        setMode("edit");
+                      },
+                    },
+                  ]
+                : []
+            }
             triggerElement={
               <Button className="!w-8 !h-8" variant="ghost">
                 <Icon size="sm" icon="threeDots" />
@@ -119,7 +128,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
         <article className="mb-9" ref={statementRef}></article>
       </>
     ),
-    [authorId, renderStats, renderTags, title]
+    [authorId, renderStats, renderTags, setMode, title, user]
   );
 
   const renderAnswerInputs = useMemo(() => {
