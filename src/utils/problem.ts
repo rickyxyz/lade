@@ -28,7 +28,7 @@ export function validateFormProblem(problem: ProblemWithoutIdType) {
     errors.statement = "Problem statement is too long.";
   }
 
-  if (type === "") errors.type = "You must select a type!";
+  if (type === "") errors.type = "Type is required!";
   if (topic === "") errors.topic = "Topic is required!";
   if (subtopic === "") errors.subtopic = "Subtopic is required!";
 

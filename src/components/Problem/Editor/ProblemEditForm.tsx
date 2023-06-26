@@ -196,19 +196,21 @@ export function ProblemEditForm({
           type="submit"
           onClick={submitForm}
         >
-          Update
+          {stateMode && stateMode[0] === "edit" ? "Update" : "Create"}
         </Button>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            if (!stateMode) return;
+        {stateMode && stateMode[0] === "edit" && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (!stateMode) return;
 
-            const setMode = stateMode[1];
-            setMode("view");
-          }}
-        >
-          Cancel
-        </Button>
+              const setMode = stateMode[1];
+              setMode("view");
+            }}
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </>
   );
