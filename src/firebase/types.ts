@@ -10,10 +10,10 @@ export interface CrudMapPathToParams {
   get_problem: GetDataType;
   get_problems: Record<string, never>;
   set_problem: SetDataType<ProblemDatabaseType>;
-  update_problem: UpdateDataType<ProblemDatabaseType>;
+  update_problem: UpdateDataType<Partial<ProblemDatabaseType>>;
   get_user: GetDataType;
   set_user: SetDataType<UserType>;
-  update_user: UpdateDataType<UserType>;
+  update_user: UpdateDataType<Partial<UserType>>;
 }
 
 export interface CrudMapOperationToParams<X = unknown> {

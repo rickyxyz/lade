@@ -71,7 +71,7 @@ export function User({
       >
         <span className="text-white">{userInitials}</span>
       </div>
-      <span className="ml-2 font-bold">{name}</span>
+      <span className="ml-3 font-bold">{name}</span>
       {caption && (
         <>
           <span className="mx-1.5" style={{ fontSize: "8px" }}>

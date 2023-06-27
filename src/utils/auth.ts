@@ -1,4 +1,9 @@
-import { LoginFormType, SignUpFormType } from "@/types";
+import {
+  ContentAccessType,
+  LoginFormType,
+  SignUpFormType,
+  UserType,
+} from "@/types";
 
 export function validatePassword(password: string) {
   if (password === "") return "Password is required!";
@@ -35,4 +40,20 @@ export function validateFormLogin(params: LoginFormType) {
   if (password === "") errors.password = "Password is required!";
 
   return errors;
+}
+
+export function getPermissionForContent({
+  content,
+  user,
+}: {
+  content: any;
+  user?: UserType | null;
+}): ContentAccessType {
+  if (!user || content.authorId !== user.id) return "viewer";
+
+  if (user.role === "admin") return "admin";
+
+  if (content.authorId === user.id) return "author";
+
+  return "viewer";
 }

@@ -2,27 +2,32 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   Card,
-  Dropdown,
   Icon,
   ProblemAnswer,
   ProblemStats,
   ProblemTopics,
   User,
 } from "@/components";
-import { md } from "@/utils";
-import { ProblemType, StateType } from "@/types";
+import { getPermissionForContent, md } from "@/utils";
+import { ProblemType, ContentViewType, StateType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { validateAnswer } from "@/utils/answer";
 import { useAppSelector } from "@/redux";
+import { ProblemMore } from "../More/ProblemMore";
+import { crudData } from "@/firebase";
+import { increment } from "firebase/firestore";
 
 export interface ProblemMainProps {
-  problem: ProblemType;
-  stateMode: StateType<"edit" | "view">;
+  stateProblem: StateType<ProblemType>;
+  stateMode: StateType<ContentViewType>;
 }
 
-export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
+export function ProblemMain({ stateProblem, stateMode }: ProblemMainProps) {
+  const [problem, setProblem] = stateProblem;
+
   const {
+    id,
     statement,
     title,
     topic,
@@ -43,6 +48,14 @@ export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
   const [cooldown, setCooldown] = useState(0);
   const user = useAppSelector("user");
   const setMode = stateMode[1];
+  const permission = useMemo(
+    () =>
+      getPermissionForContent({
+        content: problem,
+        user,
+      }),
+    [problem, user]
+  );
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -69,11 +82,24 @@ export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
     setSubmitted(now);
     setUserSolved(verdict);
 
-    if (!verdict) setCooldownIntv(interval);
-  }, [cooldownIntv, answer, submitted, type, userAnswer]);
+    if (!verdict) {
+      setCooldownIntv(interval);
+    } else {
+      crudData("update_problem", {
+        id,
+        data: {
+          solved: increment(1) as unknown as number,
+        },
+      });
+      setProblem((prev) => ({
+        ...prev,
+        solved: (prev.solved ?? 0) + 1,
+      }));
+    }
+  }, [submitted, answer, type, userAnswer, cooldownIntv, id, setProblem]);
 
   const renderTags = useMemo(
-    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-3" />,
+    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-4" />,
     [subtopic, topic]
   );
 
@@ -97,11 +123,9 @@ export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
       <>
         <div className="flex justify-between mb-4">
           <User id={authorId} caption="3h" />
-          <Dropdown
-            optionWidth={100}
-            direction="left"
+          <ProblemMore
             options={
-              user && user.id === authorId
+              permission === "author"
                 ? [
                     {
                       id: "edit",
@@ -114,21 +138,16 @@ export function ProblemMain({ problem, stateMode }: ProblemMainProps) {
                   ]
                 : []
             }
-            triggerElement={
-              <Button className="!w-8 !h-8" variant="ghost">
-                <Icon size="sm" icon="threeDots" />
-              </Button>
-            }
           />
         </div>
-        <h1 className="mb-3">{title}</h1>
+        <h1 className="mb-4">{title}</h1>
         {renderTags}
         {renderStats}
         <h2 className="mb-2">Problem Statement</h2>
         <article className="mb-9" ref={statementRef}></article>
       </>
     ),
-    [authorId, renderStats, renderTags, setMode, title, user]
+    [authorId, permission, renderStats, renderTags, setMode, title]
   );
 
   const renderAnswerInputs = useMemo(() => {

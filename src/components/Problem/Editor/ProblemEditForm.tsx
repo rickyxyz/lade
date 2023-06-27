@@ -9,7 +9,7 @@ import {
   Quote,
   Button,
 } from "@/components";
-import { ProblemWithoutIdType, StateType } from "@/types";
+import { ContentViewType, ProblemWithoutIdType, StateType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
@@ -23,7 +23,7 @@ import { constructAnswerString } from "@/utils";
 
 export interface ProblemEditFormProps {
   problem?: ProblemWithoutIdType;
-  stateMode?: StateType<"edit" | "view">;
+  stateMode?: StateType<ContentViewType>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;

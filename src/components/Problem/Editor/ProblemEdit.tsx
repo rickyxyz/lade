@@ -9,7 +9,9 @@ import {
 } from "@/utils";
 import {
   ProblemDatabaseType,
+  ContentEditType,
   ProblemType,
+  ContentViewType,
   ProblemWithoutIdType,
   StateType,
 } from "@/types";
@@ -23,9 +25,9 @@ import { useAppSelector } from "@/redux/dispatch";
 
 interface ProblemEditProps extends Partial<ProblemEditFormProps> {
   headElement?: ReactNode;
-  stateMode?: StateType<"edit" | "view">;
-  stateProblem?: StateType<ProblemType | undefined>;
-  purpose: "edit" | "create";
+  stateMode?: StateType<ContentViewType>;
+  stateProblem?: StateType<ProblemType>;
+  purpose: ContentEditType;
 }
 
 export function ProblemEdit({

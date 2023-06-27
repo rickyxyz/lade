@@ -112,3 +112,9 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
 export type ProblemBlankType = {
   [P in keyof ProblemWithoutIdType]: string;
 };
+
+export type ContentViewType = "view" | "edit";
+
+export type ContentEditType = "create" | "edit";
+
+export type ContentAccessType = "viewer" | "author" | "admin";

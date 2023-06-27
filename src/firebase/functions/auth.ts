@@ -58,7 +58,7 @@ export async function signUp(data: SignUpFormType) {
         data: {
           username,
           joinDate: now,
-        },
+        } as any,
         id,
       });
       return cred;
