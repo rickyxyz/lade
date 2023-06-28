@@ -1,4 +1,6 @@
 import {
+  ContestBlankType,
+  ContestDatabaseType,
   ProblemAnswerType,
   ProblemBlankType,
   ProblemDatabaseType,
@@ -60,4 +62,28 @@ export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
       return "Invalid Format";
     }
   }
+}
+
+export function validateFormContest(contest: ContestDatabaseType) {
+  const { title, description } = contest as unknown as ContestBlankType;
+
+  const errors: Partial<Record<keyof ContestDatabaseType, string>> = {};
+
+  if (title === "") {
+    errors.title = "Title must not be empty.";
+  } else if (title.length < 3) {
+    errors.title = "Title is too short.";
+  } else if (title.length > 24) {
+    errors.title = "Title is too long.";
+  }
+
+  if (description === "") {
+    errors.description = "Description is required.";
+  } else if (description.length < 3) {
+    errors.description = "Description is too short.";
+  } else if (title.length > 200) {
+    errors.description = "Description is too long.";
+  }
+
+  return errors;
 }

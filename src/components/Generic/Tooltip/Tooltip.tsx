@@ -63,15 +63,11 @@ export const Tooltip = forwardRef<any, any>(function (
       )}
       onFocus={() => {
         !disabled && setVisible(true);
-        console.log("onFocus");
       }}
       onClick={() => {
-        console.log("Clickity");
-        if (!visible) setVisible(true);
+        if (!visible && !disabled) setVisible(true);
       }}
-      onBlur={(e) => {
-        console.log(e);
-        console.log("onBlur");
+      onBlur={() => {
         onBlur && onBlur();
         setVisible(false);
       }}

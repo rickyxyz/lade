@@ -118,3 +118,28 @@ export type ContentViewType = "view" | "edit";
 export type ContentEditType = "create" | "edit";
 
 export type ContentAccessType = "viewer" | "author" | "admin";
+
+export interface ContestBaseType {
+  title: string;
+  description: string;
+  participants?: number;
+  views?: number;
+  postDate?: number;
+  updateDate?: number;
+  startDate?: number;
+  endDate?: number;
+  authorId?: string;
+}
+
+export type ContestType = ContestBaseType &
+  ProblemMapTypeTopicType & {
+    id: string;
+  };
+
+export type ContestDatabaseType = Omit<ContestType, "id"> & {
+  id?: string;
+};
+
+export type ContestBlankType = {
+  [P in keyof ContestDatabaseType]: string;
+};

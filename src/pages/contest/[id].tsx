@@ -3,11 +3,11 @@ import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData } from "@/firebase";
 import {
   GenericPageTemplate,
-  ProblemEdit,
   ProblemMain,
   ProblemMainSkeleton,
 } from "@/components";
 import { ProblemType, ContentViewType } from "@/types";
+import { ProblemEdit } from "@/components/Problem/Editor";
 import { deconstructAnswerString } from "@/utils";
 import { PROBLEM_BLANK } from "@/consts";
 

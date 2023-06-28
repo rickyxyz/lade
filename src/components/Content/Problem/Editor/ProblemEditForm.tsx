@@ -20,6 +20,7 @@ import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useProblemEditInitialized } from "@/hooks";
 import { constructAnswerString } from "@/utils";
+import { ContentSettingSelect } from "../../ContentSettingSelect";
 
 export interface ProblemEditFormProps {
   problem?: ProblemWithoutIdType;
@@ -56,7 +57,7 @@ export function ProblemEditForm({
       <section className="mb-8">
         <h2 className="mb-4">Problem Settings</h2>
         <div className="flex flex-col gap-4">
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Type"
             formName="type"
             options={PROBLEM_ANSWER_TYPE_OPTIONS}
@@ -74,7 +75,7 @@ export function ProblemEditForm({
             }}
             disabled={!initialized}
           />
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Topic"
             formName="topic"
             options={PROBLEM_TOPIC_OPTIONS}
@@ -85,7 +86,7 @@ export function ProblemEditForm({
             }}
             disabled={!initialized}
           />
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Subtopic"
             formName="subtopic"
             options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}

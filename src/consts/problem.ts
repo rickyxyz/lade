@@ -10,6 +10,8 @@ import {
   ProblemSortByType,
   ProblemSortOptionType,
   ProblemBlankType,
+  ContestBlankType,
+  ContestDatabaseType,
 } from "@/types";
 
 export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
@@ -31,6 +33,20 @@ export const PROBLEM_BLANK: ProblemBlankType = {
   subtopic: "",
   type: "",
   answer: "",
+};
+
+export const CONTEST_DEFAULT: ContestDatabaseType = {
+  description: "",
+  title: "",
+  topic: "calculus",
+  subtopic: "derivatives",
+};
+
+export const CONTEST_BLANK: ContestBlankType = {
+  description: "",
+  title: "",
+  topic: "",
+  subtopic: "",
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {
