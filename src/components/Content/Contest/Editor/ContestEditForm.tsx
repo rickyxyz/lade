@@ -1,18 +1,27 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { Input, Markdown, ContentSettingSelect, Button } from "@/components";
+import {
+  Input,
+  Markdown,
+  ContentSettingSelect,
+  Button,
+  Icon,
+} from "@/components";
 import {
   ContentViewType,
   ContestDatabaseType,
   DateTimeType,
+  ProblemType,
   StateType,
 } from "@/types";
 import { PROBLEM_SUBTOPIC_OPTIONS, PROBLEM_TOPIC_OPTIONS } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
-import { useProblemEditInitialized } from "@/hooks";
+import { useDebounce, useProblemEditInitialized } from "@/hooks";
 import { ContentSetting } from "../../ContentSetting";
+import { crudData } from "@/firebase";
+import { ContentSettingDate } from "../../ContentSettingDate";
 
 export interface ContestEditFormProps {
   contest?: ContestDatabaseType;
@@ -27,8 +36,16 @@ export function ContestEditForm({
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
-  const [start, setStart] = useState<DateTimeType>();
-  const [end, setEnd] = useState<DateTimeType>();
+  const stateStart = useState<DateTimeType>();
+  const stateEnd = useState<DateTimeType>();
+  const [start, setStart] = stateStart;
+  const [end, setEnd] = stateEnd;
+  const [problems, setProblems] = useState<ProblemType[]>([]);
+  const [problem, setProblem] = useState<ProblemType | null>();
+  const [query, setQuery] = useState("");
+  const [fetching, setFetching] = useState(false);
+
+  const debouncedQuery = useDebounce(query, 400);
 
   const {
     setFieldValue,
@@ -44,38 +61,23 @@ export function ContestEditForm({
 
   const loading = stateLoading[0];
 
-  const handleUpdateDate = useCallback(
-    (prev: DateTimeType | undefined, raw: string): DateTimeType => {
-      const [year, month, date] = raw.split("-") as unknown as number[];
+  const handleUpdateFormDate = useCallback(
+    (field: "startDate" | "endDate", dateTime?: DateTimeType) => {
+      if (!dateTime) return;
 
-      return {
-        ...(prev ?? {}),
-        date: {
-          year,
-          month,
-          date,
-        },
-      };
+      const { date, time } = dateTime;
+
+      if (date && time) {
+        const { date: day, month, year } = date;
+        const { hour, minute } = time;
+        const object = new Date(year, month, day, hour, minute);
+        setFieldValue(field, object.getTime());
+      }
     },
-    []
+    [setFieldValue]
   );
 
-  const handleUpdateTime = useCallback(
-    (prev: DateTimeType | undefined, raw: string): DateTimeType => {
-      const [hour, minute] = raw.split(":") as unknown as number[];
-
-      return {
-        ...(prev ?? {}),
-        time: {
-          hour,
-          minute,
-        },
-      };
-    },
-    []
-  );
-
-  const renderProblemSettings = useMemo(
+  const renderContestSettings = useMemo(
     () => (
       <section className="mb-8">
         <h2 className="mb-4">Contest Settings</h2>
@@ -103,56 +105,15 @@ export function ContestEditForm({
             allowClearSelection
             disabled={!initialized || !topic}
           />
-          <ContentSetting name="Start Date" formName="startDate">
-            <Input
-              type="date"
-              onChange={(e) => {
-                const string = e.target.value;
-                setStart((prev) => handleUpdateDate(prev, string));
-              }}
-            />
-            <Input
-              type="time"
-              onChange={(e) => {
-                const string = e.target.value;
-                setStart((prev) => handleUpdateTime(prev, string));
-              }}
-            />
-          </ContentSetting>
-          <ContentSetting name="End Date" formName="endDate">
-            <Input
-              type="date"
-              onChange={(e) => {
-                const string = e.target.value;
-                setEnd((prev) => handleUpdateDate(prev, string));
-              }}
-            />
-            <Input
-              type="time"
-              onChange={(e) => {
-                const string = e.target.value;
-                setEnd((prev) => handleUpdateTime(prev, string));
-              }}
-            />
-          </ContentSetting>
+          <ContentSettingDate name="Start Date" stateDate={stateStart} />
+          {start && <ContentSettingDate name="End Date" stateDate={stateEnd} />}
         </div>
       </section>
     ),
-    [
-      topic,
-      initialized,
-      subtopic,
-      setFieldValue,
-      handleUpdateDate,
-      handleUpdateTime,
-    ]
+    [topic, initialized, subtopic, stateStart, start, stateEnd, setFieldValue]
   );
 
-  useEffect(() => {
-    console.log(start);
-  }, [start]);
-
-  const renderProblemEditor = useMemo(
+  const renderContestEditor = useMemo(
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Contest Details</h2>
@@ -201,14 +162,160 @@ export function ContestEditForm({
     [description, errors, touched, initialized, setFieldValue, setFieldTouched]
   );
 
+  const handleGetProblem = useCallback(async () => {
+    const problem = await crudData("get_problem", {
+      id: debouncedQuery,
+    });
+
+    setFetching(false);
+
+    console.log(problem);
+    if (problem) setProblem(problem as unknown as ProblemType);
+    else setProblem(undefined);
+  }, [debouncedQuery]);
+
+  const handleAddProblem = useCallback(() => {
+    if (problem) setProblems((prev) => [...prev, problem]);
+    setProblem(null);
+  }, [problem]);
+
+  const handleReorderProblem = useCallback((idx: number, change: 1 | -1) => {
+    setProblems((prev) => {
+      const tempProblems = [...prev];
+
+      const temp = tempProblems[idx + change];
+      tempProblems[idx + change] = tempProblems[idx];
+      tempProblems[idx] = temp;
+
+      return tempProblems;
+    });
+  }, []);
+
   useEffect(() => {
+    if (query.length > 0) setFetching(true);
+  }, [query]);
+
+  useEffect(() => {
+    handleGetProblem();
+  }, [debouncedQuery, handleGetProblem]);
+
+  const renderContestProblems = useMemo(
+    () =>
+      problems.map((p, idx) => (
+        <tr key={p.id}>
+          <td>{p.title}</td>
+          <td>
+            <Input />
+          </td>
+          <td>
+            <div className="flex gap-2">
+              <Button
+                className="!w-8 !h-8"
+                variant="ghost"
+                disabled={idx === 0}
+                onClick={() => handleReorderProblem(idx, -1)}
+              >
+                <Icon icon="arrowUp" />
+              </Button>
+              <Button
+                className="!w-8 !h-8"
+                variant="ghost"
+                disabled={problems.length - 1 === idx}
+                onClick={() => handleReorderProblem(idx, 1)}
+              >
+                <Icon icon="arrowDown" />
+              </Button>
+              <Button className="!w-8 !h-8" variant="ghost-danger">
+                <Icon icon="X" />
+              </Button>
+            </div>
+          </td>
+        </tr>
+      )),
+    [handleReorderProblem, problems]
+  );
+
+  const renderContestProblemTable = useMemo(
+    () => (
+      <section className="border-transparent mb-8" data-color-mode="light">
+        <h2 className="mb-4">Contest Problems</h2>
+        <ContentSetting name="Problem ID">
+          <div className="flex gap-4 col-span-2">
+            <Input
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+            />
+            <Button
+              variant="ghost"
+              className="!w-fit"
+              onClick={handleAddProblem}
+            >
+              Add
+            </Button>
+          </div>
+        </ContentSetting>
+        <ContentSetting className="mt-2">
+          <span className="pl-4">
+            {fetching ? (
+              "Loading..."
+            ) : problem ? (
+              <b>{problem.title}</b>
+            ) : (
+              "No problem found."
+            )}
+          </span>
+        </ContentSetting>
+        <table className="mt-8">
+          <thead>
+            <tr>
+              <th className="w-full">Problem</th>
+              <th>Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {problems.length > 0 ? (
+              renderContestProblems
+            ) : (
+              <tr>
+                <td className="text-center" colSpan={3}>
+                  This contest has no problems.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </section>
+    ),
+    [
+      fetching,
+      handleAddProblem,
+      problem,
+      problems.length,
+      renderContestProblems,
+    ]
+  );
+
+  useEffect(() => {
+    handleUpdateFormDate("startDate", start);
+  }, [handleUpdateFormDate, start]);
+
+  useEffect(() => {
+    handleUpdateFormDate("endDate", end);
+  }, [handleUpdateFormDate, end]);
+
+  useEffect(() => {
+    console.log("Form Values ");
+    console.log(values);
     validateForm();
   }, [validateForm, values]);
 
   return (
     <>
-      {renderProblemSettings}
-      {renderProblemEditor}
+      {renderContestSettings}
+      {renderContestEditor}
+      {renderContestProblemTable}
       <div className="flex gap-4">
         <Button
           loading={loading}

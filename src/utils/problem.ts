@@ -65,7 +65,8 @@ export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
 }
 
 export function validateFormContest(contest: ContestDatabaseType) {
-  const { title, description } = contest as unknown as ContestBlankType;
+  const { title, description, startDate, endDate } =
+    contest as unknown as ContestBlankType;
 
   const errors: Partial<Record<keyof ContestDatabaseType, string>> = {};
 
@@ -84,6 +85,9 @@ export function validateFormContest(contest: ContestDatabaseType) {
   } else if (title.length > 200) {
     errors.description = "Description is too long.";
   }
+
+  if (startDate && endDate && startDate > endDate)
+    errors.endDate = "End date cannot be earlier than start date.";
 
   return errors;
 }

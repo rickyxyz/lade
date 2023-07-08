@@ -49,6 +49,14 @@
   .markdown li:last-child {
     margin-bottom: 1rem;
   }
+  th {
+    @apply bg-gray-100 uppercase tracking-wider;
+  }
+  th,
+  td {
+    @apply border border-gray-400;
+    padding: 0.5rem 1rem;
+  }
 }
 @tailwind base;
 @layer components {

@@ -9,4 +9,6 @@ export type IconNameType =
   | "infoCircleFill"
   | "caretDownFill"
   | "logout"
-  | "threeDots";
+  | "threeDots"
+  | "arrowDown"
+  | "arrowUp";

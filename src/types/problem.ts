@@ -122,6 +122,7 @@ export type ContentAccessType = "viewer" | "author" | "admin";
 export interface ContestBaseType {
   title: string;
   description: string;
+  problems: Record<string, number>;
   participants?: number;
   views?: number;
   postDate?: number;

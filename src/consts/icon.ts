@@ -1,5 +1,7 @@
 import { IconNameType } from "@/types";
 import {
+  BsArrowDown,
+  BsArrowUp,
   BsCaretDownFill,
   BsCheck,
   BsChevronDown,
@@ -26,4 +28,6 @@ export const ICONS: Record<IconNameType, IconType> = {
   caretDownFill: BsCaretDownFill,
   logout: MdLogout,
   threeDots: BsThreeDotsVertical,
+  arrowUp: BsArrowUp,
+  arrowDown: BsArrowDown,
 };
