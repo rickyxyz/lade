@@ -8,18 +8,26 @@ import {
   ProblemTopics,
   User,
 } from "@/components";
-import { md } from "@/utils";
-import { ProblemType } from "@/types";
+import { getPermissionForContent, md } from "@/utils";
+import { ProblemType, ContentViewType, StateType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { validateAnswer } from "@/utils/answer";
+import { useAppSelector } from "@/redux";
+import { ProblemMore } from "../More/ProblemMore";
+import { crudData } from "@/firebase";
+import { increment } from "firebase/firestore";
 
 export interface ProblemMainProps {
-  problem: ProblemType;
+  stateProblem: StateType<ProblemType>;
+  stateMode: StateType<ContentViewType>;
 }
 
-export function ProblemMain({ problem }: ProblemMainProps) {
+export function ProblemMain({ stateProblem, stateMode }: ProblemMainProps) {
+  const [problem, setProblem] = stateProblem;
+
   const {
+    id,
     statement,
     title,
     topic,
@@ -28,6 +36,7 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     views = 0,
     type,
     answer,
+    authorId,
   } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +46,16 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const [submitted, setSubmitted] = useState<number>();
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
+  const user = useAppSelector("user");
+  const setMode = stateMode[1];
+  const permission = useMemo(
+    () =>
+      getPermissionForContent({
+        content: problem,
+        user,
+      }),
+    [problem, user]
+  );
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -63,11 +82,24 @@ export function ProblemMain({ problem }: ProblemMainProps) {
     setSubmitted(now);
     setUserSolved(verdict);
 
-    if (!verdict) setCooldownIntv(interval);
-  }, [cooldownIntv, answer, submitted, type, userAnswer]);
+    if (!verdict) {
+      setCooldownIntv(interval);
+    } else {
+      crudData("update_problem", {
+        id,
+        data: {
+          solved: increment(1) as unknown as number,
+        },
+      });
+      setProblem((prev) => ({
+        ...prev,
+        solved: (prev.solved ?? 0) + 1,
+      }));
+    }
+  }, [submitted, answer, type, userAnswer, cooldownIntv, id, setProblem]);
 
   const renderTags = useMemo(
-    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-3" />,
+    () => <ProblemTopics topic={topic} subtopic={subtopic} className="mb-4" />,
     [subtopic, topic]
   );
 
@@ -89,17 +121,33 @@ export function ProblemMain({ problem }: ProblemMainProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <div>
-          <User name="John Doe" caption="3h" />
+        <div className="flex justify-between mb-4">
+          <User id={authorId} caption="3h" />
+          <ProblemMore
+            options={
+              permission === "author"
+                ? [
+                    {
+                      id: "edit",
+                      element: "Edit",
+                      onClick: () => {
+                        console.log("Edit");
+                        setMode("edit");
+                      },
+                    },
+                  ]
+                : []
+            }
+          />
         </div>
-        <h1 className="mb-3">{title}</h1>
+        <h1 className="mb-4">{title}</h1>
         {renderTags}
         {renderStats}
         <h2 className="mb-2">Problem Statement</h2>
         <article className="mb-9" ref={statementRef}></article>
       </>
     ),
-    [renderStats, renderTags, title]
+    [authorId, permission, renderStats, renderTags, setMode, title]
   );
 
   const renderAnswerInputs = useMemo(() => {

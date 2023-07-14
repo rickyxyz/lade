@@ -9,7 +9,7 @@ import {
   Quote,
   Button,
 } from "@/components";
-import { ProblemWithoutIdType, StateType } from "@/types";
+import { ContentViewType, ProblemWithoutIdType, StateType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
@@ -20,9 +20,11 @@ import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useProblemEditInitialized } from "@/hooks";
 import { constructAnswerString } from "@/utils";
+import { ContentSettingSelect } from "../../ContentSettingSelect";
 
 export interface ProblemEditFormProps {
   problem?: ProblemWithoutIdType;
+  stateMode?: StateType<ContentViewType>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;
@@ -31,6 +33,7 @@ export interface ProblemEditFormProps {
 export function ProblemEditForm({
   stateAnswer,
   stateLoading,
+  stateMode,
 }: ProblemEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
@@ -41,6 +44,7 @@ export function ProblemEditForm({
     errors,
     touched,
     setFieldTouched,
+    validateForm,
   } = useFormikContext<ProblemWithoutIdType>();
 
   const { statement, subtopic, topic, type } = values;
@@ -53,14 +57,13 @@ export function ProblemEditForm({
       <section className="mb-8">
         <h2 className="mb-4">Problem Settings</h2>
         <div className="flex flex-col gap-4">
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Type"
             formName="type"
             options={PROBLEM_ANSWER_TYPE_OPTIONS}
             selectedOption={type}
             onSelectOption={(option) => {
               setFieldValue("type", option ? option.id : undefined);
-
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
                 setFieldValue(
@@ -72,7 +75,7 @@ export function ProblemEditForm({
             }}
             disabled={!initialized}
           />
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Topic"
             formName="topic"
             options={PROBLEM_TOPIC_OPTIONS}
@@ -83,7 +86,7 @@ export function ProblemEditForm({
             }}
             disabled={!initialized}
           />
-          <ProblemSettingSelect
+          <ContentSettingSelect
             name="Problem Subtopic"
             formName="subtopic"
             options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
@@ -179,22 +182,37 @@ export function ProblemEditForm({
   }, [answer, setFieldValue, type]);
 
   useEffect(() => {
-    console.log(touched);
-  }, [touched]);
+    validateForm();
+  }, [validateForm, values]);
 
   return (
     <>
       {renderProblemSettings}
       {renderProblemEditor}
       {renderProblemAnswer}
-      <Button
-        loading={loading}
-        disabled={!initialized}
-        type="submit"
-        onClick={submitForm}
-      >
-        Submit
-      </Button>
+      <div className="flex gap-4">
+        <Button
+          loading={loading}
+          disabled={!initialized}
+          type="submit"
+          onClick={submitForm}
+        >
+          {stateMode && stateMode[0] === "edit" ? "Update" : "Create"}
+        </Button>
+        {stateMode && stateMode[0] === "edit" && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (!stateMode) return;
+
+              const setMode = stateMode[1];
+              setMode("view");
+            }}
+          >
+            Cancel
+          </Button>
+        )}
+      </div>
     </>
   );
 }

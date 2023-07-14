@@ -99,9 +99,9 @@ const BUTTON_DANGER_STYLE = [
 ];
 
 const BUTTON_GHOST_STYLE = [
-  "text-teal-700",
-  `hover:bg-teal-50`,
-  `active:bg-teal-100`,
+  "text-teal-700 disabled:text-gray-400",
+  `hover:bg-teal-50 disabled:bg-transparent`,
+  `active:bg-teal-100 disabled:bg-transparent`,
 ];
 
 const BUTTON_GHOST_DANGER_STYLE = [

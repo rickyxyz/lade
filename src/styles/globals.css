@@ -35,7 +35,10 @@
     @apply head-style;
   }
   *:not(a) > h2 {
-    @apply text-teal-700;
+    @apply text-teal-600;
+  }
+  a {
+    @apply text-teal-600 hover:text-teal-500 active:text-teal-400 focus:text-teal-400;
   }
   .markdown ul {
     list-style-type: disc;
@@ -45,6 +48,14 @@
   }
   .markdown li:last-child {
     margin-bottom: 1rem;
+  }
+  th {
+    @apply bg-gray-100 uppercase tracking-wider;
+  }
+  th,
+  td {
+    @apply border border-gray-400;
+    padding: 0.5rem 1rem;
   }
 }
 @tailwind base;
@@ -101,8 +112,14 @@
   .w-adaptive {
     width: 1024px;
   }
+  .w-adaptive-2 {
+    width: 640px;
+  }
   @media (max-width: 1024px) {
     .w-adaptive {
+      width: 100%;
+    }
+    .w-adaptive-2 {
       width: 100%;
     }
   }

@@ -4,7 +4,7 @@ import { ICONS } from "@/consts";
 
 type Base = { className: string };
 
-type IconSizeType = "lg" | "md" | "sm";
+type IconSizeType = "lg" | "md" | "sm" | "xs";
 
 export interface IconProps {
   className?: string;
@@ -53,5 +53,11 @@ const ICON_SIZE_INLINE_STYLE: Record<IconSizeType, CSSProperties> = {
     height: "1rem",
     minWidth: "1rem",
     minHeight: "1rem",
+  },
+  xs: {
+    width: "0.5rem",
+    height: "0.5rem",
+    minWidth: "0.5rem",
+    minHeight: "0.5rem",
   },
 };

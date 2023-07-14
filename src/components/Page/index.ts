@@ -1,1 +1,1 @@
-export * from "./PageGenericTemplate";
+export * from "./Auth";

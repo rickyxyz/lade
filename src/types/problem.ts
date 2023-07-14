@@ -1,5 +1,5 @@
 import { PROBLEM_TOPICS_RELATIONSHIP_OBJECT } from "@/consts";
-import { SelectOptionType } from "./select";
+import { SelectOptionType } from "./component";
 
 export type ProblemTopicNameType = "calculus" | "linear-algebra";
 
@@ -77,6 +77,7 @@ export interface ProblemBaseType {
   views?: number;
   postDate?: number;
   updateDate?: number;
+  authorId?: string;
 }
 
 export type ProblemType = ProblemBaseType &
@@ -110,4 +111,36 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
 
 export type ProblemBlankType = {
   [P in keyof ProblemWithoutIdType]: string;
+};
+
+export type ContentViewType = "view" | "edit";
+
+export type ContentEditType = "create" | "edit";
+
+export type ContentAccessType = "viewer" | "author" | "admin";
+
+export interface ContestBaseType {
+  title: string;
+  description: string;
+  problems: Record<string, number>;
+  participants?: number;
+  views?: number;
+  postDate?: number;
+  updateDate?: number;
+  startDate?: number;
+  endDate?: number;
+  authorId?: string;
+}
+
+export type ContestType = ContestBaseType &
+  ProblemMapTypeTopicType & {
+    id: string;
+  };
+
+export type ContestDatabaseType = Omit<ContestType, "id"> & {
+  id?: string;
+};
+
+export type ContestBlankType = {
+  [P in keyof ContestDatabaseType]: string;
 };

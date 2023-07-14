@@ -1,4 +1,6 @@
 import {
+  ContestBlankType,
+  ContestDatabaseType,
   ProblemAnswerType,
   ProblemBlankType,
   ProblemDatabaseType,
@@ -28,7 +30,7 @@ export function validateFormProblem(problem: ProblemWithoutIdType) {
     errors.statement = "Problem statement is too long.";
   }
 
-  if (type === "") errors.type = "You must select a type!";
+  if (type === "") errors.type = "Type is required!";
   if (topic === "") errors.topic = "Topic is required!";
   if (subtopic === "") errors.subtopic = "Subtopic is required!";
 
@@ -51,9 +53,41 @@ export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
     return "Answer must not be empty.";
   }
   if (problem.type === "matrix" && problem.answer) {
-    const sizes = parseMatrixSize(JSON.parse(problem.answer));
-    if (sizes[0] === 0 && sizes[1] === 0) {
-      return "Answer must not be empty.";
+    try {
+      const sizes = parseMatrixSize(JSON.parse(problem.answer));
+      if (sizes[0] === 0 && sizes[1] === 0) {
+        return "Answer must not be empty.";
+      }
+    } catch (e) {
+      return "Invalid Format";
     }
   }
+}
+
+export function validateFormContest(contest: ContestDatabaseType) {
+  const { title, description, startDate, endDate } =
+    contest as unknown as ContestBlankType;
+
+  const errors: Partial<Record<keyof ContestDatabaseType, string>> = {};
+
+  if (title === "") {
+    errors.title = "Title must not be empty.";
+  } else if (title.length < 3) {
+    errors.title = "Title is too short.";
+  } else if (title.length > 24) {
+    errors.title = "Title is too long.";
+  }
+
+  if (description === "") {
+    errors.description = "Description is required.";
+  } else if (description.length < 3) {
+    errors.description = "Description is too short.";
+  } else if (title.length > 200) {
+    errors.description = "Description is too long.";
+  }
+
+  if (startDate && endDate && startDate > endDate)
+    errors.endDate = "End date cannot be earlier than start date.";
+
+  return errors;
 }

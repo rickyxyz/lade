@@ -11,6 +11,8 @@ export interface InputProps
     HTMLInputElement
   > {
   variant?: InputVariantType;
+  label?: string;
+  labelClassName?: string;
   iconLeft?: IconNameType;
   iconLeftClassName?: string;
   iconRight?: IconNameType;
@@ -23,6 +25,8 @@ export interface InputProps
 export function Input({
   variant = "basic",
   className,
+  label,
+  labelClassName,
   iconLeft,
   iconLeftClassName,
   iconRight,
@@ -32,9 +36,18 @@ export function Input({
   errorText,
   ...rest
 }: InputProps) {
+  const { id } = rest;
+
   return (
     <div className={externalWrapperClassName}>
-      <div className={clsx("relative w-fit", wrapperClassName)}>
+      {label && (
+        <label htmlFor={id} className={clsx("font-bold", labelClassName)}>
+          {label}
+        </label>
+      )}
+      <div
+        className={clsx("relative w-fit", label && "mt-2", wrapperClassName)}
+      >
         {iconLeft && (
           <Icon
             icon={iconLeft}

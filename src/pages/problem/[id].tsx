@@ -2,22 +2,27 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData } from "@/firebase";
 import {
-  PageGenericTemplate,
+  GenericPageTemplate,
+  ProblemEdit,
   ProblemMain,
   ProblemMainSkeleton,
 } from "@/components";
-import { ProblemType } from "@/types";
-import { ProblemEdit } from "@/components/Problem/Editor";
+import { ProblemType, ContentViewType } from "@/types";
 import { deconstructAnswerString } from "@/utils";
+import { PROBLEM_BLANK } from "@/consts";
 
 interface ProblemProps {
   id: string;
 }
 
 export function Problem({ id }: ProblemProps) {
-  const [problem, setProblem] = useState<ProblemType>();
+  const stateProblem = useState<ProblemType>(
+    PROBLEM_BLANK as unknown as ProblemType
+  );
+  const [problem, setProblem] = stateProblem;
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState<"view" | "edit">("view");
+  const stateMode = useState<ContentViewType>("view");
+  const [mode, setMode] = stateMode;
 
   const renderEditHeader = useMemo(
     () => <h1 className="mb-8">Edit Problem</h1>,
@@ -28,15 +33,17 @@ export function Problem({ id }: ProblemProps) {
     if (loading || !problem) return <ProblemMainSkeleton />;
 
     return mode === "view" ? (
-      <ProblemMain problem={problem} />
+      <ProblemMain stateProblem={stateProblem} stateMode={stateMode} />
     ) : (
       <ProblemEdit
         headElement={renderEditHeader}
+        stateProblem={stateProblem}
         problem={problem}
-        mode="edit"
+        stateMode={stateMode}
+        purpose="edit"
       />
     );
-  }, [problem, loading, mode, renderEditHeader]);
+  }, [loading, problem, mode, stateMode, renderEditHeader, stateProblem]);
 
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;
@@ -55,13 +62,13 @@ export function Problem({ id }: ProblemProps) {
         setLoading(false);
       }
     });
-  }, [id, loading]);
+  }, [id, loading, setProblem]);
 
   useEffect(() => {
     handleGetProblems();
   }, [handleGetProblems]);
 
-  return <PageGenericTemplate>{renderQuestion}</PageGenericTemplate>;
+  return <GenericPageTemplate>{renderQuestion}</GenericPageTemplate>;
 }
 
 export async function getServerSideProps({ params }: { params: ProblemProps }) {

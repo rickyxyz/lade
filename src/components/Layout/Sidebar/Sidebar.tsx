@@ -40,7 +40,7 @@ export function Sidebar() {
   return (
     <Card
       as="aside"
-      className="!p-0 w-fit h-fit mt-8 w-64 fixed top-16 bg-white"
+      className="!p-0 w-fit h-fit w-64 sticky top-24 bg-white"
       style={{
         minWidth: "14rem",
       }}

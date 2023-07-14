@@ -1,26 +1,23 @@
-import { createRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import clsx from "clsx";
 import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
+import { Tooltip, TooltipBaseProps } from "../Tooltip";
 
 type SelectVariant = "basic" | "solid";
 
-export type SelectProps<X extends string, Y extends SelectOptionType<X>[]> = {
+export interface SelectProps<X extends string, Y extends SelectOptionType<X>[]>
+  extends TooltipBaseProps {
   selectedOption?: X;
   variant?: SelectVariant;
-  className?: string;
   inputClassName?: string;
   options: Y;
   optional?: boolean;
   allowClearSelection?: boolean;
   unselectedText?: string;
-  disabled?: boolean;
-  optionWidth?: number;
-  direction?: "left" | "right";
   onSelectOption: (option?: SelectOptionType<X>) => void;
-  onBlur?: () => void;
-};
+}
 
 export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   selectedOption,
@@ -32,13 +29,11 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   allowClearSelection = true,
   unselectedText = "None",
   disabled,
-  optionWidth = 300,
-  direction = "right",
   onSelectOption,
   onBlur,
 }: SelectProps<X, Y>) {
-  const [visible, setVisible] = useState(false);
-  const selectRef = createRef<HTMLDivElement>();
+  const stateVisible = useState(false);
+  const [visible, setVisible] = stateVisible;
 
   const renderRemoveOption = useMemo(() => {
     return (
@@ -54,7 +49,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             onSelectOption(undefined);
             onBlur && onBlur();
             setVisible(false);
-            selectRef.current?.blur();
           }}
           selected={selectedOption === undefined}
         />
@@ -65,25 +59,14 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     onBlur,
     onSelectOption,
     optional,
-    selectRef,
     selectedOption,
+    setVisible,
     unselectedText,
   ]);
 
   const renderOptions = useMemo(
     () => (
-      <div
-        className={clsx(
-          "absolute h-fit top-12 flex flex-col",
-          "border border-gray-100 bg-white shadow-md z-10",
-          className
-        )}
-        style={{
-          minWidth: optionWidth,
-          left: direction === "left" ? undefined : 0,
-          right: direction === "right" ? 0 : undefined,
-        }}
-      >
+      <>
         {renderRemoveOption}
         {options.map((option) => (
           <SelectOption
@@ -94,44 +77,24 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
               onSelectOption(option);
               onBlur && onBlur();
               setVisible(false);
-              selectRef.current?.blur();
             }}
             selected={selectedOption === option.id}
           />
         ))}
-      </div>
+      </>
     ),
     [
-      className,
-      optionWidth,
-      direction,
       renderRemoveOption,
       options,
       selectedOption,
       onSelectOption,
       onBlur,
-      selectRef,
+      setVisible,
     ]
   );
 
-  return (
-    <div
-      className={clsx(
-        "flex flex-row-reverse relative overflow-visible",
-        !disabled && "cursor-pointer",
-        className
-      )}
-      onFocus={() => {
-        !disabled && setVisible(true);
-      }}
-      onBlur={() => {
-        onBlur && onBlur();
-        setVisible(false);
-      }}
-      ref={selectRef}
-      tabIndex={0}
-    >
-      {visible && renderOptions}
+  const renderTrigger = useMemo(
+    () => (
       <div
         className={clsx(
           INPUT_BASE_STYLE,
@@ -155,7 +118,26 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         </span>
         <Icon icon="chevronDown" className="absolute right-2" size="sm" />
       </div>
-    </div>
+    ),
+    [
+      disabled,
+      inputClassName,
+      options,
+      selectedOption,
+      unselectedText,
+      variant,
+      visible,
+    ]
+  );
+
+  return (
+    <Tooltip
+      triggerElement={renderTrigger}
+      hiddenElement={renderOptions}
+      className={className}
+      stateVisible={stateVisible}
+      disabled={disabled}
+    />
   );
 }
 
