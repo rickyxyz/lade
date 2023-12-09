@@ -17,6 +17,7 @@ import { useAppSelector } from "@/redux";
 import { ProblemMore } from "../More/ProblemMore";
 import { crudData } from "@/firebase";
 import { increment } from "firebase/firestore";
+import { BsCheck, BsX } from "react-icons/bs";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -165,9 +166,9 @@ export function ProblemMain({ stateProblem, stateMode }: ProblemMainProps) {
   const renderAnswerVerdict = useMemo(() => {
     if (submitted) {
       return userSolved ? (
-        <Icon icon="check" size="lg" className="text-green-600" />
+        <Icon IconComponent={BsCheck} size="l" className="text-green-600" />
       ) : (
-        <Icon icon="X" size="lg" className="text-red-600" />
+        <Icon IconComponent={BsX} size="l" className="text-red-600" />
       );
     }
   }, [submitted, userSolved]);

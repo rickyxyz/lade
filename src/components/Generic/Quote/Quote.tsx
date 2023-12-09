@@ -1,7 +1,7 @@
-import { IconNameType } from "@/types";
 import clsx from "clsx";
 import { ReactNode } from "react";
 import { Icon } from "../Icon";
+import { IconType } from "react-icons";
 
 export type QuoteVariantType =
   | "primary"
@@ -14,7 +14,7 @@ interface QuoteProps {
   children: ReactNode;
   className?: string;
   variant?: QuoteVariantType;
-  icon?: IconNameType;
+  icon?: IconType;
 }
 
 export function Quote({
@@ -46,7 +46,7 @@ export function Quote({
             variant === "warning" && "text-yellow-700",
             variant === "danger" && "text-red-700",
           ])}
-          icon={icon}
+          IconComponent={icon}
         />
       )}
       {children}

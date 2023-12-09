@@ -14,8 +14,9 @@ import {
 } from "@/consts";
 import { Provider } from "react-redux";
 import { store } from "@/redux";
+import clsx from "clsx";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export default function App({ Component, pageProps }: AppProps) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);
@@ -52,7 +53,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <style jsx global>{`
-        #__next > *:not(.icon) {
+        * {
           font-family: ${inter.style.fontFamily}!important;
         }
       `}</style>
@@ -61,7 +62,12 @@ export default function App({ Component, pageProps }: AppProps) {
           value={[initialized, setInitialized]}
         >
           <LayoutContext.Provider value={layout}>
-            <div className="relative h-full flex flex-col flex-auto overflow-x-hidden">
+            <div
+              className={clsx(
+                "relative h-full flex flex-col flex-auto overflow-x-hidden",
+                inter.className
+              )}
+            >
               <Navbar />
               <Component {...pageProps} />
             </div>

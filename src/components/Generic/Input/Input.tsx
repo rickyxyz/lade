@@ -2,6 +2,7 @@ import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 import clsx from "clsx";
 import { IconNameType } from "@/types";
 import { Icon } from "../Icon";
+import { IconType } from "react-icons";
 
 export type InputVariantType = "basic" | "solid";
 
@@ -13,9 +14,9 @@ export interface InputProps
   variant?: InputVariantType;
   label?: string;
   labelClassName?: string;
-  iconLeft?: IconNameType;
+  iconLeft?: IconType;
   iconLeftClassName?: string;
-  iconRight?: IconNameType;
+  iconRight?: IconType;
   iconRightClassName?: string;
   externalWrapperClassName?: string;
   wrapperClassName?: string;
@@ -50,7 +51,7 @@ export function Input({
       >
         {iconLeft && (
           <Icon
-            icon={iconLeft}
+            IconComponent={iconLeft}
             className={clsx("absolute top-2 left-2", iconLeftClassName)}
           />
         )}
@@ -65,7 +66,7 @@ export function Input({
         />
         {iconRight && (
           <Icon
-            icon={iconRight}
+            IconComponent={iconRight}
             className={clsx("absolute top-2 right-2", iconRightClassName)}
           />
         )}

@@ -2,13 +2,19 @@ import { Icon, IconProps } from "./Icon";
 import clsx from "clsx";
 
 export interface IconTextProps extends IconProps {
+  classNameDiv?: string;
   text: string;
 }
 
-export function IconText({ icon, size, text, className }: IconTextProps) {
+export function IconText({
+  IconComponent,
+  text,
+  className,
+  ...rest
+}: IconTextProps) {
   return (
     <div className={clsx("flex items-center text-sm", className)}>
-      <Icon icon={icon} size={size} className={clsx("mr-2", className)} />
+      <Icon IconComponent={IconComponent} className="mr-2" {...rest} />
       {text}
     </div>
   );

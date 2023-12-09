@@ -168,7 +168,7 @@ export function ProblemEditForm({
             onBlur={() => setFieldTouched("answer", true)}
             disabled={!initialized}
           />
-          <Quote icon="infoCircleFill">
+          <Quote IconComponent="infoCircleFill">
             If the answer is a non-integer number, you should indicate the user
             to which place the answer should be accurate to.
           </Quote>

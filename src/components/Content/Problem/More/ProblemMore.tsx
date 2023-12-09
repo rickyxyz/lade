@@ -1,5 +1,6 @@
 import { Button, Dropdown, Icon } from "@/components";
 import { DropdownOptionType } from "@/types";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 interface ProblemMoreProps {
   options: DropdownOptionType[];
@@ -13,7 +14,7 @@ export function ProblemMore({ options }: ProblemMoreProps) {
       options={options}
       triggerElement={
         <Button className="!w-8 !h-8" variant="ghost">
-          <Icon size="sm" icon="threeDots" />
+          <Icon size="s" IconComponent={BsThreeDotsVertical} />
         </Button>
       }
     />

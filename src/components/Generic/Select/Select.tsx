@@ -4,6 +4,7 @@ import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
 import { Tooltip, TooltipBaseProps } from "../Tooltip";
+import { BsChevronDown } from "react-icons/bs";
 
 type SelectVariant = "basic" | "solid";
 
@@ -116,7 +117,11 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             ? options.filter((option) => option.id === selectedOption)[0].text
             : unselectedText}
         </span>
-        <Icon icon="chevronDown" className="absolute right-2" size="sm" />
+        <Icon
+          IconComponent={BsChevronDown}
+          className="absolute right-2"
+          size="s"
+        />
       </div>
     ),
     [

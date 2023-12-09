@@ -22,6 +22,7 @@ import { useDebounce, useProblemEditInitialized } from "@/hooks";
 import { ContentSetting } from "../../ContentSetting";
 import { crudData } from "@/firebase";
 import { ContentSettingDate } from "../../ContentSettingDate";
+import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 
 export interface ContestEditFormProps {
   contest?: ContestDatabaseType;
@@ -215,7 +216,7 @@ export function ContestEditForm({
                 disabled={idx === 0}
                 onClick={() => handleReorderProblem(idx, -1)}
               >
-                <Icon icon="arrowUp" />
+                <Icon IconComponent={BsArrowUp} />
               </Button>
               <Button
                 className="!w-8 !h-8"
@@ -223,10 +224,10 @@ export function ContestEditForm({
                 disabled={problems.length - 1 === idx}
                 onClick={() => handleReorderProblem(idx, 1)}
               >
-                <Icon icon="arrowDown" />
+                <Icon IconComponent={BsArrowDown} />
               </Button>
               <Button className="!w-8 !h-8" variant="ghost-danger">
-                <Icon icon="X" />
+                <Icon IconComponent={BsX} />
               </Button>
             </div>
           </td>
