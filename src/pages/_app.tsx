@@ -2,7 +2,6 @@ import type { AppProps } from "next/app";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
 import { Inter } from "next/font/google";
-import { Navbar } from "@/components";
 import { mathjax3, md } from "@/utils";
 import { ProblemEditInitializedContext } from "@/hooks";
 import { LayoutContext } from "@/contexts";
@@ -15,6 +14,7 @@ import {
 import { Provider } from "react-redux";
 import { store } from "@/redux";
 import clsx from "clsx";
+import { PageTemplateNav } from "@/templates";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -68,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 inter.className
               )}
             >
-              <Navbar />
+              <PageTemplateNav />
               <Component {...pageProps} />
             </div>
           </LayoutContext.Provider>

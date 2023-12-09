@@ -1,6 +1,6 @@
 import { SetStateAction, useCallback } from "react";
 import { DateTimeType, StateType } from "@/types";
-import { Input } from "../Generic";
+import { Input } from "../";
 import { Setting } from "./Setting";
 
 interface SettingDate {

@@ -19,7 +19,7 @@ import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
 import { crudData } from "@/firebase";
 import { useRouter } from "next/router";
-import { Card } from "@/components/Generic";
+import { Card } from "@/components";
 import { useAppSelector } from "@/redux/dispatch";
 import {
   ProblemEditForm,

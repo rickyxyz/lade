@@ -1,5 +1,5 @@
 import { useProblemEditInitialized } from "@/hooks";
-import { Card, Loader } from "../Generic";
+import { Card, Loader } from "../";
 import { useEffect } from "react";
 
 export function MarkdownEditorLoader() {
