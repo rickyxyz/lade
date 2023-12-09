@@ -9,7 +9,7 @@ import { crudData, logout } from "@/firebase";
 import { BsCaretDownFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 
-export function Navbar() {
+export function PageTemplateNav() {
   const auth = getAuth();
   const user = useAppSelector("user");
   const router = useRouter();
