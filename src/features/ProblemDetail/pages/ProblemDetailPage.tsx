@@ -6,8 +6,8 @@ import { deconstructAnswerString } from "@/utils";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemDetailMainSkeleton } from "../components/ProblemDetailMainSkeleton";
 import { ProblemDetailMain } from "../components";
-import { ProblemEdit } from "@/features/ProblemCreate";
 import { PageTemplate } from "@/templates";
+import { ProblemCreateEditor } from "@/features/ProblemCreate";
 
 interface ProblemProps {
   id: string;
@@ -33,15 +33,32 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     return mode === "view" ? (
       <ProblemDetailMain stateProblem={stateProblem} stateMode={stateMode} />
     ) : (
-      <ProblemEdit
+      <ProblemCreateEditor
         headElement={renderEditHeader}
-        stateProblem={stateProblem}
         problem={problem}
-        stateMode={stateMode}
         purpose="edit"
+        handleUpdateProblem={(data) => {
+          setMode("view");
+          setProblem((prev) => ({
+            ...prev,
+            ...data,
+          }));
+        }}
+        onLeaveEditor={() => {
+          setMode("view");
+        }}
       />
     );
-  }, [loading, problem, mode, stateMode, renderEditHeader, stateProblem]);
+  }, [
+    loading,
+    problem,
+    mode,
+    stateProblem,
+    stateMode,
+    renderEditHeader,
+    setMode,
+    setProblem,
+  ]);
 
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;

@@ -11,9 +11,7 @@ import {
   ProblemDatabaseType,
   ContentEditType,
   ProblemType,
-  ContentViewType,
   ProblemWithoutIdType,
-  StateType,
 } from "@/types";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
@@ -22,25 +20,24 @@ import { useRouter } from "next/router";
 import { Card } from "@/components";
 import { useAppSelector } from "@/redux/dispatch";
 import {
-  ProblemEditForm,
-  ProblemEditFormProps,
+  ProblemCreateEditorForm,
+  ProblemCreateEditorFormProps,
 } from "./ProblemCreateEditorForm";
 
-interface ProblemEditProps extends Partial<ProblemEditFormProps> {
+interface ProblemCreateEditorProps
+  extends Partial<ProblemCreateEditorFormProps> {
   headElement?: ReactNode;
-  stateMode?: StateType<ContentViewType>;
-  stateProblem?: StateType<ProblemType>;
   purpose: ContentEditType;
+  handleUpdateProblem?: (problem: ProblemType) => void;
 }
 
-export function ProblemEdit({
+export function ProblemCreateEditor({
   headElement,
-  stateMode,
-  stateProblem,
   problem,
   purpose,
+  handleUpdateProblem,
   ...rest
-}: ProblemEditProps) {
+}: ProblemCreateEditorProps) {
   const stateLoading = useState(false);
   const setLoading = stateLoading[1];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,22 +93,14 @@ export function ProblemEdit({
             setLoading(false);
             await sleep(200);
             router.replace(`/problem/${id}`);
-
-            if (stateMode && stateProblem) {
-              const setMode = stateMode[1];
-              const setProblem = stateProblem[1];
-              setMode("view");
-              setProblem((prev) => ({
-                ...prev,
-                ...{
-                  ...(completeValues as unknown as ProblemType),
-                  answer: deconstructAnswerString(
-                    completeValues.type,
-                    completeValues.answer
-                  ),
-                },
-              }));
-            }
+            handleUpdateProblem &&
+              handleUpdateProblem({
+                ...(completeValues as unknown as ProblemType),
+                answer: deconstructAnswerString(
+                  completeValues.type,
+                  completeValues.answer
+                ),
+              });
           })
           .catch(() => {
             setLoading(false);
@@ -120,12 +109,11 @@ export function ProblemEdit({
     },
     [
       answer,
+      handleUpdateProblem,
       problem,
       purpose,
       router,
       setLoading,
-      stateMode,
-      stateProblem,
       user?.id,
     ]
   );
@@ -150,8 +138,7 @@ export function ProblemEdit({
         validateOnChange={false}
         validateOnBlur={false}
       >
-        <ProblemEditForm
-          stateMode={stateMode}
+        <ProblemCreateEditorForm
           stateAnswer={stateAnswer}
           stateLoading={stateLoading}
           {...rest}

@@ -3,7 +3,7 @@ import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { ProblemWithoutIdType } from "@/types";
 import { PROBLEM_BLANK } from "@/consts";
-import { ProblemEdit } from "../components";
+import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
 
 export function ProblemCreatePage() {
@@ -18,7 +18,7 @@ export function ProblemCreatePage() {
 
   return (
     <PageTemplate>
-      <ProblemEdit
+      <ProblemCreateEditor
         headElement={renderHead}
         problem={problem}
         purpose="create"

@@ -17,19 +17,21 @@ import { SettingSelect } from "@/components/Setting";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { ProblemAnswer } from "@/features/ProblemDetail";
 
-export interface ProblemEditFormProps {
+export interface ProblemCreateEditorFormProps {
   problem?: ProblemWithoutIdType;
   stateMode?: StateType<ContentViewType>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   stateLoading: StateType<boolean>;
+  onLeaveEditor?: () => void;
 }
 
-export function ProblemEditForm({
+export function ProblemCreateEditorForm({
   stateAnswer,
   stateLoading,
   stateMode,
-}: ProblemEditFormProps) {
+  onLeaveEditor,
+}: ProblemCreateEditorFormProps) {
   const { initialized } = useProblemEditInitialized();
 
   const {
@@ -192,18 +194,10 @@ export function ProblemEditForm({
           type="submit"
           onClick={submitForm}
         >
-          {stateMode && stateMode[0] === "edit" ? "Update" : "Create"}
+          Submit
         </Button>
-        {stateMode && stateMode[0] === "edit" && (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (!stateMode) return;
-
-              const setMode = stateMode[1];
-              setMode("view");
-            }}
-          >
+        {onLeaveEditor && (
+          <Button variant="ghost" onClick={onLeaveEditor}>
             Cancel
           </Button>
         )}
