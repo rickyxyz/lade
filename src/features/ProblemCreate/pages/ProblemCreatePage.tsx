@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { ProblemWithoutIdType } from "@/types";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
+import { ProblemType } from "@/types";
 
 export function ProblemCreatePage() {
-  const stateProblem = useState<ProblemWithoutIdType>(
-    PROBLEM_BLANK as unknown as ProblemWithoutIdType
+  const stateProblem = useState<ProblemType>(
+    PROBLEM_BLANK as unknown as ProblemType
   );
-  const problem = stateProblem[0];
 
   const renderHead = useMemo(() => {
     return <h1 className="mb-8">Create Problem</h1>;
@@ -20,7 +19,7 @@ export function ProblemCreatePage() {
     <PageTemplate>
       <ProblemCreateEditor
         headElement={renderHead}
-        problem={problem}
+        stateProblem={stateProblem}
         purpose="create"
       />
     </PageTemplate>

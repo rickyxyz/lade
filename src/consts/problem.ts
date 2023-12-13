@@ -2,37 +2,32 @@ import {
   ProblemAllTopicNameType,
   MapProblemTypeToAnswerType,
   ProblemTopicType,
-  ProblemWithoutIdType,
   SelectOptionType,
   ProblemAnswerType,
   ProblemTopicNameType,
   ProblemSubtopicNameType,
   ProblemSortByType,
   ProblemSortOptionType,
-  ProblemBlankType,
   ContestBlankType,
   ContestDatabaseType,
+  ProblemType,
+  AnswerObjectType,
 } from "@/types";
 
-export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
-  statement: "1 + 1 = ?",
-  title: "Problem Statement",
+export const PROBLEM_BLANK: ProblemType = {
+  statement: "",
+  title: "",
   topic: "calculus",
   subtopic: "derivatives",
   type: "short_answer",
-  answer: "2",
+  answer: "",
+};
+
+export const PROBLEM_DEFAULT: ProblemType = {
+  ...PROBLEM_BLANK,
   postDate: 0,
   solved: 0,
   views: 0,
-};
-
-export const PROBLEM_BLANK: ProblemBlankType = {
-  statement: "",
-  title: "",
-  topic: "",
-  subtopic: "",
-  type: "",
-  answer: "",
 };
 
 export const CONTEST_DEFAULT: ContestDatabaseType = {
@@ -49,12 +44,17 @@ export const CONTEST_BLANK: ContestBlankType = {
   subtopic: "",
 };
 
-export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {
-  matrix: Array.from({ length: 3 }).map(() =>
-    Array.from({ length: 3 }).map(() => "")
-  ),
-  short_answer: "",
-  true_or_false: [false],
+export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {
+  matrix: {
+    content: Array.from({ length: 3 }).map(() =>
+      Array.from({ length: 3 }).map(() => "")
+    ),
+    matrixHeight: 0,
+    matrixWidth: 0,
+  },
+  short_answer: {
+    content: "",
+  },
 };
 
 export const PROBLEM_TOPICS_DETAIL_OBJECT: Record<

@@ -8,7 +8,7 @@ import {
   orderBy,
   QueryConstraint,
 } from "firebase/firestore";
-import { Card, Select } from "@/components";
+import { Button, Card, Select } from "@/components";
 import {
   ProblemSortByType,
   ProblemSubtopicNameType,
@@ -41,7 +41,7 @@ export function ProblemListPage() {
     console.log("Reset Database!");
 
     for (const problem of problems) {
-      await deleteDoc(doc(db, "problems", problem.id));
+      if (problem.id) await deleteDoc(doc(db, "problems", problem.id));
     }
 
     populateProblems();
@@ -94,6 +94,7 @@ export function ProblemListPage() {
               }}
             />
           </div>
+          <Button onClick={() => {}}>placeholder</Button>
         </div>
       </Card>
     ),

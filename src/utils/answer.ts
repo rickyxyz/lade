@@ -1,9 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  AnswerType,
   MapProblemTypeToAnswerType,
   ProblemAnswerType,
-  TestType,
 } from "@/types";
+
+function validateMatrix(correct: any[][], input: number[][]) {
+  const answerRowLengths = correct.reduce(
+    (prev, curr) => ({
+      [curr.length]: true,
+    }),
+    {}
+  );
+  const answerInputLengths = input.reduce(
+    (prev, curr) => ({
+      [curr.length]: true,
+    }),
+    {}
+  );
+
+  return !correct.some((column: any[], j: number) =>
+    column.some((cell, i) => String(cell) !== String(input[j][i]))
+  );
+}
 
 export function validateAnswer(
   type: ProblemAnswerType,
@@ -22,31 +41,21 @@ export function validateAnswer(
   return false;
 }
 
-export function constructAnswerString<X extends ProblemAnswerType>(
+export function makeAnswer<X extends ProblemAnswerType>(
   type: X,
-  answer: MapProblemTypeToAnswerType[X]
-): string {
-  switch (type) {
-    case "short_answer":
-      return typeof answer === "string" ? answer : String(answer);
-    default:
-      return JSON.stringify(answer);
-  }
+  answer: AnswerType<X>
+): any {
+  return {
+    type,
+    answer: JSON.stringify(answer),
+  };
 }
 
-export function deconstructAnswerString<X extends ProblemAnswerType>(
-  type: X,
+export function parseAnswer<X extends ProblemAnswerType>(
+  _: X,
   answer: unknown
 ): any {
-  if (!answer) return "";
-  console.log("Parsing: ", answer);
-  // console.log(JSON.parse(`{"test": ${answer}}`));
-  switch (type) {
-    case "short_answer":
-      return (
-        typeof answer === "string" ? answer : String(answer)
-      ) as MapProblemTypeToAnswerType["short_answer"];
-    default:
-      return JSON.parse(answer as string) as MapProblemTypeToAnswerType[X];
-  }
+  if (!answer || typeof answer !== "string") return null;
+
+  return JSON.parse(answer) as AnswerType<X>;
 }

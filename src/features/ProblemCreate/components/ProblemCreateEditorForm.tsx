@@ -2,7 +2,7 @@ import { useMemo, useEffect } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { Input, Markdown, Quote, Button } from "@/components";
-import { ContentViewType, ProblemWithoutIdType, StateType } from "@/types";
+import { ContentViewType, ProblemType, StateType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
@@ -12,16 +12,13 @@ import {
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useProblemEditInitialized } from "@/hooks";
-import { constructAnswerString } from "@/utils";
 import { SettingSelect } from "@/components/Setting";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { ProblemAnswer } from "@/features/ProblemDetail";
 
 export interface ProblemCreateEditorFormProps {
-  problem?: ProblemWithoutIdType;
   stateMode?: StateType<ContentViewType>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stateAnswer: StateType<any>;
+  stateAnswer: StateType<unknown>;
   stateLoading: StateType<boolean>;
   onLeaveEditor?: () => void;
 }
@@ -29,7 +26,6 @@ export interface ProblemCreateEditorFormProps {
 export function ProblemCreateEditorForm({
   stateAnswer,
   stateLoading,
-  stateMode,
   onLeaveEditor,
 }: ProblemCreateEditorFormProps) {
   const { initialized } = useProblemEditInitialized();
@@ -42,7 +38,7 @@ export function ProblemCreateEditorForm({
     touched,
     setFieldTouched,
     validateForm,
-  } = useFormikContext<ProblemWithoutIdType>();
+  } = useFormikContext<ProblemType>();
 
   const { statement, subtopic, topic, type } = values;
 
@@ -63,10 +59,7 @@ export function ProblemCreateEditorForm({
               setFieldValue("type", option ? option.id : undefined);
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
-                setFieldValue(
-                  "answer",
-                  constructAnswerString(type, defaultAnswer)
-                );
+                setFieldValue("answer", JSON.stringify(defaultAnswer));
                 setAnswer(defaultAnswer);
               }
             }}
@@ -175,7 +168,7 @@ export function ProblemCreateEditorForm({
   );
 
   useEffect(() => {
-    setFieldValue("answer", constructAnswerString(type, answer));
+    setFieldValue("answer", JSON.stringify(answer));
   }, [answer, setFieldValue, type]);
 
   useEffect(() => {

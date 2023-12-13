@@ -15,14 +15,17 @@ import { ProblemAnswer } from "./ProblemAnswer";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
+  stateAccept: StateType<unknown>;
   stateMode: StateType<ContentViewType>;
 }
 
 export function ProblemDetailMain({
   stateProblem,
+  stateAccept,
   stateMode,
 }: ProblemMainProps) {
   const [problem, setProblem] = stateProblem;
+  const accept = stateAccept[0];
 
   const {
     id,
@@ -33,7 +36,6 @@ export function ProblemDetailMain({
     solved = 0,
     views = 0,
     type,
-    answer,
     authorId,
   } = problem;
 
@@ -58,16 +60,21 @@ export function ProblemDetailMain({
   const statementRef = useRef<HTMLDivElement>(null);
 
   const handleCheckAnswer = useCallback(() => {
+    console.log("Test: ");
+    console.log(accept);
+    if (!id || !accept || !userAnswer) return;
+
     const now = new Date().getTime();
 
     if (submitted && now - submitted <= 1000 * 5) {
       return;
     }
 
-    console.log("This Is The Correct Answer");
-    console.log(answer);
-
-    const verdict = validateAnswer(type, answer, userAnswer);
+    const verdict = validateAnswer(
+      type,
+      (accept as any).content,
+      userAnswer.content
+    );
 
     if (cooldownIntv) clearInterval(cooldownIntv);
 
@@ -94,7 +101,7 @@ export function ProblemDetailMain({
         solved: (prev.solved ?? 0) + 1,
       }));
     }
-  }, [submitted, answer, type, userAnswer, cooldownIntv, id, setProblem]);
+  }, [accept, id, submitted, type, userAnswer, cooldownIntv, setProblem]);
 
   const renderTags = useMemo(
     () => (

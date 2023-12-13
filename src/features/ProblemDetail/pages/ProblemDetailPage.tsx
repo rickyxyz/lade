@@ -2,12 +2,12 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { crudData } from "@/firebase";
 import { ProblemType, ContentViewType } from "@/types";
-import { deconstructAnswerString } from "@/utils";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemDetailMainSkeleton } from "../components/ProblemDetailMainSkeleton";
 import { ProblemDetailMain } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemCreateEditor } from "@/features/ProblemCreate";
+import { parseAnswer } from "@/utils";
 
 interface ProblemProps {
   id: string;
@@ -18,6 +18,10 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     PROBLEM_BLANK as unknown as ProblemType
   );
   const [problem, setProblem] = stateProblem;
+  const stateAccept = useState<unknown>({
+    content: "",
+  });
+  const [accept, setAccept] = stateAccept;
   const [loading, setLoading] = useState(true);
   const stateMode = useState<ContentViewType>("view");
   const [mode, setMode] = stateMode;
@@ -31,11 +35,15 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     if (loading || !problem) return <ProblemDetailMainSkeleton />;
 
     return mode === "view" ? (
-      <ProblemDetailMain stateProblem={stateProblem} stateMode={stateMode} />
+      <ProblemDetailMain
+        stateProblem={stateProblem}
+        stateAccept={stateAccept}
+        stateMode={stateMode}
+      />
     ) : (
       <ProblemCreateEditor
         headElement={renderEditHeader}
-        problem={problem}
+        stateProblem={stateProblem}
         purpose="edit"
         handleUpdateProblem={(data) => {
           setMode("view");
@@ -43,6 +51,11 @@ export function ProblemDetailPage({ id }: ProblemProps) {
             ...prev,
             ...data,
           }));
+          console.log("UP");
+          console.log(data.type);
+          console.log(data.answer);
+          console.log();
+          setAccept(parseAnswer(data.type, data.answer));
         }}
         onLeaveEditor={() => {
           setMode("view");
@@ -54,10 +67,12 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     problem,
     mode,
     stateProblem,
+    stateAccept,
     stateMode,
     renderEditHeader,
     setMode,
     setProblem,
+    setAccept,
   ]);
 
   const handleGetProblems = useCallback(async () => {
@@ -69,15 +84,12 @@ export function ProblemDetailPage({ id }: ProblemProps) {
       id,
     }).then((result) => {
       if (result) {
-        setProblem({
-          ...result,
-          answer: deconstructAnswerString(result.type, result.answer),
-        } as ProblemType);
-
+        setProblem(result as ProblemType);
+        setAccept(parseAnswer(result.type, result.answer));
         setLoading(false);
       }
     });
-  }, [id, loading, setProblem]);
+  }, [id, loading, setAccept, setProblem]);
 
   useEffect(() => {
     handleGetProblems();
