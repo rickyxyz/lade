@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useState } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { sleep, validateFormContest } from "@/utils";
+import { validateFormContest } from "@/utils";
 import {
   ContentEditType,
   ContentViewType,
@@ -19,6 +19,7 @@ import { crudData } from "@/firebase";
 import { useRouter } from "next/router";
 import { Card } from "@/components";
 import { useAppSelector } from "@/redux/dispatch";
+import { useDebounce } from "@/hooks";
 
 interface ContestEditProps extends Partial<ContestEditFormProps> {
   headElement?: ReactNode;
@@ -39,6 +40,7 @@ export function ContestEdit({
   const setLoading = stateLoading[1];
   const router = useRouter();
   const user = useAppSelector("user");
+  const debounce = useDebounce();
 
   const handleSubmit = useCallback(
     async (values: ContestDatabaseType) => {
@@ -69,9 +71,10 @@ export function ContestEdit({
           data: completeValues as unknown as ContestDatabaseType,
         })
           .then(async (res) => {
-            await sleep(200);
-            setLoading(false);
-            if (res && res.id) router.replace(`/contest/${res.id}`);
+            debounce(() => {
+              setLoading(false);
+              if (res && res.id) router.replace(`/contest/${res.id}`);
+            });
           })
           .catch(() => {
             setLoading(false);
@@ -84,25 +87,35 @@ export function ContestEdit({
         })
           .then(async () => {
             setLoading(false);
-            await sleep(200);
-            router.replace(`/problem/${id}`);
+            debounce(() => {
+              router.replace(`/problem/${id}`);
 
-            if (stateMode && stateContest) {
-              const setMode = stateMode[1];
-              const setContest = stateContest[1];
-              setMode("view");
-              setContest((prev) => ({
-                ...prev,
-                ...(completeValues as unknown as ContestType),
-              }));
-            }
+              if (stateMode && stateContest) {
+                const setMode = stateMode[1];
+                const setContest = stateContest[1];
+                setMode("view");
+                setContest((prev) => ({
+                  ...prev,
+                  ...(completeValues as unknown as ContestType),
+                }));
+              }
+            });
           })
           .catch(() => {
             setLoading(false);
           });
       }
     },
-    [contest, purpose, router, setLoading, stateContest, stateMode, user?.id]
+    [
+      contest,
+      debounce,
+      purpose,
+      router,
+      setLoading,
+      stateContest,
+      stateMode,
+      user?.id,
+    ]
   );
 
   return (

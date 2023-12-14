@@ -21,9 +21,9 @@ import {
   PROBLEM_SUBTOPIC_OPTIONS,
   PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
-import { sleep } from "@/utils";
 import { ProblemCard, ProblemCardSkeleton } from "../components";
 import { PageTemplate } from "@/templates";
+import { useDebounce } from "@/hooks";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -35,6 +35,7 @@ export function ProblemListPage() {
   const [subtopic, setSubtopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>("newest");
   const [sortBy, setSortBy] = stateSortBy;
+  const debounce = useDebounce();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const resetDatabase = useCallback(async () => {
@@ -94,7 +95,7 @@ export function ProblemListPage() {
               }}
             />
           </div>
-          <Button onClick={() => {}}>placeholder</Button>
+          <Button>placeholder</Button>
         </div>
       </Card>
     ),
@@ -135,30 +136,30 @@ export function ProblemListPage() {
 
     const q = query(collection(db, "problems"), ...constraints);
 
-    await sleep(200);
+    debounce(async () => {
+      await getDocs(q)
+        .then((snap) => {
+          let results: ProblemType[] = [];
 
-    await getDocs(q)
-      .then((snap) => {
-        let results: ProblemType[] = [];
+          snap.forEach((doc) => {
+            results = [
+              ...results,
+              {
+                id: doc.id,
+                ...doc.data(),
+              } as ProblemType,
+            ];
+          });
 
-        snap.forEach((doc) => {
-          results = [
-            ...results,
-            {
-              id: doc.id,
-              ...doc.data(),
-            } as ProblemType,
-          ];
+          setLoading(false);
+          setProblems(results);
+        })
+        .catch((e) => {
+          console.log(e);
+          setLoading(false);
         });
-
-        setLoading(false);
-        setProblems(results);
-      })
-      .catch((e) => {
-        console.log(e);
-        setLoading(false);
-      });
-  }, [sortBy, subtopic, topic]);
+    });
+  }, [debounce, sortBy, subtopic, topic]);
 
   useEffect(() => {
     handleGetProblems();

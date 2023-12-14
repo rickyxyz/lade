@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { parseAnswer, sleep, validateFormProblem } from "@/utils";
+import { parseAnswer, validateFormProblem } from "@/utils";
 import { ContentEditType, ProblemType, StateType } from "@/types";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
@@ -13,6 +13,7 @@ import {
   ProblemCreateEditorForm,
   ProblemCreateEditorFormProps,
 } from "./ProblemCreateEditorForm";
+import { useDebounce } from "@/hooks";
 
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
@@ -38,6 +39,7 @@ export function ProblemCreateEditor({
   const [answer, setAnswer] = stateAnswer;
   const router = useRouter();
   const user = useAppSelector("user");
+  const debounce = useDebounce();
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
@@ -66,9 +68,10 @@ export function ProblemCreateEditor({
           data: completeValues,
         })
           .then(async (res) => {
-            await sleep(200);
-            setLoading(false);
-            if (res && res.id) router.replace(`/problem/${res.id}`);
+            debounce(() => {
+              setLoading(false);
+              if (res && res.id) router.replace(`/problem/${res.id}`);
+            });
           })
           .catch(() => {
             setLoading(false);
@@ -81,9 +84,10 @@ export function ProblemCreateEditor({
         })
           .then(async () => {
             setLoading(false);
-            await sleep(200);
-            router.replace(`/problem/${id}`);
-            handleUpdateProblem && handleUpdateProblem(completeValues);
+            debounce(() => {
+              router.replace(`/problem/${id}`);
+              handleUpdateProblem && handleUpdateProblem(completeValues);
+            });
           })
           .catch(() => {
             setLoading(false);
@@ -92,6 +96,7 @@ export function ProblemCreateEditor({
     },
     [
       answer,
+      debounce,
       handleUpdateProblem,
       problem,
       purpose,

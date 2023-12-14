@@ -38,8 +38,7 @@ export function ContestEditForm({
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
-
-  const debouncedQuery = useDebounce(query, 400);
+  const debounce = useDebounce();
 
   const {
     setFieldValue,
@@ -158,7 +157,7 @@ export function ContestEditForm({
 
   const handleGetProblem = useCallback(async () => {
     const problem = await crudData("get_problem", {
-      id: debouncedQuery,
+      id: query,
     });
 
     setFetching(false);
@@ -166,7 +165,7 @@ export function ContestEditForm({
     console.log(problem);
     if (problem) setProblem(problem as unknown as ProblemType);
     else setProblem(undefined);
-  }, [debouncedQuery]);
+  }, [query]);
 
   const handleAddProblem = useCallback(() => {
     if (problem) setProblems((prev) => [...prev, problem]);
@@ -191,7 +190,7 @@ export function ContestEditForm({
 
   useEffect(() => {
     handleGetProblem();
-  }, [debouncedQuery, handleGetProblem]);
+  }, [handleGetProblem]);
 
   const renderContestProblems = useMemo(
     () =>
