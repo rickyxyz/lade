@@ -5,10 +5,10 @@ import { parseAnswer, validateFormProblem } from "@/utils";
 import { ContentEditType, ProblemType, StateType } from "@/types";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
-import { crudData } from "@/firebase";
+import { crudData } from "@/libs/firebase";
 import { useRouter } from "next/router";
 import { Card } from "@/components";
-import { useAppSelector } from "@/redux/dispatch";
+import { useAppSelector } from "@/libs/redux";
 import {
   ProblemCreateEditorForm,
   ProblemCreateEditorFormProps,

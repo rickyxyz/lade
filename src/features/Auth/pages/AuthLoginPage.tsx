@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { login } from "@/firebase";
+import { login } from "@/libs/firebase";
 import { Button, Card } from "@/components";
 import { validateFormLogin } from "@/utils";
 import { LoginFormType } from "@/types";

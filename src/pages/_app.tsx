@@ -12,7 +12,7 @@ import {
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
 import { Provider } from "react-redux";
-import { store } from "@/redux";
+import { store } from "@/libs/redux";
 import clsx from "clsx";
 import { PageTemplateNav } from "@/templates";
 

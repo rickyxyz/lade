@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { crudData } from "@/firebase";
+import { crudData } from "@/libs/firebase";
 import { ProblemType, ContentViewType } from "@/types";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemDetailMainSkeleton } from "../components/ProblemDetailMainSkeleton";

@@ -13,7 +13,7 @@ import { PROBLEM_SUBTOPIC_OPTIONS, PROBLEM_TOPIC_OPTIONS } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useDebounce, useProblemEditInitialized } from "@/hooks";
-import { crudData } from "@/firebase";
+import { crudData } from "@/libs/firebase";
 import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
 

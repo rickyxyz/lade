@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Button, Icon, Input, User, Dropdown, IconText } from "@/components";
 import clsx from "clsx";
-import { useAppDispatch, useAppSelector } from "@/redux/dispatch";
+import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { crudData, logout } from "@/firebase";
+import { crudData, logout } from "@/libs/firebase";
 import { BsCaretDownFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 

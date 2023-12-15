@@ -15,10 +15,10 @@ import {
   ContestEditForm,
   ContestEditFormProps,
 } from "./ContestCreateEditorForm";
-import { crudData } from "@/firebase";
+import { crudData } from "@/libs/firebase";
 import { useRouter } from "next/router";
 import { Card } from "@/components";
-import { useAppSelector } from "@/redux/dispatch";
+import { useAppSelector } from "@/libs/redux";
 import { useDebounce } from "@/hooks";
 
 interface ContestEditProps extends Partial<ContestEditFormProps> {

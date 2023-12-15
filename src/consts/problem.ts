@@ -1,6 +1,5 @@
 import {
   ProblemAllTopicNameType,
-  MapProblemTypeToAnswerType,
   ProblemTopicType,
   SelectOptionType,
   ProblemAnswerType,

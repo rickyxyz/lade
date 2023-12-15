@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Card, More, User } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemType } from "@/types";
-import { useAppSelector } from "@/redux";
+import { useAppSelector } from "@/libs/redux";
 import {
   ProblemDetailStats,
   ProblemDetailTopics,

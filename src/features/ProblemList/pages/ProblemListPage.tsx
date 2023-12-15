@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { db, populateProblems } from "@/firebase";
+import { db, populateProblems } from "@/libs/firebase";
 import {
   collection,
   query,
