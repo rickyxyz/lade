@@ -1,7 +1,7 @@
 import type { AppProps } from "next/app";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
-import { Inter } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import { mathjax3, md } from "@/utils";
 import { ProblemEditInitializedContext } from "@/hooks";
 import { LayoutContext } from "@/contexts";
@@ -16,7 +16,11 @@ import { store } from "@/libs/redux";
 import clsx from "clsx";
 import { PageTemplateNav } from "@/templates";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const inter = Noto_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500"],
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);

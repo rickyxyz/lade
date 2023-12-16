@@ -6,6 +6,7 @@ export interface PageTemplateProps {
   className?: string;
   header?: ReactNode;
   children?: ReactNode;
+  sidebar?: ReactNode;
   footer?: ReactNode;
   hideSidebar?: boolean;
 }
@@ -13,14 +14,13 @@ export interface PageTemplateProps {
 export function PageTemplate({
   className,
   children,
-  hideSidebar,
+  sidebar,
 }: PageTemplateProps) {
   return (
-    <div className="flex relative mx-auto gap-8 px-8">
-      {!hideSidebar && <PageTemplateSide />}
-      <main className={clsx("w-adaptive-2 mt-8 h-full", className)}>
-        {children}
-      </main>
+    <div className="flex relative w-adaptive-2 mx-auto gap-8 px-8">
+      <main className={clsx("mt-8 h-full", className)}>{children}</main>
+      {sidebar}
+      {/* {!hideSidebar && <PageTemplateSide />} */}
     </div>
   );
 }

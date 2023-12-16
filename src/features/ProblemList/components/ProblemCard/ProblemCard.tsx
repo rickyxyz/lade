@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Card, More, User } from "@/components";
+import { Card, More } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
-import { ProblemType } from "@/types";
+import { ProblemType, UserType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import {
   ProblemDetailStats,
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
+import { BsCheck, BsPersonFill } from "react-icons/bs";
+import { useIdentity } from "@/features/Auth";
 
 export interface ProblemCardProps {
   problem: ProblemType;
@@ -26,6 +28,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   } = problem;
 
   const user = useAppSelector("user");
+  const [author, setAuthor] = useState<UserType>();
+  const { identify } = useIdentity();
 
   const permission = useMemo(
     () =>
@@ -49,7 +53,9 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     () => (
       <>
         <div className="flex justify-between mb-4">
-          <User id={authorId} caption="3h" />
+          <Link href={`/problem/${id}`}>
+            <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
+          </Link>
           <More
             options={
               permission === "author"
@@ -66,24 +72,24 @@ export function ProblemCard({ problem }: ProblemCardProps) {
             }
           />
         </div>
-        <Link href={`/problem/${id}`}>
-          <h2 className="text-teal-600 hover:text-teal-700 mb-2">{title}</h2>
-        </Link>
         {renderTags}
         <article className="mb-5" ref={statementRef}></article>
       </>
     ),
-    [authorId, id, permission, renderTags, title]
+    [id, permission, renderTags, title]
   );
 
   const renderStats = useMemo(
     () => (
-      <div className="flex items-center text-sm text-gray-600 gap-6">
-        <ProblemDetailStats type="view" value={views} />
-        <ProblemDetailStats type="solved" value={solved} />
+      <div className="flex items-center justify-end text-sm text-gray-600 gap-6">
+        <ProblemDetailStats
+          text={String(author?.username ?? "")}
+          icon={BsPersonFill}
+        />
+        <ProblemDetailStats text={String(solved)} icon={BsCheck} />
       </div>
     ),
-    [solved, views]
+    [author?.username, solved]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -94,6 +100,17 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   useEffect(() => {
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
+
+  const handleGetUsername = useCallback(async () => {
+    if (authorId) {
+      const creator = await identify(authorId);
+      creator && setAuthor(creator);
+    }
+  }, [authorId, identify]);
+
+  useEffect(() => {
+    handleGetUsername();
+  }, [handleGetUsername]);
 
   return (
     <Card>

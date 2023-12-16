@@ -116,6 +116,48 @@ export function ProblemListPage() {
     [loading, problems]
   );
 
+  const renderSidebar = useMemo(
+    () => (
+      <aside className="flex flex-auto flex-col gap-4 mt-8 !w-fit">
+        <div>
+          <b>TOPICS</b>
+          <Select
+            className="w-full mt-2"
+            inputClassName="w-full"
+            options={PROBLEM_TOPIC_OPTIONS}
+            selectedOption={topic}
+            onSelectOption={(option) => {
+              option ? setTopic(option.id) : setTopic(undefined);
+              setSubtopic(undefined);
+            }}
+            unselectedText="Any"
+            optional
+          />
+        </div>
+        <div>
+          <b>SUBTOPICS</b>
+          <ul className="mt-2">
+            {Object.values(PROBLEM_SUBTOPIC_OPTIONS).map((subtopicGroup) =>
+              subtopicGroup.map(({ id, text }) => (
+                <li className="flex mb-1" key={`filter_${id}`}>
+                  <label htmlFor={id}>
+                    <input
+                      id={id}
+                      className="self-start mt-1"
+                      type="checkbox"
+                    />
+                    <span className="ml-2">{text}</span>
+                  </label>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+      </aside>
+    ),
+    [setSubtopic, setTopic, topic]
+  );
+
   const handleGetProblems = useCallback(async () => {
     setLoading(true);
     const topicConstraint = topic ? where("topic", "==", topic) : undefined;
@@ -166,7 +208,7 @@ export function ProblemListPage() {
   }, [topic, subtopic, sortBy, handleGetProblems]);
 
   return (
-    <PageTemplate>
+    <PageTemplate sidebar={renderSidebar}>
       {renderHeader}
       {renderProblems}
     </PageTemplate>
