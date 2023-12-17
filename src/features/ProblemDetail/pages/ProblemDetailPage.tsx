@@ -95,5 +95,5 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     handleGetProblems();
   }, [handleGetProblems]);
 
-  return <PageTemplate>{renderQuestion}</PageTemplate>;
+  return <PageTemplate className="w-full">{renderQuestion}</PageTemplate>;
 }

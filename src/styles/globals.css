@@ -1,7 +1,7 @@
 @layer base {
   p,
   span {
-    @apply text-zinc-800;
+    @apply text-zinc-800 text-base;
   }
   *:focus {
     outline: none;
@@ -16,23 +16,15 @@
   }
   h1,
   .h1 {
-    @apply head-style text-5xl;
+    @apply head-style text-xl;
   }
   h2,
   .h2 {
-    @apply head-style text-2xl;
+    @apply head-style text-xl;
   }
   h3,
   .h3 {
     @apply head-style text-xl;
-  }
-  h4,
-  .h4 {
-    @apply head-style text-lg;
-  }
-  h5,
-  .h5 {
-    @apply head-style;
   }
   *:not(a) > h2 {
     @apply text-teal-600;

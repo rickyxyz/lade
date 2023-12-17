@@ -8,7 +8,7 @@ import {
   ProblemDetailStats,
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
-import { BsCheck, BsPersonFill } from "react-icons/bs";
+import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
 import { useIdentity } from "@/features/Auth";
 
 export interface ProblemCardProps {
@@ -57,6 +57,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
             <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
           </Link>
           <More
+            className="absolute right-0"
             options={
               permission === "author"
                 ? [
@@ -86,7 +87,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
           text={String(author?.username ?? "")}
           icon={BsPersonFill}
         />
-        <ProblemDetailStats text={String(solved)} icon={BsCheck} />
+        <ProblemDetailStats text={String(solved)} icon={BsCheckCircleFill} />
       </div>
     ),
     [author?.username, solved]

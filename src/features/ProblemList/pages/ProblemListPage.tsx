@@ -8,7 +8,7 @@ import {
   orderBy,
   QueryConstraint,
 } from "firebase/firestore";
-import { Button, Card, Select } from "@/components";
+import { Button, Card, Paragraph, Select } from "@/components";
 import {
   ProblemSortByType,
   ProblemSubtopicNameType,
@@ -95,7 +95,6 @@ export function ProblemListPage() {
               }}
             />
           </div>
-          <Button>placeholder</Button>
         </div>
       </Card>
     ),
@@ -105,9 +104,9 @@ export function ProblemListPage() {
   const renderProblems = useMemo(
     () =>
       loading ? (
-        <ProblemCardSkeleton className="mt-8" />
+        <ProblemCardSkeleton className="w-[28rem]" />
       ) : (
-        <div className="mt-8 flex flex-col gap-8">
+        <div className="flex flex-col gap-8 w-[28rem]">
           {problems.map((problem) => (
             <ProblemCard key={problem.id} problem={problem} />
           ))}
@@ -120,7 +119,7 @@ export function ProblemListPage() {
     () => (
       <aside className="flex flex-auto flex-col gap-4 mt-8 !w-fit">
         <div>
-          <b>TOPICS</b>
+          <Paragraph weight="bold">TOPICS</Paragraph>
           <Select
             className="w-full mt-2"
             inputClassName="w-full"
@@ -135,22 +134,24 @@ export function ProblemListPage() {
           />
         </div>
         <div>
-          <b>SUBTOPICS</b>
+          <Paragraph weight="bold">SUBTOPICS</Paragraph>
           <ul className="mt-2">
-            {Object.values(PROBLEM_SUBTOPIC_OPTIONS).map((subtopicGroup) =>
-              subtopicGroup.map(({ id, text }) => (
-                <li className="flex mb-1" key={`filter_${id}`}>
-                  <label htmlFor={id}>
-                    <input
-                      id={id}
-                      className="self-start mt-1"
-                      type="checkbox"
-                    />
-                    <span className="ml-2">{text}</span>
-                  </label>
-                </li>
-              ))
-            )}
+            {Object.entries(PROBLEM_SUBTOPIC_OPTIONS)
+              .filter(([group]) => !topic || topic === group)
+              .map(([, subtopicGroup]) =>
+                subtopicGroup.map(({ id, text }) => (
+                  <li key={`filter_${id}`}>
+                    <label className="flex mb-2" htmlFor={id}>
+                      <input
+                        id={id}
+                        className="self-start mt-1 mr-2 !w-4 !h-4 accent-teal-600"
+                        type="checkbox"
+                      />
+                      <Paragraph>{text}</Paragraph>
+                    </label>
+                  </li>
+                ))
+              )}
           </ul>
         </div>
       </aside>
@@ -207,10 +208,5 @@ export function ProblemListPage() {
     handleGetProblems();
   }, [topic, subtopic, sortBy, handleGetProblems]);
 
-  return (
-    <PageTemplate sidebar={renderSidebar}>
-      {renderHeader}
-      {renderProblems}
-    </PageTemplate>
-  );
+  return <PageTemplate sidebar={renderSidebar}>{renderProblems}</PageTemplate>;
 }

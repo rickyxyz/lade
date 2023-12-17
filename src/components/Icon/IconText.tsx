@@ -13,7 +13,7 @@ export function IconText({
   ...rest
 }: IconTextProps) {
   return (
-    <div className={clsx("flex items-center text-sm", className)}>
+    <div className={clsx("flex items-center text-base", className)}>
       <Icon IconComponent={IconComponent} className="mr-2" {...rest} />
       {text}
     </div>

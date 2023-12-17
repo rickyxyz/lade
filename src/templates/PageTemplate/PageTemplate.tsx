@@ -18,7 +18,7 @@ export function PageTemplate({
 }: PageTemplateProps) {
   return (
     <div className="flex relative w-adaptive-2 mx-auto gap-8 px-8">
-      <main className={clsx("mt-8 h-full", className)}>{children}</main>
+      <main className={clsx("mt-8 h-full w-fit", className)}>{children}</main>
       {sidebar}
       {/* {!hideSidebar && <PageTemplateSide />} */}
     </div>

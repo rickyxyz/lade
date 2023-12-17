@@ -44,7 +44,7 @@ export function ProblemAnswer({
     const { content } = answer as AnswerType<"short_answer">;
 
     return (
-      <div className="mb-4">
+      <div className="mb-8">
         <Input
           defaultValue={content}
           onChange={(e) => {

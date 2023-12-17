@@ -63,7 +63,7 @@ export function Button({
 
 const BUTTON_BASE_STYLE = [
   "flex flex-row items-center justify-center px-4 py-2 h-fit",
-  "transition-colors duration-100",
+  "transition-colors duration-100 text-base",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
   "rounded",
 ];

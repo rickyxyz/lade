@@ -13,5 +13,5 @@ export function Tag({ children }: TagProps) {
 }
 
 const TAG_BASE_STYLE = [
-  "px-3 py-1 bg-teal-100 text-teal-600 border border-teal-600 rounded-sm text-xs",
+  "px-3 py-0.5 bg-teal-100 text-teal-600 border border-teal-600 rounded-md text-sm",
 ];

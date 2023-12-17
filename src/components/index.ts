@@ -6,6 +6,7 @@ export * from "./Input";
 export * from "./Loader";
 export * from "./Markdown";
 export * from "./More";
+export * from "./Paragraph";
 export * from "./Quote";
 export * from "./Select";
 export * from "./Tag";
