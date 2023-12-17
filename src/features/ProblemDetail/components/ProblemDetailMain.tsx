@@ -1,6 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Icon, More, User } from "@/components";
-import { getPermissionForContent, md } from "@/utils";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Button, Card, Crumb, Icon, More, Paragraph, User } from "@/components";
+import { getPermissionForContent, md, parseTopicId } from "@/utils";
 import { ProblemType, ContentViewType, StateType, UserType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
@@ -8,7 +15,14 @@ import { validateAnswer } from "@/utils/answer";
 import { useAppSelector } from "@/libs/redux";
 import { crudData } from "@/libs/firebase";
 import { increment } from "firebase/firestore";
-import { BsCheck, BsCheckCircleFill, BsPersonFill, BsX } from "react-icons/bs";
+import {
+  BsCheck,
+  BsCheckCircleFill,
+  BsChevronLeft,
+  BsChevronRight,
+  BsPersonFill,
+  BsX,
+} from "react-icons/bs";
 import { ProblemDetailStats } from "./ProblemDetailStats";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
@@ -59,6 +73,8 @@ export function ProblemDetailMain({
       }),
     [problem, user]
   );
+  const topicText = useMemo(() => parseTopicId(topic).name, [topic]);
+  const subtopicText = useMemo(() => parseTopicId(subtopic).name, [subtopic]);
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -214,10 +230,42 @@ export function ProblemDetailMain({
     handleGetUsername();
   }, [handleGetUsername]);
 
+  const breadCrumb = useMemo(
+    () => ["Problem", topicText, subtopicText, title],
+    [subtopicText, title, topicText]
+  );
+
+  const renderBreadCrumb = useMemo(
+    () => (
+      <Crumb
+        crumbs={[
+          {
+            text: "Problems",
+          },
+          {
+            text: topicText,
+          },
+          {
+            text: subtopicText,
+          },
+          {
+            text: title,
+            color: "secondary-4",
+          },
+        ]}
+      />
+    ),
+    [subtopicText, title, topicText]
+  );
+
   return (
-    <Card>
-      {renderMain}
-      {renderAnswer}
-    </Card>
+    <>
+      {renderBreadCrumb}
+      <h1 className="mb-8">{title}</h1>
+      <Card>
+        {renderMain}
+        {renderAnswer}
+      </Card>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 export * from "./Button";
 export * from "./Card";
+export * from "./Crumb";
 export * from "./Dropdown";
 export * from "./Icon";
 export * from "./Input";

@@ -1,14 +1,23 @@
+import { FONT_COLOR, FontColor } from "@/consts/style";
+import clsx from "clsx";
 import { CSSProperties, useMemo } from "react";
 import { IconType, IconBaseProps as IconLibProps } from "react-icons";
 
 interface IconBaseProps {
   IconComponent: IconType;
+  color?: FontColor;
   size?: "s" | "s-alt" | "m" | "l-alt" | "l";
 }
 
 export type IconProps = IconBaseProps & Omit<IconLibProps, keyof IconBaseProps>;
 
-export function Icon({ IconComponent, size, ...rest }: IconProps) {
+export function Icon({
+  IconComponent,
+  className,
+  color,
+  size,
+  ...rest
+}: IconProps) {
   const style = useMemo<CSSProperties>(() => {
     let sizePx = "16px";
 
@@ -38,5 +47,11 @@ export function Icon({ IconComponent, size, ...rest }: IconProps) {
     };
   }, [size]);
 
-  return <IconComponent {...rest} style={style} />;
+  return (
+    <IconComponent
+      className={clsx(color && FONT_COLOR[color], className)}
+      {...rest}
+      style={style}
+    />
+  );
 }
