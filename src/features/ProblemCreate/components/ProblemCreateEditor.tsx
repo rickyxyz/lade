@@ -18,92 +18,45 @@ import { useDebounce } from "@/hooks";
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
   stateProblem: StateType<ProblemType>;
+  stateLoading: StateType<boolean>;
   headElement?: ReactNode;
-  purpose: ContentEditType;
-  handleUpdateProblem?: (problem: ProblemType) => void;
+  onSubmit: (problem: ProblemType) => void;
 }
 
 export function ProblemCreateEditor({
   headElement,
   stateProblem,
-  purpose,
-  handleUpdateProblem,
+  stateLoading,
+  onSubmit,
   ...rest
 }: ProblemCreateEditorProps) {
-  const stateLoading = useState(false);
   const setLoading = stateLoading[1];
   const problem = stateProblem[0];
   const stateAnswer = useState<unknown>({
     content: "",
   });
   const [answer, setAnswer] = stateAnswer;
-  const router = useRouter();
   const user = useAppSelector("user");
-  const debounce = useDebounce();
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
       setLoading(true);
 
       const common: ProblemType = {
+        postDate: new Date().getTime(),
         ...values,
         answer: JSON.stringify(answer),
-        postDate: new Date().getTime(),
         authorId: user?.id,
       };
 
-      const completeValues: ProblemType =
-        purpose === "create"
-          ? {
-              ...PROBLEM_DEFAULT,
-              ...common,
-            }
-          : common;
+      const completeValues: ProblemType = {
+        ...PROBLEM_DEFAULT,
+        ...common,
+      };
 
-      console.log("Creating Events:");
-      console.log(completeValues);
-
-      if (purpose === "create") {
-        await crudData("set_problem", {
-          data: completeValues,
-        })
-          .then(async (res) => {
-            debounce(() => {
-              setLoading(false);
-              if (res && res.id) router.replace(`/problem/${res.id}`);
-            });
-          })
-          .catch(() => {
-            setLoading(false);
-          });
-      } else if (problem) {
-        const { id } = problem;
-        await crudData("update_problem", {
-          id: id ?? "invalid",
-          data: completeValues,
-        })
-          .then(async () => {
-            setLoading(false);
-            debounce(() => {
-              router.replace(`/problem/${id}`);
-              handleUpdateProblem && handleUpdateProblem(completeValues);
-            });
-          })
-          .catch(() => {
-            setLoading(false);
-          });
-      }
+      onSubmit(completeValues);
     },
-    [
-      answer,
-      debounce,
-      handleUpdateProblem,
-      problem,
-      purpose,
-      router,
-      setLoading,
-      user?.id,
-    ]
+    [answer, onSubmit, setLoading, user?.id]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {

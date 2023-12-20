@@ -62,9 +62,7 @@ export function ProblemDetailMain({
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
   const user = useAppSelector("user");
-  const [author, setAuthor] = useState<UserType>();
   const setMode = stateMode[1];
-  const { identify } = useIdentity();
   const permission = useMemo(
     () =>
       getPermissionForContent({
@@ -129,22 +127,6 @@ export function ProblemDetailMain({
     [subtopic, topic]
   );
 
-  const renderStats = useMemo(
-    () => (
-      <div className={clsx("flex gap-4")}>
-        {/* <ProblemDetailStats type="view" value={views} />
-        <ProblemDetailStats type="solved" value={solved} /> */}
-
-        <ProblemDetailStats
-          text={String(author?.username ?? "")}
-          icon={BsPersonFill}
-        />
-        <ProblemDetailStats text={String(solved)} icon={BsCheckCircleFill} />
-      </div>
-    ),
-    [author?.username, solved]
-  );
-
   const renderMain = useMemo(
     () => (
       <>
@@ -195,11 +177,10 @@ export function ProblemDetailMain({
               ? Math.ceil(cooldown / 1000)
               : "Submit"}
           </Button>
-          {renderStats}
         </div>
       </>
     ),
-    [cooldown, handleCheckAnswer, renderAnswerInputs, renderStats, userSolved]
+    [cooldown, handleCheckAnswer, renderAnswerInputs, userSolved]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -218,17 +199,6 @@ export function ProblemDetailMain({
   useEffect(() => {
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
-
-  const handleGetUsername = useCallback(async () => {
-    if (authorId) {
-      const creator = await identify(authorId);
-      creator && setAuthor(creator);
-    }
-  }, [authorId, identify]);
-
-  useEffect(() => {
-    handleGetUsername();
-  }, [handleGetUsername]);
 
   const breadCrumb = useMemo(
     () => ["Problem", topicText, subtopicText, title],
@@ -260,8 +230,6 @@ export function ProblemDetailMain({
 
   return (
     <>
-      {renderBreadCrumb}
-      <h1 className="mb-8">{title}</h1>
       <Card>
         {renderMain}
         {renderAnswer}

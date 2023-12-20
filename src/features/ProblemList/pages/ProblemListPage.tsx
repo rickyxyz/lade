@@ -117,7 +117,7 @@ export function ProblemListPage() {
 
   const renderSidebar = useMemo(
     () => (
-      <aside className="flex flex-auto flex-col gap-4 mt-8 !w-fit">
+      <aside className="flex flex-auto flex-col gap-4 !w-fit">
         <div>
           <Paragraph weight="bold">TOPICS</Paragraph>
           <Select
@@ -208,5 +208,18 @@ export function ProblemListPage() {
     handleGetProblems();
   }, [topic, subtopic, sortBy, handleGetProblems]);
 
-  return <PageTemplate sidebar={renderSidebar}>{renderProblems}</PageTemplate>;
+  const renderHead = useMemo(
+    () => (
+      <Paragraph as="h1" className="mb-8">
+        Problems
+      </Paragraph>
+    ),
+    []
+  );
+
+  return (
+    <PageTemplate head={renderHead} side={renderSidebar}>
+      {renderProblems}
+    </PageTemplate>
+  );
 }

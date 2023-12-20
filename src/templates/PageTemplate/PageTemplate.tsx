@@ -4,9 +4,9 @@ import { PageTemplateSide } from "./PageTemplateSide";
 
 export interface PageTemplateProps {
   className?: string;
-  header?: ReactNode;
+  head?: ReactNode;
   children?: ReactNode;
-  sidebar?: ReactNode;
+  side?: ReactNode;
   footer?: ReactNode;
   hideSidebar?: boolean;
 }
@@ -14,13 +14,18 @@ export interface PageTemplateProps {
 export function PageTemplate({
   className,
   children,
-  sidebar,
+  head,
+  side,
 }: PageTemplateProps) {
   return (
-    <div className="flex relative w-adaptive-2 mx-auto gap-8 px-8">
-      <main className={clsx("mt-8 h-full w-fit", className)}>{children}</main>
-      {sidebar}
-      {/* {!hideSidebar && <PageTemplateSide />} */}
-    </div>
+    <main className="flex flex-col relative w-adaptive-2 mx-auto py-12">
+      {head}
+      <section className="flex w-full gap-8">
+        <article className={clsx("h-full w-fit", className)}>
+          {children}
+        </article>
+        {side}
+      </section>
+    </main>
   );
 }
