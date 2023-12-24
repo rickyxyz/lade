@@ -1,6 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import { api } from "@/utils/api";
+import {
+  PROBLEM_TOPICS_DETAIL_OBJECT,
+  PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
+} from "@/consts";
+import { ProblemAllTopicNameType, ProblemTopicType } from "@/types";
 
 const prisma = new PrismaClient({
   datasources: {
@@ -10,41 +16,60 @@ const prisma = new PrismaClient({
   },
 });
 
-const json = (param: any): any => {
-  return JSON.stringify(
-    param,
-    (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
-  );
-};
-
 async function main() {
-  // ... you will write your Prisma Client queries here
-  await prisma.topic.create({
-    data: {
-      id: 1,
-      name: "Calculus",
-    },
-  });
-  // await prisma.user.deleteMany({});
+  /*
+  await prisma.subtopic.deleteMany({});
+  await prisma.topic.deleteMany({});
 
-  const allUsers = await prisma.topic.findMany();
+  let i = 1;
+  let j = 1;
+  for (const entry of Object.entries(PROBLEM_TOPICS_RELATIONSHIP_OBJECT)) {
+    const topic = entry[0] as unknown as ProblemAllTopicNameType;
+    const subtopics = entry[1];
+    console.log(
+      "Looping Through: ",
+      PROBLEM_TOPICS_DETAIL_OBJECT[topic].name,
+      " > ",
+      subtopics.length
+    );
 
-  return json(allUsers);
+    await prisma.topic.create({
+      data: {
+        id: i,
+        name: PROBLEM_TOPICS_DETAIL_OBJECT[topic].name,
+      },
+    });
+
+    for (const subtopic of subtopics) {
+      console.log(
+        "    Looping Through: ",
+        PROBLEM_TOPICS_DETAIL_OBJECT[subtopic].name
+      );
+      await prisma.subtopic.create({
+        data: {
+          id: j,
+          name: PROBLEM_TOPICS_DETAIL_OBJECT[subtopic].name,
+          topicId: i,
+        },
+      });
+      j++;
+    }
+
+    i++;
+  }
+	*/
+  const allTopics = await prisma.topic.findMany();
+  const allSubtopics = await prisma.subtopic.findMany();
+
+  return {
+    topics: allTopics,
+    subtopics: allSubtopics,
+  };
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  main()
-    .then(async (result) => {
-      await prisma.$disconnect();
-      console.log(JSON.parse(result));
-      res.status(200).json(JSON.parse(result));
-    })
-    .catch(async (e) => {
-      console.error(e);
-      await prisma.$disconnect();
-      res.status(400).json(e);
-    });
+  api(main, req, res);
 }
