@@ -13,20 +13,31 @@ datasource db {
 model User {
   id       BigInt    @id @default(autoincrement())
   username String    @unique
-  problems Problem[]
+  Problem  Problem[]
+  Solved   Solved[]
+}
+
+model Solved {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  userId    BigInt
+  Problem   Problem  @relation(fields: [problemId], references: [id])
+  problemId BigInt
 }
 
 model Topic {
   id        BigInt     @id @default(autoincrement())
   name      String
-  subtopics Subtopic[]
-  Problem   Problem[]
+  Subtopics Subtopic[]
+  Problems  Problem[]
 }
 
 model Subtopic {
   id      BigInt    @id @default(autoincrement())
   name    String
-  topic   Topic     @relation(fields: [topicId], references: [id])
+  Topic   Topic     @relation(fields: [topicId], references: [id])
   topicId BigInt
   Problem Problem[]
 }
@@ -38,12 +49,13 @@ model Problem {
   title      String
   statement  String?
   type       String
-  author     User      @relation(fields: [authorId], references: [id])
+  Author     User      @relation(fields: [authorId], references: [id])
   authorId   BigInt
-  topic      Topic?    @relation(fields: [topicId], references: [id])
+  Topic      Topic?    @relation(fields: [topicId], references: [id])
   topicId    BigInt?
-  subtopic   Subtopic? @relation(fields: [subtopicId], references: [id])
+  Subtopic   Subtopic? @relation(fields: [subtopicId], references: [id])
   subtopicId BigInt?
+  Solved     Solved[]
 }
 
 // export interface ProblemBaseType {
