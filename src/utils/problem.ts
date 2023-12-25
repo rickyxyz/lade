@@ -5,10 +5,9 @@ import {
   ProblemAnswerType,
   ProblemType,
 } from "@/types";
-import { parseMatrixSize } from "./matrix";
 
 export function validateFormProblem(problem: ProblemType) {
-  const { title, statement, answer, topic, subtopic, type } = problem;
+  const { title, statement, answer, type } = problem;
 
   const errors: Partial<Record<keyof ProblemType, string>> = {};
 
@@ -27,10 +26,6 @@ export function validateFormProblem(problem: ProblemType) {
   } else if (title.length > 200) {
     errors.statement = "Problem statement is too long.";
   }
-
-  // if (type === "") errors.type = "Type is required!";
-  // if (topic === "") errors.topic = "Topic is required!";
-  // if (subtopic === "") errors.subtopic = "Subtopic is required!";
 
   const answerError = validateFormAnswer({
     type: type as ProblemAnswerType,

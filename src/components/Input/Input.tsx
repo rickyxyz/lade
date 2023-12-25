@@ -1,6 +1,5 @@
 import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 import clsx from "clsx";
-import { IconNameType } from "@/types";
 import { Icon } from "../Icon";
 import { IconType } from "react-icons";
 

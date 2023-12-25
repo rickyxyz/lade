@@ -8,7 +8,7 @@ import {
   ProblemDetailStats,
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
-import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
+import { BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
 import { useIdentity } from "@/features/Auth";
 
 export interface ProblemCardProps {
@@ -23,7 +23,6 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     topic,
     subtopic,
     solved = 0,
-    views = 0,
     authorId,
   } = problem;
 

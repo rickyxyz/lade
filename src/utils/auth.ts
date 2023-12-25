@@ -46,6 +46,7 @@ export function getPermissionForContent({
   content,
   user,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any;
   user?: UserType | null;
 }): ContentAccessType {

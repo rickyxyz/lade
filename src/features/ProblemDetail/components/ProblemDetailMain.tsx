@@ -1,32 +1,12 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Button, Card, Crumb, Icon, More, Paragraph, User } from "@/components";
-import { getPermissionForContent, md, parseTopicId } from "@/utils";
-import { ProblemType, ContentViewType, StateType, UserType } from "@/types";
-import clsx from "clsx";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Card } from "@/components";
+import { md } from "@/utils";
+import { ProblemType, ContentViewType, StateType } from "@/types";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { validateAnswer } from "@/utils/answer";
-import { useAppSelector } from "@/libs/redux";
 import { crudData } from "@/libs/firebase";
 import { increment } from "firebase/firestore";
-import {
-  BsCheck,
-  BsCheckCircleFill,
-  BsChevronLeft,
-  BsChevronRight,
-  BsPersonFill,
-  BsX,
-} from "react-icons/bs";
-import { ProblemDetailStats } from "./ProblemDetailStats";
-import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
-import { useIdentity } from "@/features/Auth";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -37,22 +17,11 @@ export interface ProblemMainProps {
 export function ProblemDetailMain({
   stateProblem,
   stateAccept,
-  stateMode,
 }: ProblemMainProps) {
   const [problem, setProblem] = stateProblem;
   const accept = stateAccept[0];
 
-  const {
-    id,
-    statement,
-    title,
-    topic,
-    subtopic,
-    solved = 0,
-    views = 0,
-    type,
-    authorId,
-  } = problem;
+  const { id, statement, type } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stateUserAnswer = useState<any>();
@@ -61,18 +30,6 @@ export function ProblemDetailMain({
   const [submitted, setSubmitted] = useState<number>();
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
-  const user = useAppSelector("user");
-  const setMode = stateMode[1];
-  const permission = useMemo(
-    () =>
-      getPermissionForContent({
-        content: problem,
-        user,
-      }),
-    [problem, user]
-  );
-  const topicText = useMemo(() => parseTopicId(topic).name, [topic]);
-  const subtopicText = useMemo(() => parseTopicId(subtopic).name, [subtopic]);
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -89,6 +46,7 @@ export function ProblemDetailMain({
 
     const verdict = validateAnswer(
       type,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (accept as any).content,
       userAnswer.content
     );
@@ -120,13 +78,6 @@ export function ProblemDetailMain({
     }
   }, [accept, id, submitted, type, userAnswer, cooldownIntv, setProblem]);
 
-  const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics topic={topic} subtopic={subtopic} className="mb-4" />
-    ),
-    [subtopic, topic]
-  );
-
   const renderMain = useMemo(
     () => (
       <>
@@ -148,16 +99,6 @@ export function ProblemDetailMain({
       />
     );
   }, [problem, stateUserAnswer, type, userAnswer, userSolved]);
-
-  const renderAnswerVerdict = useMemo(() => {
-    if (submitted) {
-      return userSolved ? (
-        <Icon IconComponent={BsCheck} size="l" className="text-green-600" />
-      ) : (
-        <Icon IconComponent={BsX} size="l" className="text-red-600" />
-      );
-    }
-  }, [submitted, userSolved]);
 
   const renderAnswer = useMemo(
     () => (
@@ -199,34 +140,6 @@ export function ProblemDetailMain({
   useEffect(() => {
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
-
-  const breadCrumb = useMemo(
-    () => ["Problem", topicText, subtopicText, title],
-    [subtopicText, title, topicText]
-  );
-
-  const renderBreadCrumb = useMemo(
-    () => (
-      <Crumb
-        crumbs={[
-          {
-            text: "Problems",
-          },
-          {
-            text: topicText,
-          },
-          {
-            text: subtopicText,
-          },
-          {
-            text: title,
-            color: "secondary-4",
-          },
-        ]}
-      />
-    ),
-    [subtopicText, title, topicText]
-  );
 
   return (
     <>

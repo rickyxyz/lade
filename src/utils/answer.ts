@@ -1,28 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  AnswerType,
-  MapProblemTypeToAnswerType,
-  ProblemAnswerType,
-} from "@/types";
-
-function validateMatrix(correct: any[][], input: number[][]) {
-  const answerRowLengths = correct.reduce(
-    (prev, curr) => ({
-      [curr.length]: true,
-    }),
-    {}
-  );
-  const answerInputLengths = input.reduce(
-    (prev, curr) => ({
-      [curr.length]: true,
-    }),
-    {}
-  );
-
-  return !correct.some((column: any[], j: number) =>
-    column.some((cell, i) => String(cell) !== String(input[j][i]))
-  );
-}
+import { AnswerType, ProblemAnswerType } from "@/types";
 
 export function validateAnswer(
   type: ProblemAnswerType,
