@@ -7,9 +7,8 @@ export const PROBLEM_SAMPLE_1: ProblemType = {
   title: "Maximum Volume of Box",
   topic: "calculus",
   subtopic: "applications-of-derivative",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: 400,
   }),
@@ -21,9 +20,8 @@ export const PROBLEM_SAMPLE_2: ProblemType = {
   title: "Leaning Ladder",
   topic: "calculus",
   subtopic: "applications-of-derivative",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: -2.5,
   }),
@@ -35,9 +33,8 @@ export const PROBLEM_SAMPLE_3: ProblemType = {
   title: "Filling Water",
   topic: "calculus",
   subtopic: "applications-of-derivative",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: 64,
   }),
@@ -49,9 +46,8 @@ export const PROBLEM_SAMPLE_4: ProblemType = {
   title: "Increasing Voltage",
   topic: "calculus",
   subtopic: "applications-of-derivative",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: 20,
   }),
@@ -63,9 +59,8 @@ export const PROBLEM_SAMPLE_5: ProblemType = {
   title: "Eleventh Power",
   topic: "linear-algebra",
   subtopic: "eigenvalues-eigenvectors",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("matrix", {
     content: [
       [-1, -10223, -683],
@@ -85,9 +80,8 @@ export const PROBLEM_SAMPLE_6: ProblemType = {
   subtopic: "first-order-differential-equations",
   type: "short_answer",
   answer: "2",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: 2,
   }),
@@ -99,9 +93,8 @@ export const PROBLEM_SAMPLE_7: ProblemType = {
   title: "Distance of Two Planes",
   topic: "linear-algebra",
   subtopic: "lines-planes",
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
-  views: 0,
   ...makeAnswer("short_answer", {
     content: 0.816497,
   }),

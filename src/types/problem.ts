@@ -18,6 +18,7 @@ export type ProblemAllTopicNameType =
   | ProblemSubtopicNameType;
 
 export interface ProblemTopicType {
+  id?: string;
   name: string;
 }
 
@@ -62,7 +63,7 @@ export interface ProblemBaseType {
   statement: string;
   solved?: number;
   views?: number;
-  postDate?: number;
+  createdAt?: number;
   updateDate?: number;
   authorId?: string;
   type: ProblemAnswerType;
@@ -96,7 +97,7 @@ export interface ContestBaseType {
   problems: Record<string, number>;
   participants?: number;
   views?: number;
-  postDate?: number;
+  createdAt?: number;
   updateDate?: number;
   startDate?: number;
   endDate?: number;

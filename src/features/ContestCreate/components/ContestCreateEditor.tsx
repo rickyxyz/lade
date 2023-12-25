@@ -47,7 +47,7 @@ export function ContestEdit({
       setLoading(true);
 
       const common: Partial<ContestDatabaseType> = {
-        postDate: new Date().getTime(),
+        createdAt: new Date().getTime(),
         authorId: user?.id,
       };
 

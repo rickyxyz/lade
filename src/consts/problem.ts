@@ -24,7 +24,7 @@ export const PROBLEM_BLANK: ProblemType = {
 
 export const PROBLEM_DEFAULT: ProblemType = {
   ...PROBLEM_BLANK,
-  postDate: 0,
+  createdAt: 0,
   solved: 0,
   views: 0,
 };
@@ -129,8 +129,8 @@ export const PROBLEM_SUBTOPIC_OPTIONS = Object.entries(
 
 export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[] =
   [
-    { id: "newest", text: "Newest", key: "postDate", descending: true },
-    { id: "oldest", text: "Oldest", key: "postDate", descending: false },
+    { id: "newest", text: "Newest", key: "createdAt", descending: true },
+    { id: "oldest", text: "Oldest", key: "createdAt", descending: false },
     {
       id: "most-solved",
       text: "Most Solved",

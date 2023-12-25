@@ -45,9 +45,10 @@ model Subtopic {
 model Problem {
   id         BigInt    @id @default(autoincrement())
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  updatedAt  DateTime? @updatedAt
   title      String
   statement  String?
+  answer     String
   type       String
   Author     User      @relation(fields: [authorId], references: [id])
   authorId   BigInt
@@ -64,7 +65,7 @@ model Problem {
 //   statement: string;
 //   solved?: number;
 //   views?: number;
-//   postDate?: number;
+//   createdAt?: number;
 //   updateDate?: number;
 //   authorId?: string;
 //   type: ProblemAnswerType;
