@@ -24,6 +24,7 @@ import {
 import { ProblemCard, ProblemCardSkeleton } from "../components";
 import { PageTemplate } from "@/templates";
 import { useDebounce } from "@/hooks";
+import { PROBLEM_SAMPLE_7 } from "@/libs/firebase/placeholders";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -39,14 +40,22 @@ export function ProblemListPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const resetDatabase = useCallback(async () => {
-    console.log("Reset Database!");
-
-    for (const problem of problems) {
-      if (problem.id) await deleteDoc(doc(db, "problems", problem.id));
-    }
-
-    populateProblems();
-  }, [problems]);
+    fetch(`${window.location.origin}/api/problem/`, {
+      method: "POST",
+      body: JSON.stringify(PROBLEM_SAMPLE_7),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then(async (res) => {
+        console.log("OK!!");
+        console.log(await res.json());
+      })
+      .catch((e) => {
+        console.log("Not ok");
+        console.error(e);
+      });
+  }, []);
 
   const renderHeader = useMemo(
     () => (
@@ -212,9 +221,10 @@ export function ProblemListPage() {
     () => (
       <Paragraph as="h1" className="mb-8">
         Problems
+        <Button onClick={resetDatabase}>Hehe</Button>
       </Paragraph>
     ),
-    []
+    [resetDatabase]
   );
 
   return (

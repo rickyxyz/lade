@@ -1,38 +1,35 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { json, prisma } from "@/utils/api";
+import { getPrisma, json } from "@/utils/api";
+import { ProblemType } from "@/types";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
+  const prisma = getPrisma();
   const { method } = req;
 
   if (method !== "GET") {
     res.status(500).json({
-      message: "internal server error",
+      error: "internal server error",
     });
+    return;
   }
 
-  let result: any;
+  let result: ProblemType[] | undefined;
   try {
-    const allTopics = await prisma.topic.findMany();
-    const allSubtopics = await prisma.subtopic.findMany();
-    result = JSON.parse(
-      json({
-        topics: allTopics,
-        subtopics: allSubtopics,
-      })
-    );
+    const problems = await prisma.problem.findMany();
+    result = JSON.parse(json(problems));
   } catch (e) {
-    result = true;
+    result = undefined;
   }
 
   if (result) {
     res.status(200).json(result);
   } else {
     res.status(500).json({
-      message: "internal server error",
+      error: "internal server error",
     });
   }
 

@@ -5,8 +5,8 @@ import { parseTopicId } from "@/utils";
 import clsx from "clsx";
 
 export interface ProblemDetailTopics {
-  topic: ProblemTopicNameType;
-  subtopic: ProblemSubtopicNameType;
+  topicId: ProblemTopicNameType;
+  subTopicId: ProblemSubtopicNameType;
   className?: string;
 }
 

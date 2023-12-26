@@ -52,13 +52,13 @@ export type ProblemSubtopicMapType<K extends ProblemTopicNameType> =
 type ProblemMapTypeTopicType<
   K extends ProblemTopicNameType = ProblemTopicNameType
 > = {
-  [P in K]: { topic: P } & {
-    subtopic: ProblemSubtopicMapType<P>;
+  [P in K]: { topicId: P } & {
+    subTopicId: ProblemSubtopicMapType<P>;
   };
 }[K];
 
 export interface ProblemBaseType {
-  id?: string;
+  id: string;
   title: string;
   statement: string;
   solved?: number;

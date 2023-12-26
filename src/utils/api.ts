@@ -1,13 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export const prisma = new PrismaClient({
+const prisma = new PrismaClient({
   datasources: {
     db: {
       url: process.env.DATABASE_URL,
     },
   },
 });
+
+export function getPrisma() {
+  return prisma;
+}
 
 export interface GenericAPIParams {
   req: NextApiRequest;

@@ -14,10 +14,11 @@ import {
 } from "@/types";
 
 export const PROBLEM_BLANK: ProblemType = {
+  id: "",
   statement: "",
   title: "",
-  topic: "calculus",
-  subtopic: "derivatives",
+  topicId: "calculus",
+  subTopicId: "derivatives",
   type: "short_answer",
   answer: "",
 };
@@ -32,15 +33,15 @@ export const PROBLEM_DEFAULT: ProblemType = {
 export const CONTEST_DEFAULT: ContestDatabaseType = {
   description: "",
   title: "",
-  topic: "calculus",
-  subtopic: "derivatives",
+  topicId: "calculus",
+  subTopicId: "derivatives",
 };
 
 export const CONTEST_BLANK: ContestBlankType = {
   description: "",
   title: "",
-  topic: "",
-  subtopic: "",
+  topicId: "",
+  subTopicId: "",
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {
