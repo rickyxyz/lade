@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
@@ -48,6 +48,7 @@
     "@typescript-eslint/parser": "^5.59.7",
     "autoprefixer": "^10.4.14",
     "codemirror": ">=6.0.0",
+    "cypress": "^13.6.1",
     "eslint": "^8.41.0",
     "eslint-config-next": "13.2.4",
     "jest": "^29.7.0",
