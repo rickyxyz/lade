@@ -3,4 +3,4 @@ pre-commit:
   commands:
     lint:
       glob: '*.{js,ts,jsx,tsx}'
-      run: npm run lint
+      run: yarn lint
