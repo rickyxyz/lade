@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemType, StateType } from "@/types";

@@ -1,4 +1,4 @@
-import { ContestDatabaseType, ProblemDatabaseType, UserType } from "@/types";
+import { ContestDatabaseType, ProblemBaseType, UserType } from "@/types";
 
 export interface CrudPathPropertyType {
   type: OperationType;
@@ -9,8 +9,8 @@ export interface CrudPathPropertyType {
 export interface CrudMapPathToParams {
   get_problem: GetDataType;
   get_problems: Record<string, never>;
-  set_problem: SetDataType<ProblemDatabaseType>;
-  update_problem: UpdateDataType<Partial<ProblemDatabaseType>>;
+  set_problem: SetDataType<ProblemBaseType>;
+  update_problem: UpdateDataType<Partial<ProblemBaseType>>;
   get_user: GetDataType;
   set_user: SetDataType<UserType>;
   update_user: UpdateDataType<Partial<UserType>>;
@@ -30,8 +30,8 @@ export interface CrudMapOperationToParams<X = unknown> {
 export type OperationType = keyof CrudMapOperationToParams;
 
 export interface CrudMapPathToReturnTypes {
-  get_problem: ProblemDatabaseType;
-  get_problems: ProblemDatabaseType[];
+  get_problem: ProblemBaseType;
+  get_problems: ProblemBaseType[];
   set_problem: { id: string };
   get_user: UserType;
   set_user: { id: string };

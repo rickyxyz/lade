@@ -16,7 +16,6 @@ import { parseAnswer, parseTopicId } from "@/utils";
 import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
 import { useIdentity } from "@/features/Auth";
 import clsx from "clsx";
-import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
 import { useRouter } from "next/router";
 import { useDebounce } from "@/hooks";
 
@@ -44,7 +43,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
   const stateAccept = useState<unknown>({
     content: "",
   });
-  const [accept, setAccept] = stateAccept;
+  const setAccept = stateAccept[1];
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
@@ -79,21 +78,20 @@ export function ProblemDetailPage({ id }: ProblemProps) {
       },
       {
         name: "Delete",
-        handler: () => {},
+        handler: () => {
+          return;
+        },
         permission: "author",
       },
       {
         name: "Bookmark",
-        handler: () => {},
+        handler: () => {
+          return;
+        },
         permission: "viewer",
       },
     ],
     [setMode]
-  );
-
-  const renderEditHeader = useMemo(
-    () => <h1 className="mb-8">Edit Problem</h1>,
-    []
   );
 
   const renderQuestion = useMemo(() => {

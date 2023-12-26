@@ -1,4 +1,4 @@
-import { SetStateAction, useCallback } from "react";
+import { useCallback } from "react";
 import { DateTimeType, StateType } from "@/types";
 import { Input } from "../";
 import { Setting } from "./Setting";
@@ -9,7 +9,7 @@ interface SettingDate {
 }
 
 export function SettingDate({ name, stateDate }: SettingDate) {
-  const [date, setDate] = stateDate;
+  const setDate = stateDate[1];
 
   const handleUpdateDate = useCallback(
     (prev: DateTimeType | undefined, raw: string): DateTimeType => {

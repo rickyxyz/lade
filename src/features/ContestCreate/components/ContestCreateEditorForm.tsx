@@ -12,7 +12,7 @@ import {
 import { PROBLEM_SUBTOPIC_OPTIONS, PROBLEM_TOPIC_OPTIONS } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
-import { useDebounce, useProblemEditInitialized } from "@/hooks";
+import { useProblemEditInitialized } from "@/hooks";
 import { crudData } from "@/libs/firebase";
 import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
@@ -32,13 +32,12 @@ export function ContestEditForm({
 
   const stateStart = useState<DateTimeType>();
   const stateEnd = useState<DateTimeType>();
-  const [start, setStart] = stateStart;
-  const [end, setEnd] = stateEnd;
+  const start = stateStart[0];
+  const end = stateEnd[0];
   const [problems, setProblems] = useState<ProblemType[]>([]);
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
-  const debounce = useDebounce();
 
   const {
     setFieldValue,

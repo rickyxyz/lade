@@ -13,7 +13,6 @@ export type Either<T, U> = Only<T, U> | Only<U, T>;
 
 export * from "./auth";
 export * from "./date";
-export * from "./icon";
 export * from "./problem";
 export * from "./layout";
 export * from "./component";

@@ -34,6 +34,7 @@ export const CONTEST_DEFAULT: ContestDatabaseType = {
   title: "",
   topic: "calculus",
   subtopic: "derivatives",
+  problems: {},
 };
 
 export const CONTEST_BLANK: ContestBlankType = {
@@ -41,6 +42,7 @@ export const CONTEST_BLANK: ContestBlankType = {
   title: "",
   topic: "",
   subtopic: "",
+  problems: "",
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {

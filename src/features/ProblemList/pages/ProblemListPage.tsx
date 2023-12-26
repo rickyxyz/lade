@@ -8,7 +8,7 @@ import {
   orderBy,
   QueryConstraint,
 } from "firebase/firestore";
-import { Button, Card, Paragraph, Select } from "@/components";
+import { Paragraph, Select } from "@/components";
 import {
   ProblemSortByType,
   ProblemSubtopicNameType,
@@ -34,7 +34,7 @@ export function ProblemListPage() {
   const stateSubtopic = useState<ProblemSubtopicNameType | undefined>();
   const [subtopic, setSubtopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>("newest");
-  const [sortBy, setSortBy] = stateSortBy;
+  const sortBy = stateSortBy[0];
   const debounce = useDebounce();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,59 +47,6 @@ export function ProblemListPage() {
 
     populateProblems();
   }, [problems]);
-
-  const renderHeader = useMemo(
-    () => (
-      <Card>
-        <h1 className="mb-4">Problems</h1>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col max-w-1/3">
-            <h3 className="!text-sm">Topics</h3>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={PROBLEM_TOPIC_OPTIONS}
-              selectedOption={topic}
-              onSelectOption={(option) => {
-                option ? setTopic(option.id) : setTopic(undefined);
-                setSubtopic(undefined);
-              }}
-              unselectedText="Any"
-              optional
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <h3 className="!text-sm">Subtopics</h3>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-              selectedOption={subtopic}
-              onSelectOption={(option) => {
-                option ? setSubtopic(option.id) : setTopic(undefined);
-              }}
-              disabled={!topic}
-              unselectedText="Any"
-              optional
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <h3 className="!text-sm">Sort By</h3>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={PROBLEM_SORT_BY_OPTIONS}
-              selectedOption={sortBy}
-              onSelectOption={(option) => {
-                option && setSortBy(option.id);
-              }}
-            />
-          </div>
-        </div>
-      </Card>
-    ),
-    [setSortBy, setSubtopic, setTopic, sortBy, subtopic, topic]
-  );
 
   const renderProblems = useMemo(
     () =>
