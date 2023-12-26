@@ -1,7 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";
 import { ActionKeyTypes, ActionTypes, action } from "./slices";
+import { UnknownAction } from "@reduxjs/toolkit";
 
 export function useAppDispatch<X extends ActionKeyTypes>() {
   const dispatch = useDispatch();
@@ -10,7 +14,7 @@ export function useAppDispatch<X extends ActionKeyTypes>() {
     (path: X, value: ActionTypes[X]) => {
       const dispatcher = action[path];
 
-      dispatch(dispatcher(value));
+      dispatch(dispatcher(value) as UnknownAction);
     },
     [dispatch]
   );

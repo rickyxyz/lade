@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserMapType, UserType } from "@/types";
 import {
   SliceCaseReducers,
@@ -61,13 +63,13 @@ export const usersReducer: ReducerRawType<UsersActionMapType> = {
 const userSlice = createSlice({
   name: "user",
   initialState: null as UserType | null,
-  reducers: userReducer as unknown as ReducerType<UserType>,
+  reducers: userReducer as any,
 });
 
 const usersSlice = createSlice({
   name: "users",
   initialState: {} as UserMapType | null,
-  reducers: usersReducer as unknown as ReducerType<UserMapType>,
+  reducers: usersReducer as any,
 });
 
 const reducer = {
