@@ -25,6 +25,7 @@ import { ProblemCard, ProblemCardSkeleton } from "../components";
 import { PageTemplate } from "@/templates";
 import { useDebounce } from "@/hooks";
 import { PROBLEM_SAMPLE_7 } from "@/libs/firebase/placeholders";
+import { api } from "@/utils/api";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -40,21 +41,24 @@ export function ProblemListPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const resetDatabase = useCallback(async () => {
-    fetch(`${window.location.origin}/api/problem/`, {
-      method: "POST",
-      body: JSON.stringify(PROBLEM_SAMPLE_7),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then(async (res) => {
-        console.log("OK!!");
-        console.log(await res.json());
+    const out = await api
+      .get("/problems")
+      .then((res) => {
+        console.log("Result:");
+        console.log(res.data);
+        return res.data;
+        // setProblems(r)
       })
       .catch((e) => {
-        console.log("Not ok");
-        console.error(e);
+        console.log("Result:");
+        console.log(e);
+        return null;
       });
+
+    if (out) {
+      setProblems(out);
+      setLoading(false);
+    }
   }, []);
 
   const renderHeader = useMemo(
@@ -213,9 +217,9 @@ export function ProblemListPage() {
     });
   }, [debounce, sortBy, subtopic, topic]);
 
-  useEffect(() => {
-    handleGetProblems();
-  }, [topic, subtopic, sortBy, handleGetProblems]);
+  // useEffect(() => {
+  //   handleGetProblems();
+  // }, [topic, subtopic, sortBy, handleGetProblems]);
 
   const renderHead = useMemo(
     () => (

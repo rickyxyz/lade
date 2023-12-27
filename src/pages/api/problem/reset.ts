@@ -1,18 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getPrisma } from "@/utils/api";
+import { prisma } from "@/utils/api";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const prisma = getPrisma();
   const { method } = req;
 
   if (method !== "POST") {
-    res.status(500).json({
-      error: "internal server error",
-    });
+    res.status(405).json({ message: "fail" });
     return;
   }
 
@@ -23,7 +20,7 @@ export default async function handler(
   } catch (e) {
     console.log(e);
     res.status(500).json({
-      error: "internal server error",
+      message: "fail",
     });
   }
 

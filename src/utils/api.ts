@@ -1,17 +1,23 @@
 import { PrismaClient } from "@prisma/client";
+import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export function getPrisma() {
-  return prisma;
-}
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+  });
+
+export const api = axios.create({
+  baseURL: "http://localhost:8000/api",
+  timeout: 1000,
+});
 
 export interface GenericAPIParams {
   req: NextApiRequest;

@@ -8,7 +8,7 @@ import {
 import { parseMatrixSize } from "./matrix";
 
 export function validateFormProblem(problem: ProblemType) {
-  const { title, statement, answer, topic, subtopic, type } = problem;
+  const { title, statement, answer, type } = problem;
 
   const errors: Partial<Record<keyof ProblemType, string>> = {};
 

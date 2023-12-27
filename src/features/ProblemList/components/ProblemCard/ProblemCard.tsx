@@ -20,16 +20,14 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     id,
     statement,
     title,
-    topic,
-    subtopic,
+    topicId,
+    subTopicId,
     solved = 0,
     views = 0,
     authorId,
   } = problem;
 
   const user = useAppSelector("user");
-  const [author, setAuthor] = useState<UserType>();
-  const { identify } = useIdentity();
 
   const permission = useMemo(
     () =>
@@ -44,9 +42,13 @@ export function ProblemCard({ problem }: ProblemCardProps) {
 
   const renderTags = useMemo(
     () => (
-      <ProblemDetailTopics className="mb-4" topic={topic} subtopic={subtopic} />
+      <ProblemDetailTopics
+        className="mb-4"
+        topic={topicId}
+        subTopic={subTopicId}
+      />
     ),
-    [subtopic, topic]
+    [subTopicId, topicId]
   );
 
   const renderMain = useMemo(
@@ -83,14 +85,11 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderStats = useMemo(
     () => (
       <div className="flex items-center justify-end text-sm text-gray-600 gap-6">
-        <ProblemDetailStats
-          text={String(author?.username ?? "")}
-          icon={BsPersonFill}
-        />
+        <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
         <ProblemDetailStats text={String(solved)} icon={BsCheckCircleFill} />
       </div>
     ),
-    [author?.username, solved]
+    [authorId, solved]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -101,17 +100,6 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   useEffect(() => {
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
-
-  const handleGetUsername = useCallback(async () => {
-    if (authorId) {
-      const creator = await identify(authorId);
-      creator && setAuthor(creator);
-    }
-  }, [authorId, identify]);
-
-  useEffect(() => {
-    handleGetUsername();
-  }, [handleGetUsername]);
 
   return (
     <Card>

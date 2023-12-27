@@ -5,23 +5,23 @@ import { parseTopicId } from "@/utils";
 import clsx from "clsx";
 
 export interface ProblemDetailTopics {
-  topicId: ProblemTopicNameType;
-  subTopicId: ProblemSubtopicNameType;
+  topic: ProblemTopicNameType;
+  subTopic: ProblemSubtopicNameType;
   className?: string;
 }
 
 export function ProblemDetailTopics({
   className,
   topic,
-  subtopic,
+  subTopic,
 }: ProblemDetailTopics) {
   const topicText = useMemo(() => parseTopicId(topic).name, [topic]);
-  const subtopicText = useMemo(() => parseTopicId(subtopic).name, [subtopic]);
+  const subtopicText = useMemo(() => parseTopicId(subTopic).name, [subTopic]);
 
   return (
     <div className={clsx("flex flex-wrap justfiy-center gap-4", className)}>
       {topic && <Tag>{topicText}</Tag>}
-      {subtopic && <Tag>{subtopicText}</Tag>}
+      {subTopic && <Tag>{subtopicText}</Tag>}
     </div>
   );
 }

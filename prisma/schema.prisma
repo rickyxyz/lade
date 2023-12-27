@@ -11,34 +11,34 @@ datasource db {
 }
 
 model User {
-  userId  String    @id @unique
-  Problem Problem[]
-  Solved  Solved[]
+  userId   String    @id @unique
+  problems Problem[]
+  solveds  Solved[]
 }
 
 model Solved {
   id        BigInt   @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [userId])
+  user      User     @relation(fields: [userId], references: [userId])
   userId    String
-  Problem   Problem  @relation(fields: [problemId], references: [id])
+  problem   Problem  @relation(fields: [problemId], references: [id])
   problemId String
 }
 
 model Topic {
   id        String     @id @unique
   name      String
-  Subtopics Subtopic[]
-  Problems  Problem[]
+  subtopics Subtopic[]
+  problems  Problem[]
 }
 
 model Subtopic {
-  id      String    @id @unique
-  name    String
-  topicId String
-  Problem Problem[]
-  Topic   Topic     @relation(fields: [topicId], references: [id])
+  id       String    @id @unique
+  name     String
+  topicId  String
+  topic    Topic     @relation(fields: [topicId], references: [id])
+  problems Problem[]
 }
 
 model Problem {
@@ -49,13 +49,13 @@ model Problem {
   statement  String?
   answer     String
   type       String
-  Author     User      @relation(fields: [authorId], references: [userId])
+  author     User      @relation(fields: [authorId], references: [userId])
   authorId   String
-  Topic      Topic?    @relation(fields: [topicId], references: [id])
+  topic      Topic?    @relation(fields: [topicId], references: [id])
   topicId    String?
-  Subtopic   Subtopic? @relation(fields: [subTopicId], references: [id])
+  subtopic   Subtopic? @relation(fields: [subTopicId], references: [id])
   subTopicId String?
-  Solved     Solved[]
+  solveds    Solved[]
 }
 
 // export interface ProblemBaseType {

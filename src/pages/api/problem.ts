@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { GenericAPIParams, getPrisma, json } from "@/utils/api";
+import { GenericAPIParams, prisma, json } from "@/utils/api";
 import {
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
@@ -48,7 +48,7 @@ async function POST({ prisma, req, res }: GenericAPIParams) {
   } catch (e) {
     console.log(e);
     res.status(500).json({
-      error: "internal server error 2",
+      message: "fail",
     });
   }
 }
@@ -73,7 +73,7 @@ async function GET({ prisma, req, res }: GenericAPIParams) {
   } catch (e) {
     console.log(e);
     res.status(500).json({
-      error: "internal server error 2",
+      message: "fail",
     });
   }
 }
@@ -82,7 +82,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const prisma = getPrisma();
   const { method } = req;
 
   switch (method) {
@@ -101,9 +100,7 @@ export default async function handler(
       });
       break;
     default:
-      res.status(500).json({
-        error: "internal server error 1",
-      });
+      res.status(405).json({ message: "fail" });
       break;
   }
 
