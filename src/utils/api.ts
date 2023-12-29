@@ -22,7 +22,7 @@ export const api = axios.create({
 export interface GenericAPIParams {
   req: NextApiRequest;
   res: NextApiResponse;
-  prisma: typeof prisma;
+  prisma?: typeof prisma;
 }
 
 export const json = (param: any): any => {

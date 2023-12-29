@@ -1,18 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { GenericAPIParams, prisma, json } from "@/utils/api";
-import {
-  PROBLEM_TOPICS_DETAIL_OBJECT,
-  PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
-} from "@/consts";
-import { ProblemAllTopicNameType, ProblemType } from "@/types";
-import {
-  PROBLEM_SAMPLE_1,
-  PROBLEM_SAMPLE_2,
-  PROBLEM_SAMPLE_3,
-} from "@/libs/firebase/placeholders";
+import { prisma } from "@/libs/prisma";
+import { GenericAPIParams, json } from "@/utils/api";
+import { ProblemType } from "@/types";
 
-async function POST({ prisma, req, res }: GenericAPIParams) {
+async function POST({ req, res }: GenericAPIParams) {
   try {
     const { query } = req;
     const {
@@ -53,7 +45,7 @@ async function POST({ prisma, req, res }: GenericAPIParams) {
   }
 }
 
-async function GET({ prisma, req, res }: GenericAPIParams) {
+async function GET({ req, res }: GenericAPIParams) {
   try {
     const {
       query: { id },
@@ -63,6 +55,11 @@ async function GET({ prisma, req, res }: GenericAPIParams) {
       const out = await prisma.problem.findUnique({
         where: {
           id,
+        },
+        include: {
+          solveds: true,
+          topic: true,
+          subTopic: true,
         },
       });
 
@@ -87,14 +84,12 @@ export default async function handler(
   switch (method) {
     case "GET":
       await GET({
-        prisma,
         req,
         res,
       });
       break;
     case "POST":
       await POST({
-        prisma,
         req,
         res,
       });

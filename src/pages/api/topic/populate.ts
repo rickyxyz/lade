@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { GenericAPIParams, prisma } from "@/utils/api";
+import { prisma } from "@/libs/prisma";
 import {
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,

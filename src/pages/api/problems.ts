@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma, json } from "@/utils/api";
+import { prisma } from "@/libs/prisma";
+import { json } from "@/utils/api";
 import { ProblemType } from "@/types";
 
 export default async function handler(
@@ -21,7 +22,8 @@ export default async function handler(
     const problems = await prisma.problem.findMany({
       include: {
         topic: true,
-        subtopic: true,
+        subTopic: true,
+        solveds: true,
       },
     });
     result = JSON.parse(json(problems));
