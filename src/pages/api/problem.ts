@@ -4,9 +4,40 @@ import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
 
+async function PATCH({ req, res }: GenericAPIParams) {
+  try {
+    const { body } = req;
+    const { answer, statement, subTopicId, title, topicId, type, id } =
+      body as unknown as ProblemType;
+
+    await prisma.problem.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        statement,
+        answer,
+        topicId,
+        subTopicId,
+        type,
+        updatedAt: new Date(),
+      },
+    });
+
+    res.status(200).json({ message: "success" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: "fail",
+    });
+  }
+}
+
 async function POST({ req, res }: GenericAPIParams) {
   try {
-    const { query } = req;
+    const { body } = req;
+
     const {
       answer,
       statement,
@@ -17,10 +48,8 @@ async function POST({ req, res }: GenericAPIParams) {
       authorId,
       createdAt,
       id,
-      solved,
-      updateDate,
-      views,
-    } = query as unknown as ProblemType;
+    } = body as unknown as ProblemType;
+
     await prisma.problem.create({
       data: {
         id,
@@ -90,6 +119,12 @@ export default async function handler(
       break;
     case "POST":
       await POST({
+        req,
+        res,
+      });
+      break;
+    case "PATCH":
+      await PATCH({
         req,
         res,
       });
