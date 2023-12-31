@@ -1,6 +1,4 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { parseAnswer, validateFormProblem } from "@/utils";
 import { ContentEditType, ProblemType, StateType } from "@/types";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
@@ -54,6 +52,7 @@ export function ProblemCreateEditor({
         ...common,
       };
 
+      console.log("onSubmit");
       onSubmit(completeValues);
     },
     [answer, onSubmit, setLoading, user?.id]

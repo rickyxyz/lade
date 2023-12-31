@@ -8,9 +8,22 @@ import {
 import { parseMatrixSize } from "./matrix";
 
 export function validateFormProblem(problem: ProblemType) {
-  const { title, statement, answer, type } = problem;
+  const { id, title, statement, answer, type } = problem;
 
   const errors: Partial<Record<keyof ProblemType, string>> = {};
+
+  const regex = new RegExp("^[a-zA-Z0-9_]*$");
+  const lettersBetweenHypens =
+    id.split("-").filter((words) => words.length === 0 || !regex.test(words))
+      .length > 0;
+
+  if (lettersBetweenHypens) {
+    errors.id = "ID must be alphanumeric.";
+  } else if (id.length < 4) {
+    errors.id = "ID is too short.";
+  } else if (id.length > 24) {
+    errors.id = "ID is too long.";
+  }
 
   if (title === "") {
     errors.title = "Title must not be empty.";

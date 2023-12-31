@@ -1,6 +1,5 @@
 import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 import clsx from "clsx";
-import { IconNameType } from "@/types";
 import { Icon } from "../Icon";
 import { IconType } from "react-icons";
 
@@ -47,7 +46,7 @@ export function Input({
         </label>
       )}
       <div
-        className={clsx("relative w-fit", label && "mt-2", wrapperClassName)}
+        className={clsx("relative w-full", label && "mt-2", wrapperClassName)}
       >
         {iconLeft && (
           <Icon
@@ -71,7 +70,7 @@ export function Input({
           />
         )}
       </div>
-      {errorText && <div className="text-red-600 mt-2">{errorText}</div>}
+      {errorText && <span className="text-red-600 mt-2">{errorText}</span>}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 @layer base {
   p,
-  span {
+  span,
+  input {
     @apply text-zinc-800 text-base;
   }
   *:focus {

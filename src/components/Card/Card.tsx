@@ -22,4 +22,4 @@ export function Card(props: CardProps) {
   return <div {...commonProps} />;
 }
 
-const CARD_BASE_STYLE = "p-8 border border-gray-200";
+const CARD_BASE_STYLE = "p-8 border border-gray-200 max-w-full";

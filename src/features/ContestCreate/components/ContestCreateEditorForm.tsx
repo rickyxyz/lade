@@ -1,6 +1,4 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { Input, Markdown, Button, Icon } from "@/components";
 import {
   ContentViewType,
@@ -50,7 +48,7 @@ export function ContestEditForm({
     validateForm,
   } = useFormikContext<ContestDatabaseType>();
 
-  const { description, subtopic, topic } = values;
+  const { description, subTopicId, topicId } = values;
 
   const loading = stateLoading[0];
 
@@ -79,7 +77,7 @@ export function ContestEditForm({
             name="Contest Topic"
             formName="topic"
             options={PROBLEM_TOPIC_OPTIONS}
-            selectedOption={topic}
+            selectedOption={topicId}
             onSelectOption={(option) => {
               setFieldValue("topic", option ? option.id : undefined);
               setFieldValue("subtopic", "");
@@ -90,20 +88,28 @@ export function ContestEditForm({
           <SettingSelect
             name="Contest Subtopic"
             formName="subtopic"
-            options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-            selectedOption={subtopic}
+            options={topicId ? PROBLEM_SUBTOPIC_OPTIONS[topicId] : []}
+            selectedOption={subTopicId}
             onSelectOption={(option) => {
               setFieldValue("subtopic", option ? option.id : undefined);
             }}
             allowClearSelection
-            disabled={!initialized || !topic}
+            disabled={!initialized || !topicId}
           />
           <SettingDate name="Start Date" stateDate={stateStart} />
           {start && <SettingDate name="End Date" stateDate={stateEnd} />}
         </div>
       </section>
     ),
-    [topic, initialized, subtopic, stateStart, start, stateEnd, setFieldValue]
+    [
+      topicId,
+      initialized,
+      subTopicId,
+      stateStart,
+      start,
+      stateEnd,
+      setFieldValue,
+    ]
   );
 
   const renderContestEditor = useMemo(

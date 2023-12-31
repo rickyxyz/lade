@@ -28,13 +28,13 @@ export async function populateProblems() {
     date.setDate(seed % 27);
     date.setMonth(date.getMonth() - 1);
 
-    await crudData("set_problem", {
-      data: {
-        ...problem,
-        solved: Math.floor(seed / 2 - seed / 3),
-        views: seed,
-      },
-    });
+    // await crudData("set_problem", {
+    //   data: {
+    //     ...problem,
+    //     solved: Math.floor(seed / 2 - seed / 3),
+    //     views: seed,
+    //   },
+    // });
   }
 
   return;

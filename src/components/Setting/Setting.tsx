@@ -10,8 +10,8 @@ interface SettingProps {
 
 export function Setting({ name, children, className }: SettingProps) {
   return (
-    <div className={clsx("grid grid-cols-3 gap-2 items-center", className)}>
-      <span className="w-40">{name}</span>
+    <div className={clsx("grid grid-cols-3 gap-2", className)}>
+      <span className="w-40 mt-2">{name}</span>
       {children}
     </div>
   );

@@ -117,9 +117,9 @@ export function ProblemListPage() {
   const renderProblems = useMemo(
     () =>
       loading ? (
-        <ProblemCardSkeleton className="w-[28rem]" />
+        <ProblemCardSkeleton />
       ) : (
-        <div className="flex flex-col gap-8 w-[28rem]">
+        <div className="flex flex-col gap-8">
           {problems.map((problem) => (
             <ProblemCard key={problem.id} problem={problem} />
           ))}
@@ -217,22 +217,42 @@ export function ProblemListPage() {
     });
   }, [debounce, sortBy, subtopic, topic]);
 
+  const handleGetProblemsNew = useCallback(async () => {
+    await api
+      .get("/problems")
+      .then(({ data }) => {
+        setProblems(data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log("Result:");
+        console.log(e);
+      });
+  }, []);
+
   // useEffect(() => {
   //   handleGetProblems();
   // }, [topic, subtopic, sortBy, handleGetProblems]);
+
+  useEffect(() => {
+    handleGetProblemsNew();
+  }, [handleGetProblemsNew]);
 
   const renderHead = useMemo(
     () => (
       <Paragraph as="h1" className="mb-8">
         Problems
-        <Button onClick={resetDatabase}>Hehe</Button>
       </Paragraph>
     ),
-    [resetDatabase]
+    []
   );
 
   return (
-    <PageTemplate head={renderHead} side={renderSidebar}>
+    <PageTemplate
+      head={renderHead}
+      side={renderSidebar}
+      className="!max-w-[28rem]"
+    >
       {renderProblems}
     </PageTemplate>
   );

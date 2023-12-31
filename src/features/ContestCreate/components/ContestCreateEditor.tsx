@@ -1,6 +1,4 @@
 import { ReactNode, useCallback, useState } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { validateFormContest } from "@/utils";
 import {
   ContentEditType,

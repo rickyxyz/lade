@@ -16,9 +16,10 @@ import { parseAnswer, parseTopicId } from "@/utils";
 import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
 import { useIdentity } from "@/features/Auth";
 import clsx from "clsx";
-import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
 import { useRouter } from "next/router";
 import { useDebounce } from "@/hooks";
+import { api } from "@/utils/api";
+import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
 
 interface ProblemData {
   name: string;
@@ -40,7 +41,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     PROBLEM_BLANK as unknown as ProblemType
   );
   const [problem, setProblem] = stateProblem;
-  const { title, topic, subtopic, authorId, solved } = problem;
+  const { title, topic, subTopic, authorId, solved } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -58,14 +59,14 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     () => [
       {
         name: "Author",
-        value: author?.username,
+        value: authorId,
       },
       {
         name: "Solved",
-        value: solved,
+        value: (solved ?? []).length,
       },
     ],
-    [author?.username, solved]
+    [authorId, solved]
   );
 
   const problemAction = useMemo<ProblemAction[]>(
@@ -79,12 +80,16 @@ export function ProblemDetailPage({ id }: ProblemProps) {
       },
       {
         name: "Delete",
-        handler: () => {},
+        handler: () => {
+          return 0;
+        },
         permission: "author",
       },
       {
         name: "Bookmark",
-        handler: () => {},
+        handler: () => {
+          return 0;
+        },
         permission: "viewer",
       },
     ],
@@ -134,23 +139,42 @@ export function ProblemDetailPage({ id }: ProblemProps) {
 
     setLoading(true);
 
-    await crudData("get_problem", {
-      id,
-    }).then((result) => {
-      if (result) {
-        setProblem(result as ProblemType);
-        setAccept(parseAnswer(result.type, result.answer));
+    await api
+      .get("/problem", {
+        params: {
+          id,
+        },
+      })
+      .then(({ data }) => {
+        const { type, answer } = data as ProblemType;
+        setProblem(data);
+        setAccept(parseAnswer(type, answer));
         setLoading(false);
-      }
-    });
+        // console.log("Result:");
+        // console.log(res.data);
+        // return res.data;
+        // setProblems(r)
+      })
+      .catch((e) => {
+        console.log("Result:");
+        console.log(e);
+        return null;
+      });
+
+    // await crudData("get_problem", {
+    //   id,
+    // }).then((result) => {
+    //   if (result) {
+    //     setProblem(result as ProblemType);
+    //     setAccept(parseAnswer(result.type, result.answer));
+    //     setLoading(false);
+    //   }
+    // });
   }, [id, loading, setAccept, setLoading, setProblem]);
 
   useEffect(() => {
     handleGetProblems();
   }, [handleGetProblems]);
-
-  const topicText = useMemo(() => parseTopicId(topic).name, [topic]);
-  const subtopicText = useMemo(() => parseTopicId(subtopic).name, [subtopic]);
 
   const renderBreadCrumb = useMemo(
     () => (
@@ -160,10 +184,10 @@ export function ProblemDetailPage({ id }: ProblemProps) {
             text: "Problems",
           },
           {
-            text: topicText,
+            text: topic?.name,
           },
           {
-            text: subtopicText,
+            text: subTopic?.name,
           },
           {
             text: title,
@@ -172,7 +196,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
         ]}
       />
     ),
-    [subtopicText, title, topicText]
+    [subTopic?.name, title, topic?.name]
   );
 
   const renderHead = useMemo(
@@ -293,7 +317,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
   const renderEditProblem = useMemo(
     () => (
       <PageTemplate>
-        <ProblemCreateEditor
+        {/* <ProblemCreateEditor
           headElement={<h1 className="mb-8">Edit Problem</h1>}
           stateProblem={stateProblem}
           stateLoading={stateLoading}
@@ -301,10 +325,19 @@ export function ProblemDetailPage({ id }: ProblemProps) {
           onLeaveEditor={() => {
             setMode("view");
           }}
+        /> */}
+        <ProblemEditPage
+          stateProblem={stateProblem}
+          onEdit={() => {
+            setMode("view");
+          }}
+          onLeaveEditor={() => {
+            setMode("view");
+          }}
         />
       </PageTemplate>
     ),
-    [handleSubmitEdit, setMode, stateLoading, stateProblem]
+    [setMode, stateProblem]
   );
 
   return mode === "edit" ? renderEditProblem : renderViewProblem;

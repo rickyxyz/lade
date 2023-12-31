@@ -1,8 +1,12 @@
 import { useMemo, useEffect } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { Input, Markdown, Quote, Button } from "@/components";
-import { ContentViewType, ProblemType, StateType } from "@/types";
+import {
+  ContentViewType,
+  ProblemTopicNameType,
+  ProblemType,
+  SelectOptionType,
+  StateType,
+} from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
@@ -15,17 +19,21 @@ import { useProblemEditInitialized } from "@/hooks";
 import { SettingSelect } from "@/components/Setting";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { ProblemAnswer } from "@/features/ProblemDetail";
+import { useTopics } from "@/utils";
+import { SettingInput } from "@/components/Setting/SettingInput";
 
 export interface ProblemCreateEditorFormProps {
   stateMode?: StateType<ContentViewType>;
   stateAnswer: StateType<unknown>;
   stateLoading: StateType<boolean>;
+  disableEditId?: boolean;
   onLeaveEditor?: () => void;
 }
 
 export function ProblemCreateEditorForm({
   stateAnswer,
   stateLoading,
+  disableEditId,
   onLeaveEditor,
 }: ProblemCreateEditorFormProps) {
   const { initialized } = useProblemEditInitialized();
@@ -40,16 +48,28 @@ export function ProblemCreateEditorForm({
     validateForm,
   } = useFormikContext<ProblemType>();
 
-  const { statement, subtopic, topic, type } = values;
+  const { statement, subTopicId, topicId, type, id } = values;
 
   const [answer, setAnswer] = stateAnswer;
   const loading = stateLoading[0];
+
+  const {
+    allTopics: { topics },
+    getSubTopicsFromTopic,
+    getTopicOptions,
+  } = useTopics();
+
+  const topicOptions = useMemo(
+    () => getTopicOptions(topics),
+    [getTopicOptions, topics]
+  );
 
   const renderProblemSettings = useMemo(
     () => (
       <section className="mb-8">
         <h2 className="mb-4">Problem Settings</h2>
         <div className="flex flex-col gap-4">
+          <SettingInput name="Problem ID" formName="id" />
           <SettingSelect
             name="Problem Type"
             formName="type"
@@ -67,29 +87,43 @@ export function ProblemCreateEditorForm({
           />
           <SettingSelect
             name="Problem Topic"
-            formName="topic"
-            options={PROBLEM_TOPIC_OPTIONS}
-            selectedOption={topic}
+            formName="topicId"
+            options={topicOptions}
+            selectedOption={topicId}
             onSelectOption={(option) => {
-              setFieldValue("topic", option ? option.id : undefined);
-              setFieldValue("subtopic", "");
+              setFieldValue("topicId", option ? option.id : undefined);
+              setFieldValue("subTopicId", "");
             }}
             disabled={!initialized}
           />
           <SettingSelect
             name="Problem Subtopic"
-            formName="subtopic"
-            options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-            selectedOption={subtopic}
+            formName="subTopicId"
+            options={
+              topicId
+                ? (getTopicOptions(getSubTopicsFromTopic(topicId)) as any)
+                : []
+            }
+            selectedOption={subTopicId}
             onSelectOption={(option) => {
-              setFieldValue("subtopic", option ? option.id : undefined);
+              setFieldValue("subTopicId", option ? option.id : undefined);
             }}
-            disabled={!initialized || !topic}
+            disabled={!initialized || !topicId}
           />
         </div>
       </section>
     ),
-    [type, initialized, topic, subtopic, setFieldValue, setAnswer]
+    [
+      type,
+      initialized,
+      topicOptions,
+      topicId,
+      getTopicOptions,
+      getSubTopicsFromTopic,
+      subTopicId,
+      setFieldValue,
+      setAnswer,
+    ]
   );
 
   const renderProblemEditor = useMemo(
@@ -133,7 +167,7 @@ export function ProblemCreateEditorForm({
             ]}
           />
           {errors["statement"] && touched["statement"] && (
-            <div className="text-red-600 mt-2">{errors["statement"]}</div>
+            <span className="text-red-600 mt-2">{errors["statement"]}</span>
           )}
         </div>
       </section>

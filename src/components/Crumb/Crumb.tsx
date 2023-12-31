@@ -5,7 +5,7 @@ import { BsChevronRight } from "react-icons/bs";
 import { FontColor } from "@/consts/style";
 
 interface CrumbType {
-  text: string;
+  text?: string;
   onClick?: () => void;
   color?: FontColor;
 }

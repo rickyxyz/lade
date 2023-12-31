@@ -46,8 +46,8 @@ export function ProblemDetailMain({
     id,
     statement,
     title,
-    topic,
-    subtopic,
+    topicId,
+    subTopicId,
     solved = 0,
     views = 0,
     type,
@@ -71,8 +71,11 @@ export function ProblemDetailMain({
       }),
     [problem, user]
   );
-  const topicText = useMemo(() => parseTopicId(topic).name, [topic]);
-  const subtopicText = useMemo(() => parseTopicId(subtopic).name, [subtopic]);
+  const topicText = useMemo(() => parseTopicId(topicId).name, [topicId]);
+  const subtopicText = useMemo(
+    () => parseTopicId(subTopicId).name,
+    [subTopicId]
+  );
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -107,24 +110,28 @@ export function ProblemDetailMain({
     if (!verdict) {
       setCooldownIntv(interval);
     } else {
-      crudData("update_problem", {
-        id,
-        data: {
-          solved: increment(1) as unknown as number,
-        },
-      });
+      // crudData("update_problem", {
+      //   id,
+      //   data: {
+      //     solved: increment(1) as unknown as number,
+      //   },
+      // });
       setProblem((prev) => ({
         ...prev,
-        solved: (prev.solved ?? 0) + 1,
+        solveds: [],
       }));
     }
   }, [accept, id, submitted, type, userAnswer, cooldownIntv, setProblem]);
 
   const renderTags = useMemo(
     () => (
-      <ProblemDetailTopics topic={topic} subtopic={subtopic} className="mb-4" />
+      <ProblemDetailTopics
+        topic={topicId}
+        subTopic={subTopicId}
+        className="mb-4"
+      />
     ),
-    [subtopic, topic]
+    [subTopicId, topicId]
   );
 
   const renderMain = useMemo(

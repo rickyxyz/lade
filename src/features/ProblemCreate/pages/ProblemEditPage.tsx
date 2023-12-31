@@ -1,6 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
@@ -8,13 +6,18 @@ import { ProblemType, StateType } from "@/types";
 import { crudData } from "@/libs/firebase";
 import { useDebounce } from "@/hooks";
 import { useRouter } from "next/router";
+import { api } from "@/utils/api";
 
 export function ProblemEditPage({
   stateProblem,
+  onEdit,
+  onLeaveEditor,
 }: {
   stateProblem: StateType<ProblemType>;
+  onEdit?: () => void;
+  onLeaveEditor?: () => void;
 }) {
-  const problem = stateProblem[0];
+  const setProblem = stateProblem[1];
 
   const stateLoading = useState(false);
   const [, setLoading] = stateLoading;
@@ -27,22 +30,23 @@ export function ProblemEditPage({
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
-      const { id } = problem;
-      await crudData("update_problem", {
-        id: id ?? "invalid",
-        data: values,
-      })
+      const { id } = values;
+
+      console.log(values);
+
+      await api
+        .patch("/problem", values)
         .then(async () => {
           setLoading(false);
-          debounce(() => {
-            router.replace(`/problem/${id}`);
-          });
+          setProblem(values);
+          onEdit && onEdit();
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e);
           setLoading(false);
         });
     },
-    [debounce, problem, router, setLoading]
+    [onEdit, setLoading, setProblem]
   );
 
   return (
@@ -52,6 +56,7 @@ export function ProblemEditPage({
         stateProblem={stateProblem}
         stateLoading={stateLoading}
         onSubmit={handleSubmit}
+        onLeaveEditor={onLeaveEditor}
       />
     </PageTemplate>
   );

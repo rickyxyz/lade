@@ -1,6 +1,4 @@
 import { useMemo, useState } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { ContestDatabaseType } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { ContestEdit } from "../components";

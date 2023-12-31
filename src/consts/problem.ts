@@ -26,7 +26,7 @@ export const PROBLEM_BLANK: ProblemType = {
 export const PROBLEM_DEFAULT: ProblemType = {
   ...PROBLEM_BLANK,
   createdAt: 0,
-  solved: 0,
+  solved: [],
   views: 0,
 };
 
@@ -35,6 +35,7 @@ export const CONTEST_DEFAULT: ContestDatabaseType = {
   title: "",
   topicId: "calculus",
   subTopicId: "derivatives",
+  problems: {},
 };
 
 export const CONTEST_BLANK: ContestBlankType = {
@@ -42,6 +43,7 @@ export const CONTEST_BLANK: ContestBlankType = {
   title: "",
   topicId: "",
   subTopicId: "",
+  problems: "",
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {

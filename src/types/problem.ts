@@ -20,6 +20,7 @@ export type ProblemAllTopicNameType =
 export interface ProblemTopicType {
   id?: string;
   name: string;
+  topicId?: string;
 }
 
 export interface ProblemMainTopicType extends ProblemTopicType {
@@ -61,12 +62,14 @@ export interface ProblemBaseType {
   id: string;
   title: string;
   statement: string;
-  solved?: number;
+  solved?: unknown[];
   views?: number;
   createdAt?: number;
   updateDate?: number;
   authorId?: string;
   type: ProblemAnswerType;
+  topic?: ProblemTopicType;
+  subTopic?: ProblemTopicType;
   answer: string;
 }
 
@@ -108,6 +111,10 @@ export type ContestType = ContestBaseType &
   ProblemMapTypeTopicType & {
     id: string;
   };
+
+export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
+  id?: string;
+};
 
 export type ContestDatabaseType = Omit<ContestType, "id"> & {
   id?: string;

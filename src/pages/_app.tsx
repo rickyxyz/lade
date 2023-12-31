@@ -1,6 +1,8 @@
 import type { AppProps } from "next/app";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
+import "@uiw/react-markdown-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 import { Noto_Sans } from "next/font/google";
 import { mathjax3, md } from "@/utils";
 import { ProblemEditInitializedContext } from "@/hooks";

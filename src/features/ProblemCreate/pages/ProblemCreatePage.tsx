@@ -1,6 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import "@uiw/react-markdown-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
@@ -8,6 +6,7 @@ import { ProblemType } from "@/types";
 import { crudData } from "@/libs/firebase";
 import { useDebounce } from "@/hooks";
 import { useRouter } from "next/router";
+import { api } from "@/utils/api";
 
 export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
@@ -25,13 +24,16 @@ export function ProblemCreatePage() {
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
-      await crudData("set_problem", {
-        data: values,
-      })
-        .then(async (res) => {
+      await api
+        .post("/problem", {
+          ...values,
+          authorId: "placeholder",
+        })
+        .then(() => {
+          const { id } = values;
           debounce(() => {
             setLoading(false);
-            if (res && res.id) router.replace(`/problem/${res.id}`);
+            if (id) router.replace(`/problem/${id}`);
           });
         })
         .catch(() => {

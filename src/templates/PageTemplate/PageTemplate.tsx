@@ -21,7 +21,7 @@ export function PageTemplate({
     <main className="flex flex-col relative w-adaptive-2 mx-auto py-12">
       {head}
       <section className="flex w-full gap-8">
-        <article className={clsx("h-full w-fit", className)}>
+        <article className={clsx("h-full w-full", className)}>
           {children}
         </article>
         {side}

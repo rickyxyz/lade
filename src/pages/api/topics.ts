@@ -20,7 +20,7 @@ export default async function handler(
   let result:
     | {
         topics: ProblemTopicType;
-        subtopics: ProblemTopicType;
+        subTopics: ProblemTopicType;
       }
     | undefined;
   try {
@@ -29,7 +29,7 @@ export default async function handler(
     result = JSON.parse(
       json({
         topics: allTopics,
-        subtopics: allSubtopics,
+        subTopics: allSubtopics,
       })
     );
   } catch (e) {

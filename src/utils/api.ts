@@ -16,7 +16,7 @@ export const prisma =
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_PATH,
-  timeout: 1000,
+  timeout: 5000,
 });
 
 export interface GenericAPIParams {
