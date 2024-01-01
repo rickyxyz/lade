@@ -21,7 +21,10 @@ export default async function handler(
   await prisma.user.deleteMany({});
   await prisma.user.create({
     data: {
-      userId: "admin",
+      id: "admin",
+      email: "admin@admin.com",
+      role: "ADMIN",
+      joinDate: new Date(),
     },
   });
 

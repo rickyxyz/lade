@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
 import "@uiw/react-markdown-editor/markdown-editor.css";
@@ -63,23 +64,26 @@ export default function App({ Component, pageProps }: AppProps) {
           font-family: ${inter.style.fontFamily}!important;
         }
       `}</style>
-      <Provider store={store}>
-        <ProblemEditInitializedContext.Provider
-          value={[initialized, setInitialized]}
-        >
-          <LayoutContext.Provider value={layout}>
-            <div
-              className={clsx(
-                "relative h-full flex flex-col flex-auto overflow-x-hidden",
-                inter.className
-              )}
-            >
-              <PageTemplateNav />
-              <Component {...pageProps} />
-            </div>
-          </LayoutContext.Provider>
-        </ProblemEditInitializedContext.Provider>
-      </Provider>
+
+      <SessionProvider session={pageProps.session}>
+        <Provider store={store}>
+          <ProblemEditInitializedContext.Provider
+            value={[initialized, setInitialized]}
+          >
+            <LayoutContext.Provider value={layout}>
+              <div
+                className={clsx(
+                  "relative h-full flex flex-col flex-auto overflow-x-hidden",
+                  inter.className
+                )}
+              >
+                <PageTemplateNav />
+                <Component {...pageProps} />
+              </div>
+            </LayoutContext.Provider>
+          </ProblemEditInitializedContext.Provider>
+        </Provider>
+      </SessionProvider>
     </>
   );
 }

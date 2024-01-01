@@ -9,6 +9,8 @@ import { SignUpFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
 import { PageTemplate } from "@/templates";
+import { signIn } from "next-auth/react";
+import { api } from "@/utils/api";
 
 export function AuthSignUpPage() {
   const router = useRouter();
@@ -16,8 +18,18 @@ export function AuthSignUpPage() {
   const handleSignUp = useCallback(
     async (values: SignUpFormType, actions: FormikHelpers<SignUpFormType>) => {
       await signUp(values)
-        .then(() => {
+        .then((credential) => credential.user.getIdToken(true))
+        .then(async (idToken) => {
+          const { email, username } = values;
           console.log("Register OK!!");
+          await signIn("credentials", {
+            idToken,
+            redirect: false,
+          });
+          await api.post("/user", {
+            id: username,
+            email,
+          });
           router.push("/");
         })
         .catch((e) => {

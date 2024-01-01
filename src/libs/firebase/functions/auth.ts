@@ -8,6 +8,7 @@ import {
 import { auth } from "../config";
 import { crudData } from "./getterSetter";
 import { SignUpFormType } from "@/types";
+import { signOut as signOutNextAuth } from "next-auth/react";
 
 export function getErrorMessage(code: any) {
   switch (code) {
@@ -68,6 +69,10 @@ export async function signUp(data: SignUpFormType) {
 
 export async function logout() {
   setTimeout(async () => {
-    await signOut(auth);
+    await signOut(auth).then(() => {
+      signOutNextAuth({
+        redirect: false,
+      });
+    });
   }, 300);
 }
