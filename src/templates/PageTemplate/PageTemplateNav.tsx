@@ -44,7 +44,7 @@ export function PageTemplateNav() {
           triggerElement={
             <User
               className="relative"
-              username={user.username}
+              username={user.id}
               captionElement={
                 <Icon
                   className="ml-2"

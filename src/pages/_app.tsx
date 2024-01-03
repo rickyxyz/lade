@@ -15,9 +15,10 @@ import {
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
 import { Provider } from "react-redux";
-import { store } from "@/libs/redux";
+import { persistor, store } from "@/libs/redux";
 import clsx from "clsx";
 import { PageTemplateNav } from "@/templates";
+import { PersistGate } from "redux-persist/integration/react";
 
 const inter = Noto_Sans({
   subsets: ["latin"],
@@ -67,21 +68,23 @@ export default function App({ Component, pageProps }: AppProps) {
 
       <SessionProvider session={pageProps.session}>
         <Provider store={store}>
-          <ProblemEditInitializedContext.Provider
-            value={[initialized, setInitialized]}
-          >
-            <LayoutContext.Provider value={layout}>
-              <div
-                className={clsx(
-                  "relative h-full flex flex-col flex-auto overflow-x-hidden",
-                  inter.className
-                )}
-              >
-                <PageTemplateNav />
-                <Component {...pageProps} />
-              </div>
-            </LayoutContext.Provider>
-          </ProblemEditInitializedContext.Provider>
+          <PersistGate loading={null} persistor={persistor}>
+            <ProblemEditInitializedContext.Provider
+              value={[initialized, setInitialized]}
+            >
+              <LayoutContext.Provider value={layout}>
+                <div
+                  className={clsx(
+                    "relative h-full flex flex-col flex-auto overflow-x-hidden",
+                    inter.className
+                  )}
+                >
+                  <PageTemplateNav />
+                  <Component {...pageProps} />
+                </div>
+              </LayoutContext.Provider>
+            </ProblemEditInitializedContext.Provider>
+          </PersistGate>
         </Provider>
       </SessionProvider>
     </>
