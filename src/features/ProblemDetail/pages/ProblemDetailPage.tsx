@@ -49,9 +49,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
-  const [author, setAuthor] = useState<UserType>();
   const [mode, setMode] = stateMode;
-  const { identify } = useIdentity();
   const router = useRouter();
   const debounce = useDebounce();
 
@@ -253,17 +251,6 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     ),
     [problemAction]
   );
-
-  const handleGetUsername = useCallback(async () => {
-    if (authorId) {
-      const creator = await identify(authorId);
-      creator && setAuthor(creator);
-    }
-  }, [authorId, identify]);
-
-  useEffect(() => {
-    handleGetUsername();
-  }, [handleGetUsername]);
 
   const renderSide = useMemo(
     () => (

@@ -44,7 +44,7 @@ export function Navbar() {
           triggerElement={
             <User
               className="relative"
-              username={user.username}
+              username={user.id}
               captionElement={
                 <Icon
                   className="ml-2"
@@ -100,15 +100,7 @@ export function Navbar() {
 
   const handleInitialize = useCallback(() => {
     return onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const id = user.uid;
-
-        const userData = await crudData("get_user", {
-          id,
-        });
-
-        dispatch("update_user", userData);
-      } else {
+      if (!user) {
         dispatch("reset_user", undefined);
         // User is signed out
         // ...

@@ -2,7 +2,7 @@ export interface UserType {
   id: string;
   email: string;
   role?: string;
-  joinDate: number;
+  joinDate: string;
 }
 
 export type UserMapType = Record<string, UserType>;

@@ -5,25 +5,41 @@ import { useRouter } from "next/router";
 import { login } from "@/libs/firebase";
 import { Button, Card } from "@/components";
 import { validateFormLogin } from "@/utils";
-import { LoginFormType } from "@/types";
+import { LoginFormType, UserType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
 import { PageTemplate } from "@/templates";
 import { signIn } from "next-auth/react";
+import { useAppDispatch } from "@/libs/redux";
+import { api } from "@/utils/api";
 
 export function AuthLoginPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleLogin = useCallback(
     async (values: LoginFormType, actions: FormikHelpers<LoginFormType>) => {
+      const { email } = values;
+
       await login(values)
         .then((credential) => credential.user.getIdToken(true))
-        .then(async (idToken) => {
-          console.log("Login OK!!");
-          await signIn("credentials", {
+        .then((idToken) =>
+          signIn("credentials", {
             idToken,
             redirect: false,
-          });
+          })
+        )
+        .then(() =>
+          api.get("/user", {
+            params: {
+              email,
+            },
+          })
+        )
+        .then((user) => {
+          console.log("Fetched User: ");
+          console.log(user.data);
+          dispatch("update_user", user.data);
           router.push("/");
         })
         .catch((e) => {
@@ -32,7 +48,7 @@ export function AuthLoginPage() {
           actions.setSubmitting(false);
         });
     },
-    [router]
+    [dispatch, router]
   );
 
   const renderForm = useMemo(

@@ -66,7 +66,7 @@ export interface ProblemBaseType {
   views?: number;
   createdAt?: number;
   updateDate?: number;
-  authorId?: string;
+  authorId: string;
   type: ProblemAnswerType;
   topic?: ProblemTopicType;
   subTopic?: ProblemTopicType;

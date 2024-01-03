@@ -11,25 +11,33 @@ import { AuthInput } from "../components/AuthInput";
 import { PageTemplate } from "@/templates";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
+import { useAppDispatch } from "@/libs/redux";
 
 export function AuthSignUpPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleSignUp = useCallback(
     async (values: SignUpFormType, actions: FormikHelpers<SignUpFormType>) => {
+      const now = new Date().toUTCString();
+      const { email, username } = values;
+
       await signUp(values)
         .then((credential) => credential.user.getIdToken(true))
-        .then(async (idToken) => {
-          const { email, username } = values;
-          console.log("Register OK!!");
-          await signIn("credentials", {
+        .then((idToken) =>
+          signIn("credentials", {
             idToken,
             redirect: false,
-          });
-          await api.post("/user", {
+          })
+        )
+        .then(() =>
+          api.post("/user", {
             id: username,
             email,
-          });
+            joinDate: now,
+          })
+        )
+        .then(() => {
           router.push("/");
         })
         .catch((e) => {

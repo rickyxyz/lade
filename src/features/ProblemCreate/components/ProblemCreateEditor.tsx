@@ -38,13 +38,15 @@ export function ProblemCreateEditor({
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
+      if (!user) return;
+
       setLoading(true);
 
       const common: ProblemType = {
         createdAt: new Date().getTime(),
         ...values,
         answer: JSON.stringify(answer),
-        authorId: user?.id,
+        authorId: user.id,
       };
 
       const completeValues: ProblemType = {

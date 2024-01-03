@@ -46,14 +46,13 @@ async function POST({ req, res }: GenericAPIParams) {
       topicId,
       type,
       authorId,
-      createdAt,
       id,
     } = body as unknown as ProblemType;
 
     await prisma.problem.create({
       data: {
         id,
-        authorId: "admin",
+        authorId,
         title,
         type,
         answer,

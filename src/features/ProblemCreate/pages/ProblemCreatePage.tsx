@@ -7,6 +7,7 @@ import { crudData } from "@/libs/firebase";
 import { useDebounce } from "@/hooks";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
+import { useAppSelector } from "@/libs/redux";
 
 export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
@@ -17,6 +18,7 @@ export function ProblemCreatePage() {
   const [, setLoading] = stateLoading;
   const debounce = useDebounce();
   const router = useRouter();
+  const user = useAppSelector("user");
 
   const renderHead = useMemo(() => {
     return <h1 className="mb-8">Create Problem</h1>;
@@ -24,13 +26,16 @@ export function ProblemCreatePage() {
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
+      const { id } = values;
+
+      if (!user) return;
+
       await api
         .post("/problem", {
           ...values,
-          authorId: "placeholder",
+          authorId: user.id,
         })
         .then(() => {
-          const { id } = values;
           debounce(() => {
             setLoading(false);
             if (id) router.replace(`/problem/${id}`);
