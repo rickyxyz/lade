@@ -57,6 +57,7 @@ export function ProblemEditPage({
         stateLoading={stateLoading}
         onSubmit={handleSubmit}
         onLeaveEditor={onLeaveEditor}
+        disableEditId
       />
     </PageTemplate>
   );

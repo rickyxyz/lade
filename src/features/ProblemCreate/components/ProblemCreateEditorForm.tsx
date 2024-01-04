@@ -69,7 +69,11 @@ export function ProblemCreateEditorForm({
       <section className="mb-8">
         <h2 className="mb-4">Problem Settings</h2>
         <div className="flex flex-col gap-4">
-          <SettingInput name="Problem ID" formName="id" />
+          <SettingInput
+            name="Problem ID"
+            formName="id"
+            disabled={disableEditId}
+          />
           <SettingSelect
             name="Problem Type"
             formName="type"
@@ -116,6 +120,7 @@ export function ProblemCreateEditorForm({
     [
       type,
       initialized,
+      disableEditId,
       topicOptions,
       topicId,
       getTopicOptions,

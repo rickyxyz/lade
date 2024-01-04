@@ -57,7 +57,7 @@ export function ProblemCreateEditor({
       console.log("onSubmit");
       onSubmit(completeValues);
     },
-    [answer, onSubmit, setLoading, user?.id]
+    [answer, onSubmit, setLoading, user]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {
