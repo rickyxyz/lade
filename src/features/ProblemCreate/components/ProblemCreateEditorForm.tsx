@@ -19,7 +19,7 @@ import { useProblemEditInitialized } from "@/hooks";
 import { SettingSelect } from "@/components/Setting";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { ProblemAnswer } from "@/features/ProblemDetail";
-import { useTopics, validateId } from "@/utils";
+import { useTopics, validateProblemId } from "@/utils";
 import { SettingInput } from "@/components/Setting/SettingInput";
 import { api } from "@/utils/api";
 
@@ -58,6 +58,10 @@ export function ProblemCreateEditorForm({
     getTopicOptions,
   } = useTopics();
   const { statement, subTopicId, topicId, type, id } = values;
+  const atLeastOneError = useMemo(
+    () => Object.entries(errors).length > 0,
+    [errors]
+  );
 
   const topicOptions = useMemo(
     () => getTopicOptions(topics),
@@ -83,7 +87,7 @@ export function ProblemCreateEditorForm({
 
   const handleVerifyId = useCallback(
     async (newId: string) => {
-      const validId = validateId(newId);
+      const validId = validateProblemId(newId);
       if (validId) return false;
 
       setLoading(true);
@@ -104,13 +108,13 @@ export function ProblemCreateEditorForm({
   );
 
   const handleSubmit = useCallback(async () => {
-    const valid = await handleVerifyId(id);
+    const valid = disableEditId ? true : await handleVerifyId(id);
 
     console.log("valid");
     console.log(valid);
 
     if (valid) submitForm();
-  }, [handleVerifyId, id, submitForm]);
+  }, [disableEditId, handleVerifyId, id, submitForm]);
 
   const renderProblemSettings = useMemo(
     () => (
@@ -243,7 +247,9 @@ export function ProblemCreateEditorForm({
                 <div className="text-red-600 mt-2">{errors["answer"]}</div>
               )
             }
-            onBlur={() => setFieldTouched("answer", true)}
+            onBlur={() => {
+              setFieldTouched("answer", true);
+            }}
             disabled={!initialized}
           />
           <Quote icon={BsInfoCircleFill}>
@@ -271,7 +277,7 @@ export function ProblemCreateEditorForm({
       <div className="flex gap-4">
         <Button
           loading={loading}
-          disabled={!initialized}
+          disabled={!initialized || atLeastOneError}
           type="submit"
           onClick={handleSubmit}
         >
