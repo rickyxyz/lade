@@ -7,23 +7,30 @@ import {
 } from "@/types";
 import { parseMatrixSize } from "./matrix";
 
-export function validateFormProblem(problem: ProblemType) {
-  const { id, title, statement, answer, type } = problem;
-
-  const errors: Partial<Record<keyof ProblemType, string>> = {};
-
-  const regex = new RegExp("^[a-zA-Z0-9_]*$");
+export function validateId(id: string) {
+  const regex = new RegExp("^[a-z0-9_]*$");
   const lettersBetweenHypens =
     id.split("-").filter((words) => words.length === 0 || !regex.test(words))
       .length > 0;
 
   if (lettersBetweenHypens) {
-    errors.id = "ID must be alphanumeric.";
+    return "ID must be alphanumeric and lowercase.";
   } else if (id.length < 4) {
-    errors.id = "ID is too short.";
+    return "ID is too short.";
   } else if (id.length > 24) {
-    errors.id = "ID is too long.";
+    return "ID is too long.";
   }
+
+  return null;
+}
+
+export function validateFormProblem(problem: ProblemType) {
+  const { id, title, statement, answer, type } = problem;
+
+  const errors: Partial<Record<keyof ProblemType, string>> = {};
+
+  const errorId = validateId(id);
+  if (errorId) errors.id = errorId;
 
   if (title === "") {
     errors.title = "Title must not be empty.";

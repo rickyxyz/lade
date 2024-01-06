@@ -3,14 +3,18 @@ import { Field, useFormikContext } from "formik";
 import { Input, Select, SelectProps } from "@/components";
 import { SelectOptionType } from "@/types";
 import { Setting } from "./Setting";
+import { HTMLProps } from "react";
 
-interface SettingInputProps {
+interface SettingInputProps extends HTMLProps<HTMLDivElement> {
   formName: string;
-  name: string;
-  disabled?: boolean;
 }
 
-export function SettingInput({ formName, name, disabled }: SettingInputProps) {
+export function SettingInput({
+  formName,
+  name,
+  disabled,
+  ...rest
+}: SettingInputProps) {
   const { setFieldTouched } = useFormikContext<any>();
 
   return (
@@ -33,8 +37,10 @@ export function SettingInput({ formName, name, disabled }: SettingInputProps) {
             <Input
               {...field}
               type="text"
+              name={formName}
               disabled={disabled}
               errorText={meta.touched && meta.error}
+              {...rest}
             />
           </div>
         )}
