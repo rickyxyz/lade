@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
-import { Input, Markdown, Quote, Button } from "@/components";
+import { Input, Markdown, Quote, Button, Paragraph } from "@/components";
 import {
   ContentViewType,
   ProblemTopicNameType,
@@ -225,7 +225,9 @@ export function ProblemCreateEditorForm({
             ]}
           />
           {errors["statement"] && touched["statement"] && (
-            <span className="text-red-600 mt-2">{errors["statement"]}</span>
+            <Paragraph color="danger-6" className="mt-2">
+              {errors["statement"]}
+            </Paragraph>
           )}
         </div>
       </section>
@@ -244,7 +246,9 @@ export function ProblemCreateEditorForm({
             caption={
               touched["answer"] &&
               errors["answer"] && (
-                <div className="text-red-600 mt-2">{errors["answer"]}</div>
+                <Paragraph color="danger-6" className="mt-2">
+                  {errors["answer"]}
+                </Paragraph>
               )
             }
             onBlur={() => {

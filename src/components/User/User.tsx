@@ -40,13 +40,13 @@ export function User({
         className={clsx(
           "flex items-center justify-center",
           "w-8 h-8",
-          "font-bold rounded-full",
+          "rounded-md",
           username ? "bg-gray-500" : "bg-red-700"
         )}
       >
         <span className="text-white">{userInitials}</span>
       </div>
-      <span className="ml-3 font-bold">{username}</span>
+      <span className="ml-3 ">{username}</span>
       {caption && (
         <>
           <span className="mx-1.5" style={{ fontSize: "8px" }}>

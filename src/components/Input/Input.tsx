@@ -2,6 +2,7 @@ import { DetailedHTMLProps, InputHTMLAttributes } from "react";
 import clsx from "clsx";
 import { Icon } from "../Icon";
 import { IconType } from "react-icons";
+import { Paragraph } from "../Paragraph";
 
 export type InputVariantType = "basic" | "solid";
 
@@ -70,7 +71,11 @@ export function Input({
           />
         )}
       </div>
-      {errorText && <span className="text-red-600 mt-2">{errorText}</span>}
+      {errorText && (
+        <Paragraph color="danger-6" className="mt-2">
+          {errorText}
+        </Paragraph>
+      )}
     </div>
   );
 }

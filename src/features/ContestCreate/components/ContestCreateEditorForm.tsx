@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
-import { Input, Markdown, Button, Icon } from "@/components";
+import { Input, Markdown, Button, Icon, Paragraph } from "@/components";
 import {
   ContentViewType,
   ContestDatabaseType,
@@ -153,7 +153,9 @@ export function ContestEditForm({
             ]}
           />
           {errors["description"] && touched["description"] && (
-            <div className="text-red-600 mt-2">{errors["description"]}</div>
+            <Paragraph color="danger-6" className="mt-2">
+              {errors["description"]}
+            </Paragraph>
           )}
         </div>
       </section>

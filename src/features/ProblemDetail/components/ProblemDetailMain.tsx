@@ -144,6 +144,16 @@ export function ProblemDetailMain({
     []
   );
 
+  const renderAnswerVerdict = useMemo(() => {
+    if (submitted) {
+      return userSolved ? (
+        <Paragraph color="success-5">Correct answer</Paragraph>
+      ) : (
+        <Paragraph color="danger-5">Incorrect answer</Paragraph>
+      );
+    }
+  }, [submitted, userSolved]);
+
   const renderAnswerInputs = useMemo(() => {
     if (userAnswer === undefined || !problem) return;
 
@@ -152,19 +162,17 @@ export function ProblemDetailMain({
         type={type}
         stateAnswer={stateUserAnswer}
         disabled={userSolved}
+        caption={renderAnswerVerdict}
       />
     );
-  }, [problem, stateUserAnswer, type, userAnswer, userSolved]);
-
-  const renderAnswerVerdict = useMemo(() => {
-    if (submitted) {
-      return userSolved ? (
-        <Icon IconComponent={BsCheck} size="l" className="text-green-600" />
-      ) : (
-        <Icon IconComponent={BsX} size="l" className="text-red-600" />
-      );
-    }
-  }, [submitted, userSolved]);
+  }, [
+    problem,
+    renderAnswerVerdict,
+    stateUserAnswer,
+    type,
+    userAnswer,
+    userSolved,
+  ]);
 
   const renderAnswer = useMemo(
     () => (
@@ -187,7 +195,13 @@ export function ProblemDetailMain({
         </div>
       </>
     ),
-    [cooldown, handleCheckAnswer, renderAnswerInputs, userSolved]
+    [
+      cooldown,
+      handleCheckAnswer,
+      renderAnswerInputs,
+      renderAnswerVerdict,
+      userSolved,
+    ]
   );
 
   const handleRenderMarkdown = useCallback(() => {
