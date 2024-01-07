@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import { Noto_Sans } from "next/font/google";
 import { mathjax3, md } from "@/utils";
 import { ProblemEditInitializedContext } from "@/hooks";
 import { LayoutContext } from "@/contexts";
@@ -19,12 +18,7 @@ import { persistor, store } from "@/libs/redux";
 import clsx from "clsx";
 import { PageTemplateNav } from "@/templates";
 import { PersistGate } from "redux-persist/integration/react";
-
-const inter = Noto_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500"],
-});
+import { noto } from "@/libs/fonts";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);
@@ -62,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <style jsx global>{`
         * {
-          font-family: ${inter.style.fontFamily}!important;
+          font-family: ${noto.style.fontFamily}!important;
         }
       `}</style>
 
@@ -76,7 +70,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 <div
                   className={clsx(
                     "relative h-full flex flex-col flex-auto overflow-x-hidden",
-                    inter.className
+                    noto.className
                   )}
                 >
                   <PageTemplateNav />
