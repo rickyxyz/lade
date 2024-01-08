@@ -19,20 +19,22 @@ export function AuthLoginPage() {
 
   const handleLogin = useCallback(
     async (values: LoginFormType, actions: FormikHelpers<LoginFormType>) => {
-      const { email } = values;
-
       await login(values)
-        .then((credential) => credential.user.getIdToken(true))
-        .then((idToken) =>
+        .then((credential) => ({
+          credential,
+          idToken: credential.user.getIdToken(true),
+        }))
+        .then(({ credential, idToken }) => {
           signIn("credentials", {
             idToken,
             redirect: false,
-          })
-        )
-        .then(() =>
+          });
+          return credential;
+        })
+        .then(({ user: { uid } }) =>
           api.get("/user", {
             params: {
-              email,
+              uid,
             },
           })
         )

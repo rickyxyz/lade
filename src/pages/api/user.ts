@@ -8,11 +8,12 @@ async function POST({ req, res }: GenericAPIParams) {
   const { body, method } = req;
 
   try {
-    const { id, email, joinDate } = body as unknown as UserType;
+    const { id, uid, email, joinDate } = body as unknown as UserType;
 
     await prisma.user.create({
       data: {
         id,
+        uid,
         email,
         role: "USER",
         joinDate: new Date(joinDate),
@@ -31,19 +32,19 @@ async function POST({ req, res }: GenericAPIParams) {
 async function GET({ req, res }: GenericAPIParams) {
   try {
     const {
-      query: { email },
+      query: { uid },
     } = req;
 
-    if (typeof email === "string") {
+    if (typeof uid === "string") {
       const out = await prisma.user.findUnique({
         where: {
-          email,
+          uid,
         },
       });
 
       res.status(200).json(JSON.parse(json(out)));
     } else {
-      throw Error("email undefined");
+      throw Error("uid undefined");
     }
   } catch (e) {
     console.log(e);

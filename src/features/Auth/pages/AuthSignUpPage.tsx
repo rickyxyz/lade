@@ -23,16 +23,22 @@ export function AuthSignUpPage() {
       const { email, username } = values;
 
       await signUp(values)
-        .then((credential) => credential.user.getIdToken(true))
-        .then((idToken) =>
+        .then((credential) => ({
+          credential,
+          idToken: credential.user.getIdToken(true),
+        }))
+        .then(({ idToken, credential }) => {
           signIn("credentials", {
             idToken,
             redirect: false,
-          })
-        )
-        .then(() =>
+          });
+
+          return credential;
+        })
+        .then(({ user: { uid } }) =>
           api.post("/user", {
             id: username,
+            uid,
             email,
             joinDate: now,
           })

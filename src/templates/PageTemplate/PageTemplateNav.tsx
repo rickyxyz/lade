@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import { crudData, logout } from "@/libs/firebase";
 import { BsCaretDownFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
+import { signIn } from "next-auth/react";
+import { api } from "@/utils/api";
 
 export function PageTemplateNav() {
   const auth = getAuth();
@@ -104,6 +106,25 @@ export function PageTemplateNav() {
         dispatch("reset_user", undefined);
         // User is signed out
         // ...
+      } else {
+        api
+          .get("/user", {
+            params: {
+              uid: user.uid,
+            },
+          })
+          .then((user) => {
+            console.log("Fetched User: ");
+            console.log(user.data);
+            dispatch("update_user", user.data);
+            router.push("/");
+          });
+        user.getIdToken(true).then((idToken) =>
+          signIn("credentials", {
+            idToken,
+            redirect: false,
+          })
+        );
       }
     });
   }, [auth, dispatch]);
