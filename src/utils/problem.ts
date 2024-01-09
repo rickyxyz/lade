@@ -78,7 +78,7 @@ export function validateFormProblem(problem: ProblemType) {
 
   const answerError = validateFormAnswer({
     type: type as ProblemAnswerType,
-    answer: JSON.parse(answer),
+    answer,
   });
 
   if (answerError) errors.answer = answerError;
@@ -107,7 +107,9 @@ export function validateMatrix(answer: unknown) {
 }
 
 export function validateFormAnswer(problem: Partial<ProblemType>) {
-  const { type, answer } = problem;
+  const { type } = problem;
+
+  const answer = problem.answer ? JSON.parse(problem.answer) : null;
 
   if (!answer) return "Answer must not be empty.";
 
