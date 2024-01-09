@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button, Icon, Input, User, Dropdown, IconText } from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { crudData, logout } from "@/libs/firebase";
 import { BsCaretDownFill } from "react-icons/bs";
@@ -100,17 +100,13 @@ export function PageTemplateNav() {
     [router, user]
   );
 
-  const handleInitialize = useCallback(() => {
-    return onAuthStateChanged(auth, async (user) => {
+  const handleUpdateUser = useCallback(
+    (authUser: UserType) => {
       if (!user) {
-        dispatch("reset_user", undefined);
-        // User is signed out
-        // ...
-      } else {
         api
           .get("/user", {
             params: {
-              uid: user.uid,
+              uid: authUser.uid,
             },
           })
           .then((user) => {
@@ -119,15 +115,29 @@ export function PageTemplateNav() {
             dispatch("update_user", user.data);
             router.push("/");
           });
-        user.getIdToken(true).then((idToken) =>
+
+        authUser.getIdToken(true).then((idToken) =>
           signIn("credentials", {
             idToken,
             redirect: false,
           })
         );
       }
+    },
+    [dispatch, router, user]
+  );
+
+  const handleInitialize = useCallback(() => {
+    return onAuthStateChanged(auth, async (authUser) => {
+      if (!authUser) {
+        dispatch("reset_user", undefined);
+        // User is signed out
+        // ...
+      } else {
+        handleUpdateUser(authUser);
+      }
     });
-  }, [auth, dispatch]);
+  }, [auth, dispatch, handleUpdateUser]);
 
   useEffect(() => {
     const listener = handleInitialize();
