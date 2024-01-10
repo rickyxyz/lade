@@ -64,8 +64,8 @@ export interface ProblemBaseType {
   statement: string;
   solved?: unknown[];
   views?: number;
-  createdAt?: number;
-  updateDate?: number;
+  createdAt?: Date;
+  updateAt?: Date;
   authorId: string;
   type: ProblemAnswerType;
   topic?: ProblemTopicType;

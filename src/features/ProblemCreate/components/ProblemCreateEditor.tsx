@@ -43,7 +43,7 @@ export function ProblemCreateEditor({
       setLoading(true);
 
       const common: ProblemType = {
-        createdAt: new Date().getTime(),
+        createdAt: new Date(),
         ...values,
         answer: JSON.stringify(answer),
         authorId: user.id,
