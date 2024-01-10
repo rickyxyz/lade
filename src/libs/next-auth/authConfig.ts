@@ -11,18 +11,16 @@ export const authConfig: NextAuthOptions = {
       authorize: async ({ idToken }: any, _req) => {
         if (idToken) {
           try {
-            console.log("ID TOKEN");
-            // console.log(idToken);
             const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
-            console.log(decoded);
             const user = await api.get("/user", {
               params: {
                 uid: decoded.uid,
               },
             });
 
-            if (user && user.data.id) {
+            if (user && user.data.id && user.data.role) {
               decoded.username = user.data.id;
+              decoded.role = user.data.role;
               return { ...decoded } as any;
             }
 
@@ -93,15 +91,18 @@ export const authConfig: NextAuthOptions = {
       // in JWT payload
       if (user) {
         token = user;
-        console.log("Where does this validation go");
-        console.log(user);
-        console.log(token);
       }
       return token;
     },
     session: async ({ session, token }: any) => {
       if (session?.user) {
-        session.user.id = token.uid;
+        const { username, role } = token;
+        console.log("Session User");
+        // console.log(token);
+        session.user = {
+          id: username,
+          role,
+        };
       }
       return session;
     },

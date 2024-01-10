@@ -10,12 +10,14 @@ import { BsCaretDownFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
+import { useDebounce } from "@/hooks";
 
 export function PageTemplateNav() {
   const auth = getAuth();
   const user = useAppSelector("user");
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const debounce = useDebounce();
 
   const renderSearchField = useMemo(
     () => (
@@ -102,29 +104,33 @@ export function PageTemplateNav() {
 
   const handleUpdateUser = useCallback(
     (authUser: UserType) => {
-      if (!user) {
-        api
-          .get("/user", {
-            params: {
-              uid: authUser.uid,
-            },
-          })
-          .then((user) => {
-            console.log("Fetched User: ");
-            console.log(user.data);
-            dispatch("update_user", user.data);
-            router.push("/");
-          });
-
-        authUser.getIdToken(true).then((idToken) =>
-          signIn("credentials", {
-            idToken,
-            redirect: false,
-          })
-        );
-      }
+      debounce(() => {
+        if (!user) {
+          console.log("Debounced");
+          api
+            .get("/user", {
+              params: {
+                uid: authUser.uid,
+              },
+            })
+            .then((result) => {
+              console.log("Fetched User: ");
+              console.log(result.data);
+              if (result.data) {
+                dispatch("update_user", result.data);
+                router.push("/");
+                authUser.getIdToken(true).then((idToken) =>
+                  signIn("credentials", {
+                    idToken,
+                    redirect: false,
+                  })
+                );
+              }
+            });
+        }
+      }, 1000);
     },
-    [dispatch, router, user]
+    [debounce, dispatch, router, user]
   );
 
   const handleInitialize = useCallback(() => {

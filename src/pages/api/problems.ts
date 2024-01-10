@@ -3,6 +3,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { json } from "@/utils/api";
 import { ProblemType } from "@/types";
+import { getServerSession } from "next-auth";
+import { authConfig } from "@/libs/next-auth";
+import { getAuthUser } from "@/libs/next-auth/helper";
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,16 +20,30 @@ export default async function handler(
     return;
   }
 
+  const user = await getAuthUser(req, res);
+
   let result: ProblemType[] | undefined;
   try {
-    const problems = await prisma.problem.findMany({
+    const problems = (await prisma.problem.findMany({
       include: {
         topic: true,
         subTopic: true,
         solveds: true,
       },
-    });
-    result = JSON.parse(json(problems));
+    })) as ProblemType[];
+
+    console.log("Authed");
+    console.log(user);
+
+    const removedAnswers = problems.map((problem) => {
+      const temp: ProblemType = { ...problem };
+      if (!user || (temp.authorId !== user.id && user.role !== "admin")) {
+        temp.answer = JSON.stringify({});
+      }
+      return temp;
+    }, []);
+
+    result = JSON.parse(json(removedAnswers));
   } catch (e) {
     result = undefined;
   }

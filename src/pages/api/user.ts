@@ -8,7 +8,7 @@ async function POST({ req, res }: GenericAPIParams) {
   const { body, method } = req;
 
   try {
-    const { id, uid, email, joinDate } = body as unknown as UserType;
+    const { id, uid, email } = body as unknown as UserType;
 
     await prisma.user.create({
       data: {
@@ -16,7 +16,7 @@ async function POST({ req, res }: GenericAPIParams) {
         uid,
         email,
         role: "USER",
-        joinDate: new Date(joinDate),
+        joinDate: new Date(),
       },
     });
 

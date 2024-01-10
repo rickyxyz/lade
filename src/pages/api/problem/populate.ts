@@ -23,6 +23,7 @@ export default async function handler(
     data: {
       id: "admin",
       email: "admin@admin.com",
+      uid: "admin",
       role: "ADMIN",
       joinDate: new Date(),
     },

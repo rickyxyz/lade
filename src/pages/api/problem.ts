@@ -3,12 +3,21 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
+import { getAuthUser } from "@/libs/next-auth/helper";
 
 async function PATCH({ req, res }: GenericAPIParams) {
   try {
     const { body } = req;
-    const { answer, statement, subTopicId, title, topicId, type, id } =
-      body as unknown as ProblemType;
+    const {
+      answer,
+      statement,
+      subTopicId,
+      title,
+      topicId,
+      type,
+      id,
+      authorId,
+    } = body as unknown as ProblemType;
 
     await prisma.problem.update({
       where: {
@@ -18,6 +27,7 @@ async function PATCH({ req, res }: GenericAPIParams) {
         title,
         statement,
         answer,
+        authorId,
         topicId,
         subTopicId,
         type,
@@ -79,6 +89,8 @@ async function GET({ req, res }: GenericAPIParams) {
       query: { id },
     } = req;
 
+    const user = await getAuthUser(req, res);
+
     if (typeof id === "string") {
       const out = await prisma.problem.findUnique({
         where: {
@@ -91,7 +103,16 @@ async function GET({ req, res }: GenericAPIParams) {
         },
       });
 
-      res.status(200).json(JSON.parse(json(out)));
+      const temp = { ...out } as unknown as ProblemType;
+
+      if (
+        out &&
+        (!user || (temp.authorId !== user.id && user.role !== "admin"))
+      ) {
+        temp.answer = JSON.stringify({});
+      }
+
+      res.status(200).json(JSON.parse(json(temp)));
     } else {
       throw Error("id undefined");
     }
