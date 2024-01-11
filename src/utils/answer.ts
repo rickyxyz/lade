@@ -5,38 +5,40 @@ import {
   ProblemAnswerType,
 } from "@/types";
 
-function validateMatrix(correct: any[][], input: number[][]) {
-  const answerRowLengths = correct.reduce(
-    (prev, curr) => ({
-      [curr.length]: true,
-    }),
-    {}
-  );
-  const answerInputLengths = input.reduce(
-    (prev, curr) => ({
-      [curr.length]: true,
-    }),
-    {}
-  );
+function validateMatrix(correct: any, input: any) {
+  const castedCorrect = correct as AnswerType<"matrix">;
+  const castedInput = input as AnswerType<"matrix">;
 
-  return !correct.some((column: any[], j: number) =>
-    column.some((cell, i) => String(cell) !== String(input[j][i]))
+  if (
+    castedInput.matrixWidth !== castedCorrect.matrixWidth ||
+    castedInput.matrixHeight !== castedCorrect.matrixHeight
+  )
+    return false;
+
+  const mCorrect = castedCorrect.content;
+  const mInput = castedInput.content;
+
+  return !mCorrect.some((column: any[], j: number) =>
+    column.some((cell, i) => String(cell) !== String(mInput[j][i]))
   );
 }
 
 export function validateAnswer(
   type: ProblemAnswerType,
   correct: any,
-  input: any
+  input: any,
+  parseJson?: boolean
 ) {
+  if (parseJson) {
+    correct = JSON.parse(correct);
+    input = JSON.parse(input);
+  }
+
   switch (type) {
     case "matrix":
-      // eslint-disable-next-line no-case-declarations
-      return !correct.some((column: any[], j: string | number) =>
-        column.some((cell, i) => String(cell) !== input[j][i])
-      );
+      return validateMatrix(correct, input);
     case "short_answer":
-      return String(input) === String(correct);
+      return String(input.content) === String(correct.content);
   }
   return false;
 }
