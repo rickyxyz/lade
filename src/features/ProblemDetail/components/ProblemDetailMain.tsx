@@ -7,11 +7,10 @@ import {
   useState,
 } from "react";
 import { Button, Card, Crumb, Icon, More, Paragraph, User } from "@/components";
-import { getPermissionForContent, md, parseTopicId } from "@/utils";
+import { getPermissionForContent, makeAnswer, md, parseTopicId } from "@/utils";
 import { ProblemType, ContentViewType, StateType, UserType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
-import { validateAnswer } from "@/utils/answer";
 import { useAppSelector } from "@/libs/redux";
 import { crudData } from "@/libs/firebase";
 import { increment } from "firebase/firestore";
@@ -27,6 +26,7 @@ import { ProblemDetailStats } from "./ProblemDetailStats";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
 import { useIdentity } from "@/features/Auth";
+import { api } from "@/utils/api";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -62,6 +62,7 @@ export function ProblemDetailMain({
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
   const user = useAppSelector("user");
+  const [loading, setLoading] = useState(false);
   const setMode = stateMode[1];
   const permission = useMemo(
     () =>
@@ -79,10 +80,8 @@ export function ProblemDetailMain({
 
   const statementRef = useRef<HTMLDivElement>(null);
 
-  const handleCheckAnswer = useCallback(() => {
-    console.log("Test: ");
-    console.log(accept);
-    if (!id || !accept || !userAnswer) return;
+  const handleCheckAnswer = useCallback(async () => {
+    if (!id || !userAnswer) return;
 
     const now = new Date().getTime();
 
@@ -90,11 +89,26 @@ export function ProblemDetailMain({
       return;
     }
 
-    const verdict = validateAnswer(
-      type,
-      (accept as any).content,
-      userAnswer.content
-    );
+    let verdict = false;
+
+    setLoading(true);
+
+    await api
+      .post("/problem/answer", {
+        id,
+        answer: userAnswer,
+      })
+      .then((res) => {
+        if (res.data.message === "correct") {
+          verdict = true;
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     if (cooldownIntv) clearInterval(cooldownIntv);
 
@@ -121,7 +135,7 @@ export function ProblemDetailMain({
         solveds: [],
       }));
     }
-  }, [accept, id, submitted, type, userAnswer, cooldownIntv, setProblem]);
+  }, [accept, id, submitted, userAnswer, cooldownIntv, setProblem]);
 
   const renderTags = useMemo(
     () => (
@@ -185,7 +199,7 @@ export function ProblemDetailMain({
         <div className="flex items-center justify-between">
           <Button
             className="w-20"
-            disabled={cooldown > 0 || userSolved}
+            disabled={cooldown > 0 || userSolved || loading}
             onClick={handleCheckAnswer}
           >
             {cooldown > 0 && !userSolved
@@ -195,13 +209,7 @@ export function ProblemDetailMain({
         </div>
       </>
     ),
-    [
-      cooldown,
-      handleCheckAnswer,
-      renderAnswerInputs,
-      renderAnswerVerdict,
-      userSolved,
-    ]
+    [cooldown, handleCheckAnswer, loading, renderAnswerInputs, userSolved]
   );
 
   const handleRenderMarkdown = useCallback(() => {

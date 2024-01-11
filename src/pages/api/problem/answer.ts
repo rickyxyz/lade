@@ -42,7 +42,8 @@ export default async function handler(
 
     const { answer: accept } = result;
     const type = result.type as unknown as ProblemAnswerType;
-    const verdict = validateAnswer(type as any, accept, answer, true);
+
+    const verdict = validateAnswer(type as any, JSON.parse(accept), answer);
 
     res.status(200).json({
       message: verdict ? "correct" : "wrong",
