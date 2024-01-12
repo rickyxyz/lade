@@ -112,7 +112,7 @@ export function ProblemDetailMain({
 
     if (cooldownIntv) clearInterval(cooldownIntv);
 
-    setCooldown(5000);
+    setCooldown(10000);
 
     const interval = setInterval(() => {
       setCooldown((prev) => Math.max(0, prev - 100));
@@ -161,12 +161,19 @@ export function ProblemDetailMain({
   const renderAnswerVerdict = useMemo(() => {
     if (submitted) {
       return userSolved ? (
-        <Paragraph color="success-5">Correct answer</Paragraph>
+        <Paragraph weight="semibold" color="success-5">
+          Correct answer
+        </Paragraph>
       ) : (
-        <Paragraph color="danger-5">Incorrect answer</Paragraph>
+        Boolean(cooldown > 0 && !userSolved && Math.ceil(cooldown / 1000)) && (
+          <Paragraph color="danger-5">
+            Incorrect answer. You can answer again in{" "}
+            {Math.ceil(cooldown / 1000)}s
+          </Paragraph>
+        )
       );
     }
-  }, [submitted, userSolved]);
+  }, [cooldown, submitted, userSolved]);
 
   const renderAnswerInputs = useMemo(() => {
     if (userAnswer === undefined || !problem) return;
@@ -202,9 +209,7 @@ export function ProblemDetailMain({
             disabled={cooldown > 0 || userSolved || loading}
             onClick={handleCheckAnswer}
           >
-            {cooldown > 0 && !userSolved
-              ? Math.ceil(cooldown / 1000)
-              : "Submit"}
+            Submit
           </Button>
         </div>
       </>
