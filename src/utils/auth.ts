@@ -57,3 +57,17 @@ export function getPermissionForContent({
 
   return "viewer";
 }
+
+export function checkPermission(
+  perm: ContentAccessType,
+  leastAllowed?: ContentAccessType
+) {
+  if (!leastAllowed) return true;
+
+  const order: ContentAccessType[] = ["viewer", "author", "admin"];
+
+  const perm1 = order.indexOf(perm);
+  const perm2 = order.indexOf(leastAllowed);
+
+  return perm1 >= perm2;
+}

@@ -2,10 +2,13 @@
   p,
   span,
   input {
-    @apply text-zinc-800 text-base;
+    @apply text-zinc-800 text-base font-medium;
   }
   *:focus {
     outline: none;
+  }
+  strong {
+    @apply font-semibold;
   }
   body,
   html,

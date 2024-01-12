@@ -12,7 +12,7 @@ import { ProblemDetailMainSkeleton } from "../components/ProblemDetailMainSkelet
 import { ProblemDetailMain } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemCreateEditor } from "@/features/ProblemCreate";
-import { parseAnswer, parseTopicId } from "@/utils";
+import { checkPermission, parseAnswer, parseTopicId } from "@/utils";
 import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
 import { useIdentity } from "@/features/Auth";
 import clsx from "clsx";
@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { useDebounce } from "@/hooks";
 import { api } from "@/utils/api";
 import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
+import { Session } from "next-auth";
 
 interface ProblemData {
   name: string;
@@ -34,9 +35,10 @@ interface ProblemAction {
 
 interface ProblemProps {
   id: string;
+  user: UserType;
 }
 
-export function ProblemDetailPage({ id }: ProblemProps) {
+export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateProblem = useState<ProblemType>(
     PROBLEM_BLANK as unknown as ProblemType
   );
@@ -53,6 +55,15 @@ export function ProblemDetailPage({ id }: ProblemProps) {
   const router = useRouter();
   const debounce = useDebounce();
 
+  const permission = useMemo<ContentAccessType>(() => {
+    if (user && problem) {
+      if (problem.authorId === user.id) {
+        return "author";
+      }
+    }
+    return "viewer";
+  }, [problem, user]);
+
   const problemData = useMemo<ProblemData[]>(
     () => [
       {
@@ -67,6 +78,24 @@ export function ProblemDetailPage({ id }: ProblemProps) {
     [authorId, solved]
   );
 
+  const handleDeleteProblem = useCallback(async () => {
+    await api
+      .delete("/problem", {
+        params: {
+          id,
+        },
+      })
+      .then(() => {
+        console.log("problem deleted");
+        router.push("/");
+      })
+      .catch((e) => {
+        console.log("Result:");
+        console.log(e);
+        return null;
+      });
+  }, [id, router]);
+
   const problemAction = useMemo<ProblemAction[]>(
     () => [
       {
@@ -78,9 +107,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
       },
       {
         name: "Delete",
-        handler: () => {
-          return 0;
-        },
+        handler: handleDeleteProblem,
         permission: "author",
       },
       {
@@ -91,7 +118,7 @@ export function ProblemDetailPage({ id }: ProblemProps) {
         permission: "viewer",
       },
     ],
-    [setMode]
+    [handleDeleteProblem, setMode]
   );
 
   const renderEditHeader = useMemo(
@@ -227,29 +254,31 @@ export function ProblemDetailPage({ id }: ProblemProps) {
   const renderProblemAction = useMemo(
     () => (
       <ul className="w-48">
-        {problemAction.map(({ name, handler }, idx) => {
-          let order: ButtonOrderType | undefined = "middle";
-          if (idx === 0) order = "first";
-          if (idx === problemAction.length - 1) order = "last";
-          if (problemAction.length === 1) order = undefined;
+        {problemAction
+          .filter(({ permission: perm }) => checkPermission(permission, perm))
+          .map(({ name, handler }, idx) => {
+            let order: ButtonOrderType | undefined = "middle";
+            if (idx === 0) order = "first";
+            if (idx === problemAction.length - 1) order = "last";
+            if (problemAction.length === 1) order = undefined;
 
-          return (
-            <li key={name}>
-              <Button
-                className="!w-full !pl-8"
-                variant="outline"
-                alignText="left"
-                order={order}
-                onClick={handler}
-              >
-                {name}
-              </Button>
-            </li>
-          );
-        })}
+            return (
+              <li key={name}>
+                <Button
+                  className="!w-full !pl-8"
+                  variant="outline"
+                  alignText="left"
+                  order={order}
+                  onClick={handler}
+                >
+                  {name}
+                </Button>
+              </li>
+            );
+          })}
       </ul>
     ),
-    [problemAction]
+    [permission, problemAction]
   );
 
   const renderSide = useMemo(
