@@ -24,11 +24,31 @@ export default async function handler(
 
   let result: ProblemType[] | undefined;
   try {
+    const {
+      query: { topic, subTopic, sort, sortBy },
+    } = req;
+
+    const topicQuery = topic ? { topicId: topic } : {};
+    const subTopicQuery = subTopic ? { subTopicId: subTopic } : {};
+    const sortQuery =
+      sort && sortBy
+        ? {
+            [sort as string]: sortBy,
+          }
+        : {};
+
     const problems = (await prisma.problem.findMany({
       include: {
         topic: true,
         subTopic: true,
         solveds: true,
+      },
+      where: {
+        ...(topicQuery as any),
+        ...(subTopicQuery as any),
+      },
+      orderBy: {
+        ...(sortQuery as any),
       },
     })) as ProblemType[];
 
@@ -45,6 +65,7 @@ export default async function handler(
 
     result = JSON.parse(json(removedAnswers));
   } catch (e) {
+    console.log(e);
     result = undefined;
   }
 
