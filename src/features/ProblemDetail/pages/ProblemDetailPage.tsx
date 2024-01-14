@@ -14,13 +14,13 @@ import { PageTemplate } from "@/templates";
 import { ProblemCreateEditor } from "@/features/ProblemCreate";
 import { checkPermission, parseAnswer, parseTopicId } from "@/utils";
 import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
-import { useIdentity } from "@/features/Auth";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useDebounce } from "@/hooks";
-import { api } from "@/utils/api";
+import { api, json } from "@/utils/api";
 import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
 import { Session } from "next-auth";
+import { useAppSelector } from "@/libs/redux";
 
 interface ProblemData {
   name: string;
@@ -52,8 +52,22 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
   const [mode, setMode] = stateMode;
+  const stateUserAnswer = useState<any>();
+  const setUserAnswer = stateUserAnswer[1];
+  const stateUserSolved = useState(false);
+  const setUserSolved = stateUserSolved[1];
+  const stateSubmitted = useState<number>();
+  const setSubmitted = stateSubmitted[1];
+  const stateSolvable = useState(false);
+  const setSolvable = stateSolvable[1];
   const router = useRouter();
   const debounce = useDebounce();
+  const allUserSolved = useAppSelector("solved");
+
+  const solveCache = useMemo(
+    () => allUserSolved && allUserSolved[id],
+    [allUserSolved, id]
+  );
 
   const permission = useMemo<ContentAccessType>(() => {
     if (user && problem) {
@@ -134,6 +148,10 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         stateProblem={stateProblem}
         stateAccept={stateAccept}
         stateMode={stateMode}
+        stateSubmited={stateSubmitted}
+        stateSolvable={stateSolvable}
+        stateUserAnswer={stateUserAnswer}
+        stateUserSolved={stateUserSolved}
       />
     );
 
@@ -157,45 +175,75 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     //     setMode("view");
     //   }}
     // );
-  }, [loading, problem, stateProblem, stateAccept, stateMode]);
+  }, [
+    loading,
+    problem,
+    stateProblem,
+    stateAccept,
+    stateMode,
+    stateSubmitted,
+    stateSolvable,
+    stateUserAnswer,
+    stateUserSolved,
+  ]);
 
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;
 
     setLoading(true);
 
-    await api
+    const result = await api
       .get("/problem", {
         params: {
           id,
         },
       })
       .then(({ data }) => {
-        const { type, answer } = data as ProblemType;
+        const { id } = data as ProblemType;
         setProblem(data);
-        setAccept(parseAnswer(type, answer));
         setLoading(false);
-        // console.log("Result:");
-        // console.log(res.data);
-        // return res.data;
-        // setProblems(r)
-      })
-      .catch((e) => {
-        console.log("Result:");
-        console.log(e);
-        return null;
-      });
 
-    // await crudData("get_problem", {
-    //   id,
-    // }).then((result) => {
-    //   if (result) {
-    //     setProblem(result as ProblemType);
-    //     setAccept(parseAnswer(result.type, result.answer));
-    //     setLoading(false);
-    //   }
-    // });
-  }, [id, loading, setAccept, setLoading, setProblem]);
+        return id;
+      })
+      .catch(() => null);
+
+    if (result && user) {
+      let existing: string | null;
+
+      if (!solveCache) {
+        const record = await api.get("/solved", {
+          params: {
+            userId: user.id,
+            problemId: result,
+          },
+        });
+
+        existing = record.data ? JSON.parse(record.data.answer) : null;
+      } else {
+        existing = solveCache;
+      }
+
+      if (existing) {
+        setUserAnswer(existing);
+        setUserSolved(true);
+        setSolvable(false);
+        setSubmitted(new Date().getTime());
+      } else {
+        setSolvable(true);
+      }
+    }
+  }, [
+    id,
+    loading,
+    setLoading,
+    setProblem,
+    setSolvable,
+    setSubmitted,
+    setUserAnswer,
+    setUserSolved,
+    solveCache,
+    user,
+  ]);
 
   useEffect(() => {
     handleGetProblems();
@@ -269,6 +317,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
                   variant="outline"
                   alignText="left"
                   order={order}
+                  orderDirection="column"
                   onClick={handler}
                 >
                   {name}

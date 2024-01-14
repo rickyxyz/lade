@@ -1,4 +1,4 @@
-import { UserMapType, UserType } from "@/types";
+import { SolvedMapType, UserMapType, UserType } from "@/types";
 import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
@@ -15,9 +15,9 @@ interface UserActionMapType {
   reset_user: undefined | null;
 }
 
-interface UsersActionMapType {
-  update_users: UserMapType;
-  reset_users: undefined | Record<string, never>;
+interface SolvedActionMapType {
+  update_solved: SolvedMapType;
+  reset_solved: undefined | Record<string, never>;
 }
 
 type ReducerRawType<X> = {
@@ -42,8 +42,8 @@ export const userReducer: ReducerRawType<UserActionMapType> = {
   },
 };
 
-export const usersReducer: ReducerRawType<UsersActionMapType> = {
-  update_users: (state, action) => {
+export const solvedReducer: ReducerRawType<SolvedActionMapType> = {
+  update_solved: (state, action) => {
     const value = {
       ...(state ?? {}),
       ...action.payload,
@@ -51,7 +51,7 @@ export const usersReducer: ReducerRawType<UsersActionMapType> = {
     state = value;
     return value;
   },
-  reset_users(state) {
+  reset_solved(state) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     state = {};
     return state;
@@ -64,23 +64,23 @@ const userSlice = createSlice({
   reducers: userReducer as unknown as ReducerType<UserType>,
 });
 
-const usersSlice = createSlice({
-  name: "users",
-  initialState: {} as UserMapType | null,
-  reducers: usersReducer as unknown as ReducerType<UserMapType>,
+const solvedSlice = createSlice({
+  name: "solved",
+  initialState: {} as SolvedMapType | null,
+  reducers: solvedReducer as unknown as ReducerType<SolvedMapType>,
 });
 
 const reducer = {
   user: userSlice.reducer,
-  users: usersSlice.reducer,
+  solved: solvedSlice.reducer,
 };
 
 export const action = {
   ...userSlice.actions,
-  ...usersSlice.actions,
+  ...solvedSlice.actions,
 };
 
-export type ActionTypes = UserActionMapType & UsersActionMapType;
+export type ActionTypes = UserActionMapType & SolvedActionMapType;
 
 export type ActionKeyTypes = keyof ActionTypes;
 

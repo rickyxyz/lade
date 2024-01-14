@@ -33,6 +33,7 @@ model Solved {
   userId    String
   problem   Problem  @relation(fields: [problemId], references: [id])
   problemId String
+  answer    String
 }
 
 model Topic {

@@ -16,6 +16,8 @@ export type ButtonVariantType =
 
 export type ButtonOrderType = "first" | "middle" | "last";
 
+export type ButtonDirectionType = "row" | "column";
+
 export interface ButtonProps
   extends DetailedHTMLProps<
     ButtonHTMLAttributes<HTMLButtonElement>,
@@ -24,6 +26,7 @@ export interface ButtonProps
   children: ReactNode;
   variant?: ButtonVariantType;
   order?: ButtonOrderType;
+  orderDirection?: ButtonDirectionType;
   alignText?: "left" | "center" | "right";
   className?: string;
   loading?: boolean;
@@ -37,6 +40,7 @@ export function Button({
   disabled = false,
   alignText = "center",
   order,
+  orderDirection,
   type,
   onClick,
 }: ButtonProps) {
@@ -55,11 +59,7 @@ export function Button({
           variant === "ghost-danger" && BUTTON_GHOST_DANGER_STYLE,
           variant === "link" && BUTTON_LINK_STYLE,
         ],
-        [
-          order === "first" && BUTTON_FIRST_STYLE,
-          order === "middle" && BUTTON_MIDDLE_STYLE,
-          order === "last" && BUTTON_LAST_STYLE,
-        ],
+        order && orderDirection && BUTTON_ORDER_STYLE[orderDirection][order],
         !order && "rounded",
         className
       )}
@@ -86,8 +86,8 @@ export function Button({
 }
 
 const BUTTON_BASE_STYLE = [
-  "flex flex-row px-4 py-2 h-fit",
-  "transition-colors duration-100 text-base",
+  "flex flex-row items-center px-4 py-2 h-10",
+  "transition-colors duration-100 text-base font-semibold",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
 ];
 
@@ -125,7 +125,7 @@ const BUTTON_OUTLINE_STYLE = [
   "text-teal-700 disabled:text-gray-400",
   `hover:bg-teal-50 disabled:bg-transparent`,
   `active:bg-teal-100 disabled:bg-transparent`,
-  `border border-secondary-2`,
+  `border border-gray-300`,
 ];
 
 const BUTTON_GHOST_STYLE = [
@@ -146,9 +146,21 @@ const BUTTON_LINK_STYLE = [
   "active:underline active:text-teal-500",
 ];
 
-const BUTTON_FIRST_STYLE = ["!rounded-t"];
-const BUTTON_MIDDLE_STYLE = ["!border-t-0 !border-b-0"];
-const BUTTON_LAST_STYLE = ["!rounded-b"];
+const BUTTON_ORDER_STYLE: Record<
+  ButtonDirectionType,
+  Record<ButtonOrderType, string[]>
+> = {
+  column: {
+    first: ["!rounded-t"],
+    middle: ["!border-t-0 !border-b-0"],
+    last: ["!rounded-b"],
+  },
+  row: {
+    first: ["!rounded-l"],
+    middle: ["!border-l-0 !border-r-0"],
+    last: ["!border-l-0 !rounded-r"],
+  },
+};
 
 const BUTTON_TEXT_ALIGN_STYLE = {
   left: "text-left",

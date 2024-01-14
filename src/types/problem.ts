@@ -88,6 +88,8 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
   descending?: boolean;
 };
 
+export type SolvedMapType = Record<string, string>;
+
 export type ContentViewType = "view" | "edit";
 
 export type ContentEditType = "create" | "edit";

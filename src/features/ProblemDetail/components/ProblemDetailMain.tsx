@@ -11,7 +11,7 @@ import { getPermissionForContent, makeAnswer, md, parseTopicId } from "@/utils";
 import { ProblemType, ContentViewType, StateType, UserType } from "@/types";
 import clsx from "clsx";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
-import { useAppSelector } from "@/libs/redux";
+import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { crudData } from "@/libs/firebase";
 import { increment } from "firebase/firestore";
 import {
@@ -25,19 +25,26 @@ import {
 import { ProblemDetailStats } from "./ProblemDetailStats";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
-import { useIdentity } from "@/features/Auth";
 import { api } from "@/utils/api";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
   stateAccept: StateType<unknown>;
   stateMode: StateType<ContentViewType>;
+  stateUserAnswer: StateType<any>;
+  stateUserSolved: StateType<boolean>;
+  stateSubmited: StateType<number | undefined>;
+  stateSolvable: StateType<boolean>;
 }
 
 export function ProblemDetailMain({
   stateProblem,
   stateAccept,
   stateMode,
+  stateUserAnswer,
+  stateUserSolved,
+  stateSubmited,
+  stateSolvable,
 }: ProblemMainProps) {
   const [problem, setProblem] = stateProblem;
   const accept = stateAccept[0];
@@ -55,15 +62,15 @@ export function ProblemDetailMain({
   } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const stateUserAnswer = useState<any>();
   const [userAnswer, setUserAnswer] = stateUserAnswer;
-  const [userSolved, setUserSolved] = useState(false);
-  const [submitted, setSubmitted] = useState<number>();
+  const [userSolved, setUserSolved] = stateUserSolved;
+  const [submitted, setSubmitted] = stateSubmited;
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
   const user = useAppSelector("user");
   const [loading, setLoading] = useState(false);
   const setMode = stateMode[1];
+  const solvable = stateSolvable[0];
   const permission = useMemo(
     () =>
       getPermissionForContent({
@@ -77,6 +84,8 @@ export function ProblemDetailMain({
     () => parseTopicId(subTopicId).name,
     [subTopicId]
   );
+
+  const dispatch = useAppDispatch();
 
   const statementRef = useRef<HTMLDivElement>(null);
 
@@ -130,12 +139,24 @@ export function ProblemDetailMain({
       //     solved: increment(1) as unknown as number,
       //   },
       // });
+      dispatch("update_solved", {
+        [id]: userAnswer,
+      });
       setProblem((prev) => ({
         ...prev,
         solveds: [],
       }));
     }
-  }, [accept, id, submitted, userAnswer, cooldownIntv, setProblem]);
+  }, [
+    id,
+    userAnswer,
+    submitted,
+    cooldownIntv,
+    setSubmitted,
+    setUserSolved,
+    dispatch,
+    setProblem,
+  ]);
 
   const renderTags = useMemo(
     () => (
@@ -203,18 +224,27 @@ export function ProblemDetailMain({
           {renderAnswerVerdict}
         </div> */}
         {renderAnswerInputs}
-        <div className="flex items-center justify-between">
-          <Button
-            className="w-20"
-            disabled={cooldown > 0 || userSolved || loading}
-            onClick={handleCheckAnswer}
-          >
-            Submit
-          </Button>
-        </div>
+        {!userSolved && (
+          <div className="flex items-center justify-between mt-8">
+            <Button
+              className="w-20"
+              disabled={!solvable || cooldown > 0 || userSolved || loading}
+              onClick={handleCheckAnswer}
+            >
+              Submit
+            </Button>
+          </div>
+        )}
       </>
     ),
-    [cooldown, handleCheckAnswer, loading, renderAnswerInputs, userSolved]
+    [
+      cooldown,
+      handleCheckAnswer,
+      loading,
+      renderAnswerInputs,
+      solvable,
+      userSolved,
+    ]
   );
 
   const handleRenderMarkdown = useCallback(() => {

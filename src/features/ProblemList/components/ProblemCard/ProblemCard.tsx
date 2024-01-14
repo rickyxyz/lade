@@ -9,7 +9,6 @@ import {
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
 import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
-import { useIdentity } from "@/features/Auth";
 
 export interface ProblemCardProps {
   problem: ProblemType;

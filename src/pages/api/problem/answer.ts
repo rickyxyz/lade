@@ -8,6 +8,7 @@ import {
 } from "@/libs/firebase/placeholders";
 import { parseAnswer, validateAnswer } from "@/utils";
 import { ProblemAnswerType, ProblemType } from "@/types";
+import { getAuthUser } from "@/libs/next-auth/helper";
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,6 +26,12 @@ export default async function handler(
   const { answer, id } = body as unknown as ProblemType;
 
   try {
+    const user = await getAuthUser(req, res);
+
+    if (!user) {
+      throw Error("unauthorized");
+    }
+
     const result = await prisma.problem.findUnique({
       where: {
         id: id as unknown as string,
@@ -41,9 +48,20 @@ export default async function handler(
     }
 
     const { answer: accept } = result;
+
     const type = result.type as unknown as ProblemAnswerType;
 
     const verdict = validateAnswer(type as any, JSON.parse(accept), answer);
+
+    if (verdict) {
+      await prisma.solved.create({
+        data: {
+          problemId: id as unknown as string,
+          userId: user.id,
+          answer: JSON.stringify(answer),
+        },
+      });
+    }
 
     res.status(200).json({
       message: verdict ? "correct" : "wrong",

@@ -1,8 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
-import { useIdentity } from "@/features/Auth";
 import { Either, UserType } from "@/types";
-import { UNKNOWN_USER_NAME } from "@/consts";
 
 type UserProps = UserBaseProps &
   Either<

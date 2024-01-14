@@ -102,7 +102,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           visible && INPUT_FOCUS_STYLE,
           variant === "basic" && INPUT_BASIC_STYLE,
           variant === "solid" && INPUT_SOLID_STYLE,
-          disabled && "bg-gray-200",
+          disabled ? "bg-gray-200" : "bg-white",
           "text-ellipsis whitespace-nowrap overflow-hidden",
           inputClassName
         )}

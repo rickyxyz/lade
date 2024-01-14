@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+import { DetailedHTMLProps, InputHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 import { Icon } from "../Icon";
 import { IconType } from "react-icons";
@@ -18,6 +18,7 @@ export interface InputProps
   iconLeftClassName?: string;
   iconRight?: IconType;
   iconRightClassName?: string;
+  rightElement?: ReactNode;
   externalWrapperClassName?: string;
   wrapperClassName?: string;
   errorText?: string;
@@ -32,6 +33,7 @@ export function Input({
   iconLeftClassName,
   iconRight,
   iconRightClassName,
+  rightElement,
   externalWrapperClassName,
   wrapperClassName,
   errorText,
@@ -42,7 +44,7 @@ export function Input({
   return (
     <div className={externalWrapperClassName}>
       {label && (
-        <label htmlFor={id} className={clsx("font-bold", labelClassName)}>
+        <label htmlFor={id} className={clsx("font-semibold", labelClassName)}>
           {label}
         </label>
       )}
@@ -70,6 +72,7 @@ export function Input({
             className={clsx("absolute top-2 right-2", iconRightClassName)}
           />
         )}
+        {rightElement}
       </div>
       {errorText && (
         <Paragraph color="danger-6" className="mt-2">
