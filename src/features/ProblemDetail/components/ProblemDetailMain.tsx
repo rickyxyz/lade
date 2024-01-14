@@ -1,36 +1,17 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Button, Card, Crumb, Icon, More, Paragraph, User } from "@/components";
-import { getPermissionForContent, makeAnswer, md, parseTopicId } from "@/utils";
-import { ProblemType, ContentViewType, StateType, UserType } from "@/types";
-import clsx from "clsx";
-import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Card, Crumb, Paragraph } from "@/components";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
-import { crudData } from "@/libs/firebase";
-import { increment } from "firebase/firestore";
-import {
-  BsCheck,
-  BsCheckCircleFill,
-  BsChevronLeft,
-  BsChevronRight,
-  BsPersonFill,
-  BsX,
-} from "react-icons/bs";
-import { ProblemDetailStats } from "./ProblemDetailStats";
+import { getPermissionForContent, md, parseTopicId, api } from "@/utils";
+import { ProblemType, ContentViewType, StateType } from "@/types";
+import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
-import { api } from "@/utils/api";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
   stateAccept: StateType<unknown>;
   stateMode: StateType<ContentViewType>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateUserAnswer: StateType<any>;
   stateUserSolved: StateType<boolean>;
   stateSubmited: StateType<number | undefined>;
@@ -39,7 +20,6 @@ export interface ProblemMainProps {
 
 export function ProblemDetailMain({
   stateProblem,
-  stateAccept,
   stateMode,
   stateUserAnswer,
   stateUserSolved,
@@ -47,19 +27,7 @@ export function ProblemDetailMain({
   stateSolvable,
 }: ProblemMainProps) {
   const [problem, setProblem] = stateProblem;
-  const accept = stateAccept[0];
-
-  const {
-    id,
-    statement,
-    title,
-    topicId,
-    subTopicId,
-    solved = 0,
-    views = 0,
-    type,
-    authorId,
-  } = problem;
+  const { id, statement, title, topicId, subTopicId, type } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userAnswer, setUserAnswer] = stateUserAnswer;
@@ -67,41 +35,27 @@ export function ProblemDetailMain({
   const [submitted, setSubmitted] = stateSubmited;
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
-  const user = useAppSelector("user");
   const [loading, setLoading] = useState(false);
-  const setMode = stateMode[1];
   const solvable = stateSolvable[0];
-  const permission = useMemo(
-    () =>
-      getPermissionForContent({
-        content: problem,
-        user,
-      }),
-    [problem, user]
-  );
+  const dispatch = useAppDispatch();
+  const statementRef = useRef<HTMLDivElement>(null);
+
   const topicText = useMemo(() => parseTopicId(topicId).name, [topicId]);
   const subtopicText = useMemo(
     () => parseTopicId(subTopicId).name,
     [subTopicId]
   );
 
-  const dispatch = useAppDispatch();
-
-  const statementRef = useRef<HTMLDivElement>(null);
-
   const handleCheckAnswer = useCallback(async () => {
     if (!id || !userAnswer) return;
 
     const now = new Date().getTime();
-
     if (submitted && now - submitted <= 1000 * 5) {
       return;
     }
 
     let verdict = false;
-
     setLoading(true);
-
     await api
       .post("/problem/answer", {
         id,
@@ -120,9 +74,7 @@ export function ProblemDetailMain({
       });
 
     if (cooldownIntv) clearInterval(cooldownIntv);
-
     setCooldown(10000);
-
     const interval = setInterval(() => {
       setCooldown((prev) => Math.max(0, prev - 100));
     }, 100);
@@ -133,12 +85,6 @@ export function ProblemDetailMain({
     if (!verdict) {
       setCooldownIntv(interval);
     } else {
-      // crudData("update_problem", {
-      //   id,
-      //   data: {
-      //     solved: increment(1) as unknown as number,
-      //   },
-      // });
       dispatch("update_solved", {
         [id]: userAnswer,
       });
@@ -158,24 +104,8 @@ export function ProblemDetailMain({
     setProblem,
   ]);
 
-  const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics
-        topic={topicId}
-        subTopic={subTopicId}
-        className="mb-4"
-      />
-    ),
-    [subTopicId, topicId]
-  );
-
   const renderMain = useMemo(
-    () => (
-      <>
-        {/* <h2 className="mb-2">Problem Statement</h2> */}
-        <article className="mb-8" ref={statementRef}></article>
-      </>
-    ),
+    () => <article className="mb-8" ref={statementRef}></article>,
     []
   );
 
@@ -219,10 +149,6 @@ export function ProblemDetailMain({
   const renderAnswer = useMemo(
     () => (
       <>
-        {/* <div className="flex items-center mb-3">
-          <h2>Your Answer</h2>
-          {renderAnswerVerdict}
-        </div> */}
         {renderAnswerInputs}
         {!userSolved && (
           <div className="flex items-center justify-between mt-8">
@@ -264,40 +190,10 @@ export function ProblemDetailMain({
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
 
-  const breadCrumb = useMemo(
-    () => ["Problem", topicText, subtopicText, title],
-    [subtopicText, title, topicText]
-  );
-
-  const renderBreadCrumb = useMemo(
-    () => (
-      <Crumb
-        crumbs={[
-          {
-            text: "Problems",
-          },
-          {
-            text: topicText,
-          },
-          {
-            text: subtopicText,
-          },
-          {
-            text: title,
-            color: "secondary-4",
-          },
-        ]}
-      />
-    ),
-    [subtopicText, title, topicText]
-  );
-
   return (
-    <>
-      <Card>
-        {renderMain}
-        {renderAnswer}
-      </Card>
-    </>
+    <Card>
+      {renderMain}
+      {renderAnswer}
+    </Card>
   );
 }

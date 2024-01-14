@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { crudData } from "@/libs/firebase";
+import clsx from "clsx";
+import { useRouter } from "next/router";
+import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
+import { useAppSelector } from "@/libs/redux";
+import { useDebounce } from "@/hooks";
+import { checkPermission, api } from "@/utils";
 import {
   ProblemType,
   ContentViewType,
@@ -8,19 +13,9 @@ import {
   ContentAccessType,
 } from "@/types";
 import { PROBLEM_BLANK } from "@/consts";
-import { ProblemDetailMainSkeleton } from "../components/ProblemDetailMainSkeleton";
-import { ProblemDetailMain } from "../components";
 import { PageTemplate } from "@/templates";
-import { ProblemCreateEditor } from "@/features/ProblemCreate";
-import { checkPermission, parseAnswer, parseTopicId } from "@/utils";
-import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
-import clsx from "clsx";
-import { useRouter } from "next/router";
-import { useDebounce } from "@/hooks";
-import { api, json } from "@/utils/api";
-import { ProblemEditPage } from "@/features/ProblemCreate/pages/ProblemEditPage";
-import { Session } from "next-auth";
-import { useAppSelector } from "@/libs/redux";
+import { ProblemEditPage } from "../../ProblemCreate";
+import { ProblemDetailMain, ProblemDetailMainSkeleton } from "../components";
 
 interface ProblemData {
   name: string;
@@ -47,7 +42,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateAccept = useState<unknown>({
     content: "",
   });
-  const [accept, setAccept] = stateAccept;
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
@@ -60,8 +54,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const setSubmitted = stateSubmitted[1];
   const stateSolvable = useState(false);
   const setSolvable = stateSolvable[1];
+
   const router = useRouter();
-  const debounce = useDebounce();
   const allUserSolved = useAppSelector("solved");
 
   const solveCache = useMemo(
@@ -135,11 +129,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     [handleDeleteProblem, setMode]
   );
 
-  const renderEditHeader = useMemo(
-    () => <h1 className="mb-8">Edit Problem</h1>,
-    []
-  );
-
   const renderQuestion = useMemo(() => {
     if (loading || !problem) return <ProblemDetailMainSkeleton />;
 
@@ -154,27 +143,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         stateUserSolved={stateUserSolved}
       />
     );
-
-    // <ProblemCreateEditor
-    //   headElement={renderEditHeader}
-    //   stateProblem={stateProblem}
-    //   purpose="edit"
-    //   handleUpdateProblem={(data) => {
-    //     setMode("view");
-    //     setProblem((prev) => ({
-    //       ...prev,
-    //       ...data,
-    //     }));
-    //     console.log("UP");
-    //     console.log(data.type);
-    //     console.log(data.answer);
-    //     console.log();
-    //     setAccept(parseAnswer(data.type, data.answer));
-    //   }}
-    //   onLeaveEditor={() => {
-    //     setMode("view");
-    //   }}
-    // );
   }, [
     loading,
     problem,
@@ -353,44 +321,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     [loading, renderHead, renderQuestion, renderSide]
   );
 
-  const handleSubmitEdit = useCallback(
-    async (values: ProblemType) => {
-      const { id } = problem;
-      await crudData("update_problem", {
-        id: id ?? "invalid",
-        data: values,
-      })
-        .then(async () => {
-          setLoading(false);
-          debounce(() => {
-            router.replace(`/problem/${id}`);
-          });
-          setMode("view");
-          setProblem((prev) => ({
-            ...prev,
-            ...values,
-          }));
-          setAccept(parseAnswer(values.type, values.answer));
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-    },
-    [debounce, problem, router, setAccept, setLoading, setMode, setProblem]
-  );
-
   const renderEditProblem = useMemo(
     () => (
       <PageTemplate>
-        {/* <ProblemCreateEditor
-          headElement={<h1 className="mb-8">Edit Problem</h1>}
-          stateProblem={stateProblem}
-          stateLoading={stateLoading}
-          onSubmit={handleSubmitEdit}
-          onLeaveEditor={() => {
-            setMode("view");
-          }}
-        /> */}
         <ProblemEditPage
           stateProblem={stateProblem}
           onEdit={() => {

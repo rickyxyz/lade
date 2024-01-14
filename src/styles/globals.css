@@ -20,7 +20,7 @@
   }
   h1,
   .h1 {
-    @apply head-style text-xl;
+    @apply head-style font-semibold text-xl;
   }
   h2,
   .h2 {
