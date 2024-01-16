@@ -7,6 +7,7 @@ import {
 } from "@/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "./api";
+import { API } from "@/api";
 
 export function parseTopicId<K extends ProblemAllTopicNameType>(id: K) {
   return PROBLEM_TOPICS_DETAIL_OBJECT[id];
@@ -27,10 +28,11 @@ export function useTopics() {
     if (existing) {
       setTopics(JSON.parse(existing));
     } else {
-      api.get("/topics").then(({ data }) => {
-        console.log(data);
-        setTopics(data);
-        localStorage.setItem("topics", JSON.stringify(data));
+      API("get_topics", {}).then(({ data }) => {
+        if (data) {
+          setTopics(data);
+          localStorage.setItem("topics", JSON.stringify(data));
+        }
       });
     }
   }, []);

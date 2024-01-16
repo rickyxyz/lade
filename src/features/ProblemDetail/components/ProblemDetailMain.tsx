@@ -6,6 +6,7 @@ import { ProblemType, ContentViewType, StateType } from "@/types";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
+import { API } from "@/api";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -56,11 +57,12 @@ export function ProblemDetailMain({
 
     let verdict = false;
     setLoading(true);
-    await api
-      .post("/problem/answer", {
+    await API("post_solved", {
+      body: {
         id,
         answer: userAnswer,
-      })
+      },
+    })
       .then((res) => {
         if (res.data.message === "correct") {
           verdict = true;
@@ -85,7 +87,7 @@ export function ProblemDetailMain({
     if (!verdict) {
       setCooldownIntv(interval);
     } else {
-      dispatch("update_solved", {
+      dispatch("update_solveds", {
         [id]: userAnswer,
       });
       setProblem((prev) => ({

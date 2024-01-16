@@ -21,12 +21,13 @@ export const PROBLEM_BLANK: ProblemType = {
   subTopicId: "derivatives",
   type: "short_answer",
   answer: "",
+  authorId: "",
 };
 
 export const PROBLEM_DEFAULT: ProblemType = {
   ...PROBLEM_BLANK,
-  createdAt: 0,
-  solved: [],
+  createdAt: new Date(),
+  solveds: [],
   views: 0,
 };
 
@@ -137,20 +138,13 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
     {
       id: "most-solved",
       text: "Most Solved",
-      key: "solved",
+      key: "solveds",
       descending: true,
     },
     {
       id: "least-solved",
       text: "Least Solved",
-      key: "solved",
-      descending: false,
-    },
-    { id: "most-viewed", text: "Most Viewed", key: "views", descending: true },
-    {
-      id: "least-viewed",
-      text: "Least Viewed",
-      key: "views",
+      key: "solveds",
       descending: false,
     },
   ];

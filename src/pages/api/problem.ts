@@ -46,23 +46,28 @@ async function PATCH({ req, res }: GenericAPIParams) {
 
 async function POST({ req, res }: GenericAPIParams) {
   try {
+    const user = await getAuthUser(req, res);
+
+    if (!user) throw Error("not allowed");
+
     const { body } = req;
 
-    const {
+    const { answer, statement, subTopicId, title, topicId, type, id } =
+      body as unknown as ProblemType;
+    console.log({
       answer,
       statement,
       subTopicId,
       title,
       topicId,
       type,
-      authorId,
-      id,
-    } = body as unknown as ProblemType;
+      id: user.id,
+    });
 
     await prisma.problem.create({
       data: {
         id,
-        authorId,
+        authorId: user.id,
         title,
         type,
         answer,

@@ -16,6 +16,8 @@ import { PROBLEM_BLANK } from "@/consts";
 import { PageTemplate } from "@/templates";
 import { ProblemEditPage } from "../../ProblemCreate";
 import { ProblemDetailMain, ProblemDetailMainSkeleton } from "../components";
+import { API } from "@/api";
+import solved from "@/pages/api/solved";
 
 interface ProblemData {
   name: string;
@@ -38,7 +40,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     PROBLEM_BLANK as unknown as ProblemType
   );
   const [problem, setProblem] = stateProblem;
-  const { title, topic, subTopic, authorId, solved } = problem;
+  const { title, topic, subTopic, authorId, solveds } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -56,7 +58,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const setSolvable = stateSolvable[1];
 
   const router = useRouter();
-  const allUserSolved = useAppSelector("solved");
+  const allUserSolved = useAppSelector("solveds");
 
   const solveCache = useMemo(
     () => allUserSolved && allUserSolved[id],
@@ -80,10 +82,10 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       },
       {
         name: "Solved",
-        value: (solved ?? []).length,
+        value: (solveds ?? []).length,
       },
     ],
-    [authorId, solved]
+    [authorId, solveds]
   );
 
   const handleDeleteProblem = useCallback(async () => {
@@ -160,14 +162,15 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
     setLoading(true);
 
-    const result = await api
-      .get("/problem", {
-        params: {
-          id,
-        },
-      })
+    const result = await API("get_problem", {
+      params: {
+        id,
+      },
+    })
       .then(({ data }) => {
-        const { id } = data as ProblemType;
+        if (!data) throw Error("");
+
+        const { id } = data;
         setProblem(data);
         setLoading(false);
 
@@ -179,7 +182,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       let existing: string | null;
 
       if (!solveCache) {
-        const record = await api.get("/solved", {
+        const record = await API("get_solved", {
           params: {
             userId: user.id,
             problemId: result,

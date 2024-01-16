@@ -7,6 +7,7 @@ import { crudData } from "@/libs/firebase";
 import { useDebounce } from "@/hooks";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
+import { API } from "@/api";
 
 export function ProblemEditPage({
   stateProblem,
@@ -30,13 +31,10 @@ export function ProblemEditPage({
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
-      const { id } = values;
-
-      console.log(values);
-
-      await api
-        .patch("/problem", values)
-        .then(async () => {
+      await API("patch_problem", {
+        body: values,
+      })
+        .then(() => {
           setLoading(false);
           setProblem(values);
           onEdit && onEdit();

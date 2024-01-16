@@ -8,6 +8,7 @@ import { useDebounce } from "@/hooks";
 import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
+import { API } from "@/api";
 
 export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
@@ -30,22 +31,23 @@ export function ProblemCreatePage() {
 
       if (!user) return;
 
-      await api
-        .post("/problem", {
+      await API("post_problem", {
+        body: {
           ...values,
           authorId: user.id,
-        })
+        },
+      })
         .then(() => {
           debounce(() => {
-            setLoading(false);
             if (id) router.replace(`/problem/${id}`);
           });
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e);
           setLoading(false);
         });
     },
-    [debounce, router, setLoading]
+    [debounce, router, setLoading, user]
   );
 
   return (

@@ -12,6 +12,7 @@ import { PageTemplate } from "@/templates";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useAppDispatch } from "@/libs/redux";
+import { API } from "@/api";
 
 export function AuthSignUpPage() {
   const router = useRouter();
@@ -36,11 +37,13 @@ export function AuthSignUpPage() {
           return credential;
         })
         .then(({ user: { uid } }) =>
-          api.post("/user", {
-            id: username,
-            uid,
-            email,
-            joinDate: now,
+          API("post_user", {
+            body: {
+              id: username,
+              uid,
+              email,
+              joinDate: now,
+            },
           })
         )
         .then(() => {

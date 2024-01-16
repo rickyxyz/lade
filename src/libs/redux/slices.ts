@@ -16,8 +16,8 @@ interface UserActionMapType {
 }
 
 interface SolvedActionMapType {
-  update_solved: SolvedMapType;
-  reset_solved: undefined | Record<string, never>;
+  update_solveds: SolvedMapType;
+  reset_solveds: undefined | Record<string, never>;
 }
 
 type ReducerRawType<X> = {
@@ -43,7 +43,7 @@ export const userReducer: ReducerRawType<UserActionMapType> = {
 };
 
 export const solvedReducer: ReducerRawType<SolvedActionMapType> = {
-  update_solved: (state, action) => {
+  update_solveds: (state, action) => {
     const value = {
       ...(state ?? {}),
       ...action.payload,
@@ -51,7 +51,7 @@ export const solvedReducer: ReducerRawType<SolvedActionMapType> = {
     state = value;
     return value;
   },
-  reset_solved(state) {
+  reset_solveds(state) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     state = {};
     return state;
@@ -65,14 +65,14 @@ const userSlice = createSlice({
 });
 
 const solvedSlice = createSlice({
-  name: "solved",
+  name: "solveds",
   initialState: {} as SolvedMapType | null,
   reducers: solvedReducer as unknown as ReducerType<SolvedMapType>,
 });
 
 const reducer = {
   user: userSlice.reducer,
-  solved: solvedSlice.reducer,
+  solveds: solvedSlice.reducer,
 };
 
 export const action = {

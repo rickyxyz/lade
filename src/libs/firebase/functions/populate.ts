@@ -31,7 +31,7 @@ export async function populateProblems() {
     // await crudData("set_problem", {
     //   data: {
     //     ...problem,
-    //     solved: Math.floor(seed / 2 - seed / 3),
+    //     solveds: Math.floor(seed / 2 - seed / 3),
     //     views: seed,
     //   },
     // });

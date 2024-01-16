@@ -9,7 +9,7 @@ export const PROBLEM_SAMPLE_1: ProblemType = {
   topicId: "calculus",
   subTopicId: "applications-of-derivative",
   createdAt: 0,
-  solved: 0,
+  solveds: [],
   ...makeAnswer("short_answer", {
     content: 400,
   }),
@@ -23,7 +23,7 @@ export const PROBLEM_SAMPLE_2: ProblemType = {
   topicId: "calculus",
   subTopicId: "applications-of-derivative",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("short_answer", {
     content: -2.5,
   }),
@@ -37,7 +37,7 @@ export const PROBLEM_SAMPLE_3: ProblemType = {
   topicId: "calculus",
   subTopicId: "applications-of-derivative",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("short_answer", {
     content: 64,
   }),
@@ -51,7 +51,7 @@ export const PROBLEM_SAMPLE_4: ProblemType = {
   topicId: "calculus",
   subTopicId: "applications-of-derivative",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("short_answer", {
     content: 20,
   }),
@@ -65,7 +65,7 @@ export const PROBLEM_SAMPLE_5: ProblemType = {
   topicId: "linear-algebra",
   subTopicId: "eigenvalues-eigenvectors",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("matrix", {
     content: [
       [-1, -10223, -683],
@@ -87,7 +87,7 @@ export const PROBLEM_SAMPLE_6: ProblemType = {
   type: "short_answer",
   answer: "2",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("short_answer", {
     content: 2,
   }),
@@ -101,7 +101,7 @@ export const PROBLEM_SAMPLE_7: ProblemType = {
   topicId: "linear-algebra",
   subTopicId: "lines-planes",
   createdAt: 0,
-  solved: 0,
+  solveds: 0,
   ...makeAnswer("short_answer", {
     content: 0.816497,
   }),

@@ -21,8 +21,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     title,
     topicId,
     subTopicId,
-    solved = 0,
-    views = 0,
+    solveds = [],
     authorId,
   } = problem;
 
@@ -85,10 +84,13 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     () => (
       <div className="flex items-center justify-end text-sm text-gray-600 gap-6">
         <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
-        <ProblemDetailStats text={String(solved)} icon={BsCheckCircleFill} />
+        <ProblemDetailStats
+          text={String(solveds.length)}
+          icon={BsCheckCircleFill}
+        />
       </div>
     ),
-    [authorId, solved]
+    [authorId, solveds]
   );
 
   const handleRenderMarkdown = useCallback(() => {

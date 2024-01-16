@@ -22,6 +22,7 @@ import { ProblemAnswer } from "@/features/ProblemDetail";
 import { useTopics, validateProblemId } from "@/utils";
 import { SettingInput } from "@/components/Setting/SettingInput";
 import { api } from "@/utils/api";
+import { API } from "@/api";
 
 export interface ProblemCreateEditorFormProps {
   stateMode?: StateType<ContentViewType>;
@@ -70,18 +71,20 @@ export function ProblemCreateEditorForm({
 
   const handleGetProblemWithId = useCallback(
     (newId: string) =>
-      api
-        .get("/problem", {
-          params: {
-            id: newId,
-          },
-        })
+      API("get_problem", {
+        params: {
+          id: newId,
+        },
+      })
         .then(({ data }) => {
           const verdict = !!data;
           queries.current[newId] = verdict;
           return verdict;
         })
-        .catch(() => true),
+        .catch((e) => {
+          console.error(e);
+          return true;
+        }),
     []
   );
 
@@ -188,21 +191,6 @@ export function ProblemCreateEditorForm({
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Problem Statement</h2>
-        {/* <Field name="title">
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ({ field, form: { touched, errors } }: any) => (
-              <Input
-                {...field}
-                externalWrapperClassName="mb-4"
-                wrapperClassName="w-full"
-                placeholder="Enter problem title here..."
-                errorText={touched["title"] ? errors["title"] : undefined}
-                disabled={!initialized}
-              />
-            )
-          }
-        </Field> */}
         <div className="mb-4">
           <MarkdownEditor
             value={statement}
@@ -256,10 +244,6 @@ export function ProblemCreateEditorForm({
             }}
             disabled={!initialized}
           />
-          <Quote icon={BsInfoCircleFill}>
-            If the answer is a non-integer number, you should indicate the user
-            to which place the answer should be accurate to.
-          </Quote>
         </section>
       ),
     [errors, initialized, setFieldTouched, stateAnswer, touched, type]

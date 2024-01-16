@@ -14,7 +14,7 @@ import {
   ProblemType,
 } from "@/types";
 import { ProblemCard, ProblemCardSkeleton } from "../components";
-import { api } from "@/utils/api";
+import { API } from "@/api";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -42,13 +42,39 @@ export function ProblemListPage() {
 
   const handleGetProblem = useCallback(async () => {
     setLoading(true);
-    await api
-      .get("/problems", {
-        params: {
-          ...(topic ? { topic } : {}),
-          ...(subtopic ? { subTopic: subtopic } : {}),
-        },
-      })
+
+    const queryParams: Record<
+      ProblemSortByType,
+      {
+        sort: keyof ProblemType;
+        sortBy: "asc" | "desc";
+      }
+    > = {
+      newest: {
+        sort: "createdAt",
+        sortBy: "desc",
+      },
+      oldest: {
+        sort: "createdAt",
+        sortBy: "asc",
+      },
+      "most-solved": {
+        sort: "solveds",
+        sortBy: "desc",
+      },
+      "least-solved": {
+        sort: "solveds",
+        sortBy: "asc",
+      },
+    };
+
+    await API("get_problems", {
+      params: {
+        ...(topic ? { topic } : {}),
+        ...(subtopic ? { subTopic: subtopic } : {}),
+        ...queryParams[sortBy],
+      },
+    })
       .then(({ data }) => {
         setProblems(data);
         setLoading(false);
@@ -57,10 +83,11 @@ export function ProblemListPage() {
         console.log("Result:");
         console.log(e);
       });
-  }, [subtopic, topic]);
+  }, [sortBy, subtopic, topic]);
 
   useEffect(() => {
     handleGetProblem();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderAdvanced = useMemo(

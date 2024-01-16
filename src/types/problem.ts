@@ -62,7 +62,7 @@ export interface ProblemBaseType {
   id: string;
   title: string;
   statement: string;
-  solved?: unknown[];
+  solveds?: unknown[];
   views?: number;
   createdAt?: Date;
   updateAt?: Date;
@@ -77,10 +77,8 @@ export type ProblemType = ProblemBaseType & ProblemMapTypeTopicType;
 
 export type ProblemSortByType =
   | "least-solved"
-  | "least-viewed"
   | "oldest"
   | "most-solved"
-  | "most-viewed"
   | "newest";
 
 export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
@@ -89,6 +87,14 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
 };
 
 export type SolvedMapType = Record<string, string>;
+
+export interface SolvedType {
+  id: number;
+  createdAt: Date;
+  userId: string;
+  problemId: string;
+  answer: string;
+}
 
 export type ContentViewType = "view" | "edit";
 

@@ -25,17 +25,26 @@ export default async function handler(
   let result: ProblemType[] | undefined;
   try {
     const {
-      query: { topic, subTopic, sort, sortBy },
+      query: { topic, subTopic, sort, sortBy = "desc" },
     } = req;
 
     const topicQuery = topic ? { topicId: topic } : {};
     const subTopicQuery = subTopic ? { subTopicId: subTopic } : {};
-    const sortQuery =
-      sort && sortBy
+    const sortQuery = (() => {
+      if (sort === "solveds") {
+        return {
+          solveds: {
+            _count: sortBy,
+          },
+        };
+      }
+
+      return sort
         ? {
             [sort as string]: sortBy,
           }
         : {};
+    })();
 
     const problems = (await prisma.problem.findMany({
       include: {
@@ -51,9 +60,6 @@ export default async function handler(
         ...(sortQuery as any),
       },
     })) as ProblemType[];
-
-    console.log("Authed");
-    console.log(user);
 
     const removedAnswers = problems.map((problem) => {
       const temp: ProblemType = { ...problem };

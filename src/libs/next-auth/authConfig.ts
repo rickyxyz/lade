@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { firebaseAdmin } from "@/libs/firebase/admin";
 import { api } from "@/utils/api";
+import { API } from "@/api";
 
 export const authConfig: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers
@@ -12,11 +13,13 @@ export const authConfig: NextAuthOptions = {
         if (idToken) {
           try {
             const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
-            const user = await api.get("/user", {
+            const user = await API("get_user", {
               params: {
                 uid: decoded.uid,
               },
             });
+            console.log("USER");
+            console.log(user);
 
             if (user && user.data.id && user.data.role) {
               decoded.username = user.data.id;

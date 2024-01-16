@@ -11,6 +11,7 @@ import { MdLogout } from "react-icons/md";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useDebounce } from "@/hooks";
+import { API } from "@/api";
 
 export function PageTemplateNav() {
   const auth = getAuth();
@@ -107,26 +108,24 @@ export function PageTemplateNav() {
       debounce(() => {
         if (!user) {
           console.log("Debounced");
-          api
-            .get("/user", {
-              params: {
-                uid: authUser.uid,
-              },
-            })
-            .then((result) => {
-              console.log("Fetched User: ");
-              console.log(result.data);
-              if (result.data) {
-                dispatch("update_user", result.data);
-                router.push("/");
-                authUser.getIdToken(true).then((idToken) =>
-                  signIn("credentials", {
-                    idToken,
-                    redirect: false,
-                  })
-                );
-              }
-            });
+          API("get_user", {
+            params: {
+              uid: authUser.uid,
+            },
+          }).then((result) => {
+            console.log("Fetched User: ");
+            console.log(result.data);
+            if (result.data) {
+              dispatch("update_user", result.data);
+              router.push("/");
+              authUser.getIdToken(true).then((idToken) =>
+                signIn("credentials", {
+                  idToken,
+                  redirect: false,
+                })
+              );
+            }
+          });
         }
       }, 1000);
     },

@@ -12,6 +12,7 @@ import { PageTemplate } from "@/templates";
 import { signIn } from "next-auth/react";
 import { useAppDispatch } from "@/libs/redux";
 import { api } from "@/utils/api";
+import { API } from "@/api";
 
 export function AuthLoginPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function AuthLoginPage() {
           return credential;
         })
         .then(({ user: { uid } }) =>
-          api.get("/user", {
+          API("get_user", {
             params: {
               uid,
             },
