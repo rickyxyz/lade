@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { BsSearch } from "react-icons/bs";
-import { Button, Icon, Input, Paragraph, Select } from "@/components";
+import { Button, Icon, Input, Modal, Paragraph, Select } from "@/components";
 import { PageTemplate } from "@/templates";
 import {
   PROBLEM_SORT_BY_OPTIONS,
@@ -13,7 +13,7 @@ import {
   ProblemTopicNameType,
   ProblemType,
 } from "@/types";
-import { ProblemCard, ProblemCardSkeleton } from "../components";
+import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
 import { API } from "@/api";
 import { useDevice } from "@/hooks";
 
@@ -26,7 +26,8 @@ export function ProblemListPage() {
   const [subtopic, setSubtopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>("newest");
   const [sortBy, setSortBy] = stateSortBy;
-  const [advanced, setAdvanced] = useState(false);
+  const stateAdvanced = useState(false);
+  const [advanced, setAdvanced] = stateAdvanced;
 
   const { device } = useDevice();
 
@@ -97,58 +98,41 @@ export function ProblemListPage() {
 
   const renderAdvanced = useMemo(
     () =>
-      device === "desktop" && (
-        <>
-          {advanced && (
-            <div className="bg-slate-200 rounded-lg !p-4 mb-8">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Paragraph weight="semibold">Topics</Paragraph>
-                  <Select
-                    className="w-full"
-                    inputClassName="w-full"
-                    options={PROBLEM_TOPIC_OPTIONS}
-                    selectedOption={topic}
-                    onSelectOption={(option) => {
-                      option ? setTopic(option.id) : setTopic(undefined);
-                      setSubtopic(undefined);
-                    }}
-                    unselectedText="Any"
-                    optional
-                  />
-                </div>
-                <div className="flex-1">
-                  <Paragraph weight="semibold">Subtopics</Paragraph>
-                  <Select
-                    className="w-full"
-                    inputClassName="w-full"
-                    options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-                    selectedOption={subtopic}
-                    onSelectOption={(option) => {
-                      option ? setSubtopic(option.id) : setTopic(undefined);
-                    }}
-                    disabled={!topic}
-                    unselectedText="Any"
-                    optional
-                  />
-                </div>
-                <div className="flex-1">
-                  <Paragraph weight="semibold">Sort by</Paragraph>
-                  <Select
-                    className="w-full"
-                    inputClassName="w-full"
-                    options={PROBLEM_SORT_BY_OPTIONS}
-                    selectedOption={sortBy}
-                    onSelectOption={(option) => {
-                      option && setSortBy(option.id);
-                    }}
-                  />
-                </div>
-              </div>
-              <Button className="mt-4" onClick={handleGetProblem}>
+      device === "mobile" ? (
+        <Modal stateVisible={stateAdvanced}>
+          <ProblemFilter
+            className="flex-col"
+            stateSortBy={stateSortBy}
+            stateSubTopic={stateSubtopic}
+            stateTopic={stateTopic}
+            wrapperClassName="flex-col bg-slate-200 w-80"
+            buttonElement={
+              <Button
+                className="mt-4"
+                onClick={() => {
+                  setAdvanced(false);
+                  handleGetProblem();
+                }}
+              >
                 Apply
               </Button>
-            </div>
+            }
+          />
+        </Modal>
+      ) : (
+        <>
+          {advanced && (
+            <ProblemFilter
+              stateSortBy={stateSortBy}
+              stateSubTopic={stateSubtopic}
+              stateTopic={stateTopic}
+              wrapperClassName="bg-slate-200 flex-col"
+              buttonElement={
+                <Button className="mt-4 w-fit" onClick={handleGetProblem}>
+                  Apply
+                </Button>
+              }
+            />
           )}
         </>
       ),
@@ -156,12 +140,10 @@ export function ProblemListPage() {
       advanced,
       device,
       handleGetProblem,
-      setSortBy,
-      setSubtopic,
-      setTopic,
-      sortBy,
-      subtopic,
-      topic,
+      stateAdvanced,
+      stateSortBy,
+      stateSubtopic,
+      stateTopic,
     ]
   );
 
@@ -195,7 +177,7 @@ export function ProblemListPage() {
         </div>
       </>
     ),
-    [renderAdvanced]
+    [renderAdvanced, setAdvanced]
   );
 
   return <PageTemplate head={renderHead}>{renderProblems}</PageTemplate>;

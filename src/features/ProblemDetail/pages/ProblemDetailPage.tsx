@@ -304,39 +304,39 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     [problemData]
   );
 
-  const renderProblemAction = useMemo(
-    () => (
+  const renderProblemAction = useMemo(() => {
+    const actions = problemAction.filter(({ permission: perm }) =>
+      checkPermission(permission, perm)
+    );
+    return (
       <ul className="w-48">
-        {problemAction
-          .filter(({ permission: perm }) => checkPermission(permission, perm))
-          .map(({ name, handler }, idx) => {
-            let order: ButtonOrderType | undefined = "middle";
-            if (idx === 0) order = "first";
-            if (idx === problemAction.length - 1) order = "last";
-            if (problemAction.length === 1) order = undefined;
+        {actions.map(({ name, handler }, idx) => {
+          let order: ButtonOrderType | undefined = "middle";
+          if (idx === 0) order = "first";
+          if (idx === actions.length - 1) order = "last";
+          if (actions.length === 1) order = undefined;
 
-            return (
-              <li key={name}>
-                <Button
-                  className={clsx(
-                    "!w-full",
-                    device !== "mobile" ? "!pl-8" : "!text-lg"
-                  )}
-                  variant="outline"
-                  alignText={device === "mobile" ? "center" : "left"}
-                  order={order}
-                  orderDirection="column"
-                  onClick={handler}
-                >
-                  {name}
-                </Button>
-              </li>
-            );
-          })}
+          return (
+            <li key={name}>
+              <Button
+                className={clsx(
+                  "!w-full",
+                  device !== "mobile" ? "!pl-8" : "!text-lg"
+                )}
+                variant="outline"
+                alignText={device === "mobile" ? "center" : "left"}
+                order={order}
+                orderDirection="column"
+                onClick={handler}
+              >
+                {name}
+              </Button>
+            </li>
+          );
+        })}
       </ul>
-    ),
-    [device, permission, problemAction]
-  );
+    );
+  }, [device, permission, problemAction]);
 
   const renderMobileAction = useMemo(
     () => <Modal stateVisible={stateMobileAction}>{renderProblemAction}</Modal>,
