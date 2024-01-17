@@ -23,13 +23,14 @@ export interface ButtonProps
     ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   > {
-  children: ReactNode;
+  children?: ReactNode;
   variant?: ButtonVariantType;
   order?: ButtonOrderType;
   orderDirection?: ButtonDirectionType;
   alignText?: "left" | "center" | "right";
   className?: string;
   loading?: boolean;
+  element?: ReactNode;
 }
 
 export function Button({
@@ -42,6 +43,7 @@ export function Button({
   order,
   orderDirection,
   type,
+  element,
   onClick,
 }: ButtonProps) {
   return (
@@ -68,16 +70,21 @@ export function Button({
       disabled={disabled || loading}
     >
       {!loading ? (
-        <Paragraph
-          className={clsx(
-            alignText && BUTTON_TEXT_ALIGN_STYLE[alignText],
-            "w-full"
+        <>
+          {children && (
+            <Paragraph
+              className={clsx(
+                alignText && BUTTON_TEXT_ALIGN_STYLE[alignText],
+                "w-full"
+              )}
+              as="p"
+              color="inherit"
+            >
+              {children}
+            </Paragraph>
           )}
-          as="p"
-          color="inherit"
-        >
-          {children}
-        </Paragraph>
+          {element}
+        </>
       ) : (
         <AiOutlineLoading3Quarters className="my-1 justify-self-center animate-spin" />
       )}
@@ -122,7 +129,7 @@ const BUTTON_DANGER_STYLE = [
 ];
 
 const BUTTON_OUTLINE_STYLE = [
-  "text-teal-700 disabled:text-gray-400",
+  "text-teal-700 bg-white disabled:text-gray-400",
   `hover:bg-teal-50 disabled:bg-transparent`,
   `active:bg-teal-100 disabled:bg-transparent`,
   `border border-gray-300`,

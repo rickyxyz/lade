@@ -1,27 +1,20 @@
 import { useMemo, useEffect, useCallback, useRef } from "react";
-import { Input, Markdown, Quote, Button, Paragraph } from "@/components";
-import {
-  ContentViewType,
-  ProblemTopicNameType,
-  ProblemType,
-  SelectOptionType,
-  StateType,
-} from "@/types";
+import { Markdown, Button, Paragraph } from "@/components";
+import { ContentViewType, ProblemType, StateType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
-  PROBLEM_SUBTOPIC_OPTIONS,
-  PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
-import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
-import { useFormikContext, Field } from "formik";
-import { useProblemEditInitialized } from "@/hooks";
-import { SettingSelect } from "@/components/Setting";
-import { BsInfoCircleFill } from "react-icons/bs";
+import {
+  FormulaToolbar,
+  MarkdownEditor,
+  SettingInput,
+  SettingSelect,
+} from "@/components";
+import { useFormikContext } from "formik";
 import { ProblemAnswer } from "@/features/ProblemDetail";
+import { useProblemEditInitialized } from "@/hooks";
 import { useTopics, validateProblemId } from "@/utils";
-import { SettingInput } from "@/components/Setting/SettingInput";
-import { api } from "@/utils/api";
 import { API } from "@/api";
 
 export interface ProblemCreateEditorFormProps {
@@ -161,7 +154,8 @@ export function ProblemCreateEditorForm({
             formName="subTopicId"
             options={
               topicId
-                ? (getTopicOptions(getSubTopicsFromTopic(topicId)) as any)
+                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (getTopicOptions(getSubTopicsFromTopic(topicId)) as any)
                 : []
             }
             selectedOption={subTopicId}
@@ -226,7 +220,7 @@ export function ProblemCreateEditorForm({
   const renderProblemAnswer = useMemo(
     () =>
       type && (
-        <section className="mb-4">
+        <section className="mb-8">
           <h2 className="mb-4">Problem Answer</h2>
           <ProblemAnswer
             type={type}
@@ -262,7 +256,7 @@ export function ProblemCreateEditorForm({
       {renderProblemSettings}
       {renderProblemEditor}
       {renderProblemAnswer}
-      <div className="flex gap-4">
+      <div className="flex gap-4 mt-4">
         <Button
           loading={loading}
           disabled={!initialized || atLeastOneError}

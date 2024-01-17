@@ -1,10 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState } from "react";
+import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { Button, ButtonOrderType, Crumb, Paragraph } from "@/components";
+import { API } from "@/api";
+import {
+  Button,
+  ButtonOrderType,
+  Icon,
+  IconText,
+  Modal,
+  Paragraph,
+} from "@/components";
 import { useAppSelector } from "@/libs/redux";
-import { useDebounce } from "@/hooks";
+import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
 import {
   ProblemType,
@@ -15,9 +24,11 @@ import {
 import { PROBLEM_BLANK } from "@/consts";
 import { PageTemplate } from "@/templates";
 import { ProblemEditPage } from "../../ProblemCreate";
-import { ProblemDetailMain, ProblemDetailMainSkeleton } from "../components";
-import { API } from "@/api";
-import solved from "@/pages/api/solved";
+import {
+  ProblemDetailMain,
+  ProblemDetailMainSkeleton,
+  ProblemDetailTopics,
+} from "../components";
 
 interface ProblemData {
   name: string;
@@ -40,7 +51,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     PROBLEM_BLANK as unknown as ProblemType
   );
   const [problem, setProblem] = stateProblem;
-  const { title, topic, subTopic, authorId, solveds } = problem;
+  const { title, topicId, subTopicId, authorId, solveds } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -56,9 +67,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const setSubmitted = stateSubmitted[1];
   const stateSolvable = useState(false);
   const setSolvable = stateSolvable[1];
+  const stateMobileAction = useState(false);
+  const setMobileAction = stateMobileAction[1];
 
   const router = useRouter();
   const allUserSolved = useAppSelector("solveds");
+  const { device } = useDevice();
 
   const solveCache = useMemo(
     () => allUserSolved && allUserSolved[id],
@@ -157,6 +171,16 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     stateUserSolved,
   ]);
 
+  const handleGoBack = useCallback(() => {
+    if (window.history?.length) {
+      console.log("YES!!");
+      router.back();
+    } else {
+      console.log("BYE BYE");
+      router.replace("/");
+    }
+  }, [router]);
+
   const handleGetProblems = useCallback(async () => {
     if (!loading) return;
 
@@ -220,48 +244,58 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     handleGetProblems();
   }, [handleGetProblems]);
 
-  const renderBreadCrumb = useMemo(
+  const renderNavigation = useMemo(
     () => (
-      <Crumb
-        crumbs={[
-          {
-            text: "Problems",
-          },
-          {
-            text: topic?.name,
-          },
-          {
-            text: subTopic?.name,
-          },
-          {
-            text: title,
-            color: "secondary-4",
-          },
-        ]}
+      <IconText
+        IconComponent={BsArrowLeft}
+        text="Back"
+        className="mb-4 text-teal-600 cursor-pointer"
+        onClick={handleGoBack}
       />
     ),
-    [subTopic?.name, title, topic?.name]
+    [handleGoBack]
   );
 
   const renderHead = useMemo(
     () => (
       <>
-        {renderBreadCrumb}
-        <h1 className="mb-8">{title}</h1>
+        {renderNavigation}
+        <div className="flex  justify-between mb-4">
+          <div className="flex-1">
+            <h1 className="mt-2 mb-4">{title}</h1>
+            <ProblemDetailTopics
+              className="mb-8"
+              topic={topicId}
+              subTopic={subTopicId}
+            />
+          </div>
+          {device === "mobile" && (
+            <Button
+              variant="outline"
+              className="w-10 !p-0"
+              element={
+                <Icon className="mx-auto" IconComponent={BsThreeDotsVertical} />
+              }
+              onClick={() => {
+                setMobileAction((prev) => !prev);
+              }}
+            />
+          )}
+        </div>
       </>
     ),
-    [renderBreadCrumb, title]
+    [device, renderNavigation, setMobileAction, subTopicId, title, topicId]
   );
 
   const renderProblemData = useMemo(
     () => (
-      <ul className="w-48">
+      <ul className="md:w-48">
         {problemData.map(({ name, value }, idx) => (
           <li
             className={clsx("flex justify-between", idx > 0 && "mt-1")}
             key={name}
           >
-            <Paragraph color="secondary-6">{name}</Paragraph>
+            <Paragraph color="secondary-5">{name}</Paragraph>
             <Paragraph>{value}</Paragraph>
           </li>
         ))}
@@ -284,9 +318,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
             return (
               <li key={name}>
                 <Button
-                  className="!w-full !pl-8"
+                  className={clsx(
+                    "!w-full",
+                    device !== "mobile" ? "!pl-8" : "!text-lg"
+                  )}
                   variant="outline"
-                  alignText="left"
+                  alignText={device === "mobile" ? "center" : "left"}
                   order={order}
                   orderDirection="column"
                   onClick={handler}
@@ -298,17 +335,22 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
           })}
       </ul>
     ),
-    [permission, problemAction]
+    [device, permission, problemAction]
+  );
+
+  const renderMobileAction = useMemo(
+    () => <Modal stateVisible={stateMobileAction}>{renderProblemAction}</Modal>,
+    [renderProblemAction, stateMobileAction]
   );
 
   const renderSide = useMemo(
     () => (
       <div className="flex flex-col gap-8">
         {renderProblemData}
-        {renderProblemAction}
+        {device === "mobile" ? renderMobileAction : renderProblemAction}
       </div>
     ),
-    [renderProblemAction, renderProblemData]
+    [device, renderMobileAction, renderProblemAction, renderProblemData]
   );
 
   const renderViewProblem = useMemo(
@@ -326,17 +368,15 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
   const renderEditProblem = useMemo(
     () => (
-      <PageTemplate>
-        <ProblemEditPage
-          stateProblem={stateProblem}
-          onEdit={() => {
-            setMode("view");
-          }}
-          onLeaveEditor={() => {
-            setMode("view");
-          }}
-        />
-      </PageTemplate>
+      <ProblemEditPage
+        stateProblem={stateProblem}
+        onEdit={() => {
+          setMode("view");
+        }}
+        onLeaveEditor={() => {
+          setMode("view");
+        }}
+      />
     ),
     [setMode, stateProblem]
   );

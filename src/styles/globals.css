@@ -114,9 +114,17 @@
   @media (max-width: 1024px) {
     .w-adaptive {
       width: 100%;
+      padding: 0 1rem;
     }
     .w-adaptive-2 {
       width: 100%;
+      padding: 0 2rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .w-adaptive-2 {
+      width: 100%;
+      padding: 0 1rem;
     }
   }
 }

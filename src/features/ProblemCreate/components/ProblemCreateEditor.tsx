@@ -1,17 +1,14 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { parseAnswer, validateFormProblem } from "@/utils";
-import { ContentEditType, ProblemType, StateType } from "@/types";
-import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
 import { Formik } from "formik";
-import { crudData } from "@/libs/firebase";
-import { useRouter } from "next/router";
 import { Card } from "@/components";
 import { useAppSelector } from "@/libs/redux";
+import { parseAnswer, validateFormProblem } from "@/utils";
+import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
+import { ProblemType, StateType } from "@/types";
 import {
   ProblemCreateEditorForm,
   ProblemCreateEditorFormProps,
 } from "./ProblemCreateEditorForm";
-import { useDebounce } from "@/hooks";
 
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {

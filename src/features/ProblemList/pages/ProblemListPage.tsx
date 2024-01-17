@@ -15,6 +15,7 @@ import {
 } from "@/types";
 import { ProblemCard, ProblemCardSkeleton } from "../components";
 import { API } from "@/api";
+import { useDevice } from "@/hooks";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -25,18 +26,22 @@ export function ProblemListPage() {
   const [subtopic, setSubtopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>("newest");
   const [sortBy, setSortBy] = stateSortBy;
+  const [advanced, setAdvanced] = useState(false);
+
+  const { device } = useDevice();
 
   const renderProblems = useMemo(
-    () =>
-      loading ? (
-        <ProblemCardSkeleton />
-      ) : (
-        <div className="flex flex-col gap-8">
-          {problems.map((problem) => (
+    () => (
+      <div className="flex flex-col gap-8">
+        {loading ? (
+          <ProblemCardSkeleton />
+        ) : (
+          problems.map((problem) => (
             <ProblemCard key={problem.id} problem={problem} />
-          ))}
-        </div>
-      ),
+          ))
+        )}
+      </div>
+    ),
     [loading, problems]
   );
 
@@ -91,58 +96,65 @@ export function ProblemListPage() {
   }, []);
 
   const renderAdvanced = useMemo(
-    () => (
-      <div className="bg-slate-200 rounded-lg !p-4 mb-8">
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <Paragraph weight="semibold">Topics</Paragraph>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={PROBLEM_TOPIC_OPTIONS}
-              selectedOption={topic}
-              onSelectOption={(option) => {
-                option ? setTopic(option.id) : setTopic(undefined);
-                setSubtopic(undefined);
-              }}
-              unselectedText="Any"
-              optional
-            />
-          </div>
-          <div className="flex-1">
-            <Paragraph weight="semibold">Subtopics</Paragraph>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
-              selectedOption={subtopic}
-              onSelectOption={(option) => {
-                option ? setSubtopic(option.id) : setTopic(undefined);
-              }}
-              disabled={!topic}
-              unselectedText="Any"
-              optional
-            />
-          </div>
-          <div className="flex-1">
-            <Paragraph weight="semibold">Sort by</Paragraph>
-            <Select
-              className="w-full"
-              inputClassName="w-full"
-              options={PROBLEM_SORT_BY_OPTIONS}
-              selectedOption={sortBy}
-              onSelectOption={(option) => {
-                option && setSortBy(option.id);
-              }}
-            />
-          </div>
-        </div>
-        <Button className="mt-4" onClick={handleGetProblem}>
-          Apply
-        </Button>
-      </div>
-    ),
+    () =>
+      device === "desktop" && (
+        <>
+          {advanced && (
+            <div className="bg-slate-200 rounded-lg !p-4 mb-8">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Paragraph weight="semibold">Topics</Paragraph>
+                  <Select
+                    className="w-full"
+                    inputClassName="w-full"
+                    options={PROBLEM_TOPIC_OPTIONS}
+                    selectedOption={topic}
+                    onSelectOption={(option) => {
+                      option ? setTopic(option.id) : setTopic(undefined);
+                      setSubtopic(undefined);
+                    }}
+                    unselectedText="Any"
+                    optional
+                  />
+                </div>
+                <div className="flex-1">
+                  <Paragraph weight="semibold">Subtopics</Paragraph>
+                  <Select
+                    className="w-full"
+                    inputClassName="w-full"
+                    options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
+                    selectedOption={subtopic}
+                    onSelectOption={(option) => {
+                      option ? setSubtopic(option.id) : setTopic(undefined);
+                    }}
+                    disabled={!topic}
+                    unselectedText="Any"
+                    optional
+                  />
+                </div>
+                <div className="flex-1">
+                  <Paragraph weight="semibold">Sort by</Paragraph>
+                  <Select
+                    className="w-full"
+                    inputClassName="w-full"
+                    options={PROBLEM_SORT_BY_OPTIONS}
+                    selectedOption={sortBy}
+                    onSelectOption={(option) => {
+                      option && setSortBy(option.id);
+                    }}
+                  />
+                </div>
+              </div>
+              <Button className="mt-4" onClick={handleGetProblem}>
+                Apply
+              </Button>
+            </div>
+          )}
+        </>
+      ),
     [
+      advanced,
+      device,
       handleGetProblem,
       setSortBy,
       setSubtopic,
@@ -170,7 +182,13 @@ export function ProblemListPage() {
               </Button>
             }
           />
-          <Paragraph color="primary-6" className="leading-8 my-2 self-end">
+          <Paragraph
+            color="primary-6"
+            className="leading-8 my-2 self-end cursor-pointer select-none"
+            onClick={() => {
+              setAdvanced((prev) => !prev);
+            }}
+          >
             Advanced Search
           </Paragraph>
           {renderAdvanced}

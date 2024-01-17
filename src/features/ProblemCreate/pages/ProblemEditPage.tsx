@@ -1,13 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
-import { PROBLEM_BLANK } from "@/consts";
-import { ProblemCreateEditor } from "../components";
+import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import { ProblemType, StateType } from "@/types";
-import { crudData } from "@/libs/firebase";
-import { useDebounce } from "@/hooks";
-import { useRouter } from "next/router";
-import { api } from "@/utils/api";
-import { API } from "@/api";
+import { ProblemCreateEditor } from "../components";
 
 export function ProblemEditPage({
   stateProblem,
@@ -22,8 +17,6 @@ export function ProblemEditPage({
 
   const stateLoading = useState(false);
   const [, setLoading] = stateLoading;
-  const debounce = useDebounce();
-  const router = useRouter();
 
   const renderHead = useMemo(() => {
     return <h1 className="mb-8">Edit Problem</h1>;

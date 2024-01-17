@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import { ReactNode } from "react";
-import { PageTemplateSide } from "./PageTemplateSide";
+import clsx from "clsx";
 
 export interface PageTemplateProps {
   className?: string;
@@ -20,7 +19,7 @@ export function PageTemplate({
   return (
     <main className="flex flex-col relative w-adaptive-2 mx-auto py-12">
       {head}
-      <section className="flex w-full gap-8">
+      <section className="flex flex-col md:flex-row w-full gap-8">
         <article className={clsx("h-full w-full", className)}>
           {children}
         </article>
