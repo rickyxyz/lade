@@ -105,7 +105,7 @@ export function ProblemListPage() {
             stateSortBy={stateSortBy}
             stateSubTopic={stateSubtopic}
             stateTopic={stateTopic}
-            wrapperClassName="flex-col bg-slate-200 w-80"
+            wrapperClassName="flex-col bg-white w-80"
             buttonElement={
               <Button
                 className="mt-4"
@@ -140,6 +140,7 @@ export function ProblemListPage() {
       advanced,
       device,
       handleGetProblem,
+      setAdvanced,
       stateAdvanced,
       stateSortBy,
       stateSubtopic,
