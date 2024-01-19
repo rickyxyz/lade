@@ -25,7 +25,15 @@ export default async function handler(
   let result: ProblemType[] | undefined;
   try {
     const {
-      query: { topic, subTopic, sort, sortBy = "desc" },
+      query: {
+        search,
+        topic,
+        subTopic,
+        sort,
+        sortBy = "desc",
+        page = 1,
+        count = 5,
+      },
     } = req;
 
     const topicQuery = topic ? { topicId: topic } : {};
@@ -46,6 +54,17 @@ export default async function handler(
         : {};
     })();
 
+    const searchQuery = (() => {
+      if (search) {
+        return {
+          title: {
+            contains: search,
+            mode: "insensitive",
+          },
+        };
+      }
+    })();
+
     const problems = (await prisma.problem.findMany({
       include: {
         topic: true,
@@ -55,10 +74,13 @@ export default async function handler(
       where: {
         ...(topicQuery as any),
         ...(subTopicQuery as any),
+        ...(searchQuery as any),
       },
       orderBy: {
         ...(sortQuery as any),
       },
+      skip: (Number(page) - 1) * Number(count),
+      take: Number(count),
     })) as ProblemType[];
 
     const removedAnswers = problems.map((problem) => {
