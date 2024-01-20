@@ -6,6 +6,7 @@ import { ProblemType } from "@/types";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/libs/next-auth";
 import { getAuthUser } from "@/libs/next-auth/helper";
+import { isNaN } from "formik";
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,19 +23,34 @@ export default async function handler(
 
   const user = await getAuthUser(req, res);
 
-  let result: ProblemType[] | undefined;
+  let result:
+    | {
+        data: ProblemType[];
+        pagination: {
+          total_records: number;
+          total_pages: number;
+          next_page: number | null;
+          current_page: number;
+          prev_page: number | null;
+        };
+      }
+    | undefined;
+
   try {
     const {
-      query: {
-        search,
-        topic,
-        subTopic,
-        sort,
-        sortBy = "desc",
-        page = 1,
-        count = 5,
-      },
+      query: { search, topic, subTopic, sort, sortBy = "desc" },
     } = req;
+
+    let page = req.query.page as unknown as number;
+    page = Number(req.query.page);
+    if (isNaN(page)) page = 1;
+
+    let count = req.query.count as unknown as number;
+    count = Number(req.query.count);
+    if (isNaN(count)) count = 5;
+
+    console.log("Page: ", page);
+    console.log("Count: ", count);
 
     const topicQuery = topic ? { topicId: topic } : {};
     const subTopicQuery = subTopic ? { subTopicId: subTopic } : {};
@@ -65,6 +81,18 @@ export default async function handler(
       }
     })();
 
+    const problemCount = await prisma.problem.count({
+      where: {
+        ...(topicQuery as any),
+        ...(subTopicQuery as any),
+        ...(searchQuery as any),
+      },
+    });
+    const maxPages = Math.ceil(problemCount / count);
+
+    if (page > maxPages) page = maxPages;
+    if (page < 1) page = 1;
+
     const problems = (await prisma.problem.findMany({
       include: {
         topic: true,
@@ -91,7 +119,16 @@ export default async function handler(
       return temp;
     }, []);
 
-    result = JSON.parse(json(removedAnswers));
+    result = {
+      data: JSON.parse(json(removedAnswers)),
+      pagination: {
+        total_records: problemCount,
+        next_page: page + 1 > maxPages ? null : page + 1,
+        current_page: page,
+        prev_page: page - 1 < 1 ? null : page - 1,
+        total_pages: maxPages,
+      },
+    };
   } catch (e) {
     console.log(e);
     result = undefined;

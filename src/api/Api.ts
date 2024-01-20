@@ -17,6 +17,7 @@ interface ApiParams {
     subTopic?: string;
     sort?: string;
     sortBy?: "asc" | "desc";
+    page?: number;
   };
   post_problem: Empty;
   patch_problem: Empty;
@@ -49,7 +50,16 @@ interface ApiBody {
 
 interface ApiReturn {
   get_problem: ProblemType;
-  get_problems: ProblemType[];
+  get_problems: {
+    data: ProblemType[];
+    pagination: {
+      total_records: number;
+      next_page: number;
+      current_page: number;
+      prev_page: number;
+      total_pages: number;
+    };
+  };
   post_problem: ApiMessage;
   patch_problem: ApiMessage;
   get_solved: SolvedType;
