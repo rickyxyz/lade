@@ -88,16 +88,14 @@ export function PageTemplateNav() {
               router.push("/login");
             }}
             variant="ghost"
-          >
-            Log In
-          </Button>
+            label="Login"
+          />
           <Button
             onClick={() => {
               router.push("/signup");
             }}
-          >
-            Sign Up
-          </Button>
+            label="Sign Up"
+          />
         </div>
       ),
     [router, user]

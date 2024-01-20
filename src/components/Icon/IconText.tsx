@@ -5,7 +5,7 @@ import clsx from "clsx";
 export interface IconTextProps extends IconProps {
   classNameDiv?: string;
   text: string;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export function IconText({

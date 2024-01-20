@@ -60,7 +60,7 @@ export function ProblemFilter({
             options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
             selectedOption={subtopic}
             onSelectOption={(option) => {
-              option ? setSubtopic(option.id) : setTopic(undefined);
+              option ? setSubtopic(option.id) : setSubtopic(undefined);
             }}
             disabled={!topic}
             unselectedText="Any"

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { API } from "@/api";
 import {
   Button,
+  ButtonIcon,
   ButtonOrderType,
   Icon,
   IconText,
@@ -270,15 +271,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
             />
           </div>
           {device === "mobile" && (
-            <Button
+            <ButtonIcon
               variant="outline"
-              className="w-10 !p-0"
-              element={
-                <Icon className="mx-auto" IconComponent={BsThreeDotsVertical} />
-              }
               onClick={() => {
                 setMobileAction((prev) => !prev);
               }}
+              icon={BsThreeDotsVertical}
             />
           )}
         </div>
@@ -328,9 +326,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
                 order={order}
                 orderDirection="column"
                 onClick={handler}
-              >
-                {name}
-              </Button>
+                label={name}
+              />
             </li>
           );
         })}

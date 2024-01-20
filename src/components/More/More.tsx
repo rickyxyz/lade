@@ -2,6 +2,7 @@ import { Button, Dropdown, Icon } from "@/components";
 import { DropdownOptionType } from "@/types";
 import clsx from "clsx";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { ButtonIcon } from "../Button/ButtonIcon";
 
 interface MoreProps {
   className?: string;
@@ -15,9 +16,12 @@ export function More({ className, options }: MoreProps) {
       direction="left"
       options={options}
       triggerElement={
-        <Button className={clsx("!w-8 !h-8", className)} variant="ghost">
-          <Icon size="s" IconComponent={BsThreeDotsVertical} />
-        </Button>
+        // <Button
+        //   className={clsx("!w-8 !h-8", className)}
+        //   variant="ghost"
+        //   icon={BsThreeDotsVertical}
+        // />
+        <ButtonIcon variant="ghost" icon={BsThreeDotsVertical} />
       }
     />
   );

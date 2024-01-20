@@ -2,6 +2,8 @@ import { DetailedHTMLProps, ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Paragraph } from "../Paragraph";
+import { IconType } from "react-icons";
+import { Icon } from "../Icon";
 
 export type ButtonVariantType =
   | "primary"
@@ -23,6 +25,7 @@ export interface ButtonProps
     ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   > {
+  label?: string;
   children?: ReactNode;
   variant?: ButtonVariantType;
   order?: ButtonOrderType;
@@ -30,10 +33,10 @@ export interface ButtonProps
   alignText?: "left" | "center" | "right";
   className?: string;
   loading?: boolean;
-  element?: ReactNode;
 }
 
 export function Button({
+  label,
   children,
   variant = "primary",
   className,
@@ -43,7 +46,6 @@ export function Button({
   order,
   orderDirection,
   type,
-  element,
   onClick,
 }: ButtonProps) {
   return (
@@ -71,7 +73,7 @@ export function Button({
     >
       {!loading ? (
         <>
-          {children && (
+          {label && (
             <Paragraph
               className={clsx(
                 alignText && BUTTON_TEXT_ALIGN_STYLE[alignText],
@@ -80,10 +82,10 @@ export function Button({
               as="p"
               color="inherit"
             >
-              {children}
+              {label}
             </Paragraph>
           )}
-          {element}
+          {children}
         </>
       ) : (
         <AiOutlineLoading3Quarters className="my-1 justify-self-center animate-spin" />
@@ -93,7 +95,7 @@ export function Button({
 }
 
 const BUTTON_BASE_STYLE = [
-  "flex flex-row items-center px-4 py-2 h-10",
+  "flex flex-row items-center h-10 px-4 py-2",
   "transition-colors duration-100 text-base font-semibold",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
 ];
@@ -159,12 +161,12 @@ const BUTTON_ORDER_STYLE: Record<
 > = {
   column: {
     first: ["!rounded-t"],
-    middle: ["!border-t-0 !border-b-0"],
-    last: ["!rounded-b"],
+    middle: ["!border-t-0"],
+    last: ["!border-t-0 !rounded-b"],
   },
   row: {
     first: ["!rounded-l"],
-    middle: ["!border-l-0 !border-r-0"],
+    middle: ["!border-l-0"],
     last: ["!border-l-0 !rounded-r"],
   },
 };

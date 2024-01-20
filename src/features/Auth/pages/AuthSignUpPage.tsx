@@ -89,9 +89,8 @@ export function AuthSignUpPage() {
                 className="w-full mt-8"
                 type="submit"
                 loading={isSubmitting}
-              >
-                Sign Up
-              </Button>
+                label="Sign Up"
+              />
             </Form>
           )}
         </Formik>

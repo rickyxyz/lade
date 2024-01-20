@@ -83,16 +83,14 @@ export function Navbar() {
               router.push("/login");
             }}
             variant="ghost"
-          >
-            Log In
-          </Button>
+            label="Log In"
+          />
           <Button
             onClick={() => {
               router.push("/signup");
             }}
-          >
-            Sign Up
-          </Button>
+            label="Sign Up"
+          />
         </div>
       ),
     [router, user]

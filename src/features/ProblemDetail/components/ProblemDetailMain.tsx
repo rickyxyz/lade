@@ -158,9 +158,8 @@ export function ProblemDetailMain({
               className="w-20"
               disabled={!solvable || cooldown > 0 || userSolved || loading}
               onClick={handleCheckAnswer}
-            >
-              Submit
-            </Button>
+              label="Submit"
+            />
           </div>
         )}
       </>

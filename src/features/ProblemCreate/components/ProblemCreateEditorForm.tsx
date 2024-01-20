@@ -262,13 +262,10 @@ export function ProblemCreateEditorForm({
           disabled={!initialized || atLeastOneError}
           type="submit"
           onClick={handleSubmit}
-        >
-          Submit
-        </Button>
+          label="Submit"
+        />
         {onLeaveEditor && (
-          <Button variant="ghost" onClick={onLeaveEditor}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
         )}
       </div>
     </>
