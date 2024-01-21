@@ -26,6 +26,7 @@ import {
 import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import clsx from "clsx";
+import { Pagination } from "@/components/Pagination";
 
 export function ProblemListPage() {
   const [problems, setProblems] = useState<ProblemType[]>([]);
@@ -230,6 +231,17 @@ export function ProblemListPage() {
     );
   }, [handleGetProblem, loading, maxPages, page, visiblePages]);
 
+  const renderPaginationNew = useMemo(
+    () => (
+      <Pagination
+        pagination={pagination}
+        onClick={(newPage) => {
+          if (!loading) handleGetProblem(newPage);
+        }}
+      />
+    ),
+    [handleGetProblem, loading, pagination]
+  );
   const renderPagination = useMemo(() => {
     return (
       <div className={clsx("flex mb-8 justify-center md:items-between", "")}>
@@ -240,6 +252,7 @@ export function ProblemListPage() {
             </Paragraph>
           </div>
         )}
+
         <div className="flex">
           <ButtonIcon
             variant="outline"
@@ -391,14 +404,14 @@ export function ProblemListPage() {
           </Paragraph>
           {renderAdvanced}
         </div>
-        {pagination.initialized && renderPagination}
+        {pagination.initialized && renderPaginationNew}
       </>
     ),
     [
       loading,
       renderAdvanced,
       pagination.initialized,
-      renderPagination,
+      renderPaginationNew,
       handleGetProblem,
       setAdvanced,
     ]
