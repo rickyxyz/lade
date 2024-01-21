@@ -148,3 +148,5 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
       descending: false,
     },
   ];
+
+export const PROBLEM_PAGINATION_COUNT = 5;
