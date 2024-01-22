@@ -20,6 +20,8 @@ export type ButtonOrderType = "first" | "middle" | "last";
 
 export type ButtonDirectionType = "row" | "column";
 
+export type ButtonSizeType = "m" | "s";
+
 export interface ButtonProps
   extends DetailedHTMLProps<
     ButtonHTMLAttributes<HTMLButtonElement>,
@@ -31,6 +33,7 @@ export interface ButtonProps
   order?: ButtonOrderType;
   orderDirection?: ButtonDirectionType;
   alignText?: "left" | "center" | "right";
+  size?: ButtonSizeType | null;
   className?: string;
   loading?: boolean;
 }
@@ -43,6 +46,7 @@ export function Button({
   loading = false,
   disabled = false,
   alignText = "center",
+  size = "m",
   order,
   orderDirection,
   type,
@@ -63,6 +67,7 @@ export function Button({
           variant === "ghost-danger" && BUTTON_GHOST_DANGER_STYLE,
           variant === "link" && BUTTON_LINK_STYLE,
         ],
+        size && BUTTON_SIZE_STYLE[size],
         order && orderDirection && BUTTON_ORDER_STYLE[orderDirection][order],
         !order && "rounded",
         className
@@ -95,7 +100,7 @@ export function Button({
 }
 
 const BUTTON_BASE_STYLE = [
-  "flex flex-row items-center h-10 px-4 py-2",
+  "flex flex-row items-center",
   "transition-colors duration-100 text-base font-semibold",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
 ];
@@ -175,4 +180,9 @@ const BUTTON_TEXT_ALIGN_STYLE = {
   left: "text-left",
   center: "text-center",
   right: "text-right",
+};
+
+const BUTTON_SIZE_STYLE: Record<ButtonSizeType, string> = {
+  m: "h-10 px-4 py-2",
+  s: "h-8",
 };

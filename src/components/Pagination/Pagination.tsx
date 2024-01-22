@@ -26,14 +26,10 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
     count,
   } = useMemo(() => {
     const { page, maxPages, count } = pagination;
-
-    let visiblePages = 5;
-    visiblePages = Math.min(visiblePages, maxPages);
-
+    const visiblePages = Math.min(5, maxPages);
     const half = Math.floor(visiblePages / 2);
 
     let newStyle = "first";
-
     if (page + half >= maxPages) {
       newStyle = "last";
     } else if (page - half <= 1) {
@@ -55,7 +51,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
       contentFrom: from,
       contentTo: to,
     };
-  }, [device, pagination]);
+  }, [pagination]);
 
   const renderPaginationFirst = useMemo(() => {
     return (
@@ -140,6 +136,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           icon={BsChevronLeft}
           disabled={page === 1}
           size={device === "mobile" ? "s" : "m"}
+          iconSize={device === "mobile" ? "s" : "m"}
         />
         {(() => {
           switch (style) {
@@ -158,6 +155,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           icon={BsChevronRight}
           disabled={page === maxPages}
           size={device === "mobile" ? "s" : "m"}
+          iconSize={device === "mobile" ? "s" : "m"}
         />
       </div>
     </div>

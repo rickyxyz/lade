@@ -382,6 +382,7 @@ export function ProblemListPage() {
             }}
             rightElement={
               <ButtonIcon
+                className="!px-4"
                 variant="outline"
                 order="last"
                 orderDirection="row"
