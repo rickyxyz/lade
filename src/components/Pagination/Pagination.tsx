@@ -137,6 +137,9 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           disabled={page === 1}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}
+          onClick={() => {
+            onClick(Math.max(0, page - 1));
+          }}
         />
         {(() => {
           switch (style) {
@@ -156,6 +159,9 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           disabled={page === maxPages}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}
+          onClick={() => {
+            onClick(Math.min(maxPages, page + 1));
+          }}
         />
       </div>
     </div>

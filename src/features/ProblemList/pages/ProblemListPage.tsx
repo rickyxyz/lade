@@ -1,21 +1,8 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
-import {
-  BsArrowLeft,
-  BsChevronLeft,
-  BsChevronRight,
-  BsSearch,
-} from "react-icons/bs";
+import { BsChevronLeft, BsChevronRight, BsSearch } from "react-icons/bs";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
-import {
-  Button,
-  ButtonIcon,
-  ButtonOrderType,
-  Icon,
-  Input,
-  Modal,
-  Paragraph,
-} from "@/components";
+import { Button, ButtonIcon, Input, Modal, Paragraph } from "@/components";
 import { useDevice } from "@/hooks";
 import {
   ProblemSortByType,
@@ -242,57 +229,6 @@ export function ProblemListPage() {
     ),
     [handleGetProblem, loading, pagination]
   );
-  const renderPagination = useMemo(() => {
-    return (
-      <div className={clsx("flex mb-8 justify-center md:items-between", "")}>
-        {device !== "mobile" && (
-          <div className="flex flex-1">
-            <Paragraph className="my-auto" color="secondary-6">
-              Showing {contentFrom} - {contentTo} of {count} problems
-            </Paragraph>
-          </div>
-        )}
-
-        <div className="flex">
-          <ButtonIcon
-            variant="outline"
-            order="first"
-            orderDirection="row"
-            icon={BsChevronLeft}
-            disabled={page === 1}
-          />
-          {(() => {
-            switch (style) {
-              case "middle":
-                return renderPaginationMiddle;
-              case "last":
-                return renderPaginationLast;
-              default:
-                return renderPaginationFirst;
-            }
-          })()}
-          <ButtonIcon
-            variant="outline"
-            order="last"
-            orderDirection="row"
-            icon={BsChevronRight}
-            disabled={page === maxPages}
-          />
-        </div>
-      </div>
-    );
-  }, [
-    contentFrom,
-    contentTo,
-    count,
-    device,
-    maxPages,
-    page,
-    renderPaginationFirst,
-    renderPaginationLast,
-    renderPaginationMiddle,
-    style,
-  ]);
 
   const renderProblems = useMemo(
     () => (
