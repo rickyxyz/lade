@@ -58,6 +58,9 @@ export default function App({ Component, pageProps }: AppProps) {
         * {
           font-family: ${noto.style.fontFamily}!important;
         }
+        .MathJax[display="true"] {
+          overflow-x: auto;
+        }
       `}</style>
 
       <SessionProvider session={pageProps.session}>
