@@ -149,76 +149,7 @@ export function ProblemListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderPaginationFirst = useMemo(() => {
-    return (
-      <>
-        {Array.from({ length: visiblePages }, (_, i) => i + 1).map((i) => {
-          const chosen = page === i;
-          return (
-            <Button
-              variant={chosen ? "primary" : "outline"}
-              key={i}
-              order="middle"
-              orderDirection="row"
-              label={String(i)}
-              onClick={() => {
-                if (!chosen && !loading) handleGetProblem(i);
-              }}
-            />
-          );
-        })}
-      </>
-    );
-  }, [handleGetProblem, loading, page, visiblePages]);
-
-  const renderPaginationMiddle = useMemo(() => {
-    return (
-      <>
-        {Array.from({ length: visiblePages }, (_, i) => i - half).map((i) => {
-          const chosen = i === 0;
-          return (
-            <Button
-              variant={chosen ? "primary" : "outline"}
-              key={i}
-              order="middle"
-              orderDirection="row"
-              label={String(page + i)}
-              onClick={() => {
-                if (!chosen && !loading) handleGetProblem(page + i);
-              }}
-            />
-          );
-        })}
-      </>
-    );
-  }, [half, handleGetProblem, loading, page, visiblePages]);
-
-  const renderPaginationLast = useMemo(() => {
-    return (
-      <>
-        {Array.from(
-          { length: visiblePages },
-          (_, i) => maxPages - visiblePages + i + 1
-        ).map((i) => {
-          const chosen = page === i;
-          return (
-            <Button
-              variant={chosen ? "primary" : "outline"}
-              key={i}
-              order="middle"
-              orderDirection="row"
-              label={String(i)}
-              onClick={() => {
-                if (!chosen && !loading) handleGetProblem(i);
-              }}
-            />
-          );
-        })}
-      </>
-    );
-  }, [handleGetProblem, loading, maxPages, page, visiblePages]);
-
-  const renderPaginationNew = useMemo(
+  const renderPagination = useMemo(
     () => (
       <Pagination
         pagination={pagination}
@@ -341,14 +272,14 @@ export function ProblemListPage() {
           </Paragraph>
           {renderAdvanced}
         </div>
-        {pagination.initialized && renderPaginationNew}
+        {pagination.initialized && renderPagination}
       </>
     ),
     [
       loading,
       renderAdvanced,
       pagination.initialized,
-      renderPaginationNew,
+      renderPagination,
       handleGetProblem,
       setAdvanced,
     ]
