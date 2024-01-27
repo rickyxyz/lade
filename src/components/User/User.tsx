@@ -1,6 +1,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Either, UserType } from "@/types";
+import { useDevice } from "@/hooks";
 
 type UserProps = UserBaseProps &
   Either<
@@ -17,6 +18,7 @@ type UserBaseProps = {
   captionElement?: ReactNode;
   className?: string;
   username?: string;
+  hideName?: boolean;
 };
 
 export function User({
@@ -24,6 +26,7 @@ export function User({
   caption,
   captionElement,
   username,
+  hideName,
 }: UserProps) {
   const userInitials = useMemo(() => {
     if (!username) return "?";
@@ -44,7 +47,7 @@ export function User({
       >
         <span className="text-white">{userInitials}</span>
       </div>
-      <span className="ml-3 ">{username}</span>
+      {!hideName && <span className="ml-3 ">{username}</span>}
       {caption && (
         <>
           <span className="mx-1.5" style={{ fontSize: "8px" }}>

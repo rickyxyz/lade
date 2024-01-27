@@ -1,17 +1,26 @@
 import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { Button, Icon, Input, User, Dropdown, IconText } from "@/components";
+import {
+  Button,
+  Icon,
+  Input,
+  User,
+  Dropdown,
+  IconText,
+  Paragraph,
+} from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { crudData, logout } from "@/libs/firebase";
-import { BsCaretDownFill } from "react-icons/bs";
+import { BsCaretDownFill, BsList, BsMenuButton } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
-import { useDebounce } from "@/hooks";
+import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
+import { PageTemplateNavButton } from "./PageTemplateNavButton";
 
 export function PageTemplateNav() {
   const auth = getAuth();
@@ -19,15 +28,29 @@ export function PageTemplateNav() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const debounce = useDebounce();
+  const { device } = useDevice();
 
-  const renderSearchField = useMemo(
-    () => (
-      <Input
-        variant="solid"
-        style={{ minWidth: "min(480px, 100%)" }}
-        placeholder="Search a question"
-      />
-    ),
+  const links = useMemo<
+    {
+      label: string;
+      href?: string;
+      onClick?: () => void;
+    }[]
+  >(
+    () => [
+      {
+        label: "Problems",
+        href: "/",
+      },
+      {
+        label: "Contests",
+        href: "/",
+      },
+      {
+        label: "Leaderboard",
+        href: "/",
+      },
+    ],
     []
   );
 
@@ -50,12 +73,15 @@ export function PageTemplateNav() {
             <User
               className="relative"
               username={user.id}
+              hideName={device === "mobile"}
               captionElement={
-                <Icon
-                  className="ml-2"
-                  IconComponent={BsCaretDownFill}
-                  size="s"
-                />
+                device !== "mobile" && (
+                  <Icon
+                    className="ml-2"
+                    IconComponent={BsCaretDownFill}
+                    size="s"
+                  />
+                )
               }
             />
           }
@@ -98,7 +124,20 @@ export function PageTemplateNav() {
           />
         </div>
       ),
-    [router, user]
+    [device, router, user]
+  );
+
+  const renderLinks = useMemo(
+    () =>
+      links.map(({ label, href, onClick }) => (
+        <PageTemplateNavButton
+          key={label}
+          label={label}
+          href={href}
+          onClick={onClick}
+        />
+      )),
+    [links]
   );
 
   const handleUpdateUser = useCallback(
@@ -152,8 +191,21 @@ export function PageTemplateNav() {
   return (
     <nav className={NAVBAR_OUTER_STYLE} style={{ minHeight: "4rem" }}>
       <div className={NAVBAR_INNER_STYLE}>
-        <Image src="/lade.svg" alt="LADE Logo" width={120} height={56} />
-        {renderSearchField}
+        <div className="flex h-full">
+          {device === "mobile" && (
+            <PageTemplateNavButton className="!px-6">
+              <BsList />
+            </PageTemplateNavButton>
+          )}
+          <Image
+            className="mr-8"
+            src="/lade.svg"
+            alt="LADE Logo"
+            width={120}
+            height={56}
+          />
+          {device !== "mobile" && renderLinks}
+        </div>
         {renderAuthButtons}
       </div>
     </nav>
@@ -167,5 +219,5 @@ const NAVBAR_OUTER_STYLE = clsx(
 );
 
 const NAVBAR_INNER_STYLE = clsx(
-  "flex justify-between items-center mx-auto w-adaptive gap-4"
+  "flex justify-between items-center mx-auto w-adaptive gap-4 h-full"
 );
