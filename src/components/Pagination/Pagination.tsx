@@ -120,14 +120,19 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
   }, [device, maxPages, onClick, page, visiblePages]);
 
   return (
-    <div className={clsx("flex mb-8 justify-center md:items-between", "")}>
-      {device !== "mobile" && (
-        <div className="flex flex-1">
-          <Paragraph className="my-auto" color="secondary-6">
-            Showing {contentFrom} - {contentTo} of {count} contents
-          </Paragraph>
-        </div>
+    <div
+      className={clsx(
+        "flex justify-center",
+        "items-center md:items-between",
+        "flex-col md:flex-row",
+        "mb-8 gap-4"
       )}
+    >
+      <div className="flex flex-1">
+        <Paragraph className="my-auto" color="secondary-6">
+          Showing {contentFrom} - {contentTo} of {count} contents
+        </Paragraph>
+      </div>
       <div className="flex">
         <ButtonIcon
           variant="outline"
