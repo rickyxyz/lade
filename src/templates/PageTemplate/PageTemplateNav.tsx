@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   Dropdown,
   IconText,
   Paragraph,
+  Modal,
 } from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
@@ -21,6 +22,12 @@ import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
+import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+
+interface NavLink {
+  label: string;
+  href: string;
+}
 
 export function PageTemplateNav() {
   const auth = getAuth();
@@ -28,15 +35,11 @@ export function PageTemplateNav() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const debounce = useDebounce();
+  const stateMobileLinks = useState(false);
+  const setMobileLinks = stateMobileLinks[1];
   const { device } = useDevice();
 
-  const links = useMemo<
-    {
-      label: string;
-      href?: string;
-      onClick?: () => void;
-    }[]
-  >(
+  const links = useMemo<NavLink[]>(
     () => [
       {
         label: "Problems",
@@ -129,16 +132,26 @@ export function PageTemplateNav() {
 
   const renderLinks = useMemo(
     () =>
-      links.map(({ label, href, onClick }) => (
-        <PageTemplateNavButton
-          key={label}
-          label={label}
-          href={href}
-          onClick={onClick}
-        />
+      links.map(({ label, href }) => (
+        <PageTemplateNavButton key={label} label={label} href={href} />
       )),
     [links]
   );
+
+  const renderMobileLinks = useMemo(() => {
+    const mobileLinks: ButtonListEntry[] = links.map(({ label, href }) => ({
+      label,
+      handler: () => {
+        router.push(href);
+        setMobileLinks(false);
+      },
+    }));
+    return (
+      <Modal stateVisible={stateMobileLinks}>
+        <ButtonList list={mobileLinks} className="w-48" />
+      </Modal>
+    );
+  }, [links, router, setMobileLinks, stateMobileLinks]);
 
   const handleUpdateUser = useCallback(
     (authUser: UserType) => {
@@ -193,7 +206,12 @@ export function PageTemplateNav() {
       <div className={NAVBAR_INNER_STYLE}>
         <div className="flex h-full">
           {device === "mobile" && (
-            <PageTemplateNavButton className="!px-6">
+            <PageTemplateNavButton
+              className="!px-6"
+              onClick={() => {
+                setMobileLinks((prev) => !prev);
+              }}
+            >
               <BsList />
             </PageTemplateNavButton>
           )}
@@ -207,6 +225,7 @@ export function PageTemplateNav() {
           {device !== "mobile" && renderLinks}
         </div>
         {renderAuthButtons}
+        {device === "mobile" && renderMobileLinks}
       </div>
     </nav>
   );

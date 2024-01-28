@@ -30,16 +30,15 @@ import {
   ProblemDetailMainSkeleton,
   ProblemDetailTopics,
 } from "../components";
+import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 
 interface ProblemData {
-  name: string;
+  label: string;
   value?: string | number;
 }
 
-interface ProblemAction {
-  name: string;
+interface ProblemAction extends ButtonListEntry {
   permission?: ContentAccessType;
-  handler: () => void;
 }
 
 interface ProblemProps {
@@ -92,11 +91,11 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const problemData = useMemo<ProblemData[]>(
     () => [
       {
-        name: "Author",
+        label: "Author",
         value: authorId,
       },
       {
-        name: "Solved",
+        label: "Solved",
         value: (solveds ?? []).length,
       },
     ],
@@ -124,22 +123,20 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const problemAction = useMemo<ProblemAction[]>(
     () => [
       {
-        name: "Edit",
+        label: "Edit",
         handler: () => {
           setMode("edit");
         },
         permission: "author",
       },
       {
-        name: "Delete",
+        label: "Delete",
         handler: handleDeleteProblem,
         permission: "author",
       },
       {
-        name: "Bookmark",
-        handler: () => {
-          return 0;
-        },
+        label: "Bookmark",
+        handler: () => 0,
         permission: "viewer",
       },
     ],
@@ -288,12 +285,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderProblemData = useMemo(
     () => (
       <ul className="md:w-48">
-        {problemData.map(({ name, value }, idx) => (
+        {problemData.map(({ label, value }, idx) => (
           <li
             className={clsx("flex justify-between", idx > 0 && "mt-1")}
-            key={name}
+            key={label}
           >
-            <Paragraph color="secondary-5">{name}</Paragraph>
+            <Paragraph color="secondary-5">{label}</Paragraph>
             <Paragraph>{value}</Paragraph>
           </li>
         ))}
@@ -306,34 +303,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     const actions = problemAction.filter(({ permission: perm }) =>
       checkPermission(permission, perm)
     );
-    return (
-      <ul className="w-48">
-        {actions.map(({ name, handler }, idx) => {
-          let order: ButtonOrderType | undefined = "middle";
-          if (idx === 0) order = "first";
-          if (idx === actions.length - 1) order = "last";
-          if (actions.length === 1) order = undefined;
-
-          return (
-            <li key={name}>
-              <Button
-                className={clsx(
-                  "!w-full",
-                  device !== "mobile" ? "!pl-8" : "!text-lg"
-                )}
-                variant="outline"
-                alignText={device === "mobile" ? "center" : "left"}
-                order={order}
-                orderDirection="column"
-                onClick={handler}
-                label={name}
-              />
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }, [device, permission, problemAction]);
+    return <ButtonList list={actions} className="w-48" />;
+  }, [permission, problemAction]);
 
   const renderMobileAction = useMemo(
     () => <Modal stateVisible={stateMobileAction}>{renderProblemAction}</Modal>,
