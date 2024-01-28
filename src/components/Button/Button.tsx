@@ -35,6 +35,7 @@ export interface ButtonProps
   alignText?: "left" | "center" | "right";
   size?: ButtonSizeType | null;
   className?: string;
+  textClassName?: string;
   loading?: boolean;
 }
 
@@ -43,6 +44,7 @@ export function Button({
   children,
   variant = "primary",
   className,
+  textClassName,
   loading = false,
   disabled = false,
   alignText = "center",
@@ -82,6 +84,7 @@ export function Button({
             <Paragraph
               className={clsx(
                 alignText && BUTTON_TEXT_ALIGN_STYLE[alignText],
+                textClassName,
                 "w-full"
               )}
               as="p"
