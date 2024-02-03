@@ -1,80 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useEffect, useCallback, useState } from "react";
-import { crudData } from "@/firebase";
-import {
-  GenericPageTemplate,
-  ProblemEdit,
-  ProblemMain,
-  ProblemMainSkeleton,
-} from "@/components";
-import { ProblemType, ContentViewType } from "@/types";
-import { deconstructAnswerString } from "@/utils";
-import { PROBLEM_BLANK } from "@/consts";
+import { ProblemDetailPage } from "@/features/ProblemDetail";
+import { authConfig } from "@/libs/next-auth";
+import { getAuthUser } from "@/libs/next-auth/helper";
+import { ContentAccessType } from "@/types";
+import { NextApiRequest, NextApiResponse } from "next";
+import { Session, getServerSession } from "next-auth";
+import { useMemo } from "react";
 
 interface ProblemProps {
   id: string;
+  user: string;
 }
 
-export function Problem({ id }: ProblemProps) {
-  const stateProblem = useState<ProblemType>(
-    PROBLEM_BLANK as unknown as ProblemType
-  );
-  const [problem, setProblem] = stateProblem;
-  const [loading, setLoading] = useState(true);
-  const stateMode = useState<ContentViewType>("view");
-  const [mode, setMode] = stateMode;
-
-  const renderEditHeader = useMemo(
-    () => <h1 className="mb-8">Edit Problem</h1>,
-    []
-  );
-
-  const renderQuestion = useMemo(() => {
-    if (loading || !problem) return <ProblemMainSkeleton />;
-
-    return mode === "view" ? (
-      <ProblemMain stateProblem={stateProblem} stateMode={stateMode} />
-    ) : (
-      <ProblemEdit
-        headElement={renderEditHeader}
-        stateProblem={stateProblem}
-        problem={problem}
-        stateMode={stateMode}
-        purpose="edit"
-      />
-    );
-  }, [loading, problem, mode, stateMode, renderEditHeader, stateProblem]);
-
-  const handleGetProblems = useCallback(async () => {
-    if (!loading) return;
-
-    setLoading(true);
-
-    await crudData("get_problem", {
-      id,
-    }).then((result) => {
-      if (result) {
-        setProblem({
-          ...result,
-          answer: deconstructAnswerString(result.type, result.answer),
-        } as ProblemType);
-
-        setLoading(false);
-      }
-    });
-  }, [id, loading, setProblem]);
-
-  useEffect(() => {
-    handleGetProblems();
-  }, [handleGetProblems]);
-
-  return <GenericPageTemplate>{renderQuestion}</GenericPageTemplate>;
+export function Problem({ id, user }: ProblemProps) {
+  const parsedUser = useMemo(() => JSON.parse(user), [user]);
+  return <ProblemDetailPage id={id} user={parsedUser} />;
 }
 
-export async function getServerSideProps({ params }: { params: ProblemProps }) {
+export async function getServerSideProps({
+  params,
+  req,
+  res,
+}: {
+  params: ProblemProps;
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
+  const user = await getAuthUser(req, res);
+
   const { id } = params;
 
-  return { props: { id } };
+  return { props: { id, user: JSON.stringify(user) } };
 }
 
 export default Problem;

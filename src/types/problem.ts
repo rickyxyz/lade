@@ -18,7 +18,9 @@ export type ProblemAllTopicNameType =
   | ProblemSubtopicNameType;
 
 export interface ProblemTopicType {
+  id?: string;
   name: string;
+  topicId?: string;
 }
 
 export interface ProblemMainTopicType extends ProblemTopicType {
@@ -28,36 +30,22 @@ export interface ProblemMainTopicType extends ProblemTopicType {
 export type MapProblemTypeToAnswerType = {
   short_answer: string | number;
   matrix: (string | number)[][];
-  true_or_false: boolean[];
 };
 
-export type TestType<X extends keyof MapProblemTypeToAnswerType> =
-  MapProblemTypeToAnswerType[X];
-
-export interface MapProblemTypeToTypeSpecificParams {
-  short_answer: unknown;
+export interface AnswerObjectType {
+  short_answer: {
+    content: string | number;
+  };
   matrix: {
+    content: (string | number)[][];
     matrixWidth: number;
     matrixHeight: number;
   };
-  true_or_false: unknown;
 }
 
-export type ProblemAnswerType = keyof MapProblemTypeToAnswerType;
+export type AnswerType<X extends keyof AnswerObjectType> = AnswerObjectType[X];
 
-type ProblemAnswerTypeMap<
-  K extends keyof MapProblemTypeToAnswerType = keyof MapProblemTypeToAnswerType
-> = {
-  [P in K]: { type: P } & {
-    answer: MapProblemTypeToAnswerType[P];
-  };
-}[K];
-
-type ProblemExtraParamsMapType<
-  K extends keyof MapProblemTypeToAnswerType = keyof MapProblemTypeToAnswerType
-> = {
-  [P in K]: { type: P } & MapProblemTypeToTypeSpecificParams[P];
-}[K];
+export type ProblemAnswerType = keyof AnswerObjectType;
 
 export type ProblemSubtopicMapType<K extends ProblemTopicNameType> =
   (typeof PROBLEM_TOPICS_RELATIONSHIP_OBJECT)[K][number];
@@ -65,43 +53,32 @@ export type ProblemSubtopicMapType<K extends ProblemTopicNameType> =
 type ProblemMapTypeTopicType<
   K extends ProblemTopicNameType = ProblemTopicNameType
 > = {
-  [P in K]: { topic: P } & {
-    subtopic: ProblemSubtopicMapType<P>;
+  [P in K]: { topicId: P } & {
+    subTopicId: ProblemSubtopicMapType<P>;
   };
 }[K];
 
 export interface ProblemBaseType {
+  id: string;
   title: string;
   statement: string;
-  solved?: number;
+  solveds?: unknown[];
   views?: number;
-  postDate?: number;
-  updateDate?: number;
-  authorId?: string;
+  createdAt?: Date;
+  updateAt?: Date;
+  authorId: string;
+  type: ProblemAnswerType;
+  topic?: ProblemTopicType;
+  subTopic?: ProblemTopicType;
+  answer: string;
 }
 
-export type ProblemType = ProblemBaseType &
-  ProblemAnswerTypeMap &
-  ProblemExtraParamsMapType &
-  ProblemMapTypeTopicType & {
-    id: string;
-  };
-
-export type ProblemDatabaseType = ProblemBaseType &
-  ProblemExtraParamsMapType &
-  ProblemMapTypeTopicType & {
-    id?: string;
-    answer: string;
-  };
-
-export type ProblemWithoutIdType = Omit<ProblemType, "id">;
+export type ProblemType = ProblemBaseType & ProblemMapTypeTopicType;
 
 export type ProblemSortByType =
   | "least-solved"
-  | "least-viewed"
   | "oldest"
   | "most-solved"
-  | "most-viewed"
   | "newest";
 
 export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
@@ -109,9 +86,15 @@ export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
   descending?: boolean;
 };
 
-export type ProblemBlankType = {
-  [P in keyof ProblemWithoutIdType]: string;
-};
+export type SolvedMapType = Record<string, string>;
+
+export interface SolvedType {
+  id: number;
+  createdAt: Date;
+  userId: string;
+  problemId: string;
+  answer: string;
+}
 
 export type ContentViewType = "view" | "edit";
 
@@ -125,7 +108,7 @@ export interface ContestBaseType {
   problems: Record<string, number>;
   participants?: number;
   views?: number;
-  postDate?: number;
+  createdAt?: number;
   updateDate?: number;
   startDate?: number;
   endDate?: number;
@@ -136,6 +119,10 @@ export type ContestType = ContestBaseType &
   ProblemMapTypeTopicType & {
     id: string;
   };
+
+export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
+  id?: string;
+};
 
 export type ContestDatabaseType = Omit<ContestType, "id"> & {
   id?: string;

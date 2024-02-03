@@ -7,4 +7,4 @@ export const LAYOUT_DEFAULT: LayoutContextType = {
 };
 
 export const LAYOUT_THRESHOLD_DESKTOP = 1024;
-export const LAYOUT_THRESHOLD_TABLET = 764;
+export const LAYOUT_THRESHOLD_TABLET = 768;

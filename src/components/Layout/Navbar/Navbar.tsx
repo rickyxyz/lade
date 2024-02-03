@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { Button, Icon, Input, User, Dropdown } from "@/components";
+import { Button, Icon, Input, User, Dropdown, IconText } from "@/components";
 import clsx from "clsx";
-import { useAppDispatch, useAppSelector } from "@/redux/dispatch";
+import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { crudData, logout } from "@/firebase";
+import { crudData, logout } from "@/libs/firebase";
+import { BsCaretDownFill } from "react-icons/bs";
+import { MdLogout } from "react-icons/md";
 
 export function Navbar() {
   const auth = getAuth();
@@ -35,21 +37,20 @@ export function Navbar() {
             {
               id: "Logout",
               className: "text-red-500",
-              element: (
-                <>
-                  <Icon icon="logout" />
-                  <span>Logout</span>
-                </>
-              ),
+              element: <IconText IconComponent={MdLogout} text="Logout" />,
               onClick: logout,
             },
           ]}
           triggerElement={
             <User
               className="relative"
-              username={user.username}
+              username={user.id}
               captionElement={
-                <Icon className="ml-2" icon="caretDownFill" size="xs" />
+                <Icon
+                  className="ml-2"
+                  IconComponent={BsCaretDownFill}
+                  size="s"
+                />
               }
             />
           }
@@ -82,16 +83,14 @@ export function Navbar() {
               router.push("/login");
             }}
             variant="ghost"
-          >
-            Log In
-          </Button>
+            label="Log In"
+          />
           <Button
             onClick={() => {
               router.push("/signup");
             }}
-          >
-            Sign Up
-          </Button>
+            label="Sign Up"
+          />
         </div>
       ),
     [router, user]
@@ -99,15 +98,7 @@ export function Navbar() {
 
   const handleInitialize = useCallback(() => {
     return onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const id = user.uid;
-
-        const userData = await crudData("get_user", {
-          id,
-        });
-
-        dispatch("update_user", userData);
-      } else {
+      if (!user) {
         dispatch("reset_user", undefined);
         // User is signed out
         // ...

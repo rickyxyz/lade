@@ -1,38 +1,80 @@
 import {
+  AnswerType,
   ContestBlankType,
   ContestDatabaseType,
   ProblemAnswerType,
-  ProblemBlankType,
-  ProblemDatabaseType,
-  ProblemWithoutIdType,
+  ProblemType,
 } from "@/types";
 import { parseMatrixSize } from "./matrix";
 
-export function validateFormProblem(problem: ProblemWithoutIdType) {
-  const { title, statement, answer, topic, subtopic, type } =
-    problem as unknown as ProblemBlankType;
+export function validateProblemId(id: string) {
+  const regex = new RegExp("^[a-z0-9_]*$");
+  const lettersBetweenHypens =
+    id.split("-").filter((words) => words.length === 0 || !regex.test(words))
+      .length > 0;
 
-  const errors: Partial<Record<keyof ProblemWithoutIdType, string>> = {};
+  if (lettersBetweenHypens) {
+    return "ID must be alphanumeric and lowercase.";
+  } else if (id.length < 4) {
+    return "ID is too short.";
+  } else if (id.length > 24) {
+    return "ID is too long.";
+  }
 
+  return null;
+}
+
+export function validateProblemTitle(title: string) {
   if (title === "") {
-    errors.title = "Title must not be empty.";
+    return "Title must not be empty.";
   } else if (title.length < 3) {
-    errors.title = "Title is too short.";
+    return "Title is too short.";
   } else if (title.length > 24) {
-    errors.title = "Title is too long.";
+    return "Title is too long.";
   }
+  return null;
+}
 
+export function validateProblemStatement(statement: string) {
   if (statement === "") {
-    errors.statement = "Problem statement is required.";
+    return "Problem statement is required.";
   } else if (statement.length < 3) {
-    errors.statement = "Problem statement is too short.";
-  } else if (title.length > 200) {
-    errors.statement = "Problem statement is too long.";
+    return "Problem statement is too short.";
+  } else if (statement.length > 200) {
+    return "Problem statement is too long.";
+  }
+  return null;
+}
+
+export function validateFormProblem(problem: ProblemType) {
+  const { id, title, statement, answer, type } = problem;
+
+  const errors: Partial<Record<keyof ProblemType, string>> = {};
+
+  function validateColumn<S>(
+    value: S,
+    column: keyof ProblemType,
+    validator: (value: S) => string | null
+  ) {
+    const error = validator(value);
+    if (error) errors[column] = error;
   }
 
-  if (type === "") errors.type = "Type is required!";
-  if (topic === "") errors.topic = "Topic is required!";
-  if (subtopic === "") errors.subtopic = "Subtopic is required!";
+  validateColumn(id, "id", validateProblemId);
+  validateColumn(title, "title", validateProblemTitle);
+  validateColumn(statement, "statement", validateProblemStatement);
+  validateColumn(
+    {
+      type: type as ProblemAnswerType,
+      answer,
+    },
+    "answer",
+    validateFormAnswer
+  );
+
+  // if (type === "") errors.type = "Type is required!";
+  // if (topic === "") errors.topic = "Topic is required!";
+  // if (subtopic === "") errors.subtopic = "Subtopic is required!";
 
   const answerError = validateFormAnswer({
     type: type as ProblemAnswerType,
@@ -44,24 +86,41 @@ export function validateFormProblem(problem: ProblemWithoutIdType) {
   return errors;
 }
 
-export function validateFormAnswer(problem: Partial<ProblemDatabaseType>) {
-  console.log(problem.answer);
-  if (
-    problem.type === "short_answer" &&
-    (problem.answer === undefined || String(problem.answer) === "")
-  ) {
-    return "Answer must not be empty.";
-  }
-  if (problem.type === "matrix" && problem.answer) {
-    try {
-      const sizes = parseMatrixSize(JSON.parse(problem.answer));
-      if (sizes[0] === 0 && sizes[1] === 0) {
-        return "Answer must not be empty.";
-      }
-    } catch (e) {
-      return "Invalid Format";
+export function validateShortAnswer(answer: unknown) {
+  const { content } = answer as AnswerType<"short_answer">;
+  if (String(content) == "") return "Answer must not be empty";
+  return null;
+}
+
+export function validateMatrix(answer: unknown) {
+  const { matrixHeight, matrixWidth } = answer as AnswerType<"matrix">;
+
+  try {
+    if (matrixHeight === 0 || matrixWidth === 0) {
+      return "Answer must not be empty.";
     }
+  } catch (e) {
+    return "Invalid format.";
   }
+
+  return null;
+}
+
+export function validateFormAnswer(problem: Partial<ProblemType>) {
+  const { type } = problem;
+
+  const answer = problem.answer ? JSON.parse(problem.answer) : null;
+
+  if (!answer) return "Answer must not be empty.";
+
+  switch (type) {
+    case "matrix":
+      return validateMatrix(answer);
+    case "short_answer":
+      return validateShortAnswer(answer);
+  }
+
+  return "Answer must not be empty.";
 }
 
 export function validateFormContest(contest: ContestDatabaseType) {

@@ -1,8 +1,9 @@
 import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
-import { Inter } from "next/font/google";
-import { Navbar } from "@/components";
+import "@uiw/react-markdown-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 import { mathjax3, md } from "@/utils";
 import { ProblemEditInitializedContext } from "@/hooks";
 import { LayoutContext } from "@/contexts";
@@ -13,9 +14,11 @@ import {
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
 import { Provider } from "react-redux";
-import { store } from "@/redux";
-
-const inter = Inter({ subsets: ["latin"] });
+import { persistor, store } from "@/libs/redux";
+import clsx from "clsx";
+import { PageTemplateNav } from "@/templates";
+import { PersistGate } from "redux-persist/integration/react";
+import { noto } from "@/libs/fonts";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);
@@ -52,22 +55,35 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <style jsx global>{`
-        #__next > *:not(.icon) {
-          font-family: ${inter.style.fontFamily}!important;
+        * {
+          font-family: ${noto.style.fontFamily}!important;
+        }
+        .MathJax[display="true"] {
+          overflow-x: auto;
         }
       `}</style>
-      <Provider store={store}>
-        <ProblemEditInitializedContext.Provider
-          value={[initialized, setInitialized]}
-        >
-          <LayoutContext.Provider value={layout}>
-            <div className="relative h-full flex flex-col flex-auto overflow-x-hidden">
-              <Navbar />
-              <Component {...pageProps} />
-            </div>
-          </LayoutContext.Provider>
-        </ProblemEditInitializedContext.Provider>
-      </Provider>
+
+      <SessionProvider session={pageProps.session}>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <ProblemEditInitializedContext.Provider
+              value={[initialized, setInitialized]}
+            >
+              <LayoutContext.Provider value={layout}>
+                <div
+                  className={clsx(
+                    "relative h-full flex flex-col flex-auto overflow-x-hidden",
+                    noto.className
+                  )}
+                >
+                  <PageTemplateNav />
+                  <Component {...pageProps} />
+                </div>
+              </LayoutContext.Provider>
+            </ProblemEditInitializedContext.Provider>
+          </PersistGate>
+        </Provider>
+      </SessionProvider>
     </>
   );
 }

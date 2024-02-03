@@ -1,10 +1,14 @@
 @layer base {
   p,
-  span {
-    @apply text-zinc-800;
+  span,
+  input {
+    @apply text-zinc-800 text-base font-medium;
   }
   *:focus {
     outline: none;
+  }
+  strong {
+    @apply font-semibold;
   }
   body,
   html,
@@ -16,23 +20,15 @@
   }
   h1,
   .h1 {
-    @apply head-style text-5xl;
+    @apply head-style font-semibold text-xl;
   }
   h2,
   .h2 {
-    @apply head-style text-2xl;
+    @apply head-style text-xl;
   }
   h3,
   .h3 {
     @apply head-style text-xl;
-  }
-  h4,
-  .h4 {
-    @apply head-style text-lg;
-  }
-  h5,
-  .h5 {
-    @apply head-style;
   }
   *:not(a) > h2 {
     @apply text-teal-600;
@@ -113,14 +109,22 @@
     width: 1024px;
   }
   .w-adaptive-2 {
-    width: 640px;
+    width: 800px;
   }
   @media (max-width: 1024px) {
     .w-adaptive {
       width: 100%;
+      padding: 0 1rem;
     }
     .w-adaptive-2 {
       width: 100%;
+      padding: 0 2rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .w-adaptive-2 {
+      width: 100%;
+      padding: 0 1rem;
     }
   }
 }

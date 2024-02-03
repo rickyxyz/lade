@@ -1,60 +1,63 @@
 import {
   ProblemAllTopicNameType,
-  MapProblemTypeToAnswerType,
   ProblemTopicType,
-  ProblemWithoutIdType,
   SelectOptionType,
   ProblemAnswerType,
   ProblemTopicNameType,
   ProblemSubtopicNameType,
   ProblemSortByType,
   ProblemSortOptionType,
-  ProblemBlankType,
   ContestBlankType,
   ContestDatabaseType,
+  ProblemType,
+  AnswerObjectType,
 } from "@/types";
 
-export const PROBLEM_DEFAULT: ProblemWithoutIdType = {
-  statement: "1 + 1 = ?",
-  title: "Problem Statement",
-  topic: "calculus",
-  subtopic: "derivatives",
-  type: "short_answer",
-  answer: "2",
-  postDate: 0,
-  solved: 0,
-  views: 0,
-};
-
-export const PROBLEM_BLANK: ProblemBlankType = {
+export const PROBLEM_BLANK: ProblemType = {
+  id: "",
   statement: "",
   title: "",
-  topic: "",
-  subtopic: "",
-  type: "",
+  topicId: "calculus",
+  subTopicId: "derivatives",
+  type: "short_answer",
   answer: "",
+  authorId: "",
+};
+
+export const PROBLEM_DEFAULT: ProblemType = {
+  ...PROBLEM_BLANK,
+  createdAt: new Date(),
+  solveds: [],
+  views: 0,
 };
 
 export const CONTEST_DEFAULT: ContestDatabaseType = {
   description: "",
   title: "",
-  topic: "calculus",
-  subtopic: "derivatives",
+  topicId: "calculus",
+  subTopicId: "derivatives",
+  problems: {},
 };
 
 export const CONTEST_BLANK: ContestBlankType = {
   description: "",
   title: "",
-  topic: "",
-  subtopic: "",
+  topicId: "",
+  subTopicId: "",
+  problems: "",
 };
 
-export const PROBLEM_ANSWER_DEFAULT_VALUES: MapProblemTypeToAnswerType = {
-  matrix: Array.from({ length: 3 }).map(() =>
-    Array.from({ length: 3 }).map(() => "")
-  ),
-  short_answer: "",
-  true_or_false: [false],
+export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {
+  matrix: {
+    content: Array.from({ length: 3 }).map(() =>
+      Array.from({ length: 3 }).map(() => "")
+    ),
+    matrixHeight: 0,
+    matrixWidth: 0,
+  },
+  short_answer: {
+    content: "",
+  },
 };
 
 export const PROBLEM_TOPICS_DETAIL_OBJECT: Record<
@@ -130,25 +133,20 @@ export const PROBLEM_SUBTOPIC_OPTIONS = Object.entries(
 
 export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[] =
   [
-    { id: "newest", text: "Newest", key: "postDate", descending: true },
-    { id: "oldest", text: "Oldest", key: "postDate", descending: false },
+    { id: "newest", text: "Newest", key: "createdAt", descending: true },
+    { id: "oldest", text: "Oldest", key: "createdAt", descending: false },
     {
       id: "most-solved",
       text: "Most Solved",
-      key: "solved",
+      key: "solveds",
       descending: true,
     },
     {
       id: "least-solved",
       text: "Least Solved",
-      key: "solved",
-      descending: false,
-    },
-    { id: "most-viewed", text: "Most Viewed", key: "views", descending: true },
-    {
-      id: "least-viewed",
-      text: "Least Viewed",
-      key: "views",
+      key: "solveds",
       descending: false,
     },
   ];
+
+export const PROBLEM_PAGINATION_COUNT = 5;
