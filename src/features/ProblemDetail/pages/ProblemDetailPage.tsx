@@ -4,15 +4,7 @@ import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { API } from "@/api";
-import {
-  Button,
-  ButtonIcon,
-  ButtonOrderType,
-  Icon,
-  IconText,
-  Modal,
-  Paragraph,
-} from "@/components";
+import { ButtonIcon, IconText, Modal, Paragraph } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";

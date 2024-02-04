@@ -21,7 +21,7 @@ async function PATCH({ req, res }: GenericAPIParams) {
 
     await prisma.problem.update({
       where: {
-        id,
+        id: id as number,
       },
       data: {
         title,
@@ -54,19 +54,9 @@ async function POST({ req, res }: GenericAPIParams) {
 
     const { answer, statement, subTopicId, title, topicId, type, id } =
       body as unknown as ProblemType;
-    console.log({
-      answer,
-      statement,
-      subTopicId,
-      title,
-      topicId,
-      type,
-      id: user.id,
-    });
 
     await prisma.problem.create({
       data: {
-        id,
         authorId: user.id,
         title,
         type,
@@ -96,10 +86,10 @@ async function GET({ req, res }: GenericAPIParams) {
 
     const user = await getAuthUser(req, res);
 
-    if (typeof id === "string") {
+    if (typeof id !== "undefined") {
       const out = await prisma.problem.findUnique({
         where: {
-          id,
+          id: id as unknown as number,
         },
         include: {
           solveds: true,
@@ -107,6 +97,10 @@ async function GET({ req, res }: GenericAPIParams) {
           subTopic: true,
         },
       });
+
+      console.log("OUT:");
+      console.log(out);
+      console.log(id);
 
       const temp = { ...out } as unknown as ProblemType;
 
@@ -137,7 +131,7 @@ async function DELETE({ req, res }: GenericAPIParams) {
 
     const user = await getAuthUser(req, res);
 
-    if (typeof id === "string") {
+    if (typeof id === "number") {
       const out = await prisma.problem.findUnique({
         where: {
           id,

@@ -4,6 +4,7 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 -- CreateTable
 CREATE TABLE "User" (
     "id" STRING NOT NULL,
+    "uid" STRING NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "email" STRING NOT NULL,
     "joinDate" TIMESTAMP(3) NOT NULL,
@@ -17,7 +18,8 @@ CREATE TABLE "Solved" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" STRING NOT NULL,
-    "problemId" STRING NOT NULL,
+    "problemId" INT8 NOT NULL,
+    "answer" STRING NOT NULL,
 
     CONSTRAINT "Solved_pkey" PRIMARY KEY ("id")
 );
@@ -41,7 +43,7 @@ CREATE TABLE "Subtopic" (
 
 -- CreateTable
 CREATE TABLE "Problem" (
-    "id" STRING NOT NULL,
+    "id" INT8 NOT NULL DEFAULT unique_rowid(),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
     "title" STRING NOT NULL,
@@ -59,13 +61,16 @@ CREATE TABLE "Problem" (
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_uid_key" ON "User"("uid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Topic_id_key" ON "Topic"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subtopic_id_key" ON "Subtopic"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Problem_id_key" ON "Problem"("id");
 
 -- AddForeignKey
 ALTER TABLE "Solved" ADD CONSTRAINT "Solved_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

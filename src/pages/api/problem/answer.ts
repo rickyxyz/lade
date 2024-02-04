@@ -1,12 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
-import {
-  PROBLEM_SAMPLE_1,
-  PROBLEM_SAMPLE_2,
-  PROBLEM_SAMPLE_3,
-} from "@/libs/firebase/placeholders";
-import { parseAnswer, validateAnswer } from "@/utils";
+import { validateAnswer } from "@/utils";
 import { ProblemAnswerType, ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 
@@ -34,7 +29,7 @@ export default async function handler(
 
     const result = await prisma.problem.findUnique({
       where: {
-        id: id as unknown as string,
+        id: id as number,
       },
       include: {
         solveds: true,
@@ -56,7 +51,7 @@ export default async function handler(
     if (verdict) {
       await prisma.solved.create({
         data: {
-          problemId: id as unknown as string,
+          problemId: id as unknown as number,
           userId: user.id,
           answer: JSON.stringify(answer),
         },

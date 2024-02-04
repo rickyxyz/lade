@@ -10,7 +10,7 @@ interface ApiMessage {
 
 interface ApiParams {
   get_problem: {
-    id: string;
+    id: number | string;
   };
   get_problems: {
     topic?: string;
@@ -23,7 +23,7 @@ interface ApiParams {
   patch_problem: Empty;
   get_solved: {
     userId: string;
-    problemId: string;
+    problemId: number | string;
   };
   post_solved: Empty;
   get_user: {
@@ -41,6 +41,7 @@ interface ApiBody {
   get_solved: Empty;
   post_solved: {
     id: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     answer: any;
   };
   get_user: Empty;
@@ -126,5 +127,6 @@ export async function API<X extends keyof typeof ROUTES>(
     url: path,
     params,
     data: body,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }).then((result) => result as AxiosResponse<ApiReturn[X], any>);
 }

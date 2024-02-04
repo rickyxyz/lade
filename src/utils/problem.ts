@@ -47,7 +47,7 @@ export function validateProblemStatement(statement: string) {
 }
 
 export function validateFormProblem(problem: ProblemType) {
-  const { id, title, statement, answer, type } = problem;
+  const { title, statement, answer, type } = problem;
 
   const errors: Partial<Record<keyof ProblemType, string>> = {};
 
@@ -60,7 +60,6 @@ export function validateFormProblem(problem: ProblemType) {
     if (error) errors[column] = error;
   }
 
-  validateColumn(id, "id", validateProblemId);
   validateColumn(title, "title", validateProblemTitle);
   validateColumn(statement, "statement", validateProblemStatement);
   validateColumn(

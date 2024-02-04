@@ -59,7 +59,7 @@ type ProblemMapTypeTopicType<
 }[K];
 
 export interface ProblemBaseType {
-  id: string;
+  id: number | string;
   title: string;
   statement: string;
   solveds?: unknown[];

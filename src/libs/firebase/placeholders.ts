@@ -106,3 +106,58 @@ export const PROBLEM_SAMPLE_7: ProblemType = {
     content: 0.816497,
   }),
 };
+
+export const PROBLEM_SAMPLE_8: ProblemType = {
+  id: "deriving-a-rational",
+  statement:
+    "Consider the function $f$ below.  \n\n $$ f(x)=\\frac{x^{100}+x^{98}+x^{96}+...+x^{84}+x^{82}+x^{80}}{x^{80}+x^{78}+x^{76}...+x^{64}+x^{62}+x^{60}}$$  \nThe first derivative of $f$ is a polynomial. What is the degree of that polynomial?",
+  title: "Deriving a Rational",
+  topicId: "calculus",
+  subTopicId: "derivatives",
+  createdAt: 0,
+  solveds: 0,
+  ...makeAnswer("short_answer", {
+    content: 19,
+  }),
+};
+
+export const PROBLEM_SAMPLE_9: ProblemType = {
+  id: "aquarium",
+  statement:
+    "The base of an aquarium without its lid is a rectangle which length to width ratio is $2 : 3$. If it has a surface area of $1.800 cm^3$, compute its maximum possible volume, in $cm^3$.",
+  title: "Aquarium's Volume",
+  topicId: "calculus",
+  subTopicId: "applications-of-derivative",
+  createdAt: 0,
+  solveds: 0,
+  ...makeAnswer("short_answer", {
+    content: 7200,
+  }),
+};
+
+export const PROBLEM_SAMPLE_10: ProblemType = {
+  id: "factory",
+  statement:
+    "For $x$ days, the cost of running a factory daily is $(4x+100x+40)$ IDR. Compute the least possible cost in a day.",
+  title: "Factory's Cost",
+  topicId: "calculus",
+  subTopicId: "applications-of-derivative",
+  createdAt: 0,
+  solveds: 0,
+  ...makeAnswer("short_answer", {
+    content: 80000000,
+  }),
+};
+
+export const PROBLEM_PLACEHOLDERS: ProblemType[] = [
+  PROBLEM_SAMPLE_1,
+  PROBLEM_SAMPLE_2,
+  PROBLEM_SAMPLE_3,
+  PROBLEM_SAMPLE_4,
+  PROBLEM_SAMPLE_5,
+  PROBLEM_SAMPLE_6,
+  PROBLEM_SAMPLE_7,
+  PROBLEM_SAMPLE_8,
+  PROBLEM_SAMPLE_9,
+  PROBLEM_SAMPLE_10,
+];

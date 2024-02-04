@@ -14,6 +14,7 @@ export default async function handler(
   }
 
   try {
+    await prisma.solved.deleteMany({});
     await prisma.problem.deleteMany({});
 
     res.status(200).json(req.body);

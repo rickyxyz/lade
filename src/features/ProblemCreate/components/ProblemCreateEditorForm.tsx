@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useRef } from "react";
+import { useMemo, useEffect } from "react";
 import { Markdown, Button, Paragraph } from "@/components";
 import { ContentViewType, ProblemType, StateType } from "@/types";
 import {
@@ -14,8 +14,7 @@ import {
 import { useFormikContext } from "formik";
 import { ProblemAnswer } from "@/features/ProblemDetail";
 import { useProblemEditInitialized } from "@/hooks";
-import { useTopics, validateProblemId } from "@/utils";
-import { API } from "@/api";
+import { useTopics } from "@/utils";
 
 export interface ProblemCreateEditorFormProps {
   stateMode?: StateType<ContentViewType>;
@@ -28,12 +27,10 @@ export interface ProblemCreateEditorFormProps {
 export function ProblemCreateEditorForm({
   stateAnswer,
   stateLoading,
-  disableEditId,
   onLeaveEditor,
 }: ProblemCreateEditorFormProps) {
   const [answer, setAnswer] = stateAnswer;
   const [loading, setLoading] = stateLoading;
-  const queries = useRef<Record<string, boolean>>({});
 
   const { initialized } = useProblemEditInitialized();
   const {
@@ -44,14 +41,13 @@ export function ProblemCreateEditorForm({
     touched,
     setFieldTouched,
     validateForm,
-    setFieldError,
   } = useFormikContext<ProblemType>();
   const {
     allTopics: { topics },
     getSubTopicsFromTopic,
     getTopicOptions,
   } = useTopics();
-  const { statement, subTopicId, topicId, type, id } = values;
+  const { statement, subTopicId, topicId, type } = values;
   const atLeastOneError = useMemo(
     () => Object.entries(errors).length > 0,
     [errors]
@@ -62,67 +58,12 @@ export function ProblemCreateEditorForm({
     [getTopicOptions, topics]
   );
 
-  const handleGetProblemWithId = useCallback(
-    (newId: string) =>
-      API("get_problem", {
-        params: {
-          id: newId,
-        },
-      })
-        .then(({ data }) => {
-          const verdict = !!data;
-          queries.current[newId] = verdict;
-          return verdict;
-        })
-        .catch((e) => {
-          console.error(e);
-          return true;
-        }),
-    []
-  );
-
-  const handleVerifyId = useCallback(
-    async (newId: string) => {
-      const validId = validateProblemId(newId);
-      if (validId) return false;
-
-      setLoading(true);
-      let existing = false;
-
-      if (!queries.current[newId])
-        existing = await handleGetProblemWithId(newId);
-
-      if (existing) {
-        setFieldError("id", "ID is already in use.");
-        setLoading(false);
-        return false;
-      }
-
-      return true;
-    },
-    [handleGetProblemWithId, setFieldError, setLoading]
-  );
-
-  const handleSubmit = useCallback(async () => {
-    const valid = disableEditId ? true : await handleVerifyId(id);
-
-    console.log("valid");
-    console.log(valid);
-
-    if (valid) submitForm();
-  }, [disableEditId, handleVerifyId, id, submitForm]);
-
   const renderProblemSettings = useMemo(
     () => (
       <section className="mb-8">
         <h2 className="mb-4">Problem Details</h2>
         <div className="flex flex-col gap-4">
           <SettingInput name="Problem Title" formName="title" />
-          <SettingInput
-            name="Problem ID"
-            formName="id"
-            disabled={disableEditId}
-          />
           <SettingSelect
             name="Problem Type"
             formName="type"
@@ -170,7 +111,6 @@ export function ProblemCreateEditorForm({
     [
       type,
       initialized,
-      disableEditId,
       topicOptions,
       topicId,
       getTopicOptions,
@@ -261,7 +201,7 @@ export function ProblemCreateEditorForm({
           loading={loading}
           disabled={!initialized || atLeastOneError}
           type="submit"
-          onClick={handleSubmit}
+          onClick={submitForm}
           label="Submit"
         />
         {onLeaveEditor && (
