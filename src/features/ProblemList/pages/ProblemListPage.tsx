@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback, useState, useRef } from "react";
 import { BsChevronLeft, BsChevronRight, BsSearch } from "react-icons/bs";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
@@ -14,8 +14,14 @@ import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import clsx from "clsx";
 import { Pagination } from "@/components/Pagination";
+import { useRouter } from "next/router";
+import { ParsedUrlQuery } from "querystring";
 
-export function ProblemListPage() {
+interface ProblemListPageProps {
+  userSearch?: string;
+}
+
+export function ProblemListPage({ userSearch }: ProblemListPageProps) {
   const [problems, setProblems] = useState<ProblemType[]>([]);
   const [loading, setLoading] = useState(true);
   const stateTopic = useState<ProblemTopicNameType | undefined>();
@@ -25,8 +31,10 @@ export function ProblemListPage() {
   const stateSortBy = useState<ProblemSortByType>("newest");
   const sortBy = stateSortBy[0];
   const stateAdvanced = useState(false);
-  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const [search, setSearch] = useState(userSearch ?? "");
   const [advanced, setAdvanced] = stateAdvanced;
+  const initialized = useRef(false);
   const [pagination, setPagination] = useState({
     page: 1,
     maxPages: 1,
@@ -79,6 +87,17 @@ export function ProblemListPage() {
   const handleGetProblem = useCallback(
     async (newPage?: number) => {
       setLoading(true);
+
+      const queryObject: ParsedUrlQuery = { ...router.query, search };
+      if (search === "") delete queryObject.search;
+
+      if (initialized.current) {
+        router.replace({
+          query: queryObject,
+        });
+      }
+
+      initialized.current = true;
 
       const queryParams: Record<
         ProblemSortByType,
@@ -141,7 +160,7 @@ export function ProblemListPage() {
           console.log(e);
         });
     },
-    [page, search, sortBy, subtopic, topic]
+    [page, router, search, sortBy, subtopic, topic]
   );
 
   useEffect(() => {
@@ -243,6 +262,7 @@ export function ProblemListPage() {
             externalWrapperClassName="flex-1"
             wrapperClassName="flex"
             className="!rounded-none !rounded-l-md"
+            defaultValue={search}
             onChange={(e) => {
               const newSearch = e.currentTarget.value;
               setSearch(newSearch);
@@ -276,6 +296,7 @@ export function ProblemListPage() {
       </>
     ),
     [
+      search,
       loading,
       renderAdvanced,
       pagination.initialized,

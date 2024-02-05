@@ -3,8 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { json } from "@/utils/api";
 import { ProblemType } from "@/types";
-import { getServerSession } from "next-auth";
-import { authConfig } from "@/libs/next-auth";
 import { getAuthUser } from "@/libs/next-auth/helper";
 import { isNaN } from "formik";
 
@@ -47,7 +45,7 @@ export default async function handler(
 
     let count = req.query.count as unknown as number;
     count = Number(req.query.count);
-    if (isNaN(count)) count = 5;
+    if (isNaN(count)) count = 2;
 
     console.log("Page: ", page);
     console.log("Count: ", count);
@@ -109,7 +107,7 @@ export default async function handler(
       },
       skip: (Number(page) - 1) * Number(count),
       take: Number(count),
-    })) as ProblemType[];
+    })) as unknown as ProblemType[];
 
     const removedAnswers = problems.map((problem) => {
       const temp: ProblemType = { ...problem };
@@ -129,10 +127,14 @@ export default async function handler(
         total_pages: maxPages,
       },
     };
+
+    console.log("Returning");
   } catch (e) {
     console.log(e);
     result = undefined;
   }
+
+  console.log("API HIT CONFIRMED");
 
   if (result) {
     res.status(200).json(result);

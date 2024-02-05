@@ -2,7 +2,11 @@ import { ProblemListPage } from "@/features";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-export default function Home() {
+interface HomeProps {
+  search?: string;
+}
+
+export default function Home({ search }: HomeProps) {
   const { data: session } = useSession({ required: false });
 
   useEffect(() => {
@@ -11,5 +15,11 @@ export default function Home() {
 
   if (!session) return <p>No Permission</p>;
 
-  return <ProblemListPage />;
+  return <ProblemListPage userSearch={search} />;
 }
+
+Home.getInitialProps = async ({ query }: { query: HomeProps }) => {
+  const { search } = query;
+
+  return { search };
+};
