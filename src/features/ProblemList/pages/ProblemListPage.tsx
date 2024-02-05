@@ -18,17 +18,30 @@ import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 
 interface ProblemListPageProps {
-  userSearch?: string;
+  query: {
+    search?: string;
+    topic?: ProblemTopicNameType;
+    subTopic?: ProblemSubtopicNameType;
+    sort?: ProblemSortByType;
+  };
 }
 
-export function ProblemListPage({ userSearch }: ProblemListPageProps) {
+export function ProblemListPage({ query }: ProblemListPageProps) {
+  const {
+    topic: userTopic,
+    subTopic: userSubTopic,
+    search: userSearch,
+    sort: userSort,
+  } = query;
   const [problems, setProblems] = useState<ProblemType[]>([]);
   const [loading, setLoading] = useState(true);
-  const stateTopic = useState<ProblemTopicNameType | undefined>();
+  const stateTopic = useState<ProblemTopicNameType | undefined>(userTopic);
   const topic = stateTopic[0];
-  const stateSubtopic = useState<ProblemSubtopicNameType | undefined>();
+  const stateSubtopic = useState<ProblemSubtopicNameType | undefined>(
+    userSubTopic
+  );
   const subtopic = stateSubtopic[0];
-  const stateSortBy = useState<ProblemSortByType>("newest");
+  const stateSortBy = useState<ProblemSortByType>(userSort ?? "newest");
   const sortBy = stateSortBy[0];
   const stateAdvanced = useState(false);
   const router = useRouter();
@@ -88,8 +101,16 @@ export function ProblemListPage({ userSearch }: ProblemListPageProps) {
     async (newPage?: number) => {
       setLoading(true);
 
-      const queryObject: ParsedUrlQuery = { ...router.query, search };
+      const queryObject: ParsedUrlQuery = {
+        ...router.query,
+        search,
+        topic,
+        subTopic: subtopic,
+        sort: sortBy,
+      };
       if (search === "") delete queryObject.search;
+      if (!topic) delete queryObject.topic;
+      if (!subtopic) delete queryObject.subTopic;
 
       if (initialized.current) {
         router.replace({
