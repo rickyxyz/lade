@@ -32,18 +32,18 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     topic: userTopic,
     subTopic: userSubTopic,
     search: userSearch,
-    sort: userSort,
+    sort: userSort = "newest",
   } = query;
   const [problems, setProblems] = useState<ProblemType[]>([]);
   const [loading, setLoading] = useState(true);
   const stateTopic = useState<ProblemTopicNameType | undefined>(userTopic);
-  const topic = stateTopic[0];
+  const [topic, setTopic] = stateTopic;
   const stateSubtopic = useState<ProblemSubtopicNameType | undefined>(
     userSubTopic
   );
-  const subtopic = stateSubtopic[0];
+  const [subtopic, setSubTopic] = stateSubtopic;
   const stateSortBy = useState<ProblemSortByType>(userSort ?? "newest");
-  const sortBy = stateSortBy[0];
+  const [sortBy, setSortBy] = stateSortBy;
   const stateAdvanced = useState(false);
   const router = useRouter();
   const [search, setSearch] = useState(userSearch ?? "");
@@ -89,28 +89,52 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     };
   }, [device, pagination]);
 
+  // useEffect(() => {
+  //   if (query.search) setSearch(query.search);
+  // }, [query]);
+
+  const handleUpdateFromQuery = useCallback(() => {
+    setTopic(userTopic);
+    setSubTopic(userSubTopic);
+    setSortBy(userSort);
+    setSearch(userSearch ?? "");
+  }, [
+    setSortBy,
+    setSubTopic,
+    setTopic,
+    userSearch,
+    userSort,
+    userSubTopic,
+    userTopic,
+  ]);
+
+  const handleApplyQuery = useCallback(() => {
+    const queryObject: ParsedUrlQuery = {
+      ...router.query,
+      search,
+      topic,
+      subTopic: subtopic,
+      sort: sortBy,
+    };
+    if (search === "") delete queryObject.search;
+    if (!topic) delete queryObject.topic;
+    if (!subtopic) delete queryObject.subTopic;
+
+    if (initialized.current) {
+      // router.reload();
+      router.push({
+        query: queryObject,
+      });
+    }
+
+    initialized.current = true;
+  }, [router, search, sortBy, subtopic, topic]);
+
   const handleGetProblem = useCallback(
     async (newPage?: number) => {
+      handleUpdateFromQuery();
+
       setLoading(true);
-
-      const queryObject: ParsedUrlQuery = {
-        ...router.query,
-        search,
-        topic,
-        subTopic: subtopic,
-        sort: sortBy,
-      };
-      if (search === "") delete queryObject.search;
-      if (!topic) delete queryObject.topic;
-      if (!subtopic) delete queryObject.subTopic;
-
-      if (initialized.current) {
-        router.replace({
-          query: queryObject,
-        });
-      }
-
-      initialized.current = true;
 
       const queryParams: Record<
         ProblemSortByType,
@@ -139,12 +163,12 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
 
       await API("get_problems", {
         params: {
-          ...(topic ? { topic } : {}),
-          ...(subtopic ? { subTopic: subtopic } : {}),
-          ...queryParams[sortBy],
-          ...(search !== ""
+          ...(userTopic ? { topic: userTopic } : {}),
+          ...(userSubTopic ? { subTopic: userSubTopic } : {}),
+          ...queryParams[userSort],
+          ...(userSearch !== ""
             ? {
-                search,
+                search: userSearch,
               }
             : {}),
           page: newPage ?? page,
@@ -173,13 +197,13 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
           console.log(e);
         });
     },
-    [page, router, search, sortBy, subtopic, topic]
+    [page, userSearch, userSort, userSubTopic, userTopic]
   );
 
   useEffect(() => {
     handleGetProblem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [query]);
 
   const renderPagination = useMemo(
     () => (
@@ -223,7 +247,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 className="mt-4"
                 onClick={() => {
                   setAdvanced(false);
-                  handleGetProblem();
+                  handleApplyQuery();
                 }}
                 disabled={loading}
                 label="Apply"
@@ -242,7 +266,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
               buttonElement={
                 <Button
                   className="mt-4 w-fit"
-                  onClick={() => handleGetProblem()}
+                  onClick={() => handleApplyQuery()}
                   disabled={loading}
                   label="Apply"
                 />
@@ -254,7 +278,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     [
       advanced,
       device,
-      handleGetProblem,
+      handleApplyQuery,
       loading,
       setAdvanced,
       stateAdvanced,
@@ -275,7 +299,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             externalWrapperClassName="flex-1"
             wrapperClassName="flex"
             className="!rounded-none !rounded-l-md"
-            defaultValue={search}
+            value={search}
             onChange={(e) => {
               const newSearch = e.currentTarget.value;
               setSearch(newSearch);
@@ -287,7 +311,8 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 order="last"
                 orderDirection="row"
                 onClick={() => {
-                  handleGetProblem();
+                  // handleGetProblem();
+                  handleApplyQuery();
                 }}
                 disabled={loading}
                 icon={BsSearch}
@@ -314,7 +339,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       renderAdvanced,
       pagination.initialized,
       renderPagination,
-      handleGetProblem,
+      handleApplyQuery,
       setAdvanced,
     ]
   );
