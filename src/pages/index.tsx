@@ -1,20 +1,9 @@
-import { ProblemListPage } from "@/features";
-import {
-  ProblemSortByType,
-  ProblemSubtopicNameType,
-  ProblemTopicNameType,
-} from "@/types";
-import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { ProblemListPage } from "@/features";
+import { ProblemQuery } from "@/types";
 
-interface HomeProps {
-  search?: string;
-  topic?: ProblemTopicNameType;
-  subTopic?: ProblemSubtopicNameType;
-  sort?: ProblemSortByType;
-}
-
-export default function Home(query: HomeProps) {
+export default function Home(query: ProblemQuery) {
   const { data: session } = useSession({ required: false });
 
   useEffect(() => {
@@ -26,7 +15,7 @@ export default function Home(query: HomeProps) {
   return <ProblemListPage query={query} />;
 }
 
-Home.getInitialProps = async ({ query }: { query: HomeProps }) => {
+Home.getInitialProps = async ({ query }: { query: ProblemQuery }) => {
   const { search, topic, subTopic, sort } = query;
 
   return { search, topic, subTopic, sort };

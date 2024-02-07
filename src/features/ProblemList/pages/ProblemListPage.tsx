@@ -1,10 +1,18 @@
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
-import { BsChevronLeft, BsChevronRight, BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
-import { Button, ButtonIcon, Input, Modal, Paragraph } from "@/components";
+import {
+  Button,
+  ButtonIcon,
+  Input,
+  Modal,
+  Paragraph,
+  Pagination,
+} from "@/components";
 import { useDevice } from "@/hooks";
 import {
+  ProblemQuery,
   ProblemSortByType,
   ProblemSubtopicNameType,
   ProblemTopicNameType,
@@ -12,18 +20,11 @@ import {
 } from "@/types";
 import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
-import clsx from "clsx";
-import { Pagination } from "@/components/Pagination";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 
 interface ProblemListPageProps {
-  query: {
-    search?: string;
-    topic?: ProblemTopicNameType;
-    subTopic?: ProblemSubtopicNameType;
-    sort?: ProblemSortByType;
-  };
+  query: ProblemQuery;
 }
 
 export function ProblemListPage({ query }: ProblemListPageProps) {
@@ -55,16 +56,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     initialized: false,
   });
   const { device } = useDevice();
-  const {
-    visiblePages,
-    half,
-    contentFrom,
-    contentTo,
-    style,
-    page,
-    maxPages,
-    count,
-  } = useMemo(() => {
+  const { page } = useMemo(() => {
     const { page, maxPages, count } = pagination;
 
     let visiblePages = device === "mobile" ? 3 : 5;

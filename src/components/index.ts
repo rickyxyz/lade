@@ -8,6 +8,7 @@ export * from "./Loader";
 export * from "./Markdown";
 export * from "./Modal";
 export * from "./More";
+export * from "./Pagination";
 export * from "./Paragraph";
 export * from "./Quote";
 export * from "./Select";
