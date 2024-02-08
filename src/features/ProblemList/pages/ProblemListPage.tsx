@@ -58,6 +58,8 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   });
   const { device } = useDevice();
   const debounce = useDebounce();
+  const lastQuery = useRef<ProblemQuery>();
+
   const { page } = useMemo(() => {
     const { page, maxPages, count } = pagination;
 
@@ -145,6 +147,10 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   );
 
   const handleGetProblem = useCallback(async () => {
+    if (JSON.stringify(query) === JSON.stringify(lastQuery.current)) {
+      return;
+    }
+
     handleUpdateFromQuery();
 
     setLoading(true);
@@ -174,8 +180,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       },
     };
 
-    console.log(userSearch);
-
     await API("get_problems", {
       params: {
         ...(userTopic ? { topic: userTopic } : {}),
@@ -196,6 +200,8 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             pagination: { total_records, current_page, total_pages },
           },
         }) => {
+          lastQuery.current = query;
+
           setProblems(data);
 
           setPagination({
