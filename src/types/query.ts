@@ -9,4 +9,5 @@ export interface ProblemQuery {
   topic?: ProblemTopicNameType;
   subTopic?: ProblemSubtopicNameType;
   sort?: ProblemSortByType;
+  page?: number;
 }
