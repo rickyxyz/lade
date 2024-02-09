@@ -35,6 +35,13 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
 }: SelectProps<X, Y>) {
   const stateVisible = useState(false);
   const [visible, setVisible] = stateVisible;
+  const currentOption = useMemo(() => {
+    const available = options
+      ? options.filter((option) => option.id === selectedOption)[0]
+      : undefined;
+
+    return selectedOption && available ? available.text : unselectedText;
+  }, [options, selectedOption, unselectedText]);
 
   const renderRemoveOption = useMemo(() => {
     return (
@@ -69,19 +76,23 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     () => (
       <>
         {renderRemoveOption}
-        {options.map((option) => (
-          <SelectOption
-            key={option.id}
-            option={option}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectOption(option);
-              onBlur && onBlur();
-              setVisible(false);
-            }}
-            selected={selectedOption === option.id}
-          />
-        ))}
+        {options ? (
+          options.map((option) => (
+            <SelectOption
+              key={option.id}
+              option={option}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectOption(option);
+                onBlur && onBlur();
+                setVisible(false);
+              }}
+              selected={selectedOption === option.id}
+            />
+          ))
+        ) : (
+          <></>
+        )}
       </>
     ),
     [
@@ -113,9 +124,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             width: "calc(100% - 2rem)!important",
           }}
         >
-          {selectedOption && options.length > 0
-            ? options.filter((option) => option.id === selectedOption)[0].text
-            : unselectedText}
+          {currentOption}
         </span>
         <Icon
           IconComponent={BsChevronDown}
@@ -124,15 +133,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         />
       </div>
     ),
-    [
-      disabled,
-      inputClassName,
-      options,
-      selectedOption,
-      unselectedText,
-      variant,
-      visible,
-    ]
+    [currentOption, disabled, inputClassName, variant, visible]
   );
 
   return (

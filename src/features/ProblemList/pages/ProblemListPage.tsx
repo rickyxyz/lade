@@ -70,10 +70,16 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       setSubTopic(userSubTopic);
       setSortBy(userSort);
       setSearch(userSearch ?? "");
-      setPagination((prev) => ({
-        ...prev,
-        page: isNaN(newPage) ? 1 : Number(newPage),
-      }));
+      setPagination((prev) => {
+        const currentMax = prev.maxPages;
+        let newValue = isNaN(newPage) ? 1 : Number(newPage);
+        if (newValue > currentMax) newValue = currentMax;
+
+        return {
+          ...prev,
+          page: newValue,
+        };
+      });
     },
     [
       setSortBy,
@@ -102,7 +108,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       if (!subtopic) delete queryObject.subTopic;
 
       if (initialized.current) {
-        // router.reload();
         router.push({
           query: queryObject,
         });
