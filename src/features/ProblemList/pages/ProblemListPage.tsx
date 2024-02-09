@@ -97,7 +97,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   //   if (query.search) setSearch(query.search);
   // }, [query]);
 
-  const handleUpdateFromQuery = useCallback(
+  const handleUpdateStateOnQueryUpdate = useCallback(
     (newPage = userPage) => {
       setTopic(userTopic);
       setSubTopic(userSubTopic);
@@ -120,7 +120,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     ]
   );
 
-  const handleApplyQuery = useCallback(
+  const handleUpdateQuery = useCallback(
     (newPage = userPage) => {
       const queryObject: ParsedUrlQuery = {
         ...router.query,
@@ -151,7 +151,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       return;
     }
 
-    handleUpdateFromQuery();
+    handleUpdateStateOnQueryUpdate();
 
     setLoading(true);
 
@@ -218,7 +218,8 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
         console.log(e);
       });
   }, [
-    handleUpdateFromQuery,
+    handleUpdateStateOnQueryUpdate,
+    query,
     userPage,
     userSearch,
     userSort,
@@ -226,14 +227,14 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     userTopic,
   ]);
 
-  const handleUpdate = useCallback(() => {
+  const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {
       handleGetProblem();
     }, 200);
   }, [debounce, handleGetProblem]);
 
   useEffect(() => {
-    handleUpdate();
+    handleUpdateDataOnQueryUpdate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
@@ -243,12 +244,12 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
         pagination={pagination}
         onClick={(newPage) => {
           if (!loading) {
-            handleApplyQuery(newPage);
+            handleUpdateQuery(newPage);
           }
         }}
       />
     ),
-    [handleApplyQuery, loading, pagination]
+    [handleUpdateQuery, loading, pagination]
   );
 
   const renderProblems = useMemo(
@@ -281,7 +282,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 className="mt-4"
                 onClick={() => {
                   setAdvanced(false);
-                  handleApplyQuery();
+                  handleUpdateQuery();
                 }}
                 disabled={loading}
                 label="Apply"
@@ -300,7 +301,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
               buttonElement={
                 <Button
                   className="mt-4 w-fit"
-                  onClick={() => handleApplyQuery()}
+                  onClick={() => handleUpdateQuery()}
                   disabled={loading}
                   label="Apply"
                 />
@@ -312,7 +313,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     [
       advanced,
       device,
-      handleApplyQuery,
+      handleUpdateQuery,
       loading,
       setAdvanced,
       stateAdvanced,
@@ -346,7 +347,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 orderDirection="row"
                 onClick={() => {
                   // handleGetProblem();
-                  handleApplyQuery(1);
+                  handleUpdateQuery(1);
                 }}
                 disabled={loading}
                 icon={BsSearch}
@@ -373,7 +374,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
       renderAdvanced,
       pagination.initialized,
       renderPagination,
-      handleApplyQuery,
+      handleUpdateQuery,
       setAdvanced,
     ]
   );
