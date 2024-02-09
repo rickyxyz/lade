@@ -60,39 +60,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   const debounce = useDebounce();
   const lastQuery = useRef<ProblemQuery>();
 
-  const { page } = useMemo(() => {
-    const { page, maxPages, count } = pagination;
-
-    let visiblePages = device === "mobile" ? 3 : 5;
-    visiblePages = Math.min(visiblePages, maxPages);
-
-    const half = Math.floor(visiblePages / 2);
-
-    let newStyle = "first";
-
-    if (page + half >= maxPages) {
-      newStyle = "last";
-    } else if (page - half <= 1) {
-      newStyle = "first";
-    } else {
-      newStyle = "middle";
-    }
-
-    const from = (page - 1) * PROBLEM_PAGINATION_COUNT + 1;
-    const to = Math.min(page * PROBLEM_PAGINATION_COUNT, count);
-
-    return {
-      page,
-      maxPages,
-      count,
-      visiblePages,
-      half,
-      style: newStyle,
-      contentFrom: from,
-      contentTo: to,
-    };
-  }, [device, pagination]);
-
   // useEffect(() => {
   //   if (query.search) setSearch(query.search);
   // }, [query]);
