@@ -11,7 +11,8 @@ import {
   ProblemTopicNameType,
   StateType,
 } from "@/types";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
+import { useTopics } from "@/utils";
 
 interface ProblemFilterProps {
   wrapperClassName?: string;
@@ -33,6 +34,22 @@ export function ProblemFilter({
   const [topic, setTopic] = stateTopic;
   const [subtopic, setSubtopic] = stateSubTopic;
   const [sortBy, setSortBy] = stateSortBy;
+  const {
+    allTopics: { topics: rawTopics },
+    getSubTopicsFromTopic,
+    getTopicOptions,
+  } = useTopics();
+
+  const topics = useMemo(
+    () => getTopicOptions(rawTopics),
+    [getTopicOptions, rawTopics]
+  );
+
+  const subTopics = useMemo(
+    () =>
+      topic ? (getTopicOptions(getSubTopicsFromTopic(topic)) as any[]) : [],
+    [getSubTopicsFromTopic, getTopicOptions, topic]
+  );
 
   return (
     <div className={clsx("flex rounded-lg !p-4 mb-8", wrapperClassName)}>
@@ -42,7 +59,7 @@ export function ProblemFilter({
           <Select
             className="w-full"
             inputClassName="w-full"
-            options={PROBLEM_TOPIC_OPTIONS}
+            options={topics}
             selectedOption={topic}
             onSelectOption={(option) => {
               option ? setTopic(option.id) : setTopic(undefined);
@@ -57,7 +74,7 @@ export function ProblemFilter({
           <Select
             className="w-full"
             inputClassName="w-full"
-            options={topic ? PROBLEM_SUBTOPIC_OPTIONS[topic] : []}
+            options={subTopics}
             selectedOption={subtopic}
             onSelectOption={(option) => {
               option ? setSubtopic(option.id) : setSubtopic(undefined);

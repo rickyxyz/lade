@@ -19,9 +19,9 @@ import {
   ProblemType,
 } from "@/types";
 import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
-import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
+import { useTopics } from "@/utils";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
