@@ -17,6 +17,8 @@ export type ProblemAllTopicNameType =
   | ProblemTopicNameType
   | ProblemSubtopicNameType;
 
+export type ProblemTopicLinkType = Record<string, ProblemTopicType[]>;
+
 export interface ProblemTopicType {
   id?: string;
   name: string;

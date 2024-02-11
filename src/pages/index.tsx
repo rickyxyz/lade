@@ -18,7 +18,5 @@ export default function Home(query: ProblemQuery) {
 Home.getInitialProps = async ({ query }: { query: ProblemQuery }) => {
   const { search, topic, subTopic, sort, page } = query;
 
-  console.log(query);
-
   return { search, topic, subTopic, sort, page };
 };

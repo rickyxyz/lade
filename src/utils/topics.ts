@@ -22,8 +22,43 @@ export function useTopics() {
     subTopics: [],
   });
 
+  const topicOptions = useMemo(
+    () =>
+      topics.topics
+        .map(({ id, name }) => ({
+          id,
+          text: name,
+        }))
+        .filter(({ id }) => id) as SelectOptionType<ProblemTopicNameType>[],
+    [topics.topics]
+  );
+
+  const subTopicOptions = useMemo<
+    Record<string, SelectOptionType<ProblemTopicNameType>[]>
+  >(
+    () =>
+      topics.subTopics
+        .filter(({ id, topicId }) => id && topicId)
+        .map(({ id, name, topicId }) => ({
+          id,
+          text: name,
+          topicId,
+        }))
+        .reduce((prev, curr) => {
+          const topicId = curr.topicId!;
+          const existingSubtopics = prev[topicId] ?? [];
+          return {
+            ...prev,
+            [topicId]: [...existingSubtopics, curr as any],
+          };
+        }, {} as Record<string, SelectOptionType<ProblemTopicNameType>[]>),
+    [topics.subTopics]
+  );
+
   const handleGetTopics = useCallback(async () => {
     const existing = localStorage.getItem("topics");
+
+    console.log(existing);
 
     if (existing) {
       setTopics(JSON.parse(existing));
@@ -37,22 +72,6 @@ export function useTopics() {
     }
   }, []);
 
-  const getSubTopicsFromTopic = useCallback(
-    (id: string) => topics.subTopics.filter(({ topicId }) => topicId === id),
-    [topics]
-  );
-
-  const getTopicOptions = useCallback(
-    (ts: ProblemTopicType[]) =>
-      ts
-        .map(({ id, name }) => ({
-          id,
-          text: name,
-        }))
-        .filter(({ id }) => id) as SelectOptionType<ProblemTopicNameType>[],
-    []
-  );
-
   useEffect(() => {
     handleGetTopics();
   }, [handleGetTopics]);
@@ -60,9 +79,9 @@ export function useTopics() {
   return useMemo(
     () => ({
       allTopics: topics,
-      getSubTopicsFromTopic,
-      getTopicOptions,
+      topicOptions,
+      subTopicOptions,
     }),
-    [getSubTopicsFromTopic, getTopicOptions, topics]
+    [subTopicOptions, topicOptions, topics]
   );
 }

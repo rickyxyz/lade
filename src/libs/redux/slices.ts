@@ -1,4 +1,10 @@
-import { SolvedMapType, UserMapType, UserType } from "@/types";
+import {
+  ProblemTopicLinkType,
+  ProblemTopicType,
+  SolvedMapType,
+  UserMapType,
+  UserType,
+} from "@/types";
 import {
   SliceCaseReducers,
   ValidateSliceCaseReducers,
@@ -18,6 +24,11 @@ interface UserActionMapType {
 interface SolvedActionMapType {
   update_solveds: SolvedMapType;
   reset_solveds: undefined | Record<string, never>;
+}
+
+interface TopicActionMapType {
+  update_topics: ProblemTopicLinkType;
+  reset_topics: undefined | Record<string, never>;
 }
 
 type ReducerRawType<X> = {
@@ -58,6 +69,22 @@ export const solvedReducer: ReducerRawType<SolvedActionMapType> = {
   },
 };
 
+export const topicsReducer: ReducerRawType<TopicActionMapType> = {
+  update_topics: (state, action) => {
+    const value = {
+      ...(state ?? {}),
+      ...action.payload,
+    };
+    state = value;
+    return value;
+  },
+  reset_topics(state) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    state = undefined;
+    return state;
+  },
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState: null as UserType | null,
@@ -70,14 +97,22 @@ const solvedSlice = createSlice({
   reducers: solvedReducer as unknown as ReducerType<SolvedMapType>,
 });
 
+const topicsSlice = createSlice({
+  name: "topics",
+  initialState: {} as ProblemTopicLinkType | null,
+  reducers: topicsReducer as unknown as ReducerType<ProblemTopicLinkType>,
+});
+
 const reducer = {
   user: userSlice.reducer,
   solveds: solvedSlice.reducer,
+  // topics: topicsSlice.reducer,
 };
 
 export const action = {
   ...userSlice.actions,
   ...solvedSlice.actions,
+  // ...topicsSlice.actions,
 };
 
 export type ActionTypes = UserActionMapType & SolvedActionMapType;

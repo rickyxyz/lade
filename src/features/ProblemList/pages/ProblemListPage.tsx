@@ -21,7 +21,6 @@ import {
 import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
-import { useTopics } from "@/utils";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
@@ -60,10 +59,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   const debounce = useDebounce();
   const lastQuery = useRef<ProblemQuery>();
 
-  // useEffect(() => {
-  //   if (query.search) setSearch(query.search);
-  // }, [query]);
-
   const handleUpdateStateOnQueryUpdate = useCallback(
     (newPage = userPage) => {
       setTopic(userTopic);
@@ -74,6 +69,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
         const currentMax = prev.maxPages;
         let newValue = isNaN(newPage) ? 1 : Number(newPage);
         if (newValue > currentMax) newValue = currentMax;
+        if (newValue <= 0) newValue = 1;
 
         return {
           ...prev,
@@ -308,8 +304,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             className="!rounded-none !rounded-l-md"
             value={search}
             onChange={(e) => {
-              const newSearch = e.currentTarget.value;
-              setSearch(newSearch);
+              setSearch(e.currentTarget.value);
             }}
             rightElement={
               <ButtonIcon
@@ -318,7 +313,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 order="last"
                 orderDirection="row"
                 onClick={() => {
-                  // handleGetProblem();
                   handleUpdateQuery(1);
                 }}
                 disabled={loading}

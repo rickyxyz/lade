@@ -42,20 +42,11 @@ export function ProblemCreateEditorForm({
     setFieldTouched,
     validateForm,
   } = useFormikContext<ProblemType>();
-  const {
-    allTopics: { topics },
-    getSubTopicsFromTopic,
-    getTopicOptions,
-  } = useTopics();
+  const { subTopicOptions, topicOptions } = useTopics();
   const { statement, subTopicId, topicId, type } = values;
   const atLeastOneError = useMemo(
     () => Object.entries(errors).length > 0,
     [errors]
-  );
-
-  const topicOptions = useMemo(
-    () => getTopicOptions(topics),
-    [getTopicOptions, topics]
   );
 
   const renderProblemSettings = useMemo(
@@ -96,7 +87,7 @@ export function ProblemCreateEditorForm({
             options={
               topicId
                 ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (getTopicOptions(getSubTopicsFromTopic(topicId)) as any)
+                  (subTopicOptions[topicId] as any)
                 : []
             }
             selectedOption={subTopicId}
@@ -113,8 +104,7 @@ export function ProblemCreateEditorForm({
       initialized,
       topicOptions,
       topicId,
-      getTopicOptions,
-      getSubTopicsFromTopic,
+      subTopicOptions,
       subTopicId,
       setFieldValue,
       setAnswer,
