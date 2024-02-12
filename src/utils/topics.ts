@@ -21,6 +21,7 @@ export function useTopics() {
     topics: [],
     subTopics: [],
   });
+  const [loading, setLoading] = useState(true);
 
   const topicOptions = useMemo(
     () =>
@@ -57,18 +58,24 @@ export function useTopics() {
 
   const handleGetTopics = useCallback(async () => {
     const existing = localStorage.getItem("topics");
+    setLoading(true);
 
     console.log(existing);
 
     if (existing) {
       setTopics(JSON.parse(existing));
+      setLoading(false);
     } else {
-      API("get_topics", {}).then(({ data }) => {
-        if (data) {
-          setTopics(data);
-          localStorage.setItem("topics", JSON.stringify(data));
-        }
-      });
+      API("get_topics", {})
+        .then(({ data }) => {
+          if (data) {
+            setTopics(data);
+            localStorage.setItem("topics", JSON.stringify(data));
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, []);
 
@@ -81,7 +88,8 @@ export function useTopics() {
       allTopics: topics,
       topicOptions,
       subTopicOptions,
+      loading,
     }),
-    [subTopicOptions, topicOptions, topics]
+    [loading, subTopicOptions, topicOptions, topics]
   );
 }

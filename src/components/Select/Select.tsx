@@ -5,6 +5,7 @@ import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
 import { Tooltip, TooltipBaseProps } from "../Tooltip";
 import { BsChevronDown } from "react-icons/bs";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type SelectVariant = "basic" | "solid";
 
@@ -17,6 +18,7 @@ export interface SelectProps<X extends string, Y extends SelectOptionType<X>[]>
   optional?: boolean;
   allowClearSelection?: boolean;
   unselectedText?: string;
+  loading?: boolean;
   onSelectOption: (option?: SelectOptionType<X>) => void;
 }
 
@@ -30,6 +32,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   allowClearSelection = true,
   unselectedText = "None",
   disabled,
+  loading,
   onSelectOption,
   onBlur,
 }: SelectProps<X, Y>) {
@@ -105,6 +108,15 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     ]
   );
 
+  const renderLoading = useMemo(
+    () => (
+      <div className="p-4 flex items-center justify-center">
+        <AiOutlineLoading3Quarters className="animate-spin" />
+      </div>
+    ),
+    []
+  );
+
   const renderTrigger = useMemo(
     () => (
       <div
@@ -139,7 +151,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   return (
     <Tooltip
       triggerElement={renderTrigger}
-      hiddenElement={renderOptions}
+      hiddenElement={loading ? renderLoading : renderOptions}
       className={className}
       stateVisible={stateVisible}
       disabled={disabled}

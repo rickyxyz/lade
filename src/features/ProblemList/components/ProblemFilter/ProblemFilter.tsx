@@ -1,17 +1,13 @@
 import clsx from "clsx";
-import { Button, Paragraph, Select } from "@/components";
-import {
-  PROBLEM_SORT_BY_OPTIONS,
-  PROBLEM_SUBTOPIC_OPTIONS,
-  PROBLEM_TOPIC_OPTIONS,
-} from "@/consts";
+import { Paragraph, Select } from "@/components";
+import { PROBLEM_SORT_BY_OPTIONS } from "@/consts";
 import {
   ProblemSortByType,
   ProblemSubtopicNameType,
   ProblemTopicNameType,
   StateType,
 } from "@/types";
-import { ReactNode, useMemo } from "react";
+import { ReactNode } from "react";
 import { useTopics } from "@/utils";
 
 interface ProblemFilterProps {
@@ -34,7 +30,7 @@ export function ProblemFilter({
   const [topic, setTopic] = stateTopic;
   const [subtopic, setSubtopic] = stateSubTopic;
   const [sortBy, setSortBy] = stateSortBy;
-  const { topicOptions, subTopicOptions } = useTopics();
+  const { topicOptions, subTopicOptions, loading } = useTopics();
 
   return (
     <div className={clsx("flex rounded-lg !p-4 mb-8", wrapperClassName)}>
@@ -52,6 +48,7 @@ export function ProblemFilter({
             }}
             unselectedText="Any"
             optional
+            loading={loading}
           />
         </div>
         <div className="flex-1">
@@ -67,6 +64,7 @@ export function ProblemFilter({
             disabled={!topic}
             unselectedText="Any"
             optional
+            loading={loading}
           />
         </div>
         <div className="flex-1">
