@@ -4,11 +4,14 @@ import { StateType } from "@/types";
 
 export type TooltipBaseProps = {
   className?: string;
+  classNameInner?: string;
   optionWidth?: number;
   direction?: "left" | "right";
   disabled?: boolean;
   ref?: RefObject<HTMLDivElement>;
   stateVisible?: StateType<boolean>;
+  showOnHover?: boolean;
+  topOffset?: number;
   onBlur?: () => void;
 };
 
@@ -21,12 +24,15 @@ export type TooltipProps = {
 export const Tooltip = forwardRef<any, any>(function (
   {
     className,
+    classNameInner,
     optionWidth = 300,
     direction = "right",
     disabled,
     triggerElement,
     hiddenElement,
     stateVisible,
+    showOnHover,
+    topOffset = 48,
     onBlur,
   }: TooltipProps,
   ref
@@ -38,20 +44,21 @@ export const Tooltip = forwardRef<any, any>(function (
     () => (
       <div
         className={clsx(
-          "absolute h-fit top-12 flex flex-col",
+          "absolute h-fit flex flex-col",
           "border border-gray-100 bg-white shadow-md z-10",
-          className
+          classNameInner
         )}
         style={{
           minWidth: optionWidth,
           left: direction === "left" ? undefined : 0,
           right: direction === "right" ? 0 : undefined,
+          top: topOffset,
         }}
       >
         {hiddenElement}
       </div>
     ),
-    [className, direction, hiddenElement, optionWidth]
+    [classNameInner, direction, hiddenElement, optionWidth, topOffset]
   );
 
   return (
@@ -64,12 +71,23 @@ export const Tooltip = forwardRef<any, any>(function (
       onFocus={() => {
         !disabled && setVisible(true);
       }}
+      onMouseEnter={() => {
+        if (showOnHover) {
+          !disabled && setVisible(true);
+        }
+      }}
       onClick={() => {
         if (!visible && !disabled) setVisible(true);
       }}
       onBlur={() => {
         onBlur && onBlur();
         setVisible(false);
+      }}
+      onMouseLeave={() => {
+        if (showOnHover) {
+          onBlur && onBlur();
+          setVisible(false);
+        }
       }}
       ref={ref}
       tabIndex={0}
