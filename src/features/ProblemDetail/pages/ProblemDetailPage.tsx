@@ -4,7 +4,7 @@ import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { API } from "@/api";
-import { ButtonIcon, IconText, Modal, Paragraph } from "@/components";
+import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
@@ -27,6 +27,7 @@ import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 interface ProblemData {
   label: string;
   value?: string | number;
+  tooltip?: string;
 }
 
 interface ProblemAction extends ButtonListEntry {
@@ -43,7 +44,14 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     PROBLEM_BLANK as unknown as ProblemType
   );
   const [problem, setProblem] = stateProblem;
-  const { title, topicId, subTopicId, authorId, solveds } = problem;
+  const {
+    title,
+    topicId,
+    subTopicId,
+    authorId,
+    solveds,
+    createdAt = 0,
+  } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -87,11 +95,16 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         value: authorId,
       },
       {
+        label: "Date",
+        value: new Date(createdAt).toLocaleDateString(),
+        tooltip: `${new Date(createdAt).toLocaleString()}`,
+      },
+      {
         label: "Solved",
         value: (solveds ?? []).length,
       },
     ],
-    [authorId, solveds]
+    [authorId, createdAt, solveds]
   );
 
   const handleDeleteProblem = useCallback(async () => {
@@ -277,13 +290,27 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderProblemData = useMemo(
     () => (
       <ul className="md:w-48">
-        {problemData.map(({ label, value }, idx) => (
+        {problemData.map(({ label, value, tooltip }, idx) => (
           <li
             className={clsx("flex justify-between", idx > 0 && "mt-1")}
             key={label}
           >
             <Paragraph color="secondary-5">{label}</Paragraph>
-            <Paragraph>{value}</Paragraph>
+            {tooltip ? (
+              <Tooltip
+                optionWidth={0}
+                triggerElement={<Paragraph>{value}</Paragraph>}
+                hiddenElement={
+                  <Paragraph className="whitespace-nowrap">{tooltip}</Paragraph>
+                }
+                classNameInner="w-fit px-4 py-2"
+                topOffset={32}
+                direction="left"
+                showOnHover
+              />
+            ) : (
+              <Paragraph>{value}</Paragraph>
+            )}
           </li>
         ))}
       </ul>
