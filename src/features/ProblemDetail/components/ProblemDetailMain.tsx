@@ -185,7 +185,7 @@ export function ProblemDetailMain({
 
   useEffect(() => {
     handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
+  }, [tab, handleRenderMarkdown]);
 
   const renderContent = useMemo(() => {
     switch (tab) {
@@ -216,7 +216,7 @@ export function ProblemDetailMain({
         />
         <div className="flex-grow border-b" />
       </div>
-      <Card className={clsx("!rounded-tl-none !border-t-0")}>
+      <Card className={clsx("!rounded-md !rounded-tl-none !border-t-0")}>
         {renderContent}
       </Card>
     </div>
