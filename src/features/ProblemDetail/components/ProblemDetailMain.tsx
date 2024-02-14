@@ -7,6 +7,7 @@ import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 import { ProblemAnswer } from "./ProblemAnswer";
 import { API } from "@/api";
+import clsx from "clsx";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -40,12 +41,7 @@ export function ProblemDetailMain({
   const solvable = stateSolvable[0];
   const dispatch = useAppDispatch();
   const statementRef = useRef<HTMLDivElement>(null);
-
-  const topicText = useMemo(() => parseTopicId(topicId).name, [topicId]);
-  const subtopicText = useMemo(
-    () => parseTopicId(subTopicId).name,
-    [subTopicId]
-  );
+  const [tab, setTab] = useState<"problem" | "discussion">("problem");
 
   const handleCheckAnswer = useCallback(async () => {
     if (!id || !userAnswer) return;
@@ -59,7 +55,7 @@ export function ProblemDetailMain({
     setLoading(true);
     await API("post_solved", {
       body: {
-        id,
+        id: String(id),
         answer: userAnswer,
       },
     })
@@ -191,10 +187,60 @@ export function ProblemDetailMain({
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
 
+  const renderContent = useMemo(() => {
+    switch (tab) {
+      case "problem":
+        return (
+          <>
+            {renderMain}
+            {renderAnswer}
+          </>
+        );
+      case "discussion":
+        return <div>Discussion</div>;
+    }
+  }, [renderAnswer, renderMain, tab]);
+
   return (
-    <Card>
-      {renderMain}
-      {renderAnswer}
-    </Card>
+    <div className="flex flex-col">
+      <div className="flex w-full">
+        <Tab
+          active={tab === "problem"}
+          label="Problem"
+          onClick={() => setTab("problem")}
+        />
+        <Tab
+          active={tab === "discussion"}
+          label="Discussion"
+          onClick={() => setTab("discussion")}
+        />
+        <div className="flex-grow border-b" />
+      </div>
+      <Card className={clsx("!rounded-tl-none !border-t-0")}>
+        {renderContent}
+      </Card>
+    </div>
+  );
+}
+
+function Tab({
+  active,
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+  active: boolean;
+}) {
+  return (
+    <Button
+      className={clsx(active ? "!border-b-0" : "!bg-gray-50")}
+      order="first"
+      orderDirection="column"
+      variant="outline"
+      onClick={onClick}
+    >
+      {label}
+    </Button>
   );
 }
