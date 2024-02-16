@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
-import { validateAnswer } from "@/utils";
+import { makeAnswer, validateAnswer } from "@/utils";
 import { ProblemAnswerType, ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 
@@ -20,12 +20,10 @@ export default async function handler(
 
   const { answer, id } = body as unknown as ProblemType;
 
+  let problem: ProblemType | undefined;
+
   try {
     const user = await getAuthUser(req, res);
-
-    if (!user) {
-      throw Error("unauthorized");
-    }
 
     const result = await prisma.problem.findUnique({
       where: {
@@ -38,17 +36,38 @@ export default async function handler(
       },
     });
 
+    problem = result as any;
+
+    console.log(problem);
+
     if (!result) {
-      throw Error("fail");
+      throw Error("fail1");
     }
 
-    const { answer: accept } = result;
+    if (user) {
+      const existing = await prisma.solved.findFirst({
+        where: {
+          problemId: id as number,
+          userId: user.id,
+        },
+      });
 
-    const type = result.type as unknown as ProblemAnswerType;
+      if (existing) {
+        throw Error("already answered");
+      }
+    }
+
+    if (!problem) throw Error("fail2");
+
+    const { answer: accept } = problem;
+
+    const type = problem.type as unknown as ProblemAnswerType;
 
     const verdict = validateAnswer(type as any, JSON.parse(accept), answer);
+    console.log(JSON.parse(accept));
+    console.log(answer);
 
-    if (verdict) {
+    if (user && verdict) {
       await prisma.solved.create({
         data: {
           problemId: id as unknown as number,
