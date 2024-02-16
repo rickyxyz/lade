@@ -46,7 +46,7 @@ export const PROBLEM_SAMPLE_3: ProblemType = {
 export const PROBLEM_SAMPLE_4: ProblemType = {
   id: "rising-voltage",
   statement:
-    "The equation $V = IR$ shows the relation between voltage $V$ in volts (V), the current $I$ in amperes (A) and the resistance $R$ in ohms ($\\ohm$). When $V = 24$ and $I = 4$, V is increasing at the rate of $8 \\text{ V/sec}$, and I is increasing at the rate of $4 \\text{ A/sec}$, how fast is the resistance changing? Express your answer in $\\ohm\\text{/sec}$.",
+    "The equation $V = IR$ shows the relation between voltage $V$ in volts (V), the current $I$ in amperes (A) and the resistance $R$ in ohms ($\\Omega$). When $V = 24$ and $I = 4$, V is increasing at the rate of $8 \\text{ V/sec}$, and I is increasing at the rate of $4 \\text{ A/sec}$, how fast is the resistance changing? Express your answer in $\\Omega\\text{/sec}$.",
   title: "Increasing Voltage",
   topicId: "calculus",
   subTopicId: "applications-of-derivative",
