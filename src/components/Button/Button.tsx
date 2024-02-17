@@ -1,4 +1,9 @@
-import { DetailedHTMLProps, ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  DetailedHTMLProps,
+  ButtonHTMLAttributes,
+  ReactNode,
+  CSSProperties,
+} from "react";
 import clsx from "clsx";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Paragraph } from "../Paragraph";
@@ -37,6 +42,7 @@ export interface ButtonProps
   className?: string;
   textClassName?: string;
   loading?: boolean;
+  style?: CSSProperties;
 }
 
 export function Button({
@@ -52,6 +58,7 @@ export function Button({
   order,
   orderDirection,
   type,
+  style,
   onClick,
 }: ButtonProps) {
   return (
@@ -77,6 +84,7 @@ export function Button({
       type={type}
       onClick={!loading && !disabled ? onClick : undefined}
       disabled={disabled || loading}
+      style={style}
     >
       {!loading ? (
         <>

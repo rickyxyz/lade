@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import { CSSProperties, ReactNode, useEffect, useMemo, useRef } from "react";
 import { Card, CardProps } from "./Card";
 import { Button } from "../Button";
 import clsx from "clsx";
@@ -19,18 +19,19 @@ export function CardTab<T extends string>({
   activeTab,
   ...rest
 }: CardTabProps<T>) {
-  const tabLineLength = useRef(0);
   const tabRef = useRef<HTMLDivElement>(null);
   const tabLineRef = useRef<HTMLDivElement>(null);
   const tabLine2Ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const initialized = useRef(false);
 
   const renderTabs = useMemo(
     () =>
-      tabs.map(({ id, label, onClick }) => (
+      tabs.map(({ id, label, onClick }, index) => (
         <Tab
           className={clsx(id === activeTab ? "!border-b-0" : "!bg-gray-50")}
+          style={{
+            marginLeft: `-${index}px`,
+          }}
           key={id}
           label={label}
           onClick={onClick}
@@ -55,7 +56,7 @@ export function CardTab<T extends string>({
 
   return (
     <div className="flex flex-col" ref={containerRef}>
-      <div className="flex w-fit" ref={tabRef}>
+      <div className="relative flex w-fit" ref={tabRef}>
         {renderTabs}
       </div>
       <div className="relative flex flex-row h-4">
@@ -77,10 +78,12 @@ function Tab({
   className,
   label,
   onClick,
+  style,
 }: {
   label: string;
   onClick: () => void;
   className: string;
+  style?: CSSProperties;
 }) {
   return (
     <Button
@@ -89,6 +92,7 @@ function Tab({
       orderDirection="column"
       variant="outline"
       onClick={onClick}
+      style={style}
     >
       {label}
     </Button>
