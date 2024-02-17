@@ -133,3 +133,5 @@ export type ContestDatabaseType = Omit<ContestType, "id"> & {
 export type ContestBlankType = {
   [P in keyof ContestDatabaseType]: string;
 };
+
+export type ProblemMainTabType = "problem" | "discussion";
