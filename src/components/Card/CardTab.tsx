@@ -30,8 +30,8 @@ export function CardTab<T extends string>({
     () =>
       tabs.map(({ id, label, onClick }) => (
         <Tab
+          className={clsx(id === activeTab ? "!border-b-0" : "!bg-gray-50")}
           key={id}
-          active={id === activeTab}
           label={label}
           onClick={onClick}
         />
@@ -46,9 +46,11 @@ export function CardTab<T extends string>({
     const container = containerRef.current;
 
     if (!tab || !tabLine || !tabLine2 || !container) return;
-    tabLine.style.width = `${tab.offsetWidth}px`;
-    tabLine2.style.width = `${container.offsetWidth - tab.offsetWidth}px`;
-    tabLine2.style.left = `${tab.offsetWidth}px`;
+    const w = tab.getBoundingClientRect().width;
+    tabLine.style.width = `${w}px`;
+    console.log(tab.getClientRects());
+    tabLine2.style.width = `${container.offsetWidth - w + 2}px`;
+    tabLine2.style.left = `${w - 2}px`;
   });
 
   return (
@@ -57,11 +59,11 @@ export function CardTab<T extends string>({
         {renderTabs}
       </div>
       <div className="relative flex flex-row h-4">
-        <div className="!border-l !h-full" ref={tabLineRef}></div>
+        <div className="!h-full !border-l" ref={tabLineRef}></div>
         <div
           className="absolute !border-r !border-t !rounded-tr-md !h-full flex-grow"
           style={{
-            top: 1,
+            marginTop: -1,
           }}
           ref={tabLine2Ref}
         ></div>
@@ -72,17 +74,17 @@ export function CardTab<T extends string>({
 }
 
 function Tab({
-  active,
+  className,
   label,
   onClick,
 }: {
   label: string;
   onClick: () => void;
-  active: boolean;
+  className: string;
 }) {
   return (
     <Button
-      className={clsx(active ? "!border-b-0" : "!bg-gray-50")}
+      className={className}
       order="first"
       orderDirection="column"
       variant="outline"
