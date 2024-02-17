@@ -15,16 +15,13 @@ export function ButtonIcon({
   ...rest
 }: ButtonIcon) {
   return (
-    <Button
-      className={clsx("!px-0", size && BUTTON_SIZE_STYLE[size ?? "m"])}
-      {...rest}
-    >
+    <Button className={clsx("!px-0", BUTTON_SIZE_STYLE[size ?? "m"])} {...rest}>
       <Icon size={iconSize} className="m-auto" IconComponent={icon} />
     </Button>
   );
 }
 
 const BUTTON_SIZE_STYLE: Record<ButtonSizeType, string> = {
-  m: "w-10 h-10",
-  s: "w-8 h-8",
+  m: "!w-10 !h-10",
+  s: "!w-8 !h-8",
 };
