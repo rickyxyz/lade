@@ -14,6 +14,8 @@ import { useDebounce, useProblemEditInitialized } from "@/hooks";
 import { crudData } from "@/libs/firebase";
 import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
+import { useTopics } from "@/utils";
+import { API } from "@/api";
 
 export interface ContestEditFormProps {
   contest?: ContestDatabaseType;
@@ -36,6 +38,7 @@ export function ContestEditForm({
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
+  const { subTopicOptions, topicOptions } = useTopics();
   const debounce = useDebounce();
 
   const {
@@ -74,24 +77,29 @@ export function ContestEditForm({
         <h2 className="mb-4">Contest Settings</h2>
         <div className="flex flex-col gap-4">
           <SettingSelect
-            name="Contest Topic"
+            name="Topic"
             formName="topic"
-            options={PROBLEM_TOPIC_OPTIONS}
+            options={topicOptions}
             selectedOption={topicId}
             onSelectOption={(option) => {
-              setFieldValue("topic", option ? option.id : undefined);
-              setFieldValue("subtopic", "");
+              setFieldValue("topicId", option ? option.id : undefined);
+              setFieldValue("subTopicId", "");
             }}
             allowClearSelection
             disabled={!initialized}
           />
           <SettingSelect
-            name="Contest Subtopic"
+            name="Subtopic"
             formName="subtopic"
-            options={topicId ? PROBLEM_SUBTOPIC_OPTIONS[topicId] : []}
+            options={
+              topicId
+                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (subTopicOptions[topicId] as any)
+                : []
+            }
             selectedOption={subTopicId}
             onSelectOption={(option) => {
-              setFieldValue("subtopic", option ? option.id : undefined);
+              setFieldValue("subTopicId", option ? option.id : undefined);
             }}
             allowClearSelection
             disabled={!initialized || !topicId}
@@ -102,8 +110,10 @@ export function ContestEditForm({
       </section>
     ),
     [
+      topicOptions,
       topicId,
       initialized,
+      subTopicOptions,
       subTopicId,
       stateStart,
       start,
@@ -164,15 +174,30 @@ export function ContestEditForm({
   );
 
   const handleGetProblem = useCallback(async () => {
-    const problem = await crudData("get_problem", {
-      id: query,
-    });
+    // const problem = await crudData("get_problem", {
+    //   id: query,
+    // });
+    await API("get_problem", {
+      params: {
+        id: query,
+      },
+    })
+      .then(({ data }) => {
+        if (!data) throw Error("");
 
-    setFetching(false);
+        const { id } = data;
+        setProblem(data);
 
-    console.log(problem);
-    if (problem) setProblem(problem as unknown as ProblemType);
-    else setProblem(undefined);
+        if (Object.keys(data).length > 0)
+          setProblem(data as unknown as ProblemType);
+        else setProblem(undefined);
+
+        return id;
+      })
+      .catch(() => null)
+      .finally(() => {
+        setFetching(false);
+      });
   }, [query]);
 
   const handleAddProblem = useCallback(() => {
@@ -189,6 +214,14 @@ export function ContestEditForm({
       tempProblems[idx] = temp;
 
       return tempProblems;
+    });
+  }, []);
+
+  const handleRemoveProblem = useCallback((idx: number) => {
+    setProblems((prev) => {
+      const tempProblems = [...prev];
+
+      return tempProblems.filter((_, index) => index !== idx);
     });
   }, []);
 
@@ -226,7 +259,11 @@ export function ContestEditForm({
               >
                 <Icon IconComponent={BsArrowDown} />
               </Button>
-              <Button className="!w-8 !h-8" variant="ghost-danger">
+              <Button
+                className="!w-8 !h-8"
+                variant="ghost-danger"
+                onClick={() => handleRemoveProblem(idx)}
+              >
                 <Icon IconComponent={BsX} />
               </Button>
             </div>

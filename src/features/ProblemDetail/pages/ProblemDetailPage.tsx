@@ -96,8 +96,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       },
       {
         label: "Date",
-        value: new Date(createdAt).toLocaleDateString(),
-        tooltip: `${new Date(createdAt).toLocaleString()}`,
+        value: new Date(createdAt).toLocaleDateString("en-GB"),
+        tooltip: `${new Date(createdAt).toLocaleString("en-GB")}`,
       },
       {
         label: "Solved",
@@ -176,10 +176,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
-      console.log("YES!!");
       router.back();
     } else {
-      console.log("BYE BYE");
       router.replace("/");
     }
   }, [router]);
