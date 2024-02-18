@@ -1,5 +1,12 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
-import { Input, Markdown, Button, Icon, Paragraph } from "@/components";
+import {
+  Input,
+  Markdown,
+  Button,
+  Icon,
+  Paragraph,
+  ButtonIcon,
+} from "@/components";
 import {
   ContentViewType,
   ContestDatabaseType,
@@ -243,34 +250,31 @@ export function ContestEditForm({
           </td>
           <td>
             <div className="flex gap-2">
-              <Button
-                className="!w-8 !h-8"
+              <ButtonIcon
+                icon={BsArrowUp}
+                size="s"
                 variant="ghost"
                 disabled={idx === 0}
                 onClick={() => handleReorderProblem(idx, -1)}
-              >
-                <Icon IconComponent={BsArrowUp} />
-              </Button>
-              <Button
-                className="!w-8 !h-8"
+              />
+              <ButtonIcon
+                icon={BsArrowDown}
+                size="s"
                 variant="ghost"
                 disabled={problems.length - 1 === idx}
                 onClick={() => handleReorderProblem(idx, 1)}
-              >
-                <Icon IconComponent={BsArrowDown} />
-              </Button>
-              <Button
-                className="!w-8 !h-8"
+              />
+              <ButtonIcon
+                icon={BsX}
+                size="s"
                 variant="ghost-danger"
                 onClick={() => handleRemoveProblem(idx)}
-              >
-                <Icon IconComponent={BsX} />
-              </Button>
+              />
             </div>
           </td>
         </tr>
       )),
-    [handleReorderProblem, problems]
+    [handleRemoveProblem, handleReorderProblem, problems]
   );
 
   const renderContestProblemTable = useMemo(

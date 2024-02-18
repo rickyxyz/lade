@@ -43,8 +43,9 @@ export function SettingDate({ name, stateDate }: SettingDate) {
   );
 
   return (
-    <Setting name={name}>
+    <Setting name={name} classNameChildren="flex gap-4 flex-col md:flex-row">
       <Input
+        className="flex-grow"
         type="date"
         onChange={(e) => {
           const string = e.target.value;
@@ -57,6 +58,7 @@ export function SettingDate({ name, stateDate }: SettingDate) {
         }}
       />
       <Input
+        className="flex-grow"
         type="time"
         onChange={(e) => {
           const string = e.target.value;
