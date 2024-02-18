@@ -45,6 +45,9 @@ export function ContestEditForm({
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
+  const [status, setStatus] = useState<
+    "loading" | "loaded" | "invalid" | "added" | "duplicate" | undefined
+  >();
   const { subTopicOptions, topicOptions } = useTopics();
   const debounce = useDebounce();
 
@@ -184,33 +187,45 @@ export function ContestEditForm({
     // const problem = await crudData("get_problem", {
     //   id: query,
     // });
+    if (query.length === 0) return;
+
+    setStatus("loading");
     await API("get_problem", {
       params: {
         id: query,
       },
     })
       .then(({ data }) => {
-        if (!data) throw Error("");
+        if (!data || Object.keys(data).length === 0) throw Error("");
 
-        const { id } = data;
-        setProblem(data);
+        setStatus("loaded");
 
-        if (Object.keys(data).length > 0)
-          setProblem(data as unknown as ProblemType);
-        else setProblem(undefined);
-
-        return id;
+        setProblem(data as unknown as ProblemType);
       })
-      .catch(() => null)
+      .catch(() => {
+        setProblem(null);
+        setStatus("invalid");
+        return null;
+      })
       .finally(() => {
         setFetching(false);
       });
   }, [query]);
 
   const handleAddProblem = useCallback(() => {
-    if (problem) setProblems((prev) => [...prev, problem]);
+    if (problem && problems.filter(({ id }) => id === problem.id).length > 0) {
+      setStatus("duplicate");
+      return;
+    }
+
+    if (problem) {
+      setStatus("added");
+      setProblems((prev) => [...prev, problem]);
+      return;
+    }
+
     setProblem(null);
-  }, [problem]);
+  }, [problem, problems]);
 
   const handleReorderProblem = useCallback((idx: number, change: 1 | -1) => {
     setProblems((prev) => {
@@ -232,13 +247,15 @@ export function ContestEditForm({
     });
   }, []);
 
-  useEffect(() => {
-    if (query.length > 0) setFetching(true);
-  }, [query]);
+  // useEffect(() => {
+  //   if (query.length > 0) setFetching(true);
+  // }, [query]);
 
   useEffect(() => {
-    handleGetProblem();
-  }, [handleGetProblem]);
+    debounce(() => {
+      handleGetProblem();
+    }, 500);
+  }, [debounce, handleGetProblem]);
 
   const renderContestProblems = useMemo(
     () =>
@@ -277,6 +294,25 @@ export function ContestEditForm({
     [handleRemoveProblem, handleReorderProblem, problems]
   );
 
+  const renderStatus = useMemo(() => {
+    const text = (() => {
+      switch (status) {
+        case "added":
+          return "Problem added.";
+        case "duplicate":
+          return "Problem already added.";
+        case "invalid":
+          return "Problem does not exist.";
+        case "loaded":
+          return problem?.title;
+        case "loading":
+          return "Loading...";
+      }
+    })();
+
+    return <Paragraph className="pl-4">{text}</Paragraph>;
+  }, [problem?.title, status]);
+
   const renderContestProblemTable = useMemo(
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
@@ -286,10 +322,12 @@ export function ContestEditForm({
             <Input
               onChange={(e) => {
                 setQuery(e.target.value);
+                setStatus(undefined);
               }}
             />
             <Button
-              variant="ghost"
+              variant="outline"
+              disabled={status !== "loaded"}
               className="!w-fit"
               onClick={handleAddProblem}
             >
@@ -297,17 +335,7 @@ export function ContestEditForm({
             </Button>
           </div>
         </Setting>
-        <Setting className="mt-2">
-          <span className="pl-4">
-            {fetching ? (
-              "Loading..."
-            ) : problem ? (
-              <b>{problem.title}</b>
-            ) : (
-              "No problem found."
-            )}
-          </span>
-        </Setting>
+        <Setting className="mt-2">{renderStatus}</Setting>
         <table className="mt-8">
           <thead>
             <tr>
@@ -330,13 +358,7 @@ export function ContestEditForm({
         </table>
       </section>
     ),
-    [
-      fetching,
-      handleAddProblem,
-      problem,
-      problems.length,
-      renderContestProblems,
-    ]
+    [handleAddProblem, problems.length, renderContestProblems, renderStatus]
   );
 
   useEffect(() => {
