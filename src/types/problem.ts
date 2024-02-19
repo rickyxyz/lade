@@ -111,7 +111,7 @@ export interface ContestBaseType {
   participants?: number;
   views?: number;
   createdAt?: number;
-  updateDate?: number;
+  updatedAt?: number;
   startDate?: number;
   endDate?: number;
   authorId?: string;

@@ -24,7 +24,15 @@ export default async function handler(
       }
     | undefined;
   try {
-    const allTopics = await prisma.topic.findMany();
+    const allTopics = await prisma.topic.findMany({
+      include: {
+        problems: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
     const allSubtopics = await prisma.subtopic.findMany();
     result = JSON.parse(
       json({
