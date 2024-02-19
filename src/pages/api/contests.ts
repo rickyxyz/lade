@@ -93,7 +93,15 @@ export default async function handler(
 
     const problems = await prisma.contest.findMany({
       include: {
-        toProblems: true,
+        // toProblems: {
+        //   select: {
+        //     problem: true,
+        //     score: true,
+        //   },
+        // },
+        _count: {
+          select: { toProblems: true },
+        },
       },
     });
 

@@ -11,6 +11,8 @@ import {
   ContestDatabaseType,
   ProblemType,
   AnswerObjectType,
+  ContestBaseType,
+  ContestType,
 } from "@/types";
 
 export const PROBLEM_BLANK: ProblemType = {
@@ -31,20 +33,16 @@ export const PROBLEM_DEFAULT: ProblemType = {
   views: 0,
 };
 
-export const CONTEST_DEFAULT: ContestDatabaseType = {
+export const CONTEST_DEFAULT: ContestType = {
+  id: "",
   description: "",
   title: "",
   topicId: "calculus",
   subTopicId: "derivatives",
-  problems: {},
-};
-
-export const CONTEST_BLANK: ContestBlankType = {
-  description: "",
-  title: "",
-  topicId: "",
-  subTopicId: "",
-  problems: "",
+  problems: "[]",
+  authorId: "",
+  startDate: 0,
+  endDate: 0,
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {

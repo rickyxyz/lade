@@ -1,7 +1,8 @@
 import {
   AnswerType,
+  ContestBaseType,
   ContestBlankType,
-  ContestDatabaseType,
+  ContestType,
   ProblemAnswerType,
   ProblemType,
 } from "@/types";
@@ -122,11 +123,10 @@ export function validateFormAnswer(problem: Partial<ProblemType>) {
   return "Answer must not be empty.";
 }
 
-export function validateFormContest(contest: ContestDatabaseType) {
-  const { title, description, startDate, endDate } =
-    contest as unknown as ContestBlankType;
+export function validateFormContest(contest: ContestType) {
+  const { title, description, startDate, endDate } = contest;
 
-  const errors: Partial<Record<keyof ContestDatabaseType, string>> = {};
+  const errors: Partial<Record<keyof ContestType, string>> = {};
 
   if (title === "") {
     errors.title = "Title must not be empty.";
@@ -147,5 +147,15 @@ export function validateFormContest(contest: ContestDatabaseType) {
   if (startDate && endDate && startDate > endDate)
     errors.endDate = "End date cannot be earlier than start date.";
 
+  const problems = JSON.parse(contest.problems as unknown as string);
+  console.log(problems);
+
+  const count = Object.keys(problems).length;
+
+  if (count < 3) errors.problems = "Contest cannot have less than 3 problems.";
+  else if (count > 10)
+    errors.problems = "Contest cannot have more than 10 problems";
+
+  console.log(errors);
   return errors;
 }

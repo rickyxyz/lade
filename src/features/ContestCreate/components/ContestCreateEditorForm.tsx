@@ -10,7 +10,9 @@ import {
 import {
   ContentViewType,
   ContestDatabaseType,
+  ContestType,
   DateTimeType,
+  ProblemContestType,
   ProblemType,
   StateType,
 } from "@/types";
@@ -25,14 +27,16 @@ import { useTopics } from "@/utils";
 import { API } from "@/api";
 
 export interface ContestEditFormProps {
-  contest?: ContestDatabaseType;
+  contest?: ContestType;
   stateMode?: StateType<ContentViewType>;
+  stateProblems: StateType<ProblemContestType[]>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateLoading: StateType<boolean>;
 }
 
 export function ContestEditForm({
   stateLoading,
+  stateProblems,
   stateMode,
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
@@ -41,7 +45,7 @@ export function ContestEditForm({
   const stateEnd = useState<DateTimeType>();
   const [start, setStart] = stateStart;
   const [end, setEnd] = stateEnd;
-  const [problems, setProblems] = useState<ProblemType[]>([]);
+  const [problems, setProblems] = stateProblems;
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
@@ -213,39 +217,54 @@ export function ContestEditForm({
   }, [query]);
 
   const handleAddProblem = useCallback(() => {
-    if (problem && problems.filter(({ id }) => id === problem.id).length > 0) {
+    if (
+      problem &&
+      problems.filter(({ problem: { id } }) => id === problem.id).length > 0
+    ) {
       setStatus("duplicate");
       return;
     }
 
     if (problem) {
       setStatus("added");
-      setProblems((prev) => [...prev, problem]);
+      setProblems((prev) => [
+        ...prev,
+        {
+          problem,
+          score: 10,
+        },
+      ]);
       return;
     }
 
     setProblem(null);
-  }, [problem, problems]);
+  }, [problem, problems, setProblems]);
 
-  const handleReorderProblem = useCallback((idx: number, change: 1 | -1) => {
-    setProblems((prev) => {
-      const tempProblems = [...prev];
+  const handleReorderProblem = useCallback(
+    (idx: number, change: 1 | -1) => {
+      setProblems((prev) => {
+        const tempProblems = [...prev];
 
-      const temp = tempProblems[idx + change];
-      tempProblems[idx + change] = tempProblems[idx];
-      tempProblems[idx] = temp;
+        const temp = tempProblems[idx + change];
+        tempProblems[idx + change] = tempProblems[idx];
+        tempProblems[idx] = temp;
 
-      return tempProblems;
-    });
-  }, []);
+        return tempProblems;
+      });
+    },
+    [setProblems]
+  );
 
-  const handleRemoveProblem = useCallback((idx: number) => {
-    setProblems((prev) => {
-      const tempProblems = [...prev];
+  const handleRemoveProblem = useCallback(
+    (idx: number) => {
+      setProblems((prev) => {
+        const tempProblems = [...prev];
 
-      return tempProblems.filter((_, index) => index !== idx);
-    });
-  }, []);
+        return tempProblems.filter((_, index) => index !== idx);
+      });
+    },
+    [setProblems]
+  );
 
   // useEffect(() => {
   //   if (query.length > 0) setFetching(true);
@@ -259,11 +278,32 @@ export function ContestEditForm({
 
   const renderContestProblems = useMemo(
     () =>
-      problems.map((p, idx) => (
-        <tr key={p.id}>
-          <td>{p.title}</td>
+      problems.map(({ problem: { id, title }, score }, idx) => (
+        <tr key={id}>
+          <td>{title}</td>
           <td>
-            <Input />
+            <Input
+              value={score}
+              onChange={(e) => {
+                let value = Number(e.target.value);
+
+                if (isNaN(value)) value = 10;
+                else if (value < 1) value = 10;
+                else if (value > 1000) value = 1000;
+
+                setProblems((prev) => {
+                  const previous = [...prev];
+                  return previous.map((entry) =>
+                    entry.problem.id === id
+                      ? {
+                          ...entry,
+                          score: value,
+                        }
+                      : entry
+                  );
+                });
+              }}
+            />
           </td>
           <td>
             <div className="flex gap-2">
@@ -291,7 +331,7 @@ export function ContestEditForm({
           </td>
         </tr>
       )),
-    [handleRemoveProblem, handleReorderProblem, problems]
+    [handleRemoveProblem, handleReorderProblem, problems, setProblems]
   );
 
   const renderStatus = useMemo(() => {
@@ -358,7 +398,13 @@ export function ContestEditForm({
         </table>
       </section>
     ),
-    [handleAddProblem, problems.length, renderContestProblems, renderStatus]
+    [
+      handleAddProblem,
+      problems.length,
+      renderContestProblems,
+      renderStatus,
+      status,
+    ]
   );
 
   useEffect(() => {
@@ -385,7 +431,10 @@ export function ContestEditForm({
           loading={loading}
           disabled={!initialized}
           type="submit"
-          onClick={submitForm}
+          onClick={() => {
+            setFieldValue("problems", JSON.stringify(problems));
+            submitForm();
+          }}
         >
           {stateMode && stateMode[0] === "edit" ? "Update" : "Create"}
         </Button>

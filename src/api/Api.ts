@@ -1,4 +1,11 @@
-import { ProblemTopicType, ProblemType, SolvedType, UserType } from "@/types";
+import {
+  ContestDatabaseType,
+  ContestType,
+  ProblemTopicType,
+  ProblemType,
+  SolvedType,
+  UserType,
+} from "@/types";
 import { api } from "@/utils";
 import { AxiosResponse } from "axios";
 
@@ -31,6 +38,8 @@ interface ApiParams {
   };
   post_user: Empty;
   get_topics: Empty;
+  get_contests: Empty;
+  post_contest: Empty;
 }
 
 interface ApiBody {
@@ -47,6 +56,8 @@ interface ApiBody {
   get_user: Empty;
   post_user: UserType;
   get_topics: Empty;
+  get_contests: Empty;
+  post_contest: ContestType;
 }
 
 interface ApiReturn {
@@ -71,6 +82,8 @@ interface ApiReturn {
     topics: ProblemTopicType[];
     subTopics: ProblemTopicType[];
   };
+  get_contests: ContestDatabaseType[];
+  post_contest: ApiMessage;
 }
 
 const ROUTES = {
@@ -110,6 +123,14 @@ const ROUTES = {
     path: "/topics",
     method: "GET",
   },
+  get_contests: {
+    path: "/contests",
+    method: "GET",
+  },
+  post_contest: {
+    path: "/contest",
+    method: "POST",
+  },
 };
 
 export async function API<X extends keyof typeof ROUTES>(
@@ -119,6 +140,7 @@ export async function API<X extends keyof typeof ROUTES>(
     body?: ApiBody[X];
   }
 ) {
+  console.log("Execute API");
   const { method, path } = ROUTES[type];
   const { params, body } = config;
 

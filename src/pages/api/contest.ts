@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
-import { ContestType, ProblemType } from "@/types";
+import { ContestType, ProblemContestType, ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 
 async function PATCH({ req, res }: GenericAPIParams) {
@@ -52,33 +52,45 @@ async function POST({ req, res }: GenericAPIParams) {
 
     const { body } = req;
 
-    const { subTopicId, title, topicId, description, problems, authorId } =
-      body as unknown as ContestType;
+    const {
+      subTopicId,
+      title,
+      topicId,
+      description,
+      problems,
+      authorId,
+      startDate,
+      endDate,
+    } = body as unknown as ContestType;
 
-    const convertedProblems = Object.keys({
-      "943442734548975617": 10,
-      "943442734549139457": 10,
-      "943442734549172225": 10,
-    }).map((id) => ({
-      problem: {
-        connect: {
-          id,
-        },
-      },
-      score: 10,
-    }));
+    const convertedProblems = Object.values(JSON.parse(problems)).map(
+      (entry) => {
+        const {
+          problem: { id },
+          score,
+        } = entry as ProblemContestType;
+        return {
+          problem: {
+            connect: {
+              id,
+            },
+          },
+          score,
+        };
+      }
+    );
 
     await prisma.contest.create({
       data: {
-        authorId: "admin",
-        title: "Contest Title",
-        description: "Contest Description",
-        topicId: "calculus",
-        subTopicId: "derivatives",
+        authorId,
+        title,
+        description,
+        topicId,
+        subTopicId,
         createdAt: new Date(),
         updatedAt: new Date(),
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         toProblems: {
           create: convertedProblems as any,
         },

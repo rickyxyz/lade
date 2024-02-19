@@ -77,6 +77,11 @@ export interface ProblemBaseType {
 
 export type ProblemType = ProblemBaseType & ProblemMapTypeTopicType;
 
+export type ProblemContestType = {
+  problem: ProblemType;
+  score: number;
+};
+
 export type ProblemSortByType =
   | "least-solved"
   | "oldest"
@@ -107,14 +112,14 @@ export type ContentAccessType = "viewer" | "author" | "admin";
 export interface ContestBaseType {
   title: string;
   description: string;
-  problems: Record<string, number>;
+  problems: string;
   participants?: number;
   views?: number;
   createdAt?: number;
   updatedAt?: number;
-  startDate?: number;
-  endDate?: number;
-  authorId?: string;
+  startDate: number;
+  endDate: number;
+  authorId: string;
 }
 
 export type ContestType = ContestBaseType &
@@ -126,12 +131,16 @@ export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
   id?: string;
 };
 
-export type ContestDatabaseType = Omit<ContestType, "id"> & {
+export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   id?: string;
+  toProblems: {
+    problem: ProblemDatabaseType;
+    score: number;
+  };
 };
 
 export type ContestBlankType = {
-  [P in keyof ContestDatabaseType]: string;
+  [P in keyof ContestBaseType]: string;
 };
 
 export type ProblemMainTabType = "problem" | "discussion";
