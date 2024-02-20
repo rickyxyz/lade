@@ -133,10 +133,11 @@ export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
 
 export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   id?: string;
-  toProblems: {
+  problemsData?: {
     problem: ProblemDatabaseType;
     score: number;
-  };
+  }[];
+  problems: number;
 };
 
 export type ContestBlankType = {

@@ -2,7 +2,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
-import { ContestType, ProblemContestType, ProblemType } from "@/types";
+import {
+  ContestDatabaseType,
+  ContestType,
+  ProblemContestType,
+  ProblemDatabaseType,
+  ProblemType,
+} from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 
 async function PATCH({ req, res }: GenericAPIParams) {
@@ -115,29 +121,49 @@ async function GET({ req, res }: GenericAPIParams) {
     const user = await getAuthUser(req, res);
 
     if (typeof id !== "undefined") {
-      const out = await prisma.problem.findUnique({
+      const out = await prisma.contest.findUnique({
         where: {
           id: id as unknown as number,
         },
         include: {
-          solveds: true,
+          toProblems: {
+            // include: {
+            //   problem: true,
+            // },
+            select: {
+              problem: true,
+              score: true,
+            },
+          },
           topic: true,
           subTopic: true,
         },
       });
 
-      console.log("OUT:");
-      console.log(out);
-      console.log(id);
-
-      const temp = { ...out } as unknown as ProblemType;
+      const custom = { ...(out as any) };
+      custom.problems = custom.toProblems.length;
+      custom.problemsData = custom.toProblems;
+      console.log(custom.problems);
 
       if (
         out &&
-        (!user || (temp.authorId !== user.id && user.role !== "admin"))
+        (!user || (custom.authorId !== user.id && user.role !== "admin"))
       ) {
-        temp.answer = JSON.stringify({});
+        custom.problemsData = custom.problemsData.map((entry) => {
+          const test = entry.problem;
+          return {
+            ...entry,
+            problem: {
+              ...test,
+              answer: {},
+            },
+          };
+        });
       }
+
+      delete custom.toProblems;
+
+      const temp = { ...custom } as unknown as ContestDatabaseType;
 
       res.status(200).json(JSON.parse(json(temp)));
     } else {
