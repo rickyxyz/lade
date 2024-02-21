@@ -128,15 +128,13 @@ export type ContestType = ContestBaseType &
   };
 
 export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
-  id?: string;
+  id?: string | number;
 };
 
 export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
-  id?: string;
-  problemsData?: {
-    problem: ProblemDatabaseType;
-    score: number;
-  }[];
+  id: string | number;
+  toProblems?: ProblemContestType[];
+  problemsData: ProblemContestType[];
   problems: number;
 };
 

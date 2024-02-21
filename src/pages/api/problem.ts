@@ -87,7 +87,7 @@ async function GET({ req, res }: GenericAPIParams) {
     const user = await getAuthUser(req, res);
 
     if (typeof id !== "undefined") {
-      const out = await prisma.problem.findUnique({
+      const rawProblem = await prisma.problem.findUnique({
         where: {
           id: id as unknown as number,
         },
@@ -98,20 +98,15 @@ async function GET({ req, res }: GenericAPIParams) {
         },
       });
 
-      console.log("OUT:");
-      console.log(out);
-      console.log(id);
+      if (!rawProblem) throw Error("not found");
 
-      const temp = { ...out } as unknown as ProblemType;
+      const problem = { ...rawProblem } as unknown as ProblemType;
 
-      if (
-        out &&
-        (!user || (temp.authorId !== user.id && user.role !== "admin"))
-      ) {
-        temp.answer = JSON.stringify({});
+      if (!user || (problem.authorId !== user.id && user.role !== "admin")) {
+        problem.answer = JSON.stringify({});
       }
 
-      res.status(200).json(JSON.parse(json(temp)));
+      res.status(200).json(JSON.parse(json(problem)));
     } else {
       throw Error("id undefined");
     }

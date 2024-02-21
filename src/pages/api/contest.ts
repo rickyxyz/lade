@@ -121,7 +121,7 @@ async function GET({ req, res }: GenericAPIParams) {
     const user = await getAuthUser(req, res);
 
     if (typeof id !== "undefined") {
-      const out = await prisma.contest.findUnique({
+      const rawContest = await prisma.contest.findUnique({
         where: {
           id: id as unknown as number,
         },
@@ -140,32 +140,25 @@ async function GET({ req, res }: GenericAPIParams) {
         },
       });
 
-      const custom = { ...(out as any) };
-      custom.problems = custom.toProblems.length;
-      custom.problemsData = custom.toProblems;
-      console.log(custom.problems);
+      if (!rawContest) throw Error("");
 
-      if (
-        out &&
-        (!user || (custom.authorId !== user.id && user.role !== "admin"))
-      ) {
-        custom.problemsData = custom.problemsData.map((entry) => {
-          const test = entry.problem;
-          return {
-            ...entry,
-            problem: {
-              ...test,
-              answer: {},
-            },
-          };
-        });
+      const contest = { ...(rawContest as unknown as ContestDatabaseType) };
+      contest.toProblems ??= [];
+      contest.problems = contest.toProblems.length;
+      contest.problemsData = contest.toProblems;
+      delete contest.toProblems;
+
+      if (!user || (contest.authorId !== user.id && user.role !== "admin")) {
+        contest.problemsData = contest.problemsData.map((entry) => ({
+          ...entry,
+          problem: {
+            ...entry.problem,
+            answer: "{}",
+          },
+        }));
       }
 
-      delete custom.toProblems;
-
-      const temp = { ...custom } as unknown as ContestDatabaseType;
-
-      res.status(200).json(JSON.parse(json(temp)));
+      res.status(200).json(JSON.parse(json(contest)));
     } else {
       throw Error("id undefined");
     }
