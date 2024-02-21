@@ -118,7 +118,7 @@ export interface ContestBaseType {
   createdAt?: number;
   updatedAt?: number;
   startDate: number;
-  endDate: number;
+  endDate?: number;
   authorId: string;
 }
 
@@ -134,6 +134,9 @@ export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
 export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   id: string | number;
   toProblems?: ProblemContestType[];
+  _count?: {
+    toProblems: number;
+  };
   problemsData: ProblemContestType[];
   problems: number;
 };

@@ -41,10 +41,6 @@ export function ContestEditForm({
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
-  const stateStart = useState<DateTimeType>();
-  const stateEnd = useState<DateTimeType>();
-  const [start, setStart] = stateStart;
-  const [end, setEnd] = stateEnd;
   const [problems, setProblems] = stateProblems;
   const [problem, setProblem] = useState<ProblemType | null>();
   const [query, setQuery] = useState("");
@@ -65,7 +61,7 @@ export function ContestEditForm({
     validateForm,
   } = useFormikContext<ContestDatabaseType>();
 
-  const { description, subTopicId, topicId } = values;
+  const { description, subTopicId, topicId, startDate, endDate } = values;
 
   const loading = stateLoading[0];
 
@@ -118,8 +114,22 @@ export function ContestEditForm({
             allowClearSelection
             disabled={!initialized || !topicId}
           />
-          <SettingDate name="Start Date" stateDate={stateStart} />
-          {start && <SettingDate name="End Date" stateDate={stateEnd} />}
+          <SettingDate
+            name="Start Date"
+            dateNum={startDate}
+            onChange={(newDate) => {
+              setFieldValue("startDate", newDate);
+            }}
+          />
+          {
+            <SettingDate
+              name="End Date"
+              dateNum={endDate}
+              onChange={(newDate) => {
+                setFieldValue("endDate", newDate);
+              }}
+            />
+          }
         </div>
       </section>
     ),
@@ -129,9 +139,8 @@ export function ContestEditForm({
       initialized,
       subTopicOptions,
       subTopicId,
-      stateStart,
-      start,
-      stateEnd,
+      startDate,
+      endDate,
       setFieldValue,
     ]
   );
@@ -406,14 +415,6 @@ export function ContestEditForm({
       status,
     ]
   );
-
-  useEffect(() => {
-    handleUpdateFormDate("startDate", start);
-  }, [handleUpdateFormDate, start]);
-
-  useEffect(() => {
-    handleUpdateFormDate("endDate", end);
-  }, [handleUpdateFormDate, end]);
 
   useEffect(() => {
     console.log("Form Values ");

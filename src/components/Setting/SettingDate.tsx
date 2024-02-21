@@ -1,45 +1,58 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { DateTimeType, StateType } from "@/types";
 import { Input } from "../";
 import { Setting } from "./Setting";
 
 interface SettingDate {
   name: string;
-  stateDate: StateType<DateTimeType | undefined>;
+  dateNum: number;
+  onChange?: (newDate: number) => void;
 }
 
-export function SettingDate({ name, stateDate }: SettingDate) {
-  const setDate = stateDate[1];
+export function SettingDate({ name, dateNum, onChange }: SettingDate) {
+  const existing = useMemo(() => new Date(dateNum), [dateNum]);
+  const existingDate = useMemo(() => {
+    const month = existing.getMonth() + 1;
+    const date = existing.getDate();
+
+    return `${existing.getFullYear()}-${month < 10 ? `0${month}` : month}-${
+      date < 10 ? `0${date}` : date
+    }`;
+  }, [existing]);
+  const existingTime = useMemo(() => {
+    const hours = existing.getHours();
+    const minutes = existing.getMinutes();
+    return `${hours < 10 ? `0${hours}` : hours}:${
+      minutes < 10 ? `0${minutes}` : minutes
+    }`;
+  }, [existing]);
+  console.log(existingTime);
 
   const handleUpdateDate = useCallback(
-    (prev: DateTimeType | undefined, raw: string): DateTimeType => {
+    (raw: string) => {
       const [year, month, date] = raw.split("-") as unknown as number[];
 
-      return {
-        ...(prev ?? {}),
-        date: {
-          year,
-          month,
-          date,
-        },
-      };
+      const newDate = new Date(existing);
+      newDate.setFullYear(year);
+      newDate.setMonth(month);
+      newDate.setDate(date);
+
+      onChange && onChange(newDate.getTime());
     },
-    []
+    [existing, onChange]
   );
 
   const handleUpdateTime = useCallback(
-    (prev: DateTimeType | undefined, raw: string): DateTimeType => {
+    (raw: string) => {
       const [hour, minute] = raw.split(":") as unknown as number[];
 
-      return {
-        ...(prev ?? {}),
-        time: {
-          hour,
-          minute,
-        },
-      };
+      const newDate = new Date(existing);
+      newDate.setHours(hour);
+      newDate.setMinutes(minute);
+
+      onChange && onChange(newDate.getTime());
     },
-    []
+    [existing, onChange]
   );
 
   return (
@@ -47,27 +60,20 @@ export function SettingDate({ name, stateDate }: SettingDate) {
       <Input
         className="flex-grow"
         type="date"
+        value={existingDate}
         onChange={(e) => {
           const string = e.target.value;
-          if (string === "")
-            setDate((prev) => ({
-              ...prev,
-              date: undefined,
-            }));
-          else setDate((prev) => handleUpdateDate(prev, string));
+          console.log(string);
+          handleUpdateDate(string);
         }}
       />
       <Input
         className="flex-grow"
         type="time"
+        value={existingTime}
         onChange={(e) => {
           const string = e.target.value;
-          if (string === "")
-            setDate((prev) => ({
-              ...prev,
-              time: undefined,
-            }));
-          else setDate((prev) => handleUpdateTime(prev, string));
+          handleUpdateTime(string);
         }}
       />
     </Setting>

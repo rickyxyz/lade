@@ -41,8 +41,12 @@ export const CONTEST_DEFAULT: ContestType = {
   subTopicId: "derivatives",
   problems: "[]",
   authorId: "",
-  startDate: 0,
-  endDate: 0,
+  startDate: new Date().getTime(),
+  endDate: (() => {
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+    return date;
+  })().getTime(),
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {

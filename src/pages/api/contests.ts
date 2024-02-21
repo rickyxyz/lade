@@ -101,14 +101,14 @@ export default async function handler(
       },
     });
 
-    const parsedProblems = (JSON.parse(json(problems)) as any[]).map(
-      (contest) => {
-        const custom = { ...contest };
-        custom.problems = custom._count.toProblems;
-        delete custom._count;
-        return custom;
-      }
-    ) as ContestDatabaseType[];
+    const parsedProblems = (
+      JSON.parse(json(problems)) as ContestDatabaseType[]
+    ).map((contest) => {
+      const custom = { ...contest };
+      custom.problems = custom._count ? custom._count.toProblems : 0;
+      delete custom._count;
+      return custom;
+    }) as ContestDatabaseType[];
 
     result = {
       data: parsedProblems,
