@@ -70,8 +70,6 @@ export interface ProblemBaseType {
   updateAt?: Date;
   authorId: string;
   type: ProblemAnswerType;
-  topic?: ProblemTopicType;
-  subTopic?: ProblemTopicType;
   answer: string;
 }
 
@@ -129,6 +127,8 @@ export type ContestType = ContestBaseType &
 
 export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
   id?: string | number;
+  topic: ProblemTopicType;
+  subTopic: ProblemTopicType;
 };
 
 export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
@@ -139,6 +139,8 @@ export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   };
   problemsData: ProblemContestType[];
   problems: number;
+  topic: ProblemTopicType;
+  subTopic: ProblemTopicType;
 };
 
 export type ContestBlankType = {

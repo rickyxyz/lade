@@ -12,6 +12,7 @@ import {
 } from "@/components";
 import { useDebounce, useDevice } from "@/hooks";
 import {
+  ProblemDatabaseType,
   ProblemQuery,
   ProblemSortByType,
   ProblemSubtopicNameType,
@@ -34,7 +35,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     sort: userSort = "newest",
     page: userPage = 1,
   } = query;
-  const [problems, setProblems] = useState<ProblemType[]>([]);
+  const [problems, setProblems] = useState<ProblemDatabaseType[]>([]);
   const [loading, setLoading] = useState(true);
   const stateTopic = useState<ProblemTopicNameType | undefined>(userTopic);
   const [topic, setTopic] = stateTopic;

@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Card, More } from "@/components";
+import { Card, More, Tag } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
-import { ProblemType, UserType } from "@/types";
+import { ProblemDatabaseType, ProblemType, UserType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import {
   ProblemDetailStats,
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
 import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
+import clsx from "clsx";
 
 export interface ProblemCardProps {
-  problem: ProblemType;
+  problem: ProblemDatabaseType;
 }
 
 export function ProblemCard({ problem }: ProblemCardProps) {
@@ -19,8 +20,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
     id,
     statement,
     title,
-    topicId,
-    subTopicId,
+    topic,
+    subTopic,
     solveds = [],
     authorId,
   } = problem;
@@ -39,14 +40,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const statementRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics
-        className="mb-4"
-        topic={topicId}
-        subTopic={subTopicId}
-      />
-    ),
-    [subTopicId, topicId]
+    () => <ProblemDetailTopics topic={topic.name} subTopic={subTopic.name} />,
+    [subTopic, topic]
   );
 
   const renderMain = useMemo(

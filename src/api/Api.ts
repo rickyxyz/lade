@@ -1,6 +1,7 @@
 import {
   ContestDatabaseType,
   ContestType,
+  ProblemDatabaseType,
   ProblemTopicType,
   ProblemType,
   SolvedType,
@@ -63,7 +64,7 @@ interface ApiBody {
 interface ApiReturn {
   get_problem: ProblemType;
   get_problems: {
-    data: ProblemType[];
+    data: ProblemDatabaseType[];
     pagination: {
       total_records: number;
       next_page: number;
