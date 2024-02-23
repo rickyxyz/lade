@@ -12,6 +12,7 @@ interface MoreProps {
 export function More({ className, options }: MoreProps) {
   return (
     <Dropdown
+      className={className}
       optionWidth={100}
       direction="left"
       options={options}

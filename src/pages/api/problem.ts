@@ -52,7 +52,7 @@ async function POST({ req, res }: GenericAPIParams) {
 
     const { body } = req;
 
-    const { answer, statement, subTopicId, title, topicId, type, id } =
+    const { answer, statement, subTopicId, title, topicId, type } =
       body as unknown as ProblemType;
 
     await prisma.problem.create({

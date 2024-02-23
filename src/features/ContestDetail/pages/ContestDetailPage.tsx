@@ -9,51 +9,45 @@ import { useAppSelector } from "@/libs/redux";
 import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
 import {
-  ProblemType,
+  ContestType,
   ContentViewType,
   UserType,
   ContentAccessType,
+  ProblemContestType,
 } from "@/types";
-import { PROBLEM_BLANK } from "@/consts";
+import { CONTEST_DEFAULT, PROBLEM_BLANK } from "@/consts";
 import { PageTemplate } from "@/templates";
-import { ProblemEditPage } from "../../ProblemCreate";
 import {
-  ProblemDetailMain,
-  ProblemDetailMainSkeleton,
-  ProblemDetailTopics,
+  ContestDetailMain,
+  ContestDetailMainSkeleton,
+  ContestDetailTopics,
 } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+import { ContestEditPage } from "./ContestEditPage";
 
-interface ProblemData {
+interface ContestData {
   label: string;
   value?: string | number;
   tooltip?: string;
 }
 
-interface ProblemAction extends ButtonListEntry {
+interface ContestAction extends ButtonListEntry {
   permission?: ContentAccessType;
 }
 
-interface ProblemProps {
+interface ContestProps {
   id: string;
   user: UserType;
 }
 
-export function ProblemDetailPage({ id, user }: ProblemProps) {
-  const stateProblem = useState<ProblemType>(
-    PROBLEM_BLANK as unknown as ProblemType
+export function ContestDetailPage({ id, user }: ContestProps) {
+  const stateContest = useState<ContestType>(
+    CONTEST_DEFAULT as unknown as ContestType
   );
-  const [problem, setProblem] = stateProblem;
-  const {
-    title,
-    topicId,
-    subTopicId,
-    authorId,
-    solveds,
-    createdAt = 0,
-    topic,
-    subTopic,
-  } = problem;
+  const stateProblems = useState<ProblemContestType[]>([]);
+  const setProblems = stateProblems[1];
+  const [contest, setContest] = stateContest;
+  const { title, authorId, createdAt = 0 } = contest;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -61,14 +55,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
   const [mode, setMode] = stateMode;
-  const stateUserAnswer = useState<any>();
-  const setUserAnswer = stateUserAnswer[1];
-  const stateUserSolved = useState(false);
-  const setUserSolved = stateUserSolved[1];
-  const stateSubmitted = useState<number>();
-  const setSubmitted = stateSubmitted[1];
-  const stateSolvable = useState(false);
-  const setSolvable = stateSolvable[1];
+
   const stateMobileAction = useState(false);
   const setMobileAction = stateMobileAction[1];
 
@@ -82,15 +69,15 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   );
 
   const permission = useMemo<ContentAccessType>(() => {
-    if (user && problem) {
-      if (problem.authorId === user.id) {
+    if (user && contest) {
+      if (contest.authorId === user.id) {
         return "author";
       }
     }
     return "viewer";
-  }, [problem, user]);
+  }, [contest, user]);
 
-  const problemData = useMemo<ProblemData[]>(
+  const contestData = useMemo<ContestData[]>(
     () => [
       {
         label: "Author",
@@ -101,23 +88,19 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         value: new Date(createdAt).toLocaleDateString("en-GB"),
         tooltip: `${new Date(createdAt).toLocaleString("en-GB")}`,
       },
-      {
-        label: "Solved",
-        value: (solveds ?? []).length,
-      },
     ],
-    [authorId, createdAt, solveds]
+    [authorId, createdAt]
   );
 
-  const handleDeleteProblem = useCallback(async () => {
+  const handleDeleteContest = useCallback(async () => {
     await api
-      .delete("/problem", {
+      .delete("/contest", {
         params: {
           id,
         },
       })
       .then(() => {
-        console.log("problem deleted");
+        console.log("contest deleted");
         router.push("/");
       })
       .catch((e) => {
@@ -127,7 +110,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       });
   }, [id, router]);
 
-  const problemAction = useMemo<ProblemAction[]>(
+  const contestAction = useMemo<ContestAction[]>(
     () => [
       {
         label: "Edit",
@@ -138,7 +121,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       },
       {
         label: "Delete",
-        handler: handleDeleteProblem,
+        handler: handleDeleteContest,
         permission: "author",
       },
       {
@@ -147,34 +130,20 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         permission: "viewer",
       },
     ],
-    [handleDeleteProblem, setMode]
+    [handleDeleteContest, setMode]
   );
 
   const renderQuestion = useMemo(() => {
-    if (loading || !problem) return <ProblemDetailMainSkeleton />;
+    if (loading || !contest) return <ContestDetailMainSkeleton />;
 
     return (
-      <ProblemDetailMain
-        stateProblem={stateProblem}
+      <ContestDetailMain
+        stateContest={stateContest}
         stateAccept={stateAccept}
         stateMode={stateMode}
-        stateSubmited={stateSubmitted}
-        stateSolvable={stateSolvable}
-        stateUserAnswer={stateUserAnswer}
-        stateUserSolved={stateUserSolved}
       />
     );
-  }, [
-    loading,
-    problem,
-    stateProblem,
-    stateAccept,
-    stateMode,
-    stateSubmitted,
-    stateSolvable,
-    stateUserAnswer,
-    stateUserSolved,
-  ]);
+  }, [loading, contest, stateContest, stateAccept, stateMode]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -184,12 +153,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     }
   }, [router]);
 
-  const handleGetProblems = useCallback(async () => {
+  const handleGetContests = useCallback(async () => {
     if (!loading) return;
 
     setLoading(true);
 
-    const result = await API("get_problem", {
+    const result = await API("get_contest", {
       params: {
         id,
       },
@@ -198,54 +167,18 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         if (!data) throw Error("");
 
         const { id } = data;
-        setProblem(data);
+        setContest(data as any);
+        setProblems(data.problemsData);
         setLoading(false);
 
         return id;
       })
       .catch(() => null);
-
-    if (result && user) {
-      let existing: string | null;
-
-      if (!solveCache) {
-        const record = await API("get_solved", {
-          params: {
-            userId: user.id,
-            problemId: result,
-          },
-        });
-
-        existing = record.data ? JSON.parse(record.data.answer) : null;
-      } else {
-        existing = solveCache;
-      }
-
-      if (existing) {
-        setUserAnswer(existing);
-        setUserSolved(true);
-        setSolvable(false);
-        setSubmitted(new Date().getTime());
-      } else {
-        setSolvable(true);
-      }
-    }
-  }, [
-    id,
-    loading,
-    setLoading,
-    setProblem,
-    setSolvable,
-    setSubmitted,
-    setUserAnswer,
-    setUserSolved,
-    solveCache,
-    user,
-  ]);
+  }, [id, loading, setLoading, setContest]);
 
   useEffect(() => {
-    handleGetProblems();
-  }, [handleGetProblems]);
+    handleGetContests();
+  }, [handleGetContests]);
 
   const renderNavigation = useMemo(
     () => (
@@ -266,13 +199,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         <div className="flex  justify-between mb-4">
           <div className="flex-1">
             <h1 className="mt-2 mb-4">{title}</h1>
-            {topic && subTopic && (
-              <ProblemDetailTopics
+            {/* {topic && subTopic && (
+              <ContestDetailTopics
                 className="mb-8"
                 topic={topic.name}
                 subTopic={subTopic.name}
               />
-            )}
+            )} */}
           </div>
           {device === "mobile" && (
             <ButtonIcon
@@ -286,13 +219,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         </div>
       </>
     ),
-    [device, renderNavigation, setMobileAction, subTopic, title, topic]
+    [device, renderNavigation, setMobileAction, title]
   );
 
-  const renderProblemData = useMemo(
+  const renderContestData = useMemo(
     () => (
       <ul className="md:w-48">
-        {problemData.map(({ label, value, tooltip }, idx) => (
+        {contestData.map(({ label, value, tooltip }, idx) => (
           <li
             className={clsx("flex justify-between", idx > 0 && "mt-1")}
             key={label}
@@ -317,32 +250,32 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         ))}
       </ul>
     ),
-    [problemData]
+    [contestData]
   );
 
-  const renderProblemAction = useMemo(() => {
-    const actions = problemAction.filter(({ permission: perm }) =>
+  const renderContestAction = useMemo(() => {
+    const actions = contestAction.filter(({ permission: perm }) =>
       checkPermission(permission, perm)
     );
     return <ButtonList list={actions} className="w-48" />;
-  }, [permission, problemAction]);
+  }, [permission, contestAction]);
 
   const renderMobileAction = useMemo(
-    () => <Modal stateVisible={stateMobileAction}>{renderProblemAction}</Modal>,
-    [renderProblemAction, stateMobileAction]
+    () => <Modal stateVisible={stateMobileAction}>{renderContestAction}</Modal>,
+    [renderContestAction, stateMobileAction]
   );
 
   const renderSide = useMemo(
     () => (
       <div className="flex flex-col gap-8">
-        {renderProblemData}
-        {device === "mobile" ? renderMobileAction : renderProblemAction}
+        {renderContestData}
+        {device === "mobile" ? renderMobileAction : renderContestAction}
       </div>
     ),
-    [device, renderMobileAction, renderProblemAction, renderProblemData]
+    [device, renderMobileAction, renderContestAction, renderContestData]
   );
 
-  const renderViewProblem = useMemo(
+  const renderViewContest = useMemo(
     () => (
       <PageTemplate
         className="w-full"
@@ -355,10 +288,11 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     [loading, renderHead, renderQuestion, renderSide]
   );
 
-  const renderEditProblem = useMemo(
+  const renderEditContest = useMemo(
     () => (
-      <ProblemEditPage
-        stateProblem={stateProblem}
+      <ContestEditPage
+        stateContest={stateContest}
+        stateProblems={stateProblems}
         onEdit={() => {
           setMode("view");
         }}
@@ -367,8 +301,8 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         }}
       />
     ),
-    [setMode, stateProblem]
+    [setMode, stateContest, stateProblems]
   );
 
-  return mode === "edit" ? renderEditProblem : renderViewProblem;
+  return mode === "edit" ? renderEditContest : renderViewContest;
 }

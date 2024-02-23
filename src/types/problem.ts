@@ -71,6 +71,8 @@ export interface ProblemBaseType {
   authorId: string;
   type: ProblemAnswerType;
   answer: string;
+  topic?: ProblemTopicType;
+  subTopic?: ProblemTopicType;
 }
 
 export type ProblemType = ProblemBaseType & ProblemMapTypeTopicType;
@@ -116,7 +118,7 @@ export interface ContestBaseType {
   createdAt?: number;
   updatedAt?: number;
   startDate: number;
-  endDate?: number;
+  endDate: number;
   authorId: string;
 }
 
@@ -148,3 +150,4 @@ export type ContestBlankType = {
 };
 
 export type ProblemMainTabType = "problem" | "discussion";
+export type ContestMainTabType = "contest" | "result" | "discussion";

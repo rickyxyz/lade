@@ -1,40 +1,43 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Card, More, Tag } from "@/components";
+import { Button, Card, More } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
-import { ProblemDatabaseType, ProblemType, UserType } from "@/types";
+import {
+  ContestDatabaseType,
+  ContestType,
+  ProblemType,
+  UserType,
+} from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import {
   ProblemDetailStats,
   ProblemDetailTopics,
 } from "@/features/ProblemDetail";
 import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
-import clsx from "clsx";
 
 export interface ProblemCardProps {
-  problem: ProblemDatabaseType;
+  contest: ContestDatabaseType;
 }
 
-export function ProblemCard({ problem }: ProblemCardProps) {
+export function ContestCard({ contest }: ProblemCardProps) {
   const {
     id,
-    statement,
     title,
     topic,
     subTopic,
-    solveds = [],
     authorId,
-  } = problem;
+    description: statement,
+  } = contest;
 
   const user = useAppSelector("user");
 
   const permission = useMemo(
     () =>
       getPermissionForContent({
-        content: problem,
+        content: contest,
         user,
       }),
-    [problem, user]
+    [contest, user]
   );
 
   const statementRef = useRef<HTMLDivElement>(null);
@@ -53,8 +56,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <div className="flex justify-between mb-4">
-          <Link href={`/problem/${id}`}>
+        <div className="relative flex justify-between mb-4">
+          <Link href={`/contest/${id}`}>
             <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
           </Link>
           <More
@@ -83,15 +86,14 @@ export function ProblemCard({ problem }: ProblemCardProps) {
 
   const renderStats = useMemo(
     () => (
-      <div className="flex items-center text-sm gap-6">
-        <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
-        <ProblemDetailStats
-          text={String(solveds.length)}
-          icon={BsCheckCircleFill}
-        />
+      <div className="flex items-center justify-between">
+        <Button>Participate</Button>
+        <div className="flex items-center text-sm text-gray-600 gap-6">
+          <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
+        </div>
       </div>
     ),
-    [authorId, solveds]
+    [authorId]
   );
 
   const handleRenderMarkdown = useCallback(() => {

@@ -5,12 +5,15 @@ import { Setting } from "./Setting";
 
 interface SettingDate {
   name: string;
-  dateNum: number;
+  dateNum?: number;
   onChange?: (newDate: number) => void;
 }
 
 export function SettingDate({ name, dateNum, onChange }: SettingDate) {
-  const existing = useMemo(() => new Date(dateNum), [dateNum]);
+  const existing = useMemo(
+    () => (dateNum ? new Date(dateNum) : new Date()),
+    [dateNum]
+  );
   const existingDate = useMemo(() => {
     const month = existing.getMonth() + 1;
     const date = existing.getDate();

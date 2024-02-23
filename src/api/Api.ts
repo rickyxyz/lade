@@ -39,8 +39,18 @@ interface ApiParams {
   };
   post_user: Empty;
   get_topics: Empty;
-  get_contests: Empty;
+  get_contests: {
+    topic?: string;
+    subTopic?: string;
+    sort?: string;
+    sortBy?: "asc" | "desc";
+    page?: number;
+  };
   post_contest: Empty;
+  get_contest: {
+    id: number | string;
+  };
+  patch_contest: Empty;
 }
 
 interface ApiBody {
@@ -58,7 +68,9 @@ interface ApiBody {
   post_user: UserType;
   get_topics: Empty;
   get_contests: Empty;
+  get_contest: Empty;
   post_contest: ContestType;
+  patch_contest: ContestType;
 }
 
 interface ApiReturn {
@@ -83,8 +95,19 @@ interface ApiReturn {
     topics: ProblemTopicType[];
     subTopics: ProblemTopicType[];
   };
-  get_contests: ContestDatabaseType[];
+  get_contests: {
+    data: ContestDatabaseType[];
+    pagination: {
+      total_records: number;
+      next_page: number;
+      current_page: number;
+      prev_page: number;
+      total_pages: number;
+    };
+  };
+  get_contest: ContestDatabaseType;
   post_contest: ApiMessage;
+  patch_contest: ApiMessage;
 }
 
 const ROUTES = {
@@ -128,9 +151,17 @@ const ROUTES = {
     path: "/contests",
     method: "GET",
   },
+  get_contest: {
+    path: "/contest",
+    method: "GET",
+  },
   post_contest: {
     path: "/contest",
     method: "POST",
+  },
+  patch_contest: {
+    path: "/contest",
+    method: "PATCH",
   },
 };
 

@@ -14,30 +14,54 @@ import { getAuthUser } from "@/libs/next-auth/helper";
 async function PATCH({ req, res }: GenericAPIParams) {
   try {
     const { body } = req;
+
     const {
-      answer,
-      statement,
+      id,
       subTopicId,
       title,
       topicId,
-      type,
-      id,
+      description,
+      problems,
       authorId,
-    } = body as unknown as ProblemType;
+      startDate,
+      endDate,
+      createdAt,
+      updatedAt,
+    } = body as unknown as ContestType;
 
-    await prisma.problem.update({
+    // const convertedProblems = Object.values(JSON.parse(problems)).map(
+    //   (entry) => {
+    //     const {
+    //       problem: { id: pid },
+    //       score,
+    //     } = entry as ProblemContestType;
+    //     return {
+    //       problem: {
+    //         connect: {
+    //           id: pid,
+    //         },
+    //       },
+    //       score,
+    //     };
+    //   }
+    // );
+
+    await prisma.contest.update({
       where: {
-        id: id as number,
+        id: id as any,
       },
       data: {
-        title,
-        statement,
-        answer,
         authorId,
+        title,
+        description,
         topicId,
         subTopicId,
-        type,
         updatedAt: new Date(),
+        ...(startDate ? { startDate: new Date(startDate) } : {}),
+        ...(endDate ? { endDate: new Date(endDate) } : {}),
+        // toProblems: {
+        //   connectOrCreate: convertedProblems as any,
+        // },
       },
     });
 

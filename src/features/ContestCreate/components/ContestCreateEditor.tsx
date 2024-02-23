@@ -4,53 +4,45 @@ import {
   ContentEditType,
   ContentViewType,
   StateType,
-  ContestDatabaseType,
   ContestType,
-  ProblemType,
   ProblemContestType,
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { Formik } from "formik";
 import {
-  ContestEditForm,
+  ContestCreateEditorForm,
   ContestEditFormProps,
 } from "./ContestCreateEditorForm";
-import { crudData } from "@/libs/firebase";
-import { useRouter } from "next/router";
 import { Card } from "@/components";
 import { useAppSelector } from "@/libs/redux";
-import { useDebounce } from "@/hooks";
-import { API } from "@/api";
 
-interface ContestEditProps extends Partial<ContestEditFormProps> {
+interface ContestEditProps extends ContestEditFormProps {
   headElement?: ReactNode;
   stateMode?: StateType<ContentViewType>;
-  stateContest?: StateType<ContestType>;
-  purpose: ContentEditType;
+  stateLoading: StateType<boolean>;
+  onSubmit: (problem: ContestType) => void;
 }
 
-export function ContestEdit({
+export function ContestCreateEditor({
   headElement,
   stateMode,
-  stateContest,
+  stateLoading,
   contest,
-  purpose,
+  onSubmit,
   ...rest
 }: ContestEditProps) {
-  const stateLoading = useState(false);
   const setLoading = stateLoading[1];
-  const router = useRouter();
   const user = useAppSelector("user");
-  const stateProblems = useState<ProblemContestType[]>([]);
-  const problems = stateProblems[0];
-  const debounce = useDebounce();
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
-      // setLoading(true);
+      if (!user) return;
+
+      setLoading(true);
 
       const common: Partial<ContestType> = {
         createdAt: new Date().getTime(),
+        ...values,
         authorId: user?.id,
         // problems: problems.reduce(
         //   (prev, curr) => ({
@@ -61,31 +53,12 @@ export function ContestEdit({
         // ),
       };
 
-      const completeValues =
-        purpose === "create"
-          ? {
-              ...CONTEST_DEFAULT,
-              ...values,
-              ...common,
-            }
-          : {
-              ...values,
-              ...common,
-            };
+      const completeValues = {
+        ...CONTEST_DEFAULT,
+        ...common,
+      };
 
-      console.log("Creating Events:");
-      console.log(completeValues);
-
-      await API("post_contest", {
-        body: completeValues as any,
-      })
-        .then(() => {
-          console.log("OK");
-        })
-        .catch((e) => {
-          console.log("Nope");
-          console.log(e);
-        });
+      onSubmit(completeValues as ContestType);
       // if (purpose === "create") {
       //   await crudData("set_contest", {
       //     data: completeValues as unknown as ContestDatabaseType,
@@ -126,7 +99,7 @@ export function ContestEdit({
       //     });
       // }
     },
-    [purpose, user?.id]
+    [onSubmit, setLoading, user]
   );
 
   return (
@@ -139,10 +112,9 @@ export function ContestEdit({
         validateOnChange={false}
         validateOnBlur={false}
       >
-        <ContestEditForm
+        <ContestCreateEditorForm
           stateMode={stateMode}
           stateLoading={stateLoading}
-          stateProblems={stateProblems}
           {...rest}
         />
       </Formik>

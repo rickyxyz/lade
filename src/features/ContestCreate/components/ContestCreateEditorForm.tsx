@@ -32,17 +32,20 @@ export interface ContestEditFormProps {
   stateProblems: StateType<ProblemContestType[]>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateLoading: StateType<boolean>;
+  onLeaveEditor?: () => void;
 }
 
-export function ContestEditForm({
+export function ContestCreateEditorForm({
   stateLoading,
   stateProblems,
   stateMode,
+  onLeaveEditor,
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
   const [problems, setProblems] = stateProblems;
   const [problem, setProblem] = useState<ProblemType | null>();
+
   const [query, setQuery] = useState("");
   const [fetching, setFetching] = useState(false);
   const [status, setStatus] = useState<
@@ -121,15 +124,13 @@ export function ContestEditForm({
               setFieldValue("startDate", newDate);
             }}
           />
-          {
-            <SettingDate
-              name="End Date"
-              dateNum={endDate}
-              onChange={(newDate) => {
-                setFieldValue("endDate", newDate);
-              }}
-            />
-          }
+          <SettingDate
+            name="End Date"
+            dateNum={endDate}
+            onChange={(newDate) => {
+              setFieldValue("endDate", newDate);
+            }}
+          />
         </div>
       </section>
     ),
@@ -196,35 +197,6 @@ export function ContestEditForm({
     [description, errors, touched, initialized, setFieldValue, setFieldTouched]
   );
 
-  const handleGetProblem = useCallback(async () => {
-    // const problem = await crudData("get_problem", {
-    //   id: query,
-    // });
-    if (query.length === 0) return;
-
-    setStatus("loading");
-    await API("get_problem", {
-      params: {
-        id: query,
-      },
-    })
-      .then(({ data }) => {
-        if (!data || Object.keys(data).length === 0) throw Error("");
-
-        setStatus("loaded");
-
-        setProblem(data as unknown as ProblemType);
-      })
-      .catch(() => {
-        setProblem(null);
-        setStatus("invalid");
-        return null;
-      })
-      .finally(() => {
-        setFetching(false);
-      });
-  }, [query]);
-
   const handleAddProblem = useCallback(() => {
     if (
       problem &&
@@ -278,12 +250,6 @@ export function ContestEditForm({
   // useEffect(() => {
   //   if (query.length > 0) setFetching(true);
   // }, [query]);
-
-  useEffect(() => {
-    debounce(() => {
-      handleGetProblem();
-    }, 500);
-  }, [debounce, handleGetProblem]);
 
   const renderContestProblems = useMemo(
     () =>
@@ -422,12 +388,17 @@ export function ContestEditForm({
     validateForm();
   }, [validateForm, values]);
 
+  useEffect(() => {
+    setFieldValue("problems", JSON.stringify(problems));
+  }, [problems, setFieldValue]);
+
   return (
     <>
       {renderContestSettings}
       {renderContestEditor}
       {renderContestProblemTable}
-      <div className="flex gap-4">
+
+      <div className="flex gap-4 mt-4">
         <Button
           loading={loading}
           disabled={!initialized}
@@ -436,21 +407,10 @@ export function ContestEditForm({
             setFieldValue("problems", JSON.stringify(problems));
             submitForm();
           }}
-        >
-          {stateMode && stateMode[0] === "edit" ? "Update" : "Create"}
-        </Button>
-        {stateMode && stateMode[0] === "edit" && (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (!stateMode) return;
-
-              const setMode = stateMode[1];
-              setMode("view");
-            }}
-          >
-            Cancel
-          </Button>
+          label="Submit"
+        />
+        {onLeaveEditor && (
+          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
         )}
       </div>
     </>
