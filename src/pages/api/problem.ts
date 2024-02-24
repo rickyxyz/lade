@@ -55,7 +55,7 @@ async function POST({ req, res }: GenericAPIParams) {
     const { answer, statement, subTopicId, title, topicId, type } =
       body as unknown as ProblemType;
 
-    await prisma.problem.create({
+    const problem = await prisma.problem.create({
       data: {
         authorId: user.id,
         title,
@@ -69,7 +69,9 @@ async function POST({ req, res }: GenericAPIParams) {
       },
     });
 
-    res.status(200).json({ message: "success" });
+    res
+      .status(200)
+      .json(JSON.parse(json({ message: "success", id: problem.id })));
   } catch (e) {
     console.log(e);
     res.status(500).json({

@@ -110,7 +110,7 @@ async function POST({ req, res }: GenericAPIParams) {
       }
     );
 
-    await prisma.contest.create({
+    const contest = await prisma.contest.create({
       data: {
         authorId,
         title,
@@ -127,7 +127,9 @@ async function POST({ req, res }: GenericAPIParams) {
       },
     });
 
-    res.status(200).json({ message: "success" });
+    res
+      .status(200)
+      .json(JSON.parse(json({ message: "success", id: contest.id })));
   } catch (e) {
     console.log(e);
     res.status(500).json({
