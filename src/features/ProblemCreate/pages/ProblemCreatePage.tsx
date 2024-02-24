@@ -37,9 +37,9 @@ export function ProblemCreatePage() {
           authorId: user.id,
         },
       })
-        .then(() => {
+        .then(({ data }) => {
           debounce(() => {
-            if (id) router.replace(`/problem/${id}`);
+            if (data.id) router.replace(`/problem/${data.id}`);
           });
         })
         .catch((e) => {

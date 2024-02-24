@@ -25,8 +25,6 @@ export function ContestCreatePage() {
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
-      const { id } = values;
-
       if (!user) return;
 
       await API("post_contest", {
@@ -35,9 +33,9 @@ export function ContestCreatePage() {
           authorId: user.id,
         },
       })
-        .then(() => {
+        .then(({ data }) => {
           debounce(() => {
-            if (id) router.replace(`/contest/${id}`);
+            if (data.id) router.replace(`/contest/${data.id}`);
           });
         })
         .catch((e) => {

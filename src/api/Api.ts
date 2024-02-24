@@ -85,7 +85,9 @@ interface ApiReturn {
       total_pages: number;
     };
   };
-  post_problem: ApiMessage;
+  post_problem: ApiMessage & {
+    id: string;
+  };
   patch_problem: ApiMessage;
   get_solved: SolvedType;
   post_solved: ApiMessage;
@@ -106,7 +108,9 @@ interface ApiReturn {
     };
   };
   get_contest: ContestDatabaseType;
-  post_contest: ApiMessage;
+  post_contest: ApiMessage & {
+    id: string;
+  };
   patch_contest: ApiMessage;
 }
 
