@@ -29,43 +29,88 @@ async function PATCH({ req, res }: GenericAPIParams) {
       updatedAt,
     } = body as unknown as ContestType;
 
-    // const convertedProblems = Object.values(JSON.parse(problems)).map(
-    //   (entry) => {
-    //     const {
-    //       problem: { id: pid },
-    //       score,
-    //     } = entry as ProblemContestType;
-    //     return {
-    //       problem: {
-    //         connect: {
-    //           id: pid,
-    //         },
-    //       },
-    //       score,
-    //     };
-    //   }
-    // );
+    await prisma.$transaction(async (tx) => {
+      const ids = Object.values(JSON.parse(problems)).map((entry, index) => {
+        const {
+          problem: { id },
+          score,
+        } = entry as ProblemContestType;
+        return id;
+      });
 
-    await prisma.contest.update({
-      where: {
-        id: id as any,
-      },
-      data: {
-        authorId,
-        title,
-        description,
-        topicId,
-        subTopicId,
-        updatedAt: new Date(),
-        ...(startDate ? { startDate: new Date(startDate) } : {}),
-        ...(endDate ? { endDate: new Date(endDate) } : {}),
-        // toProblems: {
-        //   connectOrCreate: convertedProblems as any,
-        // },
-      },
+      const test = await tx.contestToProblem.findMany({
+        where: {
+          contestId: id as any,
+        },
+      });
+
+      console.log(test);
+
+      const convertedProblems2 = Object.values(JSON.parse(problems)).map(
+        (entry, index) => {
+          const {
+            problem: { id: pid },
+          } = entry as ProblemContestType;
+          return {
+            contestId_problemId: {
+              contestId: id,
+              problemId: pid,
+            },
+          };
+        }
+      );
+      const convertedProblems = Object.values(JSON.parse(problems)).map(
+        (entry, index) => {
+          const {
+            problem: { id: pid },
+            score,
+          } = entry as ProblemContestType;
+          return {
+            problem: {
+              connect: {
+                id: pid,
+              },
+            },
+            score,
+            order: index,
+          };
+        }
+      );
+
+      await tx.contestToProblem.deleteMany({
+        where: {
+          contestId: id as any,
+        },
+      });
+
+      await tx.contest.update({
+        where: {
+          id: id as any,
+        },
+        data: {
+          authorId,
+          title,
+          description,
+          topicId,
+          subTopicId,
+          updatedAt: new Date(),
+          ...(startDate ? { startDate: new Date(startDate) } : {}),
+          ...(endDate ? { endDate: new Date(endDate) } : {}),
+          toProblems: {
+            create: convertedProblems as any,
+          },
+        },
+      });
     });
+    // prisma.contestToProblem.get({
+    // 	where: {
+    // 		contestId: {
+    // 			equals: id as any,
+    // 		},
+    // 	},
+    // }),
 
-    res.status(200).json({ message: "success" });
+    await res.status(200).json({ message: "success" });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -94,7 +139,7 @@ async function POST({ req, res }: GenericAPIParams) {
     } = body as unknown as ContestType;
 
     const convertedProblems = Object.values(JSON.parse(problems)).map(
-      (entry) => {
+      (entry, index) => {
         const {
           problem: { id },
           score,
@@ -106,6 +151,7 @@ async function POST({ req, res }: GenericAPIParams) {
             },
           },
           score,
+          index,
         };
       }
     );

@@ -107,6 +107,7 @@ model ContestToProblem {
   problem   Problem @relation(fields: [problemId], references: [id])
   problemId BigInt
   score     Int
+  order     Int?
 
   @@id([contestId, problemId])
 }

@@ -51,6 +51,7 @@ export function ContestCreateEditorForm({
   const [status, setStatus] = useState<
     "loading" | "loaded" | "invalid" | "added" | "duplicate" | undefined
   >();
+  console.log(status);
   const { subTopicOptions, topicOptions } = useTopics();
   const debounce = useDebounce();
 
@@ -197,6 +198,35 @@ export function ContestCreateEditorForm({
     [description, errors, touched, initialized, setFieldValue, setFieldTouched]
   );
 
+  const handleGetProblem = useCallback(async () => {
+    // const problem = await crudData("get_problem", {
+    //   id: query,
+    // });
+    if (query.length === 0) return;
+
+    setStatus("loading");
+    await API("get_problem", {
+      params: {
+        id: query,
+      },
+    })
+      .then(({ data }) => {
+        if (!data || Object.keys(data).length === 0) throw Error("");
+
+        setStatus("loaded");
+
+        setProblem(data as unknown as ProblemType);
+      })
+      .catch(() => {
+        setProblem(null);
+        setStatus("invalid");
+        return null;
+      })
+      .finally(() => {
+        setFetching(false);
+      });
+  }, [query]);
+
   const handleAddProblem = useCallback(() => {
     if (
       problem &&
@@ -250,6 +280,12 @@ export function ContestCreateEditorForm({
   // useEffect(() => {
   //   if (query.length > 0) setFetching(true);
   // }, [query]);
+
+  useEffect(() => {
+    debounce(() => {
+      handleGetProblem();
+    }, 500);
+  }, [debounce, handleGetProblem]);
 
   const renderContestProblems = useMemo(
     () =>
