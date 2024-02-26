@@ -250,30 +250,31 @@ async function DELETE({ req, res }: GenericAPIParams) {
 
     const user = await getAuthUser(req, res);
 
-    if (typeof id === "number") {
-      const out = await prisma.problem.findUnique({
+    if (id !== undefined) {
+      const rawContest = await prisma.contest.findUnique({
         where: {
-          id,
-        },
-        include: {
-          solveds: true,
-          topic: true,
-          subTopic: true,
+          id: id as any,
         },
       });
 
-      const temp = { ...out } as unknown as ProblemType;
+      const contest = { ...rawContest } as unknown as ContestType;
 
       const allowDelete =
-        user && (user.id === temp.authorId || user.role === "admin");
+        user && (user.id === contest.authorId || user.role === "admin");
 
       if (!allowDelete) {
         throw Error("unauthorized");
       }
 
-      await prisma.problem.delete({
+      await prisma.contestToProblem.deleteMany({
         where: {
-          id,
+          contestId: id as any,
+        },
+      });
+
+      await prisma.contest.delete({
+        where: {
+          id: id as any,
         },
       });
 
