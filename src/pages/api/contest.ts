@@ -151,7 +151,7 @@ async function POST({ req, res }: GenericAPIParams) {
             },
           },
           score,
-          index,
+          order: index,
         };
       }
     );
@@ -248,42 +248,44 @@ async function DELETE({ req, res }: GenericAPIParams) {
       query: { id },
     } = req;
 
-    const user = await getAuthUser(req, res);
+    return await prisma.$transaction(async (tx) => {
+      const user = await getAuthUser(req, res);
 
-    if (id !== undefined) {
-      const rawContest = await prisma.contest.findUnique({
-        where: {
-          id: id as any,
-        },
-      });
+      if (id !== undefined) {
+        const rawContest = await tx.contest.findUnique({
+          where: {
+            id: id as any,
+          },
+        });
 
-      const contest = { ...rawContest } as unknown as ContestType;
+        const contest = { ...rawContest } as unknown as ContestType;
 
-      const allowDelete =
-        user && (user.id === contest.authorId || user.role === "admin");
+        const allowDelete =
+          user && (user.id === contest.authorId || user.role === "admin");
 
-      if (!allowDelete) {
-        throw Error("unauthorized");
+        if (!allowDelete) {
+          throw Error("unauthorized");
+        }
+
+        await tx.contestToProblem.deleteMany({
+          where: {
+            contestId: id as any,
+          },
+        });
+
+        await tx.contest.delete({
+          where: {
+            id: id as any,
+          },
+        });
+
+        res.status(200).json({
+          message: "success",
+        });
+      } else {
+        throw Error("id undefined");
       }
-
-      await prisma.contestToProblem.deleteMany({
-        where: {
-          contestId: id as any,
-        },
-      });
-
-      await prisma.contest.delete({
-        where: {
-          id: id as any,
-        },
-      });
-
-      res.status(200).json({
-        message: "success",
-      });
-    } else {
-      throw Error("id undefined");
-    }
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({
