@@ -30,35 +30,12 @@ async function PATCH({ req, res }: GenericAPIParams) {
     } = body as unknown as ContestType;
 
     await prisma.$transaction(async (tx) => {
-      const ids = Object.values(JSON.parse(problems)).map((entry, index) => {
-        const {
-          problem: { id },
-          score,
-        } = entry as ProblemContestType;
-        return id;
-      });
-
-      const test = await tx.contestToProblem.findMany({
+      await tx.contestToProblem.findMany({
         where: {
           contestId: id as any,
         },
       });
 
-      console.log(test);
-
-      const convertedProblems2 = Object.values(JSON.parse(problems)).map(
-        (entry, index) => {
-          const {
-            problem: { id: pid },
-          } = entry as ProblemContestType;
-          return {
-            contestId_problemId: {
-              contestId: id,
-              problemId: pid,
-            },
-          };
-        }
-      );
       const convertedProblems = Object.values(JSON.parse(problems)).map(
         (entry, index) => {
           const {
@@ -102,15 +79,8 @@ async function PATCH({ req, res }: GenericAPIParams) {
         },
       });
     });
-    // prisma.contestToProblem.get({
-    // 	where: {
-    // 		contestId: {
-    // 			equals: id as any,
-    // 		},
-    // 	},
-    // }),
 
-    await res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success" });
   } catch (e) {
     console.log(e);
     res.status(500).json({
