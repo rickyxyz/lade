@@ -25,6 +25,7 @@ import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
 import { useTopics } from "@/utils";
 import { API } from "@/api";
+import clsx from "clsx";
 
 export interface ContestEditFormProps {
   contest?: ContestType;
@@ -361,7 +362,11 @@ export function ContestCreateEditorForm({
       }
     })();
 
-    return <Paragraph className="pl-4">{text}</Paragraph>;
+    return (
+      <Paragraph className={clsx(status === "loaded" && "font-bold")}>
+        {text}
+      </Paragraph>
+    );
   }, [problem?.title, status]);
 
   const renderContestProblemTable = useMemo(
