@@ -1,4 +1,9 @@
-import { DetailedHTMLProps, InputHTMLAttributes, ReactNode } from "react";
+import {
+  DetailedHTMLProps,
+  InputHTMLAttributes,
+  ReactNode,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 import { Icon } from "../Icon";
 import { IconType } from "react-icons";
@@ -24,21 +29,25 @@ export interface InputProps
   errorText?: string;
 }
 
-export function Input({
-  variant = "basic",
-  className,
-  label,
-  labelClassName,
-  iconLeft,
-  iconLeftClassName,
-  iconRight,
-  iconRightClassName,
-  rightElement,
-  externalWrapperClassName,
-  wrapperClassName,
-  errorText,
-  ...rest
-}: InputProps) {
+// eslint-disable-next-line react/display-name
+export const Input = forwardRef<any, any>(function (
+  {
+    variant = "basic",
+    className,
+    label,
+    labelClassName,
+    iconLeft,
+    iconLeftClassName,
+    iconRight,
+    iconRightClassName,
+    rightElement,
+    externalWrapperClassName,
+    wrapperClassName,
+    errorText,
+    ...rest
+  }: InputProps,
+  ref
+) {
   const { id } = rest;
 
   return (
@@ -59,6 +68,7 @@ export function Input({
         )}
         <input
           {...rest}
+          ref={ref}
           className={clsx(
             INPUT_BASE_STYLE,
             variant === "basic" && INPUT_BASIC_STYLE,
@@ -81,7 +91,66 @@ export function Input({
       )}
     </div>
   );
-}
+});
+
+// export function Input({
+//   variant = "basic",
+//   className,
+//   label,
+//   labelClassName,
+//   iconLeft,
+//   iconLeftClassName,
+//   iconRight,
+//   iconRightClassName,
+//   rightElement,
+//   externalWrapperClassName,
+//   wrapperClassName,
+//   errorText,
+//   ...rest
+// }: InputProps) {
+//   const { id } = rest;
+
+//   return (
+//     <div className={externalWrapperClassName}>
+//       {label && (
+//         <label htmlFor={id} className={clsx("font-semibold", labelClassName)}>
+//           {label}
+//         </label>
+//       )}
+//       <div
+//         className={clsx("relative w-full", label && "mt-2", wrapperClassName)}
+//       >
+//         {iconLeft && (
+//           <Icon
+//             IconComponent={iconLeft}
+//             className={clsx("absolute top-2 left-2", iconLeftClassName)}
+//           />
+//         )}
+//         <input
+//           {...rest}
+//           className={clsx(
+//             INPUT_BASE_STYLE,
+//             variant === "basic" && INPUT_BASIC_STYLE,
+//             variant === "solid" && INPUT_SOLID_STYLE,
+//             className
+//           )}
+//         />
+//         {iconRight && (
+//           <Icon
+//             IconComponent={iconRight}
+//             className={clsx("absolute top-2 right-2", iconRightClassName)}
+//           />
+//         )}
+//         {rightElement}
+//       </div>
+//       {errorText && (
+//         <Paragraph color="danger-6" className="mt-2">
+//           {errorText}
+//         </Paragraph>
+//       )}
+//     </div>
+//   );
+// }
 
 const INPUT_BASE_STYLE = "w-full h-10 px-4 rounded-md";
 

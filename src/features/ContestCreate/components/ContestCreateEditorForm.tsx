@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import {
   Input,
   Markdown,
@@ -44,6 +44,7 @@ export function ContestCreateEditorForm({
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const [problems, setProblems] = stateProblems;
   const [problem, setProblem] = useState<ProblemType | null>();
 
@@ -229,6 +230,8 @@ export function ContestCreateEditorForm({
   }, [query]);
 
   const handleAddProblem = useCallback(() => {
+    const input = inputRef.current;
+
     if (
       problem &&
       problems.filter(({ problem: { id } }) => id === problem.id).length > 0
@@ -238,6 +241,10 @@ export function ContestCreateEditorForm({
     }
 
     if (problem) {
+      if (input) {
+        input.value = "";
+      }
+      setQuery("");
       setStatus("added");
       setProblems((prev) => [
         ...prev,
@@ -363,7 +370,10 @@ export function ContestCreateEditorForm({
     })();
 
     return (
-      <Paragraph className={clsx(status === "loaded" && "font-bold")}>
+      <Paragraph
+        className={clsx(status === "loaded" && "font-bold")}
+        color={status === "invalid" ? "danger-5" : undefined}
+      >
         {text}
       </Paragraph>
     );
@@ -376,9 +386,15 @@ export function ContestCreateEditorForm({
         <Setting name="Problem ID">
           <div className="flex gap-4 col-span-2">
             <Input
+              ref={inputRef}
               onChange={(e) => {
                 setQuery(e.target.value);
                 setStatus(undefined);
+              }}
+              onKeyUp={(e) => {
+                if (e.key === "Enter" || e.keyCode === 13) {
+                  handleAddProblem();
+                }
               }}
             />
             <Button
