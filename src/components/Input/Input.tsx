@@ -29,69 +29,70 @@ export interface InputProps
   errorText?: string;
 }
 
-// eslint-disable-next-line react/display-name
-export const Input = forwardRef<any, any>(function (
-  {
-    variant = "basic",
-    className,
-    label,
-    labelClassName,
-    iconLeft,
-    iconLeftClassName,
-    iconRight,
-    iconRightClassName,
-    rightElement,
-    externalWrapperClassName,
-    wrapperClassName,
-    errorText,
-    ...rest
-  }: InputProps,
-  ref
-) {
-  const { id } = rest;
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  function Component(
+    {
+      variant = "basic",
+      className,
+      label,
+      labelClassName,
+      iconLeft,
+      iconLeftClassName,
+      iconRight,
+      iconRightClassName,
+      rightElement,
+      externalWrapperClassName,
+      wrapperClassName,
+      errorText,
+      ...rest
+    },
+    ref
+  ) {
+    const { id } = rest;
 
-  return (
-    <div className={externalWrapperClassName}>
-      {label && (
-        <label htmlFor={id} className={clsx("font-semibold", labelClassName)}>
-          {label}
-        </label>
-      )}
-      <div
-        className={clsx("relative w-full", label && "mt-2", wrapperClassName)}
-      >
-        {iconLeft && (
-          <Icon
-            IconComponent={iconLeft}
-            className={clsx("absolute top-2 left-2", iconLeftClassName)}
-          />
+    return (
+      <div className={externalWrapperClassName}>
+        {label && (
+          <label htmlFor={id} className={clsx("font-semibold", labelClassName)}>
+            {label}
+          </label>
         )}
-        <input
-          {...rest}
-          ref={ref}
-          className={clsx(
-            INPUT_BASE_STYLE,
-            variant === "basic" && INPUT_BASIC_STYLE,
-            variant === "solid" && INPUT_SOLID_STYLE,
-            className
+        <div
+          className={clsx("relative w-full", label && "mt-2", wrapperClassName)}
+        >
+          {iconLeft && (
+            <Icon
+              IconComponent={iconLeft}
+              className={clsx("absolute top-2 left-2", iconLeftClassName)}
+            />
           )}
-        />
-        {iconRight && (
-          <Icon
-            IconComponent={iconRight}
-            className={clsx("absolute top-2 right-2", iconRightClassName)}
+          <input
+            {...rest}
+            ref={ref}
+            className={clsx(
+              INPUT_BASE_STYLE,
+              variant === "basic" && INPUT_BASIC_STYLE,
+              variant === "solid" && INPUT_SOLID_STYLE,
+              className
+            )}
           />
+          {iconRight && (
+            <Icon
+              IconComponent={iconRight}
+              className={clsx("absolute top-2 right-2", iconRightClassName)}
+            />
+          )}
+          {rightElement}
+        </div>
+        {errorText && (
+          <Paragraph color="danger-6" className="mt-2">
+            {errorText}
+          </Paragraph>
         )}
-        {rightElement}
       </div>
-      {errorText && (
-        <Paragraph color="danger-6" className="mt-2">
-          {errorText}
-        </Paragraph>
-      )}
-    </div>
-  );
-});
+    );
+  }
+);
 
 // export function Input({
 //   variant = "basic",

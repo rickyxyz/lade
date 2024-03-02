@@ -20,80 +20,81 @@ export type TooltipProps = {
   hiddenElement: ReactNode;
 } & TooltipBaseProps;
 
-// eslint-disable-next-line react/display-name, @typescript-eslint/no-explicit-any
-export const Tooltip = forwardRef<any, any>(function (
-  {
-    className,
-    classNameInner,
-    optionWidth = 300,
-    direction = "right",
-    disabled,
-    triggerElement,
-    hiddenElement,
-    stateVisible,
-    showOnHover,
-    topOffset = 48,
-    onBlur,
-  }: TooltipProps,
-  ref
-) {
-  const selfVisible = useState(false);
-  const [visible, setVisible] = stateVisible ?? selfVisible;
+export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
+  function Component(
+    {
+      className,
+      classNameInner,
+      optionWidth = 300,
+      direction = "right",
+      disabled,
+      triggerElement,
+      hiddenElement,
+      stateVisible,
+      showOnHover,
+      topOffset = 48,
+      onBlur,
+    }: TooltipProps,
+    ref
+  ) {
+    const selfVisible = useState(false);
+    const [visible, setVisible] = stateVisible ?? selfVisible;
 
-  const renderHiddenElement = useMemo(
-    () => (
+    const renderHiddenElement = useMemo(
+      () => (
+        <div
+          className={clsx(
+            "absolute h-fit flex flex-col",
+            "border border-gray-100 bg-white shadow-md z-10",
+            classNameInner
+          )}
+          style={{
+            minWidth: optionWidth,
+            left: direction === "left" ? undefined : 0,
+            right: direction === "right" ? 0 : undefined,
+            top: topOffset,
+          }}
+        >
+          {hiddenElement}
+        </div>
+      ),
+      [classNameInner, direction, hiddenElement, optionWidth, topOffset]
+    );
+
+    return (
       <div
         className={clsx(
-          "absolute h-fit flex flex-col",
-          "border border-gray-100 bg-white shadow-md z-10",
-          classNameInner
+          "flex flex-row-reverse relative overflow-visible",
+          !disabled && "cursor-pointer",
+          className
         )}
-        style={{
-          minWidth: optionWidth,
-          left: direction === "left" ? undefined : 0,
-          right: direction === "right" ? 0 : undefined,
-          top: topOffset,
-        }}
-      >
-        {hiddenElement}
-      </div>
-    ),
-    [classNameInner, direction, hiddenElement, optionWidth, topOffset]
-  );
-
-  return (
-    <div
-      className={clsx(
-        "flex flex-row-reverse relative overflow-visible",
-        !disabled && "cursor-pointer",
-        className
-      )}
-      onFocus={() => {
-        !disabled && setVisible(true);
-      }}
-      onMouseEnter={() => {
-        if (showOnHover) {
+        onFocus={() => {
           !disabled && setVisible(true);
-        }
-      }}
-      onClick={() => {
-        if (!visible && !disabled) setVisible(true);
-      }}
-      onBlur={() => {
-        onBlur && onBlur();
-        setVisible(false);
-      }}
-      onMouseLeave={() => {
-        if (showOnHover) {
+        }}
+        onMouseEnter={() => {
+          if (showOnHover) {
+            !disabled && setVisible(true);
+          }
+        }}
+        onClick={() => {
+          if (!visible && !disabled) setVisible(true);
+        }}
+        onBlur={() => {
           onBlur && onBlur();
           setVisible(false);
-        }
-      }}
-      ref={ref}
-      tabIndex={0}
-    >
-      {visible && renderHiddenElement}
-      {triggerElement}
-    </div>
-  );
-});
+        }}
+        onMouseLeave={() => {
+          if (showOnHover) {
+            onBlur && onBlur();
+            setVisible(false);
+          }
+        }}
+        ref={ref}
+        tabIndex={0}
+      >
+        {visible && renderHiddenElement}
+        {triggerElement}
+      </div>
+    );
+  }
+);
