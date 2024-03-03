@@ -175,6 +175,7 @@ async function GET({ req, res }: GenericAPIParams) {
             select: {
               problem: true,
               score: true,
+              order: true,
             },
           },
           topic: true,

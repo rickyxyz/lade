@@ -168,13 +168,15 @@ export function ContestDetailPage({ id, user }: ContestProps) {
 
         const { id } = data;
         setContest(data as any);
-        setProblems(data.problemsData);
+        setProblems(
+          data.problemsData.sort((pd1, pd2) => pd1.order - pd2.order)
+        );
         setLoading(false);
 
         return id;
       })
       .catch(() => null);
-  }, [id, loading, setLoading, setContest]);
+  }, [loading, setLoading, id, setContest, setProblems]);
 
   useEffect(() => {
     handleGetContests();

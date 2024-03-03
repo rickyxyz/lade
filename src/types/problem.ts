@@ -80,6 +80,7 @@ export type ProblemType = ProblemBaseType & ProblemMapTypeTopicType;
 export type ProblemContestType = {
   problem: ProblemType;
   score: number;
+  order: number;
 };
 
 export type ProblemSortByType =
