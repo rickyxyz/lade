@@ -10,8 +10,11 @@ import {
   ProblemType,
 } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
+import { validateFormContest } from "@/utils";
 
 async function PATCH({ req, res }: GenericAPIParams) {
+  let errors: Record<string, string> = {};
+
   try {
     const { body } = req;
 
@@ -54,6 +57,12 @@ async function PATCH({ req, res }: GenericAPIParams) {
         }
       );
 
+      errors = validateFormContest(body);
+
+      if (Object.keys(errors).length > 0) {
+        throw errors;
+      }
+
       await tx.contestToProblem.deleteMany({
         where: {
           contestId: id as any,
@@ -85,15 +94,18 @@ async function PATCH({ req, res }: GenericAPIParams) {
     console.log(e);
     res.status(500).json({
       message: "fail",
+      ...(Object.keys(errors).length > 0 ? { errors } : {}),
     });
   }
 }
 
 async function POST({ req, res }: GenericAPIParams) {
+  let errors: Record<string, string> = {};
+
   try {
     const user = await getAuthUser(req, res);
 
-    // if (!user) throw Error("not allowed");
+    if (!user) throw Error("not allowed");
 
     const { body } = req;
 
@@ -126,6 +138,12 @@ async function POST({ req, res }: GenericAPIParams) {
       }
     );
 
+    errors = validateFormContest(body);
+
+    if (Object.keys(errors).length > 0) {
+      throw errors;
+    }
+
     const contest = await prisma.contest.create({
       data: {
         authorId,
@@ -150,6 +168,7 @@ async function POST({ req, res }: GenericAPIParams) {
     console.log(e);
     res.status(500).json({
       message: "fail",
+      ...(Object.keys(errors).length > 0 ? { errors } : {}),
     });
   }
 }
