@@ -4,8 +4,11 @@ import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
+import { validateFormProblem } from "@/utils";
 
 async function PATCH({ req, res }: GenericAPIParams) {
+  let errors: Record<string, string> = {};
+
   try {
     const { body } = req;
     const {
@@ -18,6 +21,12 @@ async function PATCH({ req, res }: GenericAPIParams) {
       id,
       authorId,
     } = body as unknown as ProblemType;
+
+    errors = validateFormProblem(body);
+
+    if (Object.keys(errors).length > 0) {
+      throw errors;
+    }
 
     await prisma.problem.update({
       where: {
@@ -40,11 +49,14 @@ async function PATCH({ req, res }: GenericAPIParams) {
     console.log(e);
     res.status(500).json({
       message: "fail",
+      ...(Object.keys(errors).length > 0 ? { errors } : {}),
     });
   }
 }
 
 async function POST({ req, res }: GenericAPIParams) {
+  let errors: Record<string, string> = {};
+
   try {
     const user = await getAuthUser(req, res);
 
@@ -54,6 +66,12 @@ async function POST({ req, res }: GenericAPIParams) {
 
     const { answer, statement, subTopicId, title, topicId, type } =
       body as unknown as ProblemType;
+
+    errors = validateFormProblem(body);
+
+    if (Object.keys(errors).length > 0) {
+      throw errors;
+    }
 
     const problem = await prisma.problem.create({
       data: {
@@ -76,6 +94,7 @@ async function POST({ req, res }: GenericAPIParams) {
     console.log(e);
     res.status(500).json({
       message: "fail",
+      ...(Object.keys(errors).length > 0 ? { errors } : {}),
     });
   }
 }

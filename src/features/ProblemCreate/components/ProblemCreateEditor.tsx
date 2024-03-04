@@ -74,7 +74,7 @@ export function ProblemCreateEditor({
       {headElement}
       <Formik
         initialValues={problem ?? PROBLEM_BLANK}
-        validate={validateFormProblem}
+        // validate={validateFormProblem}
         onSubmit={handleSubmit}
         validateOnChange={false}
         validateOnBlur={false}
