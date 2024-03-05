@@ -116,55 +116,55 @@ interface ApiReturn {
 
 const ROUTES = {
   get_problem: {
-    path: "/problem",
+    path: "/v1/problem",
     method: "GET",
   },
   get_problems: {
-    path: "/problems",
+    path: "/v1/problems",
     method: "GET",
   },
   post_problem: {
-    path: "/problem",
+    path: "/v1/problem",
     method: "POST",
   },
   patch_problem: {
-    path: "/problem",
+    path: "/v1/problem",
     method: "PATCH",
   },
   get_solved: {
-    path: "/solved",
+    path: "/v1/solved",
     method: "GET",
   },
   post_solved: {
-    path: "/problem/answer",
+    path: "/v1/problem/answer",
     method: "POST",
   },
   get_user: {
-    path: "/user",
+    path: "/v1/user",
     method: "GET",
   },
   post_user: {
-    path: "/user",
+    path: "/v1/user",
     method: "POST",
   },
   get_topics: {
-    path: "/topics",
+    path: "/v1/topics",
     method: "GET",
   },
   get_contests: {
-    path: "/contests",
+    path: "/v1/contests",
     method: "GET",
   },
   get_contest: {
-    path: "/contest",
+    path: "/v1/contest",
     method: "GET",
   },
   post_contest: {
-    path: "/contest",
+    path: "/v1/contest",
     method: "POST",
   },
   patch_contest: {
-    path: "/contest",
+    path: "/v1/contest",
     method: "PATCH",
   },
 };

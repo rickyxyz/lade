@@ -45,8 +45,8 @@ export default async function handler(
     count = Number(req.query.count);
     if (isNaN(count)) count = 2;
 
-    console.log("Page: ", page);
-    console.log("Count: ", count);
+    if (count >= 10) count = 10;
+    else if (count < 0) count = 2;
 
     const topicQuery = topic ? { topicId: topic } : {};
     const subTopicQuery = subTopic ? { subTopicId: subTopic } : {};
