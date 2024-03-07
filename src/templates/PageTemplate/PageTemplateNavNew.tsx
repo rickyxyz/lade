@@ -14,7 +14,6 @@ import {
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/router";
 import { crudData, logout } from "@/libs/firebase";
 import { BsCaretDownFill, BsList, BsMenuButton } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
@@ -24,13 +23,14 @@ import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+import { useRouter } from "next/navigation";
 
 interface NavLink {
   label: string;
   href: string;
 }
 
-export function PageTemplateNav() {
+export function PageTemplateNavNew() {
   const auth = getAuth();
   const user = useAppSelector("user");
   const router = useRouter();
