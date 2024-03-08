@@ -29,40 +29,19 @@ import {
   useSearchParams,
 } from "next/navigation";
 
-export function ProblemListPageNew() {
+interface ProblemListPageProps {
+  query: ProblemQuery;
+}
+
+export function ProblemListPageNew({ query }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  // const {
-  //   topic: userTopic,
-  //   subTopic: userSubTopic,
-  //   search: userSearch,
-  //   sort: userSort = "newest",
-  //   page: userPage = 1,
-  // } = {}
-  const userTopic = searchParams
-    ? (searchParams.get("topic") as unknown as ProblemTopicNameType)
-    : undefined;
-  const userSubTopic = searchParams
-    ? (searchParams.get("subTopic") as unknown as ProblemSubtopicNameType)
-    : undefined;
-  const userSearch = searchParams
-    ? (searchParams.get("search") as unknown as string)
-    : undefined;
-  const userSort = searchParams
-    ? (searchParams.get("sort") as unknown as ProblemSortByType)
-    : "newest";
-  const rawPage = searchParams ? searchParams.get("page") : 1;
-  const userPage = rawPage && !isNaN(Number(rawPage)) ? Number(rawPage) : 1;
-  const query = useMemo(
-    () => ({
-      topic: userTopic,
-      subTopic: userSubTopic,
-      search: userSearch,
-      sort: userSort,
-      page: userPage,
-    }),
-    [userPage, userSearch, userSort, userSubTopic, userTopic]
-  );
+  const {
+    topic: userTopic,
+    subTopic: userSubTopic,
+    search: userSearch,
+    sort: userSort = "newest",
+    page: userPage = 1,
+  } = query;
   const router = useRouter();
 
   const [problems, setProblems] = useState<ProblemDatabaseType[]>([]);
