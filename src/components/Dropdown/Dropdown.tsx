@@ -19,7 +19,7 @@ export function Dropdown({
   onBlur,
   ...rest
 }: DropdownProps) {
-  const ref = useRef<HTMLDivElement>();
+  const ref = useRef<HTMLDivElement>(null);
 
   const stateVisible = useState(false);
   const [visible, setVisible] = stateVisible;
