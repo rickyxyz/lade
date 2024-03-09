@@ -1,5 +1,6 @@
+"use client";
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
-import { BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs/index";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import {
@@ -20,14 +21,20 @@ import {
   ProblemType,
 } from "@/types";
 import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
-import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
+import {
+  ReadonlyURLSearchParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
 }
 
 export function ProblemListPage({ query }: ProblemListPageProps) {
+  const pathname = usePathname();
   const {
     topic: userTopic,
     subTopic: userSubTopic,
@@ -35,6 +42,8 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
     sort: userSort = "newest",
     page: userPage = 1,
   } = query;
+  const router = useRouter();
+
   const [problems, setProblems] = useState<ProblemDatabaseType[]>([]);
   const [loading, setLoading] = useState(true);
   const stateTopic = useState<ProblemTopicNameType | undefined>(userTopic);
@@ -46,7 +55,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   const stateSortBy = useState<ProblemSortByType>(userSort ?? "newest");
   const [sortBy, setSortBy] = stateSortBy;
   const stateAdvanced = useState(false);
-  const router = useRouter();
   const [search, setSearch] = useState(userSearch ?? "");
   const [advanced, setAdvanced] = stateAdvanced;
   const initialized = useRef(false);
@@ -92,27 +100,26 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
 
   const handleUpdateQuery = useCallback(
     (newPage = userPage) => {
-      const queryObject: ParsedUrlQuery = {
-        ...router.query,
+      const queryObject: any = {
         search,
         topic,
         subTopic: subtopic,
-        sort: sortBy,
+        sort: sortBy ?? "newest",
         page: String(newPage),
       };
       if (search === "") delete queryObject.search;
       if (!topic) delete queryObject.topic;
       if (!subtopic) delete queryObject.subTopic;
 
+      const newParams = new URLSearchParams(queryObject);
+
       if (initialized.current) {
-        router.push({
-          query: queryObject,
-        });
+        router.push(`${pathname}?${newParams}`);
       }
 
       initialized.current = true;
     },
-    [router, search, sortBy, subtopic, topic, userPage]
+    [pathname, router, search, sortBy, subtopic, topic, userPage]
   );
 
   const handleGetProblem = useCallback(async () => {
@@ -251,7 +258,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                 className="mt-4"
                 onClick={() => {
                   setAdvanced(false);
-                  handleUpdateQuery();
+                  handleUpdateQuery(1);
                 }}
                 disabled={loading}
                 label="Apply"
@@ -270,7 +277,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
               buttonElement={
                 <Button
                   className="mt-4 w-fit"
-                  onClick={() => handleUpdateQuery()}
+                  onClick={() => handleUpdateQuery(1)}
                   disabled={loading}
                   label="Apply"
                 />

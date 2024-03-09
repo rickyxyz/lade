@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemType } from "@/types";
 import { crudData } from "@/libs/firebase";
 import { useDebounce } from "@/hooks";
-import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";

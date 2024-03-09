@@ -2,7 +2,7 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { API } from "@/api";
 import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
 import { useAppSelector } from "@/libs/redux";

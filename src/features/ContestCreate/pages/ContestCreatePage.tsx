@@ -4,7 +4,7 @@ import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
 import { ContestCreateEditor } from "../components";
 import { useDebounce } from "@/hooks";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
 

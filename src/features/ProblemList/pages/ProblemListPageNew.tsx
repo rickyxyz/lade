@@ -33,7 +33,7 @@ interface ProblemListPageProps {
   query: ProblemQuery;
 }
 
-export function ProblemListPageNew({ query }) {
+export function ProblemListPageNew({ query }: ProblemListPageProps) {
   const pathname = usePathname();
   const {
     topic: userTopic,
@@ -101,7 +101,6 @@ export function ProblemListPageNew({ query }) {
   const handleUpdateQuery = useCallback(
     (newPage = userPage) => {
       const queryObject: any = {
-        // ...(searchParams ? searchParams.),
         search,
         topic,
         subTopic: subtopic,
@@ -115,8 +114,6 @@ export function ProblemListPageNew({ query }) {
       const newParams = new URLSearchParams(queryObject);
 
       if (initialized.current) {
-        console.log("Test123");
-        // console.log(`${pathname}/${newParams}`);
         router.push(`${pathname}?${newParams}`);
       }
 

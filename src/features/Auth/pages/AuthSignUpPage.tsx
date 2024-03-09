@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { signUp } from "@/libs/firebase";
 import { Button, Card } from "@/components";
 import { validateFormSignUp } from "@/utils";

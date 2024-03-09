@@ -14,7 +14,7 @@ import {
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { crudData, logout } from "@/libs/firebase";
 import { BsCaretDownFill, BsList, BsMenuButton } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";

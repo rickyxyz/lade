@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
 import { BsSearch } from "react-icons/bs";
+import { usePathname, useRouter } from "next/navigation";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import {
@@ -20,7 +21,6 @@ import {
   ProblemType,
 } from "@/types";
 import { ContestCard, ContestCardSkeleton, ProblemFilter } from "../components";
-import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 
 interface ProblemListPageProps {
@@ -28,6 +28,7 @@ interface ProblemListPageProps {
 }
 
 export function ContestListPage({ query }: ProblemListPageProps) {
+  const pathname = usePathname();
   const {
     topic: userTopic,
     subTopic: userSubTopic,
@@ -92,27 +93,26 @@ export function ContestListPage({ query }: ProblemListPageProps) {
 
   const handleUpdateQuery = useCallback(
     (newPage = userPage) => {
-      const queryObject: ParsedUrlQuery = {
-        ...router.query,
+      const queryObject: any = {
         search,
         topic,
         subTopic: subtopic,
-        sort: sortBy,
+        sort: sortBy ?? "newest",
         page: String(newPage),
       };
       if (search === "") delete queryObject.search;
       if (!topic) delete queryObject.topic;
       if (!subtopic) delete queryObject.subTopic;
 
+      const newParams = new URLSearchParams(queryObject);
+
       if (initialized.current) {
-        router.push({
-          query: queryObject,
-        });
+        router.push(`${pathname}?${newParams}`);
       }
 
       initialized.current = true;
     },
-    [router, search, sortBy, subtopic, topic, userPage]
+    [pathname, router, search, sortBy, subtopic, topic, userPage]
   );
 
   const handleGetProblem = useCallback(async () => {
