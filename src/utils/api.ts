@@ -44,3 +44,16 @@ export async function runMain(
   });
   await prisma.$disconnect();
 }
+
+export function entryObject<K extends string>(
+  object: URLSearchParams,
+  keys: K[]
+) {
+  return keys.reduce(
+    (prev, key) => ({
+      ...prev,
+      [key]: object.get(key),
+    }),
+    {}
+  ) as Record<K, string>;
+}

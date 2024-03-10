@@ -1,25 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
-import { json } from "@/utils/api";
+import { entryObject, json } from "@/utils/api";
 import { ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
-import { isNaN } from "formik";
+import { NextRequest } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "GET") {
-    res.status(405).json({
-      message: "fail",
-    });
-    return;
-  }
-
-  const user = await getAuthUser(req, res);
+export async function GET(req: NextRequest) {
+  const user = await getAuthUser();
+  const searchParams = req.nextUrl.searchParams;
 
   let result:
     | {
@@ -35,20 +23,24 @@ export default async function handler(
     | undefined;
 
   try {
-    const {
-      query: { search, topic, subTopic, sort, sortBy = "desc" },
-    } = req;
+    const parPage = searchParams.get("page");
+    const parCount = searchParams.get("count");
 
-    let page = req.query.page as unknown as number;
-    page = Number(req.query.page);
+    const { topic, subTopic, sort, sortBy, search } = entryObject(
+      searchParams,
+      ["topic", "subTopic", "sort", "sortBy", "search"]
+    );
+
+    let page = parPage as unknown as number;
+    page = Number(parPage);
     if (isNaN(page)) page = 1;
 
-    let count = req.query.count as unknown as number;
-    count = Number(req.query.count);
+    let count = parCount as unknown as number;
+    count = Number(parCount);
     if (isNaN(count)) count = 2;
 
     if (count >= 10) count = 10;
-    else if (count < 0) count = 2;
+    else if (count <= 0) count = 2;
 
     const topicQuery = topic ? { topicId: topic } : {};
     const subTopicQuery = subTopic ? { subTopicId: subTopic } : {};
@@ -117,6 +109,8 @@ export default async function handler(
       return temp;
     }, []);
 
+    console.log(problems);
+
     result = {
       data: JSON.parse(json(removedAnswers)),
       pagination: {
@@ -136,13 +130,15 @@ export default async function handler(
 
   console.log("API HIT CONFIRMED");
 
+  await prisma.$disconnect();
+
   if (result) {
-    res.status(200).json(result);
+    // res.status(200).json(result);
+    console.log(result);
+    return Response.json(result);
   } else {
-    res.status(500).json({
+    return Response.json({
       message: "fail",
     });
   }
-
-  await prisma.$disconnect();
 }
