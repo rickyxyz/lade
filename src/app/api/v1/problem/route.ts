@@ -1,16 +1,17 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 import { validateFormProblem } from "@/utils";
+import { NextRequest } from "next/server";
 
-async function PATCH({ req, res }: GenericAPIParams) {
+export async function PATCH(req: NextRequest) {
   let errors: Record<string, string> = {};
+  let response: Response | undefined;
 
   try {
-    const { body } = req;
+    const body = await req.json();
     const {
       answer,
       statement,
@@ -44,26 +45,27 @@ async function PATCH({ req, res }: GenericAPIParams) {
       },
     });
 
-    res.status(200).json({ message: "success" });
+    response = Response.json("success");
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-      ...(Object.keys(errors).length > 0 ? { errors } : {}),
+    response = new Response("fail", {
+      status: 500,
     });
   }
+  await prisma.$disconnect();
+
+  return response;
 }
 
-async function POST({ req, res }: GenericAPIParams) {
+export async function POST(req: NextRequest) {
   let errors: Record<string, string> = {};
+  let response: Response | undefined;
 
   try {
-    const user = await getAuthUser(req, res);
-
+    const user = await getAuthUser();
     if (!user) throw Error("not allowed");
 
-    const { body } = req;
-
+    const body = await req.json();
     const { answer, statement, subTopicId, title, topicId, type } =
       body as unknown as ProblemType;
 
@@ -87,25 +89,35 @@ async function POST({ req, res }: GenericAPIParams) {
       },
     });
 
-    res
-      .status(200)
-      .json(JSON.parse(json({ message: "success", id: problem.id })));
+    response = Response.json(
+      JSON.parse(json({ message: "success", id: problem.id }))
+    );
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-      ...(Object.keys(errors).length > 0 ? { errors } : {}),
-    });
+    response = Response.json(
+      {
+        message: "fail",
+        ...(Object.keys(errors).length > 0 ? { errors } : {}),
+      },
+      {
+        status: 500,
+      }
+    );
   }
+
+  await prisma.$disconnect();
+  return response;
 }
 
-async function GET({ req, res }: GenericAPIParams) {
-  try {
-    const {
-      query: { id },
-    } = req;
+export async function GET(req: NextRequest) {
+  let response: Response | undefined;
 
-    const user = await getAuthUser(req, res);
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get("id");
+
+    const user = await getAuthUser();
+    console.log(user);
 
     if (typeof id !== "undefined") {
       const rawProblem = await prisma.problem.findUnique({
@@ -127,25 +139,33 @@ async function GET({ req, res }: GenericAPIParams) {
         problem.answer = JSON.stringify({});
       }
 
-      res.status(200).json(JSON.parse(json(problem)));
+      response = Response.json(JSON.parse(json(problem)));
     } else {
       throw Error("id undefined");
     }
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
+    response = Response.json(
+      {
+        message: "fail",
+      },
+      {
+        status: 500,
+      }
+    );
   }
+  await prisma.$disconnect();
+  return response;
 }
 
-async function DELETE({ req, res }: GenericAPIParams) {
-  try {
-    const {
-      query: { id },
-    } = req;
+export async function DELETE(req: NextRequest) {
+  let response: Response | undefined;
 
-    const user = await getAuthUser(req, res);
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get("id");
+
+    const user = await getAuthUser();
 
     if (typeof id === "number") {
       const out = await prisma.problem.findUnique({
@@ -174,7 +194,7 @@ async function DELETE({ req, res }: GenericAPIParams) {
         },
       });
 
-      res.status(200).json({
+      response = Response.json({
         message: "success",
       });
     } else {
@@ -182,47 +202,16 @@ async function DELETE({ req, res }: GenericAPIParams) {
     }
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
-  }
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  switch (method) {
-    case "GET":
-      await GET({
-        req,
-        res,
-      });
-      break;
-    case "POST":
-      await POST({
-        req,
-        res,
-      });
-      break;
-    case "PATCH":
-      await PATCH({
-        req,
-        res,
-      });
-      break;
-    case "DELETE":
-      await DELETE({
-        req,
-        res,
-      });
-      break;
-    default:
-      res.status(405).json({ message: "fail" });
-      break;
+    response = Response.json(
+      {
+        message: "fail",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 
   await prisma.$disconnect();
+  return response;
 }
