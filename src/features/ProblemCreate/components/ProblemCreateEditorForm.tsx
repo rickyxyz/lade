@@ -14,7 +14,7 @@ import {
 import { useFormikContext } from "formik";
 import { ProblemAnswer } from "@/features/ProblemDetail";
 import { useProblemEditInitialized } from "@/hooks";
-import { useTopics } from "@/utils";
+import { useTopics } from "@/hooks";
 
 export interface ProblemCreateEditorFormProps {
   stateMode?: StateType<ContentViewType>;

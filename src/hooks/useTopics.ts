@@ -1,17 +1,10 @@
-import { PROBLEM_TOPICS_DETAIL_OBJECT } from "@/consts";
 import {
-  ProblemAllTopicNameType,
   ProblemTopicNameType,
   ProblemTopicType,
   SelectOptionType,
 } from "@/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api } from "./api";
 import { API } from "@/api";
-
-export function parseTopicId<K extends ProblemAllTopicNameType>(id: K) {
-  return PROBLEM_TOPICS_DETAIL_OBJECT[id];
-}
 
 export function useTopics() {
   const [topics, setTopics] = useState<{

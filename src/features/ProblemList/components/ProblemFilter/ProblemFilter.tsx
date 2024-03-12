@@ -8,7 +8,7 @@ import {
   StateType,
 } from "@/types";
 import { ReactNode } from "react";
-import { useTopics } from "@/utils";
+import { useTopics } from "@/hooks";
 
 interface ProblemFilterProps {
   wrapperClassName?: string;

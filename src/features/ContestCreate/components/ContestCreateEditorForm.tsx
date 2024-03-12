@@ -19,11 +19,10 @@ import {
 import { PROBLEM_SUBTOPIC_OPTIONS, PROBLEM_TOPIC_OPTIONS } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
-import { useDebounce, useProblemEditInitialized } from "@/hooks";
+import { useDebounce, useProblemEditInitialized, useTopics } from "@/hooks";
 import { crudData } from "@/libs/firebase";
 import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
-import { useTopics } from "@/utils";
 import { API } from "@/api";
 import clsx from "clsx";
 

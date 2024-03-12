@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Tag } from "@/components";
 import { ProblemSubtopicNameType, ProblemTopicNameType } from "@/types";
-import { parseTopicId } from "@/utils";
 import clsx from "clsx";
 
 export interface ProblemDetailTopics {
