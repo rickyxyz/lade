@@ -1,4 +1,6 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useMemo, useEffect, useCallback, useState } from "react";
 import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
@@ -36,7 +38,7 @@ interface ProblemAction extends ButtonListEntry {
 
 interface ProblemProps {
   id: string;
-  user: UserType;
+  user?: UserType | null;
 }
 
 export function ProblemDetailPage({ id, user }: ProblemProps) {

@@ -3,17 +3,15 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { PROBLEM_PLACEHOLDERS } from "@/libs/firebase/placeholders";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "POST") {
-    res.status(405).json({ message: "fail" });
-    return;
-  }
-
+export async function POST() {
+  let response = Response.json(
+    {
+      message: "fail",
+    },
+    {
+      status: 500,
+    }
+  );
   try {
     // for (const problem of PROBLEM_PLACEHOLDERS) {
     //   const { answer, statement, subTopicId, title, topicId, type } = problem;
@@ -63,13 +61,14 @@ export default async function handler(
       ),
     });
 
-    res.status(200).json(req.body);
+    response = Response.json({
+      message: "ok",
+    });
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      error: "internal server error 2",
-    });
   }
 
   await prisma.$disconnect();
+
+  return response;
 }

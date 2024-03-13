@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import { firebaseAdmin } from "@/libs/firebase/admin";
 import { api } from "@/utils/api";
 import { API } from "@/api";
+import NextAuth from "next-auth/next";
 
 export const authConfig: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers
@@ -118,3 +119,7 @@ export const authConfig: NextAuthOptions = {
   // Enable debug messages in the console if you are having problems
   debug: process.env.NODE_ENV !== "production",
 };
+
+const handler = NextAuth(authConfig);
+
+export const { auth } = handler;

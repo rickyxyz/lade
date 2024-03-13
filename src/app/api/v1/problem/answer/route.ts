@@ -3,27 +3,27 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { makeAnswer, validateAnswer } from "@/utils";
 import { ProblemAnswerType, ProblemType } from "@/types";
-import { getAuthUser } from "@/libs/next-auth/helper";
+import { getAuthUserNext } from "@/libs/next-auth/helper";
+import { NextRequest } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "POST") {
-    res.status(405).json({ message: "fail" });
-    return;
-  }
-
+export async function POST(req: NextRequest) {
   const { body } = req;
 
   const { answer, id } = body as unknown as ProblemType;
 
   let problem: ProblemType | undefined;
 
+  let response = Response.json(
+    {
+      message: "fail",
+    },
+    {
+      status: 500,
+    }
+  );
+
   try {
-    const user = await getAuthUser(req, res);
+    const user = await getAuthUserNext();
 
     const result = await prisma.problem.findUnique({
       where: {
@@ -77,15 +77,14 @@ export default async function handler(
       });
     }
 
-    res.status(200).json({
+    response = Response.json({
       message: verdict ? "correct" : "wrong",
     });
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      error: "internal server error",
-    });
   }
 
   await prisma.$disconnect();
+
+  return response;
 }

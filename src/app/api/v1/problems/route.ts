@@ -2,11 +2,11 @@
 import { prisma } from "@/libs/prisma";
 import { entryObject, json } from "@/utils/api";
 import { ProblemType } from "@/types";
-import { getAuthUser } from "@/libs/next-auth/helper";
 import { NextRequest } from "next/server";
+import { getAuthUserNext } from "@/libs/next-auth/helper";
 
 export async function GET(req: NextRequest) {
-  const user = await getAuthUser();
+  const user = await getAuthUserNext();
   const searchParams = req.nextUrl.searchParams;
 
   let result:

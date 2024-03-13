@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
-import { getAuthUser } from "@/libs/next-auth/helper";
+import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormProblem } from "@/utils";
 import { NextRequest } from "next/server";
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   let response: Response | undefined;
 
   try {
-    const user = await getAuthUser();
+    const user = await getAuthUserNext();
     if (!user) throw Error("not allowed");
 
     const body = await req.json();
@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const id = searchParams.get("id");
 
-    const user = await getAuthUser();
+    const user = await getAuthUserNext();
     console.log(user);
 
     if (typeof id !== "undefined") {
@@ -165,7 +165,7 @@ export async function DELETE(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const id = searchParams.get("id");
 
-    const user = await getAuthUser();
+    const user = await getAuthUserNext();
 
     if (typeof id === "number") {
       const out = await prisma.problem.findUnique({
