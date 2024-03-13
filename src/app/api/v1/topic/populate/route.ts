@@ -1,25 +1,20 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import {
   PROBLEM_TOPICS_DETAIL_OBJECT,
   PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
 } from "@/consts";
 import { ProblemAllTopicNameType } from "@/types";
+import { NextRequest } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "POST") {
-    res.status(500).json({
+export async function POST() {
+  let response = Response.json(
+    {
       message: "fail",
-    });
-    return;
-  }
-
+    },
+    {
+      status: 500,
+    }
+  );
   try {
     await prisma.subtopic.deleteMany({});
     await prisma.topic.deleteMany({});
@@ -43,10 +38,6 @@ export default async function handler(
       });
 
       for (const subtopic of subtopics) {
-        console.log(
-          "    Looping Through: ",
-          PROBLEM_TOPICS_DETAIL_OBJECT[subtopic].name
-        );
         await prisma.subtopic.create({
           data: {
             id: subtopic,
@@ -57,13 +48,13 @@ export default async function handler(
       }
     }
 
-    res.status(200).json(req.body);
+    response = Response.json({
+      message: "ok",
+    });
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
   }
 
   await prisma.$disconnect();
+  return response;
 }

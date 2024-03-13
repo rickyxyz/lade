@@ -1,22 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
 import { json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType } from "@/types";
+import { NextRequest } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "GET") {
-    res.status(405).json({
-      message: "fail",
-    });
-    return;
-  }
-
+export async function GET() {
   let result:
     | {
         topics: ProblemTopicType;
@@ -44,13 +32,18 @@ export default async function handler(
     result = undefined;
   }
 
-  if (result) {
-    res.status(200).json(result);
-  } else {
-    res.status(500).json({
-      message: "fail",
-    });
-  }
-
   await prisma.$disconnect();
+
+  if (result) {
+    return Response.json(result);
+  } else {
+    return Response.json(
+      {
+        message: "fail",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

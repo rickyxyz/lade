@@ -2,29 +2,24 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  if (method !== "POST") {
-    res.status(500).json({
+export async function POST() {
+  let result = Response.json(
+    {
       message: "fail",
-    });
-    return;
-  }
-
+    },
+    {
+      status: 500,
+    }
+  );
   try {
     await prisma.solved.deleteMany({});
-
-    res.status(200).json(req.body);
+    result = Response.json({
+      message: "ok",
+    });
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
   }
 
   await prisma.$disconnect();
+  return result;
 }
