@@ -1,10 +1,6 @@
 import { ContestDetailPage } from "@/features/ContestDetail";
-import { ProblemDetailPage } from "@/features/ProblemDetail";
-import { authConfig } from "@/libs/next-auth";
-import { getAuthUser } from "@/libs/next-auth/helper";
-import { ContentAccessType } from "@/types";
+import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Session, getServerSession } from "next-auth";
 import { useMemo } from "react";
 
 interface ProblemProps {
@@ -17,16 +13,8 @@ export function Contest({ id, user }: ProblemProps) {
   return <ContestDetailPage id={id} user={parsedUser} />;
 }
 
-export async function getServerSideProps({
-  params,
-  req,
-  res,
-}: {
-  params: ProblemProps;
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
-  const user = await getAuthUser(req, res);
+export async function getServerSideProps({ params }: { params: ProblemProps }) {
+  const user = await getAuthUserNext();
 
   const { id } = params;
 
