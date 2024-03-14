@@ -12,7 +12,7 @@ interface ProblemProps {
   user: string;
 }
 
-export function Problem({ id, user }: ProblemProps) {
+export function Contest({ id, user }: ProblemProps) {
   const parsedUser = useMemo(() => JSON.parse(user), [user]);
   return <ContestDetailPage id={id} user={parsedUser} />;
 }
@@ -33,4 +33,4 @@ export async function getServerSideProps({
   return { props: { id, user: JSON.stringify(user) } };
 }
 
-export default Problem;
+export default Contest;

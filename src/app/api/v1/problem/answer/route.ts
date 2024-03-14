@@ -7,7 +7,7 @@ import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { body } = req;
+  const body = await req.json();
 
   const { answer, id } = body as unknown as ProblemType;
 
