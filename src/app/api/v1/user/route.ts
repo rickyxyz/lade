@@ -3,11 +3,21 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { GenericAPIParams, json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType, UserType } from "@/types";
+import { NextRequest } from "next/server";
 
-async function POST({ req, res }: GenericAPIParams) {
-  const { body, method } = req;
+export async function POST(req: NextRequest) {
+  let response = Response.json(
+    {
+      message: "fail",
+    },
+    {
+      status: 500,
+    }
+  );
 
   try {
+    const body = await req.json();
+
     const { id, uid, email } = body as unknown as UserType;
 
     await prisma.user.create({
@@ -20,20 +30,28 @@ async function POST({ req, res }: GenericAPIParams) {
       },
     });
 
-    res.status(200).json({ message: "success" });
+    response = Response.json({ message: "success" });
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
   }
+
+  await prisma.$disconnect();
+  return response;
 }
 
-async function GET({ req, res }: GenericAPIParams) {
+export async function GET(req: NextRequest) {
+  let response = Response.json(
+    {
+      message: "fail",
+    },
+    {
+      status: 500,
+    }
+  );
+
   try {
-    const {
-      query: { uid },
-    } = req;
+    const searchParams = req.nextUrl.searchParams;
+    const uid = searchParams.get("uid");
 
     if (typeof uid === "string") {
       const out = await prisma.user.findUnique({
@@ -42,41 +60,14 @@ async function GET({ req, res }: GenericAPIParams) {
         },
       });
 
-      res.status(200).json(JSON.parse(json(out)));
+      response = Response.json(JSON.parse(json(out)));
     } else {
       throw Error("uid undefined");
     }
   } catch (e) {
     console.log(e);
-    res.status(500).json({
-      message: "fail",
-    });
-  }
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  const { method } = req;
-
-  switch (method) {
-    case "GET":
-      await GET({
-        req,
-        res,
-      });
-      break;
-    case "POST":
-      await POST({
-        req,
-        res,
-      });
-      break;
-    default:
-      res.status(405).json({ message: "fail" });
-      break;
   }
 
   await prisma.$disconnect();
+  return response;
 }
