@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     console.log(e);
     response = Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
       },
       {
@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
     console.log(e);
     response = Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
       },
       {
         status: 500,
@@ -204,7 +204,7 @@ export async function DELETE(req: NextRequest) {
     console.log(e);
     response = Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
       },
       {
         status: 500,

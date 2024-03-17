@@ -2,6 +2,7 @@
 import { prisma } from "@/libs/prisma";
 import { json } from "@/utils/api";
 import { UserType } from "@/types";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function GET() {
   let result: UserType[] | undefined;
@@ -19,7 +20,7 @@ export async function GET() {
   } else {
     return Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
       },
       {
         status: 500,

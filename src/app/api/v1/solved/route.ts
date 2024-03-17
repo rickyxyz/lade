@@ -4,6 +4,7 @@ import { json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType } from "@/types";
 import { NextRequest } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function GET(req: NextRequest) {
   let result: any;
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
   } else {
     return Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
       },
       {
         status: 500,

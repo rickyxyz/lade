@@ -4,11 +4,12 @@ import { GenericAPIParams, json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType, UserType } from "@/types";
 import { NextRequest } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST(req: NextRequest) {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

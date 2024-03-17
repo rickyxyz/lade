@@ -5,6 +5,7 @@ import { json } from "@/utils/api";
 import { ContestDatabaseType, ProblemType } from "@/types";
 import { getAuthUser } from "@/libs/next-auth/helper";
 import { isNaN } from "formik";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,7 +15,7 @@ export default async function handler(
 
   if (method !== "GET") {
     res.status(405).json({
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     });
     return;
   }
@@ -57,7 +58,7 @@ export default async function handler(
     res.status(200).json(result);
   } else {
     res.status(500).json({
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     });
   }
 

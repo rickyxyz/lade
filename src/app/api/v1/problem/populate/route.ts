@@ -6,7 +6,7 @@ import { PROBLEM_PLACEHOLDERS } from "@/libs/firebase/placeholders";
 export async function POST() {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

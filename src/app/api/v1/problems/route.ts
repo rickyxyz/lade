@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
     return Response.json(result);
   } else {
     return Response.json({
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     });
   }
 }

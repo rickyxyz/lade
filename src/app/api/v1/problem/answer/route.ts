@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

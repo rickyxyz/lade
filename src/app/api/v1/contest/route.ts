@@ -5,12 +5,13 @@ import { ContestDatabaseType, ContestType, ProblemContestType } from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormContest } from "@/utils";
 import { NextRequest } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function PATCH(req: NextRequest) {
   let errors: Record<string, string> = {};
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,
@@ -98,7 +99,7 @@ export async function PATCH(req: NextRequest) {
     console.log(e);
     response = Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
       },
       {
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
   let errors: Record<string, string> = {};
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,
@@ -187,7 +188,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     response = Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
       },
       {
@@ -203,7 +204,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,
@@ -269,7 +270,7 @@ export async function GET(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

@@ -5,7 +5,7 @@ import { prisma } from "@/libs/prisma";
 export default async function POST() {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

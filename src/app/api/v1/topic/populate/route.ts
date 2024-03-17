@@ -5,11 +5,12 @@ import {
 } from "@/consts";
 import { ProblemAllTopicNameType } from "@/types";
 import { NextRequest } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST() {
   let response = Response.json(
     {
-      message: "fail",
+      message: API_FAIL_MESSAGE,
     },
     {
       status: 500,

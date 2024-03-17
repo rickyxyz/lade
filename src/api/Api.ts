@@ -28,6 +28,7 @@ interface ApiParams {
     page?: number;
   };
   post_problem: Empty;
+  post_problems: Empty;
   patch_problem: Empty;
   get_solved: {
     userId: string;
@@ -57,6 +58,7 @@ interface ApiBody {
   get_problem: Empty;
   get_problems: Empty;
   post_problem: ProblemType;
+  post_problems: ProblemType[];
   patch_problem: ProblemType;
   get_solved: Empty;
   post_solved: {
@@ -88,6 +90,7 @@ interface ApiReturn {
   post_problem: ApiMessage & {
     id: string;
   };
+  post_problems: ApiMessage;
   patch_problem: ApiMessage;
   get_solved: SolvedType;
   post_solved: ApiMessage;
@@ -125,6 +128,10 @@ const ROUTES = {
   },
   post_problem: {
     path: "/v1/problem",
+    method: "POST",
+  },
+  post_problems: {
+    path: "/v2/problem",
     method: "POST",
   },
   patch_problem: {

@@ -145,7 +145,7 @@ export async function GET(req: NextRequest) {
   } else {
     return Response.json(
       {
-        message: "fail",
+        message: API_FAIL_MESSAGE,
       },
       {
         status: 500,
