@@ -1,3 +1,4 @@
+"use client";
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
 import { BsSearch } from "react-icons/bs";
 import { usePathname, useRouter } from "next/navigation";
@@ -186,7 +187,15 @@ export function ContestListPage({ query }: ProblemListPageProps) {
         console.log("Result:");
         console.log(e);
       });
-  }, [handleUpdateStateOnQueryUpdate, query]);
+  }, [
+    handleUpdateStateOnQueryUpdate,
+    query,
+    userPage,
+    userSearch,
+    userSort,
+    userSubTopic,
+    userTopic,
+  ]);
 
   const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {
