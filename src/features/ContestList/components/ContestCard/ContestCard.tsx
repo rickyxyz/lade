@@ -1,19 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { Button, Card, More } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
-import {
-  ContestDatabaseType,
-  ContestType,
-  ProblemType,
-  UserType,
-} from "@/types";
+import { ContestDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
-import {
-  ProblemDetailStats,
-  ProblemDetailTopics,
-} from "@/features/ProblemDetail";
-import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
+import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
+import { BsPersonFill } from "react-icons/bs";
 
 export interface ProblemCardProps {
   contest: ContestDatabaseType;

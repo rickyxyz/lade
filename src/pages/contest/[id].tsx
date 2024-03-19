@@ -1,6 +1,5 @@
-import { ContestDetailPage } from "@/features/ContestDetail";
+import { ContestDetailPage } from "@/features";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
-import { NextApiRequest, NextApiResponse } from "next";
 import { useMemo } from "react";
 
 interface ProblemProps {

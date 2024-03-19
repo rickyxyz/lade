@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Card, More, Tag } from "@/components";
+import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
+import { Card, More } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
-import { ProblemDatabaseType, ProblemType, UserType } from "@/types";
+import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
-import {
-  ProblemDetailStats,
-  ProblemDetailTopics,
-} from "@/features/ProblemDetail";
-import { BsCheck, BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
-import clsx from "clsx";
+import { BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;

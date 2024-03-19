@@ -1,7 +1,5 @@
-import { ProblemListPage } from "@/features";
-import { ProblemListPageNew } from "@/features/ProblemList/pages/ProblemListPageNew";
+import { ProblemListPageNew } from "@/features";
 import { ProblemQuery } from "@/types";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default async function Page({
   searchParams,

@@ -21,8 +21,7 @@ import {
   ProblemTopicNameType,
   ProblemType,
 } from "@/types";
-import { ContestCard, ContestCardSkeleton, ProblemFilter } from "../components";
-import { ParsedUrlQuery } from "querystring";
+import { ContestCard, ContestCardSkeleton, ProblemFilter } from "@/features";
 
 interface ProblemListPageProps {
   query: ProblemQuery;

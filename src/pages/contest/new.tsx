@@ -1,4 +1,4 @@
-import { ContestCreatePage } from "@/features/ContestCreate";
+import { ContestCreatePage } from "@/features";
 
 export default function CreateProblem() {
   return <ContestCreatePage />;

@@ -1,7 +1,5 @@
-import { ProblemListPage } from "@/features";
-import { ContestListPage } from "@/features/ContestList/pages/ContestListPage";
+import { ContestListPage } from "@/features";
 import { ProblemQuery } from "@/types";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default async function Page({
   searchParams,

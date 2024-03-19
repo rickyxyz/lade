@@ -12,7 +12,7 @@ import {
   SettingSelect,
 } from "@/components";
 import { useFormikContext } from "formik";
-import { ProblemAnswer } from "@/features/ProblemDetail";
+import { ProblemAnswer } from "@/features";
 import { useProblemEditInitialized } from "@/hooks";
 import { useTopics } from "@/hooks";
 
