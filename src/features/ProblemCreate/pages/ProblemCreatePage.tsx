@@ -57,7 +57,14 @@ export function ProblemCreatePage() {
       <Button
         onClick={async () => {
           await API("post_problems", {
-            body: [PROBLEM_PLACEHOLDERS[0], PROBLEM_PLACEHOLDERS[0]],
+            body: [
+              {
+                ...PROBLEM_PLACEHOLDERS[0],
+                title: "",
+                statement: "",
+              },
+              PROBLEM_PLACEHOLDERS[0],
+            ],
           });
         }}
       >

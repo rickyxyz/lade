@@ -5,6 +5,7 @@ import { ProblemType } from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormProblem } from "@/utils";
 import { NextRequest } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function PATCH(req: NextRequest) {
   let errors: Record<string, string> = {};
