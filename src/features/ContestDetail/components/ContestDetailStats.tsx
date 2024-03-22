@@ -1,8 +1,8 @@
 import { IconText } from "@/components";
-import { IconType } from "react-icons";
+import { SvgIconComponent } from "@mui/icons-material";
 
 export interface ContestStatsDetailProps {
-  icon: IconType;
+  icon: SvgIconComponent;
   text: string;
 }
 

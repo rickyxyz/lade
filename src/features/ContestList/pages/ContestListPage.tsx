@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
-import { BsSearch } from "react-icons/bs";
 import { usePathname, useRouter } from "next/navigation";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
@@ -22,6 +21,7 @@ import {
   ProblemType,
 } from "@/types";
 import { ContestCard, ContestCardSkeleton, ProblemFilter } from "@/features";
+import { Search } from "@mui/icons-material";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
@@ -317,7 +317,7 @@ export function ContestListPage({ query }: ProblemListPageProps) {
                   handleUpdateQuery(1);
                 }}
                 disabled={loading}
-                icon={BsSearch}
+                icon={Search}
               />
             }
           />

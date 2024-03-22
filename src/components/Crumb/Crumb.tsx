@@ -1,8 +1,7 @@
-import { Fragment } from "react";
 import { Paragraph } from "../Paragraph";
 import { Icon } from "../Icon";
-import { BsChevronRight } from "react-icons/bs";
 import { FontColor } from "@/consts/style";
+import { ArrowForwardIos } from "@mui/icons-material";
 
 interface CrumbType {
   text?: string;
@@ -21,7 +20,7 @@ export function Crumb({ crumbs }: CrumbProps) {
         const isFirst = idx === 0;
         return (
           <div className="flex items-center gap-2" key={`Crumb_${idx}`}>
-            {!isFirst && <Icon color={color} IconComponent={BsChevronRight} />}
+            {!isFirst && <Icon color={color} IconComponent={ArrowForwardIos} />}
             <Paragraph color={color} onClick={onClick}>
               {text}
             </Paragraph>

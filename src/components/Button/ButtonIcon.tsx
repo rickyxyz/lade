@@ -1,10 +1,10 @@
-import { IconType } from "react-icons";
 import { Button, ButtonProps, ButtonSizeType } from "./Button";
 import { Icon, IconSizeType } from "../Icon";
 import clsx from "clsx";
+import { SvgIconComponent } from "@mui/icons-material";
 
 interface ButtonIcon extends ButtonProps {
-  icon: IconType;
+  icon: SvgIconComponent;
   iconSize?: IconSizeType;
 }
 

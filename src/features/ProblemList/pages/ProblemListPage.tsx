@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
-import { BsSearch } from "react-icons/bs/index";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import {
@@ -28,6 +27,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
+import { Search } from "@mui/icons-material";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
@@ -324,7 +324,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
                   handleUpdateQuery(1);
                 }}
                 disabled={loading}
-                icon={BsSearch}
+                icon={Search}
               />
             }
           />

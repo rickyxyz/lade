@@ -1,18 +1,16 @@
 import { FONT_COLOR, FontColor } from "@/consts/style";
 import clsx from "clsx";
 import { CSSProperties, useMemo } from "react";
-import { IconType, IconBaseProps as IconLibProps } from "react-icons";
+import { SvgIconComponent } from "@mui/icons-material";
 
-export type IconSizeType = "m" | "s";
+export type IconSizeType = "m" | "s" | "l";
 
-interface IconBaseProps {
-  IconComponent: IconType;
+export interface IconProps {
+  IconComponent: SvgIconComponent;
+  className?: string;
   color?: FontColor;
   size?: IconSizeType;
 }
-
-export type IconProps = IconBaseProps & Omit<IconLibProps, keyof IconBaseProps>;
-
 export function Icon({
   IconComponent,
   className,
@@ -24,6 +22,9 @@ export function Icon({
     let sizePx = "16px";
 
     switch (size) {
+      case "l":
+        sizePx = "24px";
+        break;
       case "m":
         sizePx = "16px";
         break;

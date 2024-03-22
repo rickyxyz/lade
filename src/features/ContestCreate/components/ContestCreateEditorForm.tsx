@@ -21,10 +21,10 @@ import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useDebounce, useProblemEditInitialized, useTopics } from "@/hooks";
 import { crudData } from "@/libs/firebase";
-import { BsArrowDown, BsArrowUp, BsX } from "react-icons/bs";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
 import { API } from "@/api";
 import clsx from "clsx";
+import { North, South, X } from "@mui/icons-material";
 
 export interface ContestEditFormProps {
   contest?: ContestType;
@@ -250,6 +250,7 @@ export function ContestCreateEditorForm({
         {
           problem,
           score: 10,
+          order: prev.length,
         },
       ]);
       return;
@@ -326,21 +327,21 @@ export function ContestCreateEditorForm({
           <td>
             <div className="flex gap-2">
               <ButtonIcon
-                icon={BsArrowUp}
+                icon={North}
                 size="s"
                 variant="ghost"
                 disabled={idx === 0}
                 onClick={() => handleReorderProblem(idx, -1)}
               />
               <ButtonIcon
-                icon={BsArrowDown}
+                icon={South}
                 size="s"
                 variant="ghost"
                 disabled={problems.length - 1 === idx}
                 onClick={() => handleReorderProblem(idx, 1)}
               />
               <ButtonIcon
-                icon={BsX}
+                icon={X}
                 size="s"
                 variant="ghost-danger"
                 onClick={() => handleRemoveProblem(idx)}

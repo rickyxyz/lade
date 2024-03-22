@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ReactNode } from "react";
 import { Icon } from "../Icon";
-import { IconType } from "react-icons";
+import { SvgIconComponent } from "@mui/icons-material";
 
 export type QuoteVariantType =
   | "primary"
@@ -14,7 +14,7 @@ interface QuoteProps {
   children: ReactNode;
   className?: string;
   variant?: QuoteVariantType;
-  icon?: IconType;
+  icon?: SvgIconComponent;
 }
 
 export function Quote({

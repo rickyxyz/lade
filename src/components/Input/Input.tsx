@@ -6,8 +6,8 @@ import {
 } from "react";
 import clsx from "clsx";
 import { Icon } from "../Icon";
-import { IconType } from "react-icons";
 import { Paragraph } from "../Paragraph";
+import { SvgIconComponent } from "@mui/icons-material";
 
 export type InputVariantType = "basic" | "solid";
 
@@ -19,9 +19,9 @@ export interface InputProps
   variant?: InputVariantType;
   label?: string;
   labelClassName?: string;
-  iconLeft?: IconType;
+  iconLeft?: SvgIconComponent;
   iconLeftClassName?: string;
-  iconRight?: IconType;
+  iconRight?: SvgIconComponent;
   iconRightClassName?: string;
   rightElement?: ReactNode;
   externalWrapperClassName?: string;

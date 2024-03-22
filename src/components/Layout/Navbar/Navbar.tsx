@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button, Icon, Input, User, Dropdown, IconText } from "@/components";
+import {
+  Button,
+  Icon,
+  Input,
+  User,
+  Dropdown,
+  IconText,
+  DropdownOption,
+} from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { crudData, logout } from "@/libs/firebase";
-import { BsCaretDownFill } from "react-icons/bs";
-import { MdLogout } from "react-icons/md";
+import { ArrowDropDown, Logout } from "@mui/icons-material";
 
 export function Navbar() {
   const auth = getAuth();
@@ -37,7 +44,7 @@ export function Navbar() {
             {
               id: "Logout",
               className: "text-red-500",
-              element: <IconText IconComponent={MdLogout} text="Logout" />,
+              element: <IconText IconComponent={Logout} text="Logout" />,
               onClick: logout,
             },
           ]}
@@ -46,11 +53,7 @@ export function Navbar() {
               className="relative"
               username={user.id}
               captionElement={
-                <Icon
-                  className="ml-2"
-                  IconComponent={BsCaretDownFill}
-                  size="s"
-                />
+                <Icon className="ml-2" IconComponent={ArrowDropDown} size="s" />
               }
             />
           }

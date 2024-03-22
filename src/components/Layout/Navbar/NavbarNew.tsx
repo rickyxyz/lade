@@ -5,9 +5,8 @@ import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { crudData, logout } from "@/libs/firebase";
-import { BsCaretDownFill } from "react-icons/bs";
-import { MdLogout } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { ArrowDropDown, Logout } from "@mui/icons-material";
 
 export function NavbarNew() {
   const auth = getAuth();
@@ -37,7 +36,7 @@ export function NavbarNew() {
             {
               id: "Logout",
               className: "text-red-500",
-              element: <IconText IconComponent={MdLogout} text="Logout" />,
+              element: <IconText IconComponent={Logout} text="Logout" />,
               onClick: logout,
             },
           ]}
@@ -46,11 +45,7 @@ export function NavbarNew() {
               className="relative"
               username={user.id}
               captionElement={
-                <Icon
-                  className="ml-2"
-                  IconComponent={BsCaretDownFill}
-                  size="s"
-                />
+                <Icon className="ml-2" IconComponent={ArrowDropDown} size="s" />
               }
             />
           }
@@ -126,7 +121,7 @@ export function NavbarNew() {
 
 const NAVBAR_OUTER_STYLE = clsx(
   "sticky top-0 flex justify-between items-center h-16",
-  "bg-gray-50",
+  "bg-red-300",
   "border-t-4 border-t-teal-500 border-b border-gray-200 z-20"
 );
 

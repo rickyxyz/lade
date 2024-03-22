@@ -1,4 +1,3 @@
-import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { ButtonIcon } from "../Button";
 import { PaginationData } from "@/types/pagination";
 import { Paragraph } from "../Paragraph";
@@ -7,6 +6,7 @@ import { useMemo } from "react";
 import { useDevice } from "@/hooks";
 import clsx from "clsx";
 import { PaginationButton } from "./PaginationButton";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 interface PaginationProps {
   pagination: PaginationData;
@@ -138,7 +138,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           variant="outline"
           order="first"
           orderDirection="row"
-          icon={BsChevronLeft}
+          icon={ChevronLeft}
           disabled={page === 1}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}
@@ -160,7 +160,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           variant="outline"
           order="last"
           orderDirection="row"
-          icon={BsChevronRight}
+          icon={ChevronRight}
           disabled={page === maxPages}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}

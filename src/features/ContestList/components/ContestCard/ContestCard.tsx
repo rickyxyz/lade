@@ -5,7 +5,7 @@ import { getPermissionForContent, md } from "@/utils";
 import { ContestDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { BsPersonFill } from "react-icons/bs";
+import { Person } from "@mui/icons-material";
 
 export interface ContestCardProps {
   contest: ContestDatabaseType;
@@ -81,7 +81,7 @@ export function ContestCard({ contest }: ContestCardProps) {
       <div className="flex items-center justify-between">
         <Button>Participate</Button>
         <div className="flex items-center text-sm text-gray-600 gap-6">
-          <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
+          <ProblemDetailStats text={String(authorId)} icon={Person} />
         </div>
       </div>
     ),

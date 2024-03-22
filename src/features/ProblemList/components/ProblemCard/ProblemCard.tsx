@@ -5,7 +5,7 @@ import { Card, More } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
-import { BsCheckCircleFill, BsPersonFill } from "react-icons/bs";
+import { CheckCircle, Person } from "@mui/icons-material";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
@@ -80,11 +80,8 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderStats = useMemo(
     () => (
       <div className="flex items-center text-sm gap-6">
-        <ProblemDetailStats text={String(authorId)} icon={BsPersonFill} />
-        <ProblemDetailStats
-          text={String(solveds.length)}
-          icon={BsCheckCircleFill}
-        />
+        <ProblemDetailStats text={String(authorId)} icon={Person} />
+        <ProblemDetailStats text={String(solveds.length)} icon={CheckCircle} />
       </div>
     ),
     [authorId, solveds]

@@ -4,8 +4,7 @@ import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
 import { Tooltip, TooltipBaseProps } from "../Tooltip";
-import { BsChevronDown } from "react-icons/bs";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ExpandMore, HourglassEmpty } from "@mui/icons-material";
 
 type SelectVariant = "basic" | "solid";
 
@@ -111,7 +110,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   const renderLoading = useMemo(
     () => (
       <div className="p-4 flex items-center justify-center">
-        <AiOutlineLoading3Quarters className="animate-spin" />
+        <HourglassEmpty className="animate-spin" />
       </div>
     ),
     []
@@ -139,7 +138,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           {currentOption}
         </span>
         <Icon
-          IconComponent={BsChevronDown}
+          IconComponent={ExpandMore}
           className="absolute right-2"
           size="s"
         />

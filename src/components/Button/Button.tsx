@@ -5,10 +5,9 @@ import {
   CSSProperties,
 } from "react";
 import clsx from "clsx";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Paragraph } from "../Paragraph";
-import { IconType } from "react-icons";
 import { Icon } from "../Icon";
+import { HourglassEmpty } from "@mui/icons-material";
 
 export type ButtonVariantType =
   | "primary"
@@ -104,7 +103,10 @@ export function Button({
           {children}
         </>
       ) : (
-        <AiOutlineLoading3Quarters className="my-1 justify-self-center animate-spin" />
+        <Icon
+          IconComponent={HourglassEmpty}
+          className="my-1 justify-self-center animate-spin"
+        />
       )}
     </button>
   );

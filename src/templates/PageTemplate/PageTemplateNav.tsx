@@ -16,14 +16,13 @@ import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { crudData, logout } from "@/libs/firebase";
-import { BsCaretDownFill, BsList, BsMenuButton } from "react-icons/bs";
-import { MdLogout } from "react-icons/md";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+import { ArrowDropDown, Logout, Menu } from "@mui/icons-material";
 
 interface NavLink {
   label: string;
@@ -69,7 +68,7 @@ export function PageTemplateNav() {
             {
               id: "Logout",
               className: "text-red-500",
-              element: <IconText IconComponent={MdLogout} text="Logout" />,
+              element: <IconText IconComponent={Logout} text="Logout" />,
               onClick: logout,
             },
           ]}
@@ -82,7 +81,7 @@ export function PageTemplateNav() {
                 device !== "mobile" && (
                   <Icon
                     className="ml-2"
-                    IconComponent={BsCaretDownFill}
+                    IconComponent={ArrowDropDown}
                     size="s"
                   />
                 )
@@ -213,7 +212,7 @@ export function PageTemplateNav() {
                 setMobileLinks((prev) => !prev);
               }}
             >
-              <BsList />
+              <Menu />
             </PageTemplateNavButton>
           )}
           <Image
@@ -234,7 +233,7 @@ export function PageTemplateNav() {
 
 const NAVBAR_OUTER_STYLE = clsx(
   "sticky top-0 flex justify-between items-center h-16",
-  "bg-gray-50",
+  "bg-red-100",
   "border-t-4 border-t-teal-500 border-b border-gray-200 z-20"
 );
 

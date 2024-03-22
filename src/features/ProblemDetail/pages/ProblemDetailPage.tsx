@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { API } from "@/api";
@@ -25,6 +24,7 @@ import {
   ProblemDetailTopics,
 } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+import { MoreVert, West } from "@mui/icons-material";
 
 interface ProblemData {
   label: string;
@@ -252,7 +252,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderNavigation = useMemo(
     () => (
       <IconText
-        IconComponent={BsArrowLeft}
+        IconComponent={West}
         text="Back"
         className="mb-4 text-teal-600 cursor-pointer"
         onClick={handleGoBack}
@@ -282,7 +282,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
               onClick={() => {
                 setMobileAction((prev) => !prev);
               }}
-              icon={BsThreeDotsVertical}
+              icon={MoreVert}
             />
           )}
         </div>

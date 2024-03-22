@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState } from "react";
-import { BsArrowLeft, BsThreeDotsVertical } from "react-icons/bs";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { API } from "@/api";
@@ -24,6 +23,7 @@ import {
 } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { ContestEditPage } from "./ContestEditPage";
+import { MoreVert, West } from "@mui/icons-material";
 
 interface ContestData {
   label: string;
@@ -185,7 +185,7 @@ export function ContestDetailPage({ id, user }: ContestProps) {
   const renderNavigation = useMemo(
     () => (
       <IconText
-        IconComponent={BsArrowLeft}
+        IconComponent={West}
         text="Back"
         className="mb-4 text-teal-600 cursor-pointer"
         onClick={handleGoBack}
@@ -215,7 +215,7 @@ export function ContestDetailPage({ id, user }: ContestProps) {
               onClick={() => {
                 setMobileAction((prev) => !prev);
               }}
-              icon={BsThreeDotsVertical}
+              icon={MoreVert}
             />
           )}
         </div>

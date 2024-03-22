@@ -15,8 +15,6 @@ import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
 import { crudData, logout } from "@/libs/firebase";
-import { BsCaretDownFill, BsList, BsMenuButton } from "react-icons/bs";
-import { MdLogout } from "react-icons/md";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
@@ -24,6 +22,7 @@ import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { useRouter } from "next/navigation";
+import { ArrowDropDown, Logout, Menu } from "@mui/icons-material";
 
 interface NavLink {
   label: string;
@@ -69,7 +68,7 @@ export function PageTemplateNavNew() {
             {
               id: "Logout",
               className: "text-red-500",
-              element: <IconText IconComponent={MdLogout} text="Logout" />,
+              element: <IconText IconComponent={Logout} text="Logout" />,
               onClick: logout,
             },
           ]}
@@ -82,7 +81,7 @@ export function PageTemplateNavNew() {
                 device !== "mobile" && (
                   <Icon
                     className="ml-2"
-                    IconComponent={BsCaretDownFill}
+                    IconComponent={ArrowDropDown}
                     size="s"
                   />
                 )
@@ -213,7 +212,7 @@ export function PageTemplateNavNew() {
                 setMobileLinks((prev) => !prev);
               }}
             >
-              <BsList />
+              <Menu />
             </PageTemplateNavButton>
           )}
           <Image

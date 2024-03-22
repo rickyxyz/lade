@@ -1,7 +1,7 @@
 import { SelectOptionType } from "@/types";
+import { Check } from "@mui/icons-material";
 import clsx from "clsx";
 import { HTMLProps } from "react";
-import { BsCheck } from "react-icons/bs";
 
 interface SelectOptionProps extends HTMLProps<HTMLDivElement> {
   option: SelectOptionType<string>;
@@ -21,7 +21,7 @@ export function SelectOption({
       key={option.id}
     >
       <span className={clsx("w-8", !selected && "invisible")}>
-        <BsCheck size={24} />
+        <Check />
       </span>
       <span>{option.text}</span>
     </div>
