@@ -119,9 +119,9 @@ const BUTTON_BASE_STYLE = [
 ];
 
 const BUTTON_PRIMARY_STYLE = [
-  `bg-teal-600 text-white`,
-  `hover:bg-teal-700`,
-  `active:bg-teal-800`,
+  `bg-blue-600 text-white`,
+  `hover:bg-blue-700`,
+  `active:bg-blue-800`,
 ];
 
 const BUTTON_SECONDARY_STYLE = [
@@ -149,16 +149,16 @@ const BUTTON_DANGER_STYLE = [
 ];
 
 const BUTTON_OUTLINE_STYLE = [
-  "text-teal-700 bg-white disabled:text-gray-400",
-  `hover:bg-teal-50 disabled:bg-transparent`,
-  `active:bg-teal-100 disabled:bg-transparent`,
+  "text-blue-700 bg-white disabled:text-gray-400",
+  `hover:bg-blue-50 disabled:bg-transparent`,
+  `active:bg-blue-100 disabled:bg-transparent`,
   `border border-gray-300`,
 ];
 
 const BUTTON_GHOST_STYLE = [
-  "text-teal-700 disabled:text-gray-400",
-  `hover:bg-teal-50 disabled:bg-transparent`,
-  `active:bg-teal-100 disabled:bg-transparent`,
+  "text-blue-700 disabled:text-gray-400",
+  `hover:bg-blue-50 disabled:bg-transparent`,
+  `active:bg-blue-100 disabled:bg-transparent`,
 ];
 
 const BUTTON_GHOST_DANGER_STYLE = [
@@ -168,9 +168,9 @@ const BUTTON_GHOST_DANGER_STYLE = [
 ];
 
 const BUTTON_LINK_STYLE = [
-  "text-teal-700",
-  "hover:underline hover:text-teal-500",
-  "active:underline active:text-teal-500",
+  "text-blue-700",
+  "hover:underline hover:text-blue-500",
+  "active:underline active:text-blue-500",
 ];
 
 const BUTTON_ORDER_STYLE: Record<

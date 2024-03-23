@@ -24,7 +24,7 @@ export interface ParagraphProps {
 export function Paragraph({
   as = "span",
   weight = "medium",
-  size = "m",
+  size = "base",
   color = "secondary-8",
   className: propsClass,
   ...rest

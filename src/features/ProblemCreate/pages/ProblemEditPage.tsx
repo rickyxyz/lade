@@ -41,7 +41,7 @@ export function ProblemEditPage({
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate title="Edit Problem">
       <ProblemCreateEditor
         headElement={renderHead}
         stateProblem={stateProblem}

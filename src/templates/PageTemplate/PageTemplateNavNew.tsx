@@ -20,13 +20,27 @@ import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
-import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
-import { useRouter } from "next/navigation";
-import { ArrowDropDown, Logout, Menu } from "@mui/icons-material";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  ArrowDropDown,
+  AssignmentOutlined,
+  EmojiEventsOutlined,
+  LightbulbOutlined,
+  Logout,
+  Menu,
+  SvgIconComponent,
+} from "@mui/icons-material";
+import { List } from "@mui/material";
 
 interface NavLink {
   label: string;
   href: string;
+  icon: SvgIconComponent;
+}
+
+interface NavGroup {
+  name: string;
+  links: NavLink[];
 }
 
 export function PageTemplateNavNew() {
@@ -38,20 +52,29 @@ export function PageTemplateNavNew() {
   const stateMobileLinks = useState(false);
   const setMobileLinks = stateMobileLinks[1];
   const { device } = useDevice();
+  const pathname = usePathname();
 
-  const links = useMemo<NavLink[]>(
+  const navLinks = useMemo<NavGroup[]>(
     () => [
       {
-        label: "Problems",
-        href: "/",
-      },
-      {
-        label: "Contests",
-        href: "/",
-      },
-      {
-        label: "Leaderboard",
-        href: "/",
+        name: "MAIN",
+        links: [
+          {
+            label: "Problems",
+            href: "/",
+            icon: LightbulbOutlined,
+          },
+          {
+            label: "Contests",
+            href: "/contests",
+            icon: AssignmentOutlined,
+          },
+          {
+            label: "Leaderboard",
+            href: "/leaderboard",
+            icon: EmojiEventsOutlined,
+          },
+        ],
       },
     ],
     []
@@ -132,26 +155,24 @@ export function PageTemplateNavNew() {
 
   const renderLinks = useMemo(
     () =>
-      links.map(({ label, href }) => (
-        <PageTemplateNavButton key={label} label={label} href={href} />
+      navLinks.map(({ name, links }) => (
+        <div className="flex flex-col gap-1" key={name}>
+          <Paragraph weight="semibold" color="secondary-4">
+            {name}
+          </Paragraph>
+          {links.map(({ label, href, icon }) => (
+            <PageTemplateNavButton
+              key={label}
+              label={label}
+              href={href}
+              icon={icon}
+              active={href === pathname}
+            />
+          ))}
+        </div>
       )),
-    [links]
+    [navLinks, pathname]
   );
-
-  const renderMobileLinks = useMemo(() => {
-    const mobileLinks: ButtonListEntry[] = links.map(({ label, href }) => ({
-      label,
-      handler: () => {
-        router.push(href);
-        setMobileLinks(false);
-      },
-    }));
-    return (
-      <Modal stateVisible={stateMobileLinks}>
-        <ButtonList list={mobileLinks} className="w-48" />
-      </Modal>
-    );
-  }, [links, router, setMobileLinks, stateMobileLinks]);
 
   const handleUpdateUser = useCallback(
     (authUser: UserType) => {
@@ -202,41 +223,34 @@ export function PageTemplateNavNew() {
   }, [handleInitialize]);
 
   return (
-    <nav className={NAVBAR_OUTER_STYLE} style={{ minHeight: "4rem" }}>
-      <div className={NAVBAR_INNER_STYLE}>
-        <div className="flex h-full">
-          {device === "mobile" && (
-            <PageTemplateNavButton
-              className="!px-6"
-              onClick={() => {
-                setMobileLinks((prev) => !prev);
-              }}
-            >
-              <Menu />
-            </PageTemplateNavButton>
-          )}
-          <Image
-            className="mr-8"
-            src="/lade.svg"
-            alt="LADE Logo"
-            width={120}
-            height={56}
-          />
-          {device !== "mobile" && renderLinks}
-        </div>
-        {renderAuthButtons}
-        {device === "mobile" && renderMobileLinks}
-      </div>
+    <nav
+      className={clsx(
+        "flex flex-col h-full",
+        "border-gray-300 border-r",
+        "px-6 py-4"
+      )}
+      style={{
+        minWidth: "240px",
+      }}
+    >
+      {device === "mobile" && (
+        <PageTemplateNavButton
+          className="!px-6"
+          onClick={() => {
+            setMobileLinks((prev) => !prev);
+          }}
+        >
+          <List />
+        </PageTemplateNavButton>
+      )}
+      <Image
+        className="mb-8"
+        src="/lade.svg"
+        alt="LADE Logo"
+        width={72}
+        height={20}
+      />
+      {device !== "mobile" && renderLinks}
     </nav>
   );
 }
-
-const NAVBAR_OUTER_STYLE = clsx(
-  "sticky top-0 flex justify-between items-center h-16",
-  "bg-gray-50",
-  "border-t-4 border-t-teal-500 border-b border-gray-200 z-20"
-);
-
-const NAVBAR_INNER_STYLE = clsx(
-  "flex justify-between items-center mx-auto w-adaptive gap-4 h-full"
-);

@@ -2,7 +2,8 @@ export const FONT_SIZE = {
   xl: "!text-xl",
   l: "!text-lg !leading-8",
   "l-alt": "!text-lg-alt",
-  m: "",
+  m: "!text-md",
+  base: "",
   "m-alt": "!text-md-alt",
   s: "!text-sm",
 } as const;
@@ -49,14 +50,14 @@ export const FONT_COLOR = {
   "secondary-3": "text-zinc-300",
   "secondary-2": "text-zinc-200",
   "secondary-1": "text-zinc-100",
-  "primary-8": "text-teal-800",
-  "primary-7": "text-teal-700",
-  "primary-6": "text-teal-600",
-  "primary-5": "text-teal-500",
-  "primary-4": "text-teal-400",
-  "primary-3": "text-teal-300",
-  "primary-2": "text-teal-200",
-  "primary-1": "text-teal-100",
+  "primary-8": "text-blue-800",
+  "primary-7": "text-blue-700",
+  "primary-6": "text-blue-600",
+  "primary-5": "text-blue-500",
+  "primary-4": "text-blue-400",
+  "primary-3": "text-blue-300",
+  "primary-2": "text-blue-200",
+  "primary-1": "text-blue-100",
 };
 
 export type FontColor = keyof typeof FONT_COLOR;

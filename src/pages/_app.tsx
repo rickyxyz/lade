@@ -76,7 +76,6 @@ export default function App({ Component, pageProps }: AppProps) {
                     noto.className
                   )}
                 >
-                  <PageTemplateNav />
                   <Component {...pageProps} />
                 </div>
               </LayoutContext.Provider>

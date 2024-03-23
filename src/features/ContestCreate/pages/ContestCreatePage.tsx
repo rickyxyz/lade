@@ -47,7 +47,7 @@ export function ContestCreatePage() {
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate title="Create Contest">
       <ContestCreateEditor
         headElement={renderHead}
         contest={contest}

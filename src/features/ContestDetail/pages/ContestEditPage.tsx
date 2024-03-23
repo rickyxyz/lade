@@ -45,7 +45,7 @@ export function ContestEditPage({
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate title="Edit Contest">
       <ContestCreateEditor
         headElement={renderHead}
         stateProblems={stateProblems}

@@ -26,6 +26,7 @@ interface ApiParams {
     sort?: string;
     sortBy?: "asc" | "desc";
     page?: number;
+    count?: number;
   };
   post_problem: Empty;
   post_problems: Empty;

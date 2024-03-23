@@ -28,6 +28,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { Search } from "@mui/icons-material";
+import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
@@ -167,6 +168,7 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
             }
           : {}),
         page: isNaN(userPage) ? 1 : userPage,
+        count: PROBLEM_PAGINATION_COUNT,
       },
     })
       .then(
@@ -230,9 +232,14 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
 
   const renderProblems = useMemo(
     () => (
-      <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-2 gap-8">
         {loading ? (
-          <ProblemCardSkeleton />
+          <>
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+          </>
         ) : (
           problems.map((problem) => (
             <ProblemCard key={problem.id} problem={problem} />
@@ -302,9 +309,6 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
   const renderHead = useMemo(
     () => (
       <>
-        <Paragraph as="h1" className="mb-8">
-          Problems
-        </Paragraph>
         <div className="flex flex-col">
           <Input
             externalWrapperClassName="flex-1"
@@ -353,5 +357,9 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
     ]
   );
 
-  return <PageTemplate head={renderHead}>{renderProblems}</PageTemplate>;
+  return (
+    <PageTemplate title="Problems" head={renderHead}>
+      {renderProblems}
+    </PageTemplate>
+  );
 }

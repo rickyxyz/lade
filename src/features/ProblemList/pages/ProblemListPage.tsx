@@ -167,6 +167,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             }
           : {}),
         page: isNaN(userPage) ? 1 : userPage,
+        count: 4,
       },
     })
       .then(
@@ -302,9 +303,6 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
   const renderHead = useMemo(
     () => (
       <>
-        <Paragraph as="h1" className="mb-8">
-          Problems
-        </Paragraph>
         <div className="flex flex-col">
           <Input
             externalWrapperClassName="flex-1"

@@ -1,8 +1,11 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
+import { PageTemplateNavNew } from "./PageTemplateNavNew";
+import { Paragraph } from "@/components";
 
 export interface PageTemplateProps {
   className?: string;
+  title?: string;
   head?: ReactNode;
   children?: ReactNode;
   side?: ReactNode;
@@ -11,20 +14,30 @@ export interface PageTemplateProps {
 }
 
 export function PageTemplate({
+  title = "Title",
   className,
   children,
   head,
   side,
 }: PageTemplateProps) {
   return (
-    <main className="flex flex-col relative w-adaptive-2 mx-auto py-12">
-      {head}
-      <section className="flex flex-col md:flex-row w-full gap-8">
-        <article className={clsx("h-full w-full", className)}>
+    <div
+      className={clsx(
+        "relative h-full flex flex-row flex-auto overflow-hidden"
+      )}
+    >
+      <PageTemplateNavNew />
+      <main className="flex flex-col w-full bg-gray-100">
+        <div className="w-full py-3 px-8 bg-white border-b border-gray-300">
+          <Paragraph size="m" weight="semibold">
+            {title}
+          </Paragraph>
+        </div>
+        <section className="flex flex-col w-full overflow-y-scroll p-8">
+          {head}
           {children}
-        </article>
-        {side}
-      </section>
-    </main>
+        </section>
+      </main>
+    </div>
   );
 }

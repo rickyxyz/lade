@@ -53,7 +53,7 @@ export function ProblemCreatePage() {
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate title="Create Problem">
       <Button
         onClick={async () => {
           await API("post_problems", {

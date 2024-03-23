@@ -40,7 +40,7 @@ export function Quote({
       {icon && (
         <Icon
           className={clsx([
-            variant === "primary" && "text-teal-700",
+            variant === "primary" && "text-blue-700",
             variant === "secondary" && "text-gray-700",
             variant === "success" && "text-green-700",
             variant === "warning" && "text-yellow-700",
@@ -61,7 +61,7 @@ const QUOTE_BASE_STYLE = [
   "rounded",
 ];
 
-const QUOTE_PRIMARY_STYLE = [`bg-teal-100`];
+const QUOTE_PRIMARY_STYLE = [`bg-blue-100`];
 
 const QUOTE_SECONDARY_STYLE = [`bg-gray-100`];
 

@@ -163,11 +163,11 @@ const INPUT_BASE_STYLE =
 
 const INPUT_BASIC_STYLE = [
   "border border-gray-300",
-  "focus:outline focus:border-teal-400 focus:outline-4 outline-teal-200",
+  "focus:outline focus:border-blue-400 focus:outline-4 outline-blue-200",
 ];
 
 const INPUT_FOCUS_STYLE = [
-  "outline border-teal-400 outline-4 outline-teal-200",
+  "outline border-blue-400 outline-4 outline-blue-200",
 ];
 
 const INPUT_SOLID_STYLE = ["bg-gray-100 focus:bg-gray-200"];

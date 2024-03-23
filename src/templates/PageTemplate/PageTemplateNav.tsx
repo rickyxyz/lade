@@ -234,7 +234,7 @@ export function PageTemplateNav() {
 const NAVBAR_OUTER_STYLE = clsx(
   "sticky top-0 flex justify-between items-center h-16",
   "bg-red-100",
-  "border-t-4 border-t-teal-500 border-b border-gray-200 z-20"
+  "border-t-4 border-t-blue-500 border-b border-gray-200 z-20"
 );
 
 const NAVBAR_INNER_STYLE = clsx(

@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     let count = parCount as unknown as number;
     count = Number(parCount);
-    if (isNaN(count)) count = 2;
+    if (isNaN(count)) count = 4;
 
     if (count >= 10) count = 10;
     else if (count <= 0) count = 2;

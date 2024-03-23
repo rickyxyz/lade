@@ -18,7 +18,7 @@ import {
 export const PROBLEM_BLANK: ProblemType = {
   id: "",
   statement: "",
-  title: "",
+  title: "An Untitled Problem",
   topicId: "calculus",
   subTopicId: "derivatives",
   type: "short_answer",
@@ -36,7 +36,7 @@ export const PROBLEM_DEFAULT: ProblemType = {
 export const CONTEST_DEFAULT: ContestType = {
   id: "",
   description: "",
-  title: "",
+  title: "An Untitled Contest",
   topicId: "calculus",
   subTopicId: "derivatives",
   problems: "[]",
@@ -151,4 +151,4 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
     },
   ];
 
-export const PROBLEM_PAGINATION_COUNT = 5;
+export const PROBLEM_PAGINATION_COUNT = 6;

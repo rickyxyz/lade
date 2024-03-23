@@ -223,9 +223,14 @@ export function ContestListPage({ query }: ProblemListPageProps) {
 
   const renderProblems = useMemo(
     () => (
-      <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-2 gap-8">
         {loading ? (
-          <ContestCardSkeleton />
+          <>
+            <ContestCardSkeleton />
+            <ContestCardSkeleton />
+            <ContestCardSkeleton />
+            <ContestCardSkeleton />
+          </>
         ) : (
           problems.map((problem) => (
             <ContestCard key={problem.id} contest={problem} />
@@ -295,9 +300,6 @@ export function ContestListPage({ query }: ProblemListPageProps) {
   const renderHead = useMemo(
     () => (
       <>
-        <Paragraph as="h1" className="mb-8">
-          Problems
-        </Paragraph>
         <div className="flex flex-col">
           <Input
             externalWrapperClassName="flex-1"
@@ -346,5 +348,9 @@ export function ContestListPage({ query }: ProblemListPageProps) {
     ]
   );
 
-  return <PageTemplate head={renderHead}>{renderProblems}</PageTemplate>;
+  return (
+    <PageTemplate title="Contests" head={renderHead}>
+      {renderProblems}
+    </PageTemplate>
+  );
 }

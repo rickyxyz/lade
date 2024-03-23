@@ -68,17 +68,9 @@ export default function RootLayout({
           overflow-x: auto;
         }
       `}</style>
-      <body>
+      <body className={noto.className}>
         <ProviderWrapper layout={layout} stateInitialized={stateInitialized}>
-          <div
-            className={clsx(
-              "relative h-full flex flex-col flex-auto overflow-x-hidden",
-              noto.className
-            )}
-          >
-            <PageTemplateNavNew />
-            {children}
-          </div>
+          {children}
         </ProviderWrapper>
       </body>
     </html>

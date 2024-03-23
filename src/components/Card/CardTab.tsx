@@ -59,7 +59,7 @@ export function CardTab<T extends string>({
       <div className="relative flex w-fit" ref={tabRef}>
         {renderTabs}
       </div>
-      <div className="relative flex flex-row h-4">
+      <div className="relative flex flex-row h-4 bg-white">
         <div className="!h-full !border-l" ref={tabLineRef}></div>
         <div
           className="absolute !border-r !border-t !rounded-tr-md !h-full flex-grow"

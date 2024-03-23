@@ -254,7 +254,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       <IconText
         IconComponent={West}
         text="Back"
-        className="mb-4 text-teal-600 cursor-pointer"
+        className="mb-4 text-blue-600 cursor-pointer"
         onClick={handleGoBack}
       />
     ),
@@ -347,6 +347,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderViewProblem = useMemo(
     () => (
       <PageTemplate
+        title={title}
         className="w-full"
         head={!loading && renderHead}
         side={!loading && renderSide}
@@ -354,7 +355,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         {renderQuestion}
       </PageTemplate>
     ),
-    [loading, renderHead, renderQuestion, renderSide]
+    [loading, renderHead, renderQuestion, renderSide, title]
   );
 
   const renderEditProblem = useMemo(

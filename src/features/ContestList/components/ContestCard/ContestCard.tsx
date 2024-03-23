@@ -50,7 +50,7 @@ export function ContestCard({ contest }: ContestCardProps) {
       <>
         <div className="relative flex justify-between mb-4">
           <Link href={`/contest/${id}`}>
-            <h2 className="text-teal-600 hover:text-teal-700">{title}</h2>
+            <h2 className="text-blue-600 hover:text-blue-700">{title}</h2>
           </Link>
           <More
             className="!absolute !right-0"
