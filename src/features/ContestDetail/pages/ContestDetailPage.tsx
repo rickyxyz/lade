@@ -37,7 +37,7 @@ interface ContestAction extends ButtonListEntry {
 
 interface ContestProps {
   id: string;
-  user: UserType;
+  user?: UserType | null;
 }
 
 export function ContestDetailPage({ id, user }: ContestProps) {

@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
-export default async function handler(req: NextRequest) {
+export async function POST(req: NextRequest) {
   let result: any;
 
   try {
@@ -25,9 +25,9 @@ export default async function handler(req: NextRequest) {
   await prisma.$disconnect();
 
   if (result) {
-    return Response.json(JSON.parse(json(result)));
+    return NextResponse.json(JSON.parse(json(result)));
   } else {
-    return Response.json(
+    return NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
       },

@@ -2,7 +2,7 @@
 import { json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType } from "@/types";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function GET() {
@@ -36,9 +36,9 @@ export async function GET() {
   await prisma.$disconnect();
 
   if (result) {
-    return Response.json(result);
+    return NextResponse.json(result);
   } else {
-    return Response.json(
+    return NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
       },

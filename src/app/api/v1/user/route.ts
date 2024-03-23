@@ -3,11 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { GenericAPIParams, json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { ProblemTopicType, UserType } from "@/types";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST(req: NextRequest) {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    response = Response.json({ message: "success" });
+    response = NextResponse.json({ message: "success" });
   } catch (e) {
     console.log(e);
   }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
         },
       });
 
-      response = Response.json(JSON.parse(json(out)));
+      response = NextResponse.json(JSON.parse(json(out)));
     } else {
       throw Error("uid undefined");
     }

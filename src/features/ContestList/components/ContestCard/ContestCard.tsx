@@ -7,11 +7,11 @@ import { useAppSelector } from "@/libs/redux";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
 import { BsPersonFill } from "react-icons/bs";
 
-export interface ProblemCardProps {
+export interface ContestCardProps {
   contest: ContestDatabaseType;
 }
 
-export function ContestCard({ contest }: ProblemCardProps) {
+export function ContestCard({ contest }: ContestCardProps) {
   const {
     id,
     title,

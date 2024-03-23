@@ -2,9 +2,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { API_FAIL_MESSAGE } from "@/consts/api";
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -17,7 +18,7 @@ export async function POST() {
     await prisma.subtopic.deleteMany({});
     await prisma.topic.deleteMany({});
 
-    response = Response.json({
+    response = NextResponse.json({
       message: "ok",
     });
   } catch (e) {

@@ -4,12 +4,12 @@ import { json } from "@/utils/api";
 import { ContestDatabaseType, ContestType, ProblemContestType } from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormContest } from "@/utils";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function PATCH(req: NextRequest) {
   let errors: Record<string, string> = {};
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -92,12 +92,12 @@ export async function PATCH(req: NextRequest) {
       });
     });
 
-    response = Response.json({
+    response = NextResponse.json({
       message: "success",
     });
   } catch (e) {
     console.log(e);
-    response = Response.json(
+    response = NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
@@ -114,7 +114,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   let errors: Record<string, string> = {};
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -182,11 +182,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    response = Response.json(
+    response = NextResponse.json(
       JSON.parse(json({ message: "success", id: contest.id }))
     );
   } catch (e) {
-    response = Response.json(
+    response = NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
@@ -202,7 +202,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -255,7 +255,7 @@ export async function GET(req: NextRequest) {
         }));
       }
 
-      response = Response.json(JSON.parse(json(contest)));
+      response = NextResponse.json(JSON.parse(json(contest)));
     } else {
       throw Error("id undefined");
     }
@@ -268,7 +268,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -311,7 +311,7 @@ export async function DELETE(req: NextRequest) {
           },
         });
 
-        response = Response.json({
+        response = NextResponse.json({
           message: "success",
         });
       } else {

@@ -2,22 +2,11 @@ import { ContestDetailPage } from "@/features";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { useMemo } from "react";
 
-interface ProblemProps {
-  id: string;
-  user: string;
-}
-
-export function Contest({ id, user }: ProblemProps) {
-  const parsedUser = useMemo(() => JSON.parse(user), [user]);
-  return <ContestDetailPage id={id} user={parsedUser} />;
-}
-
-export async function getServerSideProps({ params }: { params: ProblemProps }) {
+export default async function Page({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const user = await getAuthUserNext();
-
-  const { id } = params;
-
-  return { props: { id, user: JSON.stringify(user) } };
+  return <ContestDetailPage id={id} user={user} />;
 }
-
-export default Contest;

@@ -2,7 +2,8 @@
 import { prisma } from "@/libs/prisma";
 import { entryObject, json } from "@/utils/api";
 import { ContestDatabaseType } from "@/types";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -141,9 +142,9 @@ export async function GET(req: NextRequest) {
   await prisma.$disconnect();
 
   if (result) {
-    return Response.json(result);
+    return NextResponse.json(result);
   } else {
-    return Response.json(
+    return NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
       },

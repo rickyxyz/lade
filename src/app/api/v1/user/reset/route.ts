@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST() {
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -16,7 +16,7 @@ export async function POST() {
 
   try {
     await prisma.user.deleteMany({});
-    response = Response.json({
+    response = NextResponse.json({
       message: "ok",
     });
   } catch (e) {

@@ -4,7 +4,8 @@ import { prisma } from "@/libs/prisma";
 import { makeAnswer, validateAnswer } from "@/utils";
 import { ProblemAnswerType, ProblemType } from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   let problem: ProblemType | undefined;
 
-  let response = Response.json(
+  let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
     },
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    response = Response.json({
+    response = NextResponse.json({
       message: verdict ? "correct" : "wrong",
     });
   } catch (e) {

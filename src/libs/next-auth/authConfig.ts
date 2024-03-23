@@ -1,11 +1,11 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextAuthOptions } from "next-auth";
+import { AuthOptions, NextAuthOptions } from "next-auth";
 import { firebaseAdmin } from "@/libs/firebase/admin";
 import { api } from "@/utils/api";
 import { API } from "@/api";
 import NextAuth from "next-auth/next";
 
-export const authConfig: NextAuthOptions = {
+export const authConfig: AuthOptions = {
   // https://next-auth.js.org/configuration/providers
   providers: [
     CredentialsProvider({

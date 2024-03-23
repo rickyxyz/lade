@@ -2,8 +2,9 @@
 import { prisma } from "@/libs/prisma";
 import { entryObject, json } from "@/utils/api";
 import { ProblemType } from "@/types";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
+import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function GET(req: NextRequest) {
   const user = await getAuthUserNext();
@@ -135,9 +136,9 @@ export async function GET(req: NextRequest) {
   if (result) {
     // res.status(200).json(result);
     console.log(result);
-    return Response.json(result);
+    return NextResponse.json(result);
   } else {
-    return Response.json({
+    return NextResponse.json({
       message: API_FAIL_MESSAGE,
     });
   }

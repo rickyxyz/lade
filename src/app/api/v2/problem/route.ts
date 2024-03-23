@@ -4,12 +4,12 @@ import { GenericAPIParams, json } from "@/utils/api";
 import { ProblemType } from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormProblem } from "@/utils";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 
 export async function POST(req: NextRequest) {
   let errors: Record<string, string> = {};
-  let response: Response | undefined;
+  let response: NextResponse | undefined;
 
   try {
     const user = await getAuthUserNext();
@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
       })),
     });
 
-    response = Response.json(JSON.parse(json({ message: "success" })));
+    response = NextResponse.json(JSON.parse(json({ message: "success" })));
   } catch (e) {
     console.log(e);
-    response = Response.json(
+    response = NextResponse.json(
       {
         message: API_FAIL_MESSAGE,
         ...(Object.keys(errors).length > 0 ? { errors } : {}),
