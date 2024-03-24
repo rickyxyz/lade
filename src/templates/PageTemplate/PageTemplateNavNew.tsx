@@ -157,21 +157,24 @@ export function PageTemplateNavNew() {
     () =>
       navLinks.map(({ name, links }) => (
         <div className="flex flex-col gap-1" key={name}>
-          <Paragraph weight="semibold" color="secondary-4">
-            {name}
-          </Paragraph>
+          {device === "desktop" && (
+            <Paragraph weight="semibold" color="secondary-4">
+              {name}
+            </Paragraph>
+          )}
           {links.map(({ label, href, icon }) => (
             <PageTemplateNavButton
               key={label}
               label={label}
               href={href}
               icon={icon}
+              device={device}
               active={href === pathname}
             />
           ))}
         </div>
       )),
-    [navLinks, pathname]
+    [device, navLinks, pathname]
   );
 
   const handleUpdateUser = useCallback(
@@ -225,24 +228,21 @@ export function PageTemplateNavNew() {
   return (
     <nav
       className={clsx(
-        "flex flex-col h-full",
+        "flex flex-col",
         "border-gray-300 border-r",
-        "px-6 py-4"
+        "py-4",
+        device === "desktop" ? "px-6" : "px-2"
       )}
-      style={{
-        minWidth: "240px",
-      }}
+      style={
+        device === "desktop"
+          ? {
+              minWidth: "240px",
+            }
+          : {
+              width: "58px",
+            }
+      }
     >
-      {device === "mobile" && (
-        <PageTemplateNavButton
-          className="!px-6"
-          onClick={() => {
-            setMobileLinks((prev) => !prev);
-          }}
-        >
-          <List />
-        </PageTemplateNavButton>
-      )}
       <Image
         className="mb-8"
         src="/lade.svg"
@@ -250,7 +250,7 @@ export function PageTemplateNavNew() {
         width={72}
         height={20}
       />
-      {device !== "mobile" && renderLinks}
+      {renderLinks}
     </nav>
   );
 }

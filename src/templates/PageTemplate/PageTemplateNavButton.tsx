@@ -1,4 +1,5 @@
 import { Icon, Paragraph } from "@/components";
+import { DeviceScreenType } from "@/types";
 import { SvgIconComponent } from "@mui/icons-material";
 import clsx from "clsx";
 import Link from "next/link";
@@ -11,6 +12,7 @@ interface PageTemplateNavButton {
   icon?: SvgIconComponent;
   href?: string;
   active?: boolean;
+  device?: DeviceScreenType;
   onClick?: () => void;
 }
 
@@ -18,6 +20,7 @@ export function PageTemplateNavButton({
   className,
   label,
   children,
+  device,
   icon,
   href,
   active,
@@ -27,25 +30,28 @@ export function PageTemplateNavButton({
     () => (
       <div
         className={clsx(
-          "flex items-center px-4 py-2 rounded-md",
+          "flex items-center rounded-md",
           "hover:bg-blue-100 transition-colors",
           active ? "bg-blue-100 text-blue-700" : "text-gray-700",
+          device === "desktop" ? "px-4 h-10" : "p-2 h-10 w-10",
           className
         )}
         onClick={onClick}
       >
         {icon && (
           <Icon
-            className="mr-2"
+            className={clsx(device === "desktop" && "mr-2")}
             IconComponent={icon}
             size="l"
             color="inherit"
           />
         )}
-        {children ?? <Paragraph color="inherit">{label}</Paragraph>}
+        {label && device === "desktop" && (
+          <Paragraph color="inherit">{label}</Paragraph>
+        )}
       </div>
     ),
-    [active, children, className, icon, label, onClick]
+    [active, className, device, icon, label, onClick]
   );
 
   if (href) {
