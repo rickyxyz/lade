@@ -44,6 +44,7 @@ interface NavLink {
   label: string;
   href: string;
   icon: SvgIconComponent;
+  danger?: boolean;
 }
 
 interface NavGroup {
@@ -82,16 +83,20 @@ export function PageTemplateNavNew() {
             href: "/leaderboard",
             icon: EmojiEventsOutlined,
           },
-          {
-            label: "New Problem",
-            href: "/problem/new",
-            icon: NoteAddOutlined,
-          },
-          {
-            label: "New Contest",
-            href: "/contest/new",
-            icon: AddToPhotosOutlined,
-          },
+          ...(user
+            ? [
+                {
+                  label: "New Problem",
+                  href: "/problem/new",
+                  icon: NoteAddOutlined,
+                },
+                {
+                  label: "New Contest",
+                  href: "/contest/new",
+                  icon: AddToPhotosOutlined,
+                },
+              ]
+            : []),
         ],
       },
       {
@@ -102,6 +107,12 @@ export function PageTemplateNavNew() {
                 label: "You",
                 href: "/user",
                 icon: Person,
+              },
+              {
+                label: "Log Out",
+                href: "/logout",
+                icon: Logout,
+                danger: true,
               },
             ]
           : [
@@ -209,13 +220,14 @@ export function PageTemplateNavNew() {
                 {name}
               </Paragraph>
             )}
-            {links.map(({ label, href, icon }) => (
+            {links.map(({ label, href, icon, danger }) => (
               <PageTemplateNavButton
                 key={label}
                 label={label}
                 href={href}
                 icon={icon}
                 device={device}
+                danger={danger}
                 active={href === pathname}
               />
             ))}
@@ -300,10 +312,6 @@ export function PageTemplateNavNew() {
         height={20}
       />
       {renderLinks}
-      {/* <div className="flex justify-between">
-        <User username={user?.id ?? "?"} />
-        <ButtonIcon variant="danger" icon={LogoutOutlined} />
-      </div> */}
     </nav>
   );
 }

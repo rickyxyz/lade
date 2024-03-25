@@ -13,17 +13,18 @@ interface PageTemplateNavButton {
   href?: string;
   active?: boolean;
   device?: DeviceScreenType;
+  danger?: boolean;
   onClick?: () => void;
 }
 
 export function PageTemplateNavButton({
   className,
   label,
-  children,
   device,
   icon,
   href,
   active,
+  danger,
   onClick,
 }: PageTemplateNavButton) {
   const renderButton = useMemo(
@@ -31,8 +32,15 @@ export function PageTemplateNavButton({
       <div
         className={clsx(
           "flex items-center rounded-md",
-          "hover:bg-blue-100 transition-colors",
-          active ? "bg-blue-100 text-blue-700" : "text-gray-700",
+          danger
+            ? [
+                "hover:bg-red-100 transition-colors",
+                active ? "bg-red-100 text-red-600" : "text-red-600",
+              ]
+            : [
+                "hover:bg-blue-100 transition-colors",
+                active ? "bg-blue-100 text-blue-600" : "text-gray-600",
+              ],
           device === "desktop" ? "px-4 h-10" : "p-2 h-10 w-10",
           className
         )}
