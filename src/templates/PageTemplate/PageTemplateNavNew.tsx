@@ -10,6 +10,7 @@ import {
   IconText,
   Paragraph,
   Modal,
+  ButtonIcon,
 } from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
@@ -22,15 +23,22 @@ import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  AddToPhotosOutlined,
   ArrowDropDown,
   AssignmentOutlined,
+  DescriptionOutlined,
   EmojiEventsOutlined,
+  LibraryBooksOutlined,
   LightbulbOutlined,
+  LoginOutlined,
   Logout,
+  LogoutOutlined,
   Menu,
+  NoteAddOutlined,
+  Person,
+  PersonAddAltOutlined,
   SvgIconComponent,
 } from "@mui/icons-material";
-import { List } from "@mui/material";
 
 interface NavLink {
   label: string;
@@ -57,27 +65,60 @@ export function PageTemplateNavNew() {
   const navLinks = useMemo<NavGroup[]>(
     () => [
       {
-        name: "MAIN",
+        name: "Explore",
         links: [
           {
             label: "Problems",
             href: "/",
-            icon: LightbulbOutlined,
+            icon: DescriptionOutlined,
           },
           {
             label: "Contests",
             href: "/contests",
-            icon: AssignmentOutlined,
+            icon: LibraryBooksOutlined,
           },
           {
             label: "Leaderboard",
             href: "/leaderboard",
             icon: EmojiEventsOutlined,
           },
+          {
+            label: "New Problem",
+            href: "/problem/new",
+            icon: NoteAddOutlined,
+          },
+          {
+            label: "New Contest",
+            href: "/contest/new",
+            icon: AddToPhotosOutlined,
+          },
         ],
       },
+      {
+        name: "Account",
+        links: user
+          ? [
+              {
+                label: "You",
+                href: "/user",
+                icon: Person,
+              },
+            ]
+          : [
+              {
+                label: "Sign Up",
+                href: "/signup",
+                icon: PersonAddAltOutlined,
+              },
+              {
+                label: "Log In",
+                href: "/login",
+                icon: LoginOutlined,
+              },
+            ],
+      },
     ],
-    []
+    [user]
   );
 
   const renderAuthButtons = useMemo(
@@ -154,26 +195,34 @@ export function PageTemplateNavNew() {
   );
 
   const renderLinks = useMemo(
-    () =>
-      navLinks.map(({ name, links }) => (
-        <div className="flex flex-col gap-1" key={name}>
-          {device === "desktop" && (
-            <Paragraph weight="semibold" color="secondary-4">
-              {name}
-            </Paragraph>
-          )}
-          {links.map(({ label, href, icon }) => (
-            <PageTemplateNavButton
-              key={label}
-              label={label}
-              href={href}
-              icon={icon}
-              device={device}
-              active={href === pathname}
-            />
-          ))}
-        </div>
-      )),
+    () => (
+      <div className="flex-grow">
+        {navLinks.map(({ name, links }, index) => (
+          <div className={clsx("flex flex-col gap-1")} key={name}>
+            {index > 0 && device !== "desktop" && <hr className="mt-2 mb-1" />}
+            {device === "desktop" && (
+              <Paragraph
+                className={clsx(index > 0 && "mt-8")}
+                weight="semibold"
+                color="secondary-4"
+              >
+                {name}
+              </Paragraph>
+            )}
+            {links.map(({ label, href, icon }) => (
+              <PageTemplateNavButton
+                key={label}
+                label={label}
+                href={href}
+                icon={icon}
+                device={device}
+                active={href === pathname}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    ),
     [device, navLinks, pathname]
   );
 
@@ -251,6 +300,10 @@ export function PageTemplateNavNew() {
         height={20}
       />
       {renderLinks}
+      {/* <div className="flex justify-between">
+        <User username={user?.id ?? "?"} />
+        <ButtonIcon variant="danger" icon={LogoutOutlined} />
+      </div> */}
     </nav>
   );
 }
