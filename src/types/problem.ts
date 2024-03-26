@@ -104,12 +104,6 @@ export interface SolvedType {
   answer: string;
 }
 
-export type ContentViewType = "view" | "edit";
-
-export type ContentEditType = "create" | "edit";
-
-export type ContentAccessType = "viewer" | "author" | "admin";
-
 export interface ContestBaseType {
   title: string;
   description: string;

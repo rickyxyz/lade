@@ -18,3 +18,10 @@ export interface LoginFormType {
   email: string;
   password: string;
 }
+
+export type ContentViewType = "view" | "edit";
+export type ContentEditType = "create" | "edit";
+export type ContentAccessType = "viewer" | "author" | "admin";
+
+export type RoleType = "guest" | "user" | "admin";
+export type LinkPermissionType = "guest+" | "user+" | RoleType;

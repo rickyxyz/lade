@@ -9,18 +9,14 @@ import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
 import {
   ContestType,
-  ContentViewType,
   UserType,
-  ContentAccessType,
   ProblemContestType,
+  ContentViewType,
+  ContentAccessType,
 } from "@/types";
-import { CONTEST_DEFAULT, PROBLEM_BLANK } from "@/consts";
+import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
-import {
-  ContestDetailMain,
-  ContestDetailMainSkeleton,
-  ContestDetailTopics,
-} from "../components";
+import { ContestDetailMain, ContestDetailMainSkeleton } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { ContestEditPage } from "./ContestEditPage";
 import { MoreVert, West } from "@mui/icons-material";

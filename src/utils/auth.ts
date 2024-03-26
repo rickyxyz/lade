@@ -1,5 +1,6 @@
 import {
   ContentAccessType,
+  LinkPermissionType,
   LoginFormType,
   SignUpFormType,
   UserType,
@@ -42,11 +43,15 @@ export function validateFormLogin(params: LoginFormType) {
   return errors;
 }
 
-export function getPermissionForContent({
+export function getPermissionForContent<
+  T extends {
+    authorId: string;
+  }
+>({
   content,
   user,
 }: {
-  content: any;
+  content: T;
   user?: UserType | null;
 }): ContentAccessType {
   if (!user || content.authorId !== user.id) return "viewer";
@@ -70,4 +75,22 @@ export function checkPermission(
   const perm2 = order.indexOf(leastAllowed);
 
   return perm1 >= perm2;
+}
+
+export function checkPermissionLink(
+  perm: LinkPermissionType,
+  leastAllowed?: LinkPermissionType
+) {
+  if (!leastAllowed) return true;
+
+  const exclusive = !leastAllowed.endsWith("+");
+  const phrase = (
+    exclusive ? leastAllowed : leastAllowed.slice(0, -1)
+  ) as LinkPermissionType;
+  const order: LinkPermissionType[] = ["guest", "user", "admin"];
+
+  const perm1 = order.indexOf(perm);
+  const perm2 = order.indexOf(phrase);
+
+  return exclusive ? perm === leastAllowed : perm1 >= perm2;
 }

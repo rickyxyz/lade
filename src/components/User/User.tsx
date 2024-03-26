@@ -40,8 +40,8 @@ export function User({
       <div
         className={clsx(
           "flex items-center justify-center",
-          "w-8 h-8",
-          "rounded-md",
+          "w-10 h-10",
+          "rounded-full",
           username ? "bg-gray-500" : "bg-red-700"
         )}
       >
