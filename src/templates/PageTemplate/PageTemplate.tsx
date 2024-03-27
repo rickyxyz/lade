@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
-import { PageTemplateNavNew } from "./PageTemplateNavNew";
+import { PageTemplateNav } from "./PageTemplateNav";
 import { Paragraph } from "@/components";
 
 export interface PageTemplateProps {
@@ -26,7 +26,7 @@ export function PageTemplate({
         "relative h-full flex flex-row flex-auto overflow-hidden"
       )}
     >
-      <PageTemplateNavNew />
+      <PageTemplateNav />
       <main className="flex flex-col w-full bg-gray-100">
         <div className="w-full py-3 px-8 bg-white border-b border-gray-300">
           <Paragraph size="m" weight="semibold">

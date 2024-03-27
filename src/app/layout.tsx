@@ -1,24 +1,15 @@
 "use client";
-import type { AppProps } from "next/app";
-import { SessionProvider } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { mathjax3, md } from "@/utils";
-import { ProblemEditInitializedContext } from "@/hooks";
-import { LayoutContext } from "@/contexts";
 import { DeviceScreenType, LayoutContextType } from "@/types";
 import {
   LAYOUT_DEFAULT,
   LAYOUT_THRESHOLD_DESKTOP,
   LAYOUT_THRESHOLD_TABLET,
 } from "@/consts";
-import { Provider } from "react-redux";
-import { persistor, store } from "@/libs/redux";
-import clsx from "clsx";
-import { PageTemplateNav, PageTemplateNavNew } from "@/templates";
-import { PersistGate } from "redux-persist/integration/react";
 import { noto } from "@/libs/fonts";
 import ProviderWrapper from "@/contexts/ProviderWrapper";
 

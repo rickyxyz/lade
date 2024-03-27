@@ -10,23 +10,51 @@ import {
   IconText,
   Paragraph,
   Modal,
+  ButtonIcon,
 } from "@/components";
 import clsx from "clsx";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
 import { crudData, logout } from "@/libs/firebase";
 import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
 import { PageTemplateNavButton } from "./PageTemplateNavButton";
-import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
-import { ArrowDropDown, Logout, Menu } from "@mui/icons-material";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  AddToPhotosOutlined,
+  ArrowDropDown,
+  AssignmentOutlined,
+  DescriptionOutlined,
+  EmojiEventsOutlined,
+  LibraryBooksOutlined,
+  LightbulbOutlined,
+  LoginOutlined,
+  Logout,
+  LogoutOutlined,
+  Menu,
+  NoteAddOutlined,
+  Person,
+  PersonAddAltOutlined,
+  SvgIconComponent,
+} from "@mui/icons-material";
+import { checkPermissionLink } from "@/utils";
+import { LinkPermissionType, RoleType } from "@/types";
 
 interface NavLink {
   label: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
+  danger?: boolean;
+  icon: SvgIconComponent;
+  permission?: LinkPermissionType;
+}
+
+interface NavGroup {
+  name: string;
+  links: NavLink[];
+  permission?: LinkPermissionType;
 }
 
 export function PageTemplateNav() {
@@ -38,120 +66,122 @@ export function PageTemplateNav() {
   const stateMobileLinks = useState(false);
   const setMobileLinks = stateMobileLinks[1];
   const { device } = useDevice();
+  const pathname = usePathname();
+  const permission = useMemo<RoleType>(() => {
+    if (!user) return "guest";
+    return "user";
+  }, [user]);
 
-  const links = useMemo<NavLink[]>(
+  const navLinks = useMemo<NavGroup[]>(
     () => [
       {
-        label: "Problems",
-        href: "/",
+        name: "Explore",
+        links: [
+          {
+            label: "Problems",
+            href: "/",
+            icon: DescriptionOutlined,
+          },
+          {
+            label: "Contests",
+            href: "/contests",
+            icon: LibraryBooksOutlined,
+          },
+          {
+            label: "Leaderboard",
+            href: "/leaderboard",
+            icon: EmojiEventsOutlined,
+          },
+          {
+            label: "New Problem",
+            href: "/problem/new",
+            icon: NoteAddOutlined,
+            permission: "user",
+          },
+          {
+            label: "New Contest",
+            href: "/contest/new",
+            icon: AddToPhotosOutlined,
+            permission: "user",
+          },
+        ],
       },
       {
-        label: "Contests",
-        href: "/",
-      },
-      {
-        label: "Leaderboard",
-        href: "/",
+        name: "Account",
+        links: [
+          {
+            label: "You",
+            href: "/user",
+            icon: Person,
+            permission: "user+",
+          },
+          {
+            label: "Log Out",
+            onClick: logout,
+            icon: Logout,
+            danger: true,
+            permission: "user+",
+          },
+          {
+            label: "Sign Up",
+            href: "/signup",
+            icon: PersonAddAltOutlined,
+            permission: "guest",
+          },
+          {
+            label: "Log In",
+            href: "/login",
+            icon: LoginOutlined,
+            permission: "guest",
+          },
+        ],
       },
     ],
     []
   );
 
-  const renderAuthButtons = useMemo(
-    () =>
-      user ? (
-        <Dropdown
-          direction="left"
-          optionWidth={200}
-          classNameOption="flex gap-4"
-          options={[
-            {
-              id: "Logout",
-              className: "text-red-500",
-              element: <IconText IconComponent={Logout} text="Logout" />,
-              onClick: logout,
-            },
-          ]}
-          triggerElement={
-            <User
-              className="relative"
-              username={user.id}
-              hideName={device === "mobile"}
-              captionElement={
-                device !== "mobile" && (
-                  <Icon
-                    className="ml-2"
-                    IconComponent={ArrowDropDown}
-                    size="s"
-                  />
-                )
-              }
-            />
-          }
-        />
-      ) : (
-        // <Tooltip
-        //   direction="left"
-        //   optionWidth={200}
-        //   triggerElement={
-        //     <User
-        //       className="relative"
-        //       username={user.username}
-        //       captionElement={
-        //         <Icon className="ml-2" icon="caretDownFill" size="xs" />
-        //       }
-        //     />
-        //   }
-        //   hiddenElement={
-        //     <>
-        //       <TooltipOption className="justify-between" onClick={logout}>
-        //         <span>Logout</span>
-        //         <Icon icon="logout" />
-        //       </TooltipOption>
-        //     </>
-        //   }
-        // />
-        <div className="flex flex-row gap-4 mr-6 w-fit">
-          <Button
-            onClick={() => {
-              router.push("/login");
-            }}
-            variant="ghost"
-            label="Login"
-          />
-          <Button
-            onClick={() => {
-              router.push("/signup");
-            }}
-            label="Sign Up"
-          />
-        </div>
-      ),
-    [device, router, user]
-  );
-
   const renderLinks = useMemo(
-    () =>
-      links.map(({ label, href }) => (
-        <PageTemplateNavButton key={label} label={label} href={href} />
-      )),
-    [links]
+    () => (
+      <ul className="flex-grow">
+        {navLinks
+          .filter(({ permission: linkPerm }) =>
+            checkPermissionLink(permission, linkPerm)
+          )
+          .map(({ name, links }, index) => (
+            <li className={clsx("flex flex-col gap-1")} key={name}>
+              {index > 0 && device !== "desktop" && (
+                <hr className="mt-2 mb-1" />
+              )}
+              {device === "desktop" && (
+                <Paragraph
+                  className={clsx(index > 0 && "mt-8")}
+                  weight="semibold"
+                  color="secondary-4"
+                >
+                  {name}
+                </Paragraph>
+              )}
+              {links
+                .filter(({ permission: linkPerm }) =>
+                  checkPermissionLink(permission, linkPerm)
+                )
+                .map(({ label, href, icon, danger }) => (
+                  <PageTemplateNavButton
+                    key={label}
+                    label={label}
+                    href={href}
+                    icon={icon}
+                    device={device}
+                    isDanger={danger}
+                    isActive={href === pathname}
+                  />
+                ))}
+            </li>
+          ))}
+      </ul>
+    ),
+    [device, navLinks, pathname, permission]
   );
-
-  const renderMobileLinks = useMemo(() => {
-    const mobileLinks: ButtonListEntry[] = links.map(({ label, href }) => ({
-      label,
-      handler: () => {
-        router.push(href);
-        setMobileLinks(false);
-      },
-    }));
-    return (
-      <Modal stateVisible={stateMobileLinks}>
-        <ButtonList list={mobileLinks} className="w-48" />
-      </Modal>
-    );
-  }, [links, router, setMobileLinks, stateMobileLinks]);
 
   const handleUpdateUser = useCallback(
     (authUser: UserType) => {
@@ -202,41 +232,23 @@ export function PageTemplateNav() {
   }, [handleInitialize]);
 
   return (
-    <nav className={NAVBAR_OUTER_STYLE} style={{ minHeight: "4rem" }}>
-      <div className={NAVBAR_INNER_STYLE}>
-        <div className="flex h-full">
-          {device === "mobile" && (
-            <PageTemplateNavButton
-              className="!px-6"
-              onClick={() => {
-                setMobileLinks((prev) => !prev);
-              }}
-            >
-              <Menu />
-            </PageTemplateNavButton>
-          )}
-          <Image
-            className="mr-8"
-            src="/lade.svg"
-            alt="LADE Logo"
-            width={120}
-            height={56}
-          />
-          {device !== "mobile" && renderLinks}
-        </div>
-        {renderAuthButtons}
-        {device === "mobile" && renderMobileLinks}
-      </div>
+    <nav
+      className={clsx(
+        "flex flex-col",
+        "border-gray-300 border-r",
+        "py-4",
+        "max-lg:max-w-[58px] lg:min-w-[240px]",
+        "max-lg:px-2 lg:px-6"
+      )}
+    >
+      <Image
+        className="mb-8"
+        src="/lade.svg"
+        alt="LADE Logo"
+        width={72}
+        height={20}
+      />
+      {renderLinks}
     </nav>
   );
 }
-
-const NAVBAR_OUTER_STYLE = clsx(
-  "sticky top-0 flex justify-between items-center h-16",
-  "bg-red-100",
-  "border-t-4 border-t-blue-500 border-b border-gray-200 z-20"
-);
-
-const NAVBAR_INNER_STYLE = clsx(
-  "flex justify-between items-center mx-auto w-adaptive gap-4 h-full"
-);
