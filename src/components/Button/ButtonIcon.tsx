@@ -1,7 +1,8 @@
-import { Button, ButtonProps, ButtonSizeType } from "./Button";
+import { Button, ButtonProps } from "./Button";
 import { Icon, IconSizeType } from "../Icon";
 import clsx from "clsx";
 import { SvgIconComponent } from "@mui/icons-material";
+import { ButtonSizeType } from "@/types";
 
 interface ButtonIcon extends ButtonProps {
   icon: SvgIconComponent;

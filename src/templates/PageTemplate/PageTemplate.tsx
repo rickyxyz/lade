@@ -33,7 +33,7 @@ export function PageTemplate({
             {title}
           </Paragraph>
         </div>
-        <section className="flex flex-col w-full overflow-y-scroll p-8">
+        <section className="flex flex-col w-full overflow-y-auto p-8">
           {head}
           {children}
         </section>

@@ -17,3 +17,4 @@ export * from "./problem";
 export * from "./layout";
 export * from "./component";
 export * from "./query";
+export * from "./style";

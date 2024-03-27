@@ -17,7 +17,7 @@ export function PaginationButton({
   return (
     <Button
       className={clsx(size === "m" ? "w-10" : "!w-8 !h-8 !px-0")}
-      variant={isActive ? "primary" : "outline"}
+      variant={isActive ? "solid" : "outline"}
       order="middle"
       orderDirection="row"
       label={String(page)}

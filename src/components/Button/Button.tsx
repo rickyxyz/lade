@@ -8,23 +8,13 @@ import clsx from "clsx";
 import { Paragraph } from "../Paragraph";
 import { Icon } from "../Icon";
 import { HourglassEmpty } from "@mui/icons-material";
-
-export type ButtonVariantType =
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "outline"
-  | "danger"
-  | "ghost"
-  | "ghost-danger"
-  | "link";
-
-export type ButtonOrderType = "first" | "middle" | "last";
-
-export type ButtonDirectionType = "row" | "column";
-
-export type ButtonSizeType = "m" | "s";
+import {
+  ButtonDirectionType,
+  ButtonOrderType,
+  ButtonSizeType,
+  ButtonVariantType,
+  GenericColorType,
+} from "@/types";
 
 export interface ButtonProps
   extends DetailedHTMLProps<
@@ -34,6 +24,7 @@ export interface ButtonProps
   label?: string;
   children?: ReactNode;
   variant?: ButtonVariantType;
+  color?: GenericColorType;
   order?: ButtonOrderType;
   orderDirection?: ButtonDirectionType;
   alignText?: "left" | "center" | "right";
@@ -47,7 +38,8 @@ export interface ButtonProps
 export function Button({
   label,
   children,
-  variant = "primary",
+  variant = "solid",
+  color = "primary",
   className,
   textClassName,
   loading = false,
@@ -64,17 +56,7 @@ export function Button({
     <button
       className={clsx(
         BUTTON_BASE_STYLE,
-        [
-          variant === "primary" && BUTTON_PRIMARY_STYLE,
-          variant === "secondary" && BUTTON_SECONDARY_STYLE,
-          variant === "success" && BUTTON_SUCCESS_STYLE,
-          variant === "warning" && BUTTON_WARNING_STYLE,
-          variant === "danger" && BUTTON_DANGER_STYLE,
-          variant === "outline" && BUTTON_OUTLINE_STYLE,
-          variant === "ghost" && BUTTON_GHOST_STYLE,
-          variant === "ghost-danger" && BUTTON_GHOST_DANGER_STYLE,
-          variant === "link" && BUTTON_LINK_STYLE,
-        ],
+        BUTTON_VARIOUS_STYLE[variant][color],
         size && BUTTON_SIZE_STYLE[size],
         order && orderDirection && BUTTON_ORDER_STYLE[orderDirection][order],
         !order && "rounded",
@@ -96,6 +78,7 @@ export function Button({
               )}
               as="p"
               color="inherit"
+              weight="medium"
             >
               {label}
             </Paragraph>
@@ -116,61 +99,6 @@ const BUTTON_BASE_STYLE = [
   "flex flex-row items-center",
   "transition-colors duration-100 text-base font-semibold",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
-];
-
-const BUTTON_PRIMARY_STYLE = [
-  `bg-blue-600 text-white`,
-  `hover:bg-blue-700`,
-  `active:bg-blue-800`,
-];
-
-const BUTTON_SECONDARY_STYLE = [
-  `bg-gray-500 text-white`,
-  `hover:bg-gray-600`,
-  `active:bg-gray-700`,
-];
-
-const BUTTON_SUCCESS_STYLE = [
-  `bg-green-500 text-white`,
-  `hover:bg-green-600`,
-  `active:bg-green-700`,
-];
-
-const BUTTON_WARNING_STYLE = [
-  `bg-yellow-500 text-white`,
-  `hover:bg-yellow-600`,
-  `active:bg-yellow-700`,
-];
-
-const BUTTON_DANGER_STYLE = [
-  `bg-red-500 text-white`,
-  `hover:bg-red-600`,
-  `active:bg-red-700`,
-];
-
-const BUTTON_OUTLINE_STYLE = [
-  "text-blue-700 bg-white disabled:text-gray-400",
-  `hover:bg-blue-50 disabled:bg-transparent`,
-  `active:bg-blue-100 disabled:bg-transparent`,
-  `border border-gray-300`,
-];
-
-const BUTTON_GHOST_STYLE = [
-  "text-blue-700 disabled:text-gray-400",
-  `hover:bg-blue-50 disabled:bg-transparent`,
-  `active:bg-blue-100 disabled:bg-transparent`,
-];
-
-const BUTTON_GHOST_DANGER_STYLE = [
-  "text-red-700",
-  `hover:bg-red-50`,
-  `active:bg-red-100`,
-];
-
-const BUTTON_LINK_STYLE = [
-  "text-blue-700",
-  "hover:underline hover:text-blue-500",
-  "active:underline active:text-blue-500",
 ];
 
 const BUTTON_ORDER_STYLE: Record<
@@ -198,4 +126,112 @@ const BUTTON_TEXT_ALIGN_STYLE = {
 const BUTTON_SIZE_STYLE: Record<ButtonSizeType, string> = {
   m: "h-10 px-4 py-2",
   s: "h-8",
+};
+
+const BUTTON_VARIOUS_STYLE: Record<
+  ButtonVariantType,
+  Record<GenericColorType, string[]>
+> = {
+  solid: {
+    primary: [
+      "bg-primary-5 text-white",
+      "hover:bg-primary-6",
+      "active:bg-primary-7",
+    ],
+    secondary: [
+      "bg-secondary-5 text-white",
+      "hover:bg-secondary-6",
+      "active:bg-secondary-7",
+    ],
+    warning: [
+      "bg-warning-5 text-white",
+      "hover:bg-warning-6",
+      "active:bg-warning-7",
+    ],
+    success: [
+      "bg-success-5 text-white",
+      "hover:bg-success-6",
+      "active:bg-success-7",
+    ],
+    danger: [
+      "bg-danger-5 text-white",
+      "hover:bg-danger-6",
+      "active:bg-danger-7",
+    ],
+  },
+  outline: {
+    primary: [
+      "text-primary-6",
+      "hover:bg-primary-1",
+      "active:bg-primary-2",
+      "border border-gray-300",
+    ],
+    secondary: [
+      "text-secondary-6",
+      "hover:bg-secondary-1",
+      "active:bg-secondary-2",
+      "border border-gray-300",
+    ],
+    warning: [
+      "text-warning-6",
+      "hover:bg-warning-1",
+      "active:bg-warning-2",
+      "border border-gray-300",
+    ],
+    success: [
+      "text-success-6",
+      "hover:bg-success-1",
+      "active:bg-success-2",
+      "border border-gray-300",
+    ],
+    danger: [
+      "text-danger-6",
+      "hover:bg-danger-1",
+      "active:bg-danger-2",
+      "border border-gray-300",
+    ],
+  },
+  "outline-2": {
+    primary: [
+      "text-primary-6",
+      "hover:bg-primary-1",
+      "active:bg-primary-2",
+      "border border-primary-6",
+    ],
+    secondary: [
+      "text-secondary-6",
+      "hover:bg-secondary-1",
+      "active:bg-secondary-2",
+      "border border-secondary-6",
+    ],
+    warning: [
+      "text-warning-6",
+      "hover:bg-warning-1",
+      "active:bg-warning-2",
+      "border border-warning-6",
+    ],
+    success: [
+      "text-success-6",
+      "hover:bg-success-1",
+      "active:bg-success-2",
+      "border border-success-6",
+    ],
+    danger: [
+      "text-danger-6",
+      "hover:bg-danger-1",
+      "active:bg-danger-2",
+      "border border-danger-6",
+    ],
+  },
+  ghost: {
+    primary: ["text-primary-6", "hover:bg-primary-1", "active:bg-primary-2"],
+    secondary: [
+      "text-secondary-6",
+      "hover:bg-secondary-1",
+      "active:bg-secondary-2",
+    ],
+    warning: ["text-warning-6", "hover:bg-warning-1", "active:bg-warning-2"],
+    success: ["text-success-6", "hover:bg-success-1", "active:bg-success-2"],
+    danger: ["text-danger-6", "hover:bg-danger-1", "active:bg-danger-2"],
+  },
 };

@@ -5,7 +5,14 @@ import { useMemo, useEffect, useCallback, useState } from "react";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { API } from "@/api";
-import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
+import {
+  ButtonIcon,
+  Card,
+  IconText,
+  Modal,
+  Paragraph,
+  Tooltip,
+} from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
@@ -25,6 +32,7 @@ import {
 } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { MoreVert, West } from "@mui/icons-material";
+import { ProblemDetailData } from "../components/ProblemDetailData";
 
 interface ProblemData {
   label: string;
@@ -153,10 +161,14 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   );
 
   const renderQuestion = useMemo(() => {
-    if (loading || !problem) return <ProblemDetailMainSkeleton />;
+    const className = "flex-1";
+
+    if (loading || !problem)
+      return <ProblemDetailMainSkeleton className={className} />;
 
     return (
       <ProblemDetailMain
+        className={className}
         stateProblem={stateProblem}
         stateAccept={stateAccept}
         stateMode={stateMode}
@@ -177,6 +189,15 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     stateUserAnswer,
     stateUserSolved,
   ]);
+
+  const renderQuestionMetadata = useMemo(() => {
+    const className = "grow md:max-w-[320px] h-fit";
+
+    if (loading || !problem)
+      return <ProblemDetailMainSkeleton className={className} />;
+
+    return <ProblemDetailData className={className} problem={problem} />;
+  }, [loading, problem]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -265,7 +286,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     () => (
       <>
         {renderNavigation}
-        <div className="flex  justify-between mb-4">
+        <div className="flex justify-between mb-4">
           <div className="flex-1">
             <h1 className="mt-2 mb-4">{title}</h1>
             {topic && subTopic && (
@@ -346,16 +367,14 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
   const renderViewProblem = useMemo(
     () => (
-      <PageTemplate
-        title={title}
-        className="w-full"
-        head={!loading && renderHead}
-        side={!loading && renderSide}
-      >
-        {renderQuestion}
+      <PageTemplate title={title} className="w-full">
+        <div className="flex flex-row flex-wrap gap-8">
+          {renderQuestion}
+          {renderQuestionMetadata}
+        </div>
       </PageTemplate>
     ),
-    [loading, renderHead, renderQuestion, renderSide, title]
+    [renderQuestion, renderQuestionMetadata, title]
   );
 
   const renderEditProblem = useMemo(

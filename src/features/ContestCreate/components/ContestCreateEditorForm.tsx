@@ -408,7 +408,7 @@ export function ContestCreateEditorForm({
           </div>
         </Setting>
         <Setting className="mt-2">{renderStatus}</Setting>
-        <table className="mt-8">
+        <table className="table mt-8">
           <thead>
             <tr>
               <th className="w-full">Problem</th>

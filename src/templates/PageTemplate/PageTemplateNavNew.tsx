@@ -142,13 +142,13 @@ export function PageTemplateNavNew() {
 
   const renderLinks = useMemo(
     () => (
-      <div className="flex-grow">
+      <ul className="flex-grow">
         {navLinks
           .filter(({ permission: linkPerm }) =>
             checkPermissionLink(permission, linkPerm)
           )
           .map(({ name, links }, index) => (
-            <div className={clsx("flex flex-col gap-1")} key={name}>
+            <li className={clsx("flex flex-col gap-1")} key={name}>
               {index > 0 && device !== "desktop" && (
                 <hr className="mt-2 mb-1" />
               )}
@@ -176,9 +176,9 @@ export function PageTemplateNavNew() {
                     isActive={href === pathname}
                   />
                 ))}
-            </div>
+            </li>
           ))}
-      </div>
+      </ul>
     ),
     [device, navLinks, pathname, permission]
   );

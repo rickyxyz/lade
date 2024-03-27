@@ -22,9 +22,11 @@ export interface ProblemMainProps {
   stateUserSolved: StateType<boolean>;
   stateSubmited: StateType<number | undefined>;
   stateSolvable: StateType<boolean>;
+  className?: string;
 }
 
 export function ProblemDetailMain({
+  className,
   stateProblem,
   stateMode,
   stateUserAnswer,
@@ -226,9 +228,5 @@ export function ProblemDetailMain({
     }
   }, [renderAnswer, renderMain, tab]);
 
-  return (
-    <CardTab tabs={tabs} activeTab={tab}>
-      {renderContent}
-    </CardTab>
-  );
+  return <Card className={className}>{renderContent}</Card>;
 }
