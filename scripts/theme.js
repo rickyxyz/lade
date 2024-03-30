@@ -16,23 +16,18 @@ function produceStyle() {
     colorName.forEach((color, idx2) => {
       let texts = ``;
       for (let i = 1; i <= 9; i++) {
-        texts = `${texts}\n.${style}-${color}-${i}  {@apply ${style}-${colorOrigin[idx2]}-${i}00}`;
+        texts = `${texts} .${style}-${color}-${i}  {@apply ${style}-${colorOrigin[idx2]}-${i}00}`;
       }
-      texts1 = `${texts1}\n${texts}`;
+      texts1 = `${texts1} ${texts}`;
     });
-    fullText = `${fullText}\n${texts1}`;
+    fullText = `${fullText} ${texts1}`;
   });
 
   console.log(fullText);
 
   fs.writeFile(
     "./src/styles/auto.css",
-    `
-			@layer base {
-				${fullText}
-			}
-			@tailwind base;
-		`,
+    `@layer base { ${fullText} } @tailwind base;`,
     (err) => {
       if (err) {
         console.error(err);
