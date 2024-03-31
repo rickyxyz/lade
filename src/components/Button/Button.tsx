@@ -53,6 +53,7 @@ export function Button({
   style,
   onClick,
 }: ButtonProps) {
+  console.log(BUTTON_VARIOUS_STYLE[variant][color]);
   return (
     <button
       className={clsx(

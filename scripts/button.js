@@ -7,20 +7,20 @@ const variants = ["solid", "outline", "outline-2", "ghost"];
 
 function styleTemplate(style, color) {
   const SOLID = [
-    `bg-${color}-5 text-white`,
-    `hover:bg-${color}-6`,
-    `active:bg-${color}-7`,
+    `bg-${color}-500 text-white`,
+    `hover:bg-${color}-600`,
+    `active:bg-${color}-700 focus:bg-${color}-600`,
   ];
 
   const GHOST = [
-    `text-${color}-6`,
-    `hover:bg-${color}-1`,
-    `active:bg-${color}-2`,
+    `text-${color}-600`,
+    `hover:bg-${color}-100`,
+    `active:bg-${color}-200 focus:bg-${color}-100`,
   ];
 
   const OUTLINE = [...GHOST, `border border-${color}-6`];
 
-  const OUTLINE_COLORLESS = [...GHOST, `border border-gray-300`];
+  const OUTLINE_COLORLESS = [...GHOST, `border border-secondary-300`];
 
   switch (style) {
     case "solid":
@@ -48,8 +48,10 @@ function produceStyle() {
   });
 
   fs.writeFile(
-    "./src/consts/style/button.json",
-    JSON.stringify(collection),
+    "./src/consts/style/button.ts",
+    `import { ButtonVariantType, GenericColorType } from "@/types"\nexport const BUTTON_VARIOUS_STYLE: Record<ButtonVariantType, Record<GenericColorType, string[]>> = ${JSON.stringify(
+      collection
+    )};`,
     (err) => {
       if (err) {
         console.error(err);

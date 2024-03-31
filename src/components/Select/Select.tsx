@@ -124,7 +124,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           visible && INPUT_FOCUS_STYLE,
           variant === "basic" && INPUT_BASIC_STYLE,
           variant === "solid" && INPUT_SOLID_STYLE,
-          disabled ? "bg-gray-200" : "bg-white",
+          disabled ? "bg-secondary-200" : "bg-white",
           "text-ellipsis whitespace-nowrap overflow-hidden",
           inputClassName
         )}
@@ -162,12 +162,12 @@ const INPUT_BASE_STYLE =
   "w-full flex justify-between items-center h-10 pl-4 rounded-md";
 
 const INPUT_BASIC_STYLE = [
-  "border border-gray-300",
-  "focus:outline focus:border-blue-400 focus:outline-4 outline-blue-200",
+  "border border-secondary-300",
+  "focus:outline focus:border-primary-400 focus:outline-4 outline-primary-200",
 ];
 
 const INPUT_FOCUS_STYLE = [
-  "outline border-blue-400 outline-4 outline-blue-200",
+  "outline border-primary-400 outline-4 outline-primary-200",
 ];
 
-const INPUT_SOLID_STYLE = ["bg-gray-100 focus:bg-gray-200"];
+const INPUT_SOLID_STYLE = ["bg-secondary-100 focus:bg-secondary-200"];

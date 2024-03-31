@@ -22,4 +22,4 @@ export function Tag({ children }: TagProps) {
   );
 }
 
-const TAG_BASE_STYLE = ["px-2 py-0.5 bg-blue-100 rounded-md"];
+const TAG_BASE_STYLE = ["px-2 py-0.5 bg-primary-100 rounded-md"];

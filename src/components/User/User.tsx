@@ -42,7 +42,7 @@ export function User({
           "flex items-center justify-center",
           "w-10 h-10",
           "rounded-full",
-          username ? "bg-gray-500" : "bg-red-700"
+          username ? "bg-secondary-500" : "bg-danger-700"
         )}
       >
         <span className="text-white">{userInitials}</span>

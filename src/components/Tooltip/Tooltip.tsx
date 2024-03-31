@@ -45,7 +45,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         <div
           className={clsx(
             "absolute h-fit flex flex-col",
-            "border border-gray-100 bg-white shadow-md z-10",
+            "border border-secondary-100 bg-white shadow-md z-10",
             classNameInner
           )}
           style={{

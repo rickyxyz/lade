@@ -16,4 +16,4 @@ export function TooltipOption({
   );
 }
 
-const OPTION_BASE_STYLE = ["px-4 py-2 hover:bg-gray-100", "flex"];
+const OPTION_BASE_STYLE = ["px-4 py-2 hover:bg-secondary-100", "flex"];

@@ -51,7 +51,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
       <>
         <div className="relative flex justify-between mb-4">
           <Link href={`/problem/${id}`}>
-            <h2 className="text-blue-600 hover:text-blue-700">{title}</h2>
+            <h2 className="text-primary-600 hover:text-primary-700">{title}</h2>
           </Link>
           <More
             className="!absolute !right-0"

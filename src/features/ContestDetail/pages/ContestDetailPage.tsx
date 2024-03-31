@@ -183,7 +183,7 @@ export function ContestDetailPage({ id, user }: ContestProps) {
       <IconText
         IconComponent={West}
         text="Back"
-        className="mb-4 text-blue-600 cursor-pointer"
+        className="mb-4 text-primary-600 cursor-pointer"
         onClick={handleGoBack}
       />
     ),

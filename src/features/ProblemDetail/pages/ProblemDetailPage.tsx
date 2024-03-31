@@ -196,8 +196,20 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     if (loading || !problem)
       return <ProblemDetailMainSkeleton className={className} />;
 
-    return <ProblemDetailData className={className} problem={problem} />;
-  }, [loading, problem]);
+    return (
+      <ProblemDetailData
+        className={className}
+        problem={problem}
+        showAuthorMenu={!!user && problem.authorId === user?.id}
+        onEdit={() => {
+          setMode("edit");
+        }}
+        onDelete={() => {
+          handleDeleteProblem();
+        }}
+      />
+    );
+  }, [handleDeleteProblem, loading, problem, setMode, user]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -275,7 +287,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       <IconText
         IconComponent={West}
         text="Back"
-        className="mb-4 text-blue-600 cursor-pointer"
+        className="mb-4 text-primary-600 cursor-pointer"
         onClick={handleGoBack}
       />
     ),

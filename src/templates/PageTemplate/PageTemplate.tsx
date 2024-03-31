@@ -27,8 +27,8 @@ export function PageTemplate({
       )}
     >
       <PageTemplateNav />
-      <main className="flex flex-col w-full bg-gray-100">
-        <div className="w-full py-3 px-8 bg-white border-b border-gray-300">
+      <main className="flex flex-col w-full bg-secondary-100">
+        <div className="w-full py-3 px-8 bg-white border-b border-secondary-300">
           <Paragraph size="m" weight="semibold">
             {title}
           </Paragraph>

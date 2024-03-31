@@ -52,7 +52,6 @@ export function ProblemCreateEditorForm({
   const renderProblemSettings = useMemo(
     () => (
       <section className="mb-8">
-        <h2 className="mb-4">Problem Details</h2>
         <div className="flex flex-col gap-4">
           <SettingInput name="Problem Title" formName="title" />
           <SettingSelect
@@ -114,7 +113,6 @@ export function ProblemCreateEditorForm({
   const renderProblemEditor = useMemo(
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
-        <h2 className="mb-4">Problem Statement</h2>
         <div className="mb-4">
           <MarkdownEditor
             value={statement}
@@ -151,7 +149,6 @@ export function ProblemCreateEditorForm({
     () =>
       type && (
         <section className="mb-8">
-          <h2 className="mb-4">Problem Answer</h2>
           <ProblemAnswer
             type={type}
             stateAnswer={stateAnswer}
@@ -193,9 +190,11 @@ export function ProblemCreateEditorForm({
           type="submit"
           onClick={submitForm}
           label="Submit"
+          variant="solid"
+          color="primary"
         />
         {onLeaveEditor && (
-          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
+          <Button variant="outline" onClick={onLeaveEditor} label="Cancel" />
         )}
       </div>
     </>

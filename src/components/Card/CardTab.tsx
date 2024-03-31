@@ -28,7 +28,9 @@ export function CardTab<T extends string>({
     () =>
       tabs.map(({ id, label, onClick }, index) => (
         <Tab
-          className={clsx(id === activeTab ? "!border-b-0" : "!bg-gray-50")}
+          className={clsx(
+            id === activeTab ? "!border-b-0" : "!bg-secondary-50"
+          )}
           style={{
             marginLeft: `-${index}px`,
           }}

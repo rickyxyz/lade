@@ -50,7 +50,7 @@ export function ContestCard({ contest }: ContestCardProps) {
       <>
         <div className="relative flex justify-between mb-4">
           <Link href={`/contest/${id}`}>
-            <h2 className="text-blue-600 hover:text-blue-700">{title}</h2>
+            <h2 className="text-primary-600 hover:text-primary-700">{title}</h2>
           </Link>
           <More
             className="!absolute !right-0"
@@ -80,7 +80,7 @@ export function ContestCard({ contest }: ContestCardProps) {
     () => (
       <div className="flex items-center justify-between">
         <Button>Participate</Button>
-        <div className="flex items-center text-sm text-gray-600 gap-6">
+        <div className="flex items-center text-sm text-secondary-600 gap-6">
           <ProblemDetailStats text={String(authorId)} icon={Person} />
         </div>
       </div>

@@ -40,11 +40,11 @@ export function Quote({
       {icon && (
         <Icon
           className={clsx([
-            variant === "primary" && "text-blue-700",
-            variant === "secondary" && "text-gray-700",
-            variant === "success" && "text-green-700",
-            variant === "warning" && "text-yellow-700",
-            variant === "danger" && "text-red-700",
+            variant === "primary" && "text-primary-700",
+            variant === "secondary" && "text-secondary-700",
+            variant === "success" && "text-success-700",
+            variant === "warning" && "text-warning-700",
+            variant === "danger" && "text-danger-700",
           ])}
           IconComponent={icon}
         />
@@ -56,17 +56,17 @@ export function Quote({
 
 const QUOTE_BASE_STYLE = [
   "flex flex-row items-center w-fit px-4 py-2 h-fit gap-4",
-  "transition-colors duration-100 text-gray-800",
+  "transition-colors duration-100 text-secondary-800",
   "disabled:cursor-not-allowed disabled:bg-opacity-50",
   "rounded",
 ];
 
-const QUOTE_PRIMARY_STYLE = [`bg-blue-100`];
+const QUOTE_PRIMARY_STYLE = [`bg-primary-100`];
 
-const QUOTE_SECONDARY_STYLE = [`bg-gray-100`];
+const QUOTE_SECONDARY_STYLE = [`bg-secondary-100`];
 
-const QUOTE_SUCCESS_STYLE = [`bg-green-100`];
+const QUOTE_SUCCESS_STYLE = [`bg-success-100`];
 
-const QUOTE_WARNING_STYLE = [`bg-yellow-100`];
+const QUOTE_WARNING_STYLE = [`bg-warning-100`];
 
-const QUOTE_DANGER_STYLE = [`bg-red-100`];
+const QUOTE_DANGER_STYLE = [`bg-danger-100`];

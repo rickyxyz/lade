@@ -235,7 +235,7 @@ export function PageTemplateNav() {
     <nav
       className={clsx(
         "flex flex-col",
-        "border-gray-300 border-r",
+        "border-secondary-300 border-r",
         "py-4",
         "max-lg:max-w-[58px] lg:min-w-[240px]",
         "max-lg:px-2 lg:px-6"

@@ -1,17 +1,14 @@
-import { ReactNode, useMemo } from "react";
-import { Button, Card, Paragraph, Tag } from "@/components";
-import {
-  ProblemSubtopicNameType,
-  ProblemTopicNameType,
-  ProblemType,
-} from "@/types";
-import clsx from "clsx";
+import { ReactNode } from "react";
+import { Button, Card, Paragraph } from "@/components";
+import { ProblemType } from "@/types";
 import { ProblemDetailTopics } from "./ProblemDetailTopic";
 
 export interface ProblemDetailDataProps {
   problem: ProblemType;
   className?: string;
   showAuthorMenu?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 function DataRow({ name, value }: { name: string; value: ReactNode }) {
@@ -33,6 +30,8 @@ export function ProblemDetailData({
   className,
   problem,
   showAuthorMenu,
+  onEdit,
+  onDelete,
 }: ProblemDetailDataProps) {
   const { title, topic, subTopic, authorId, createdAt } = problem;
 
@@ -69,8 +68,13 @@ export function ProblemDetailData({
       </table>
       {showAuthorMenu && (
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <Button variant="outline-2" label="Edit" />
-          <Button color="danger" variant="outline-2" label="Delete" />
+          <Button variant="outline-2" label="Edit" onClick={onEdit} />
+          <Button
+            color="danger"
+            variant="outline-2"
+            label="Delete"
+            onClick={onDelete}
+          />
         </div>
       )}
     </Card>

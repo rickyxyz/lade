@@ -33,12 +33,14 @@ export function PageTemplateNavButton({
           "flex items-center rounded-md transition-colors",
           isDanger
             ? [
-                "hover:bg-red-100",
-                isActive ? "bg-red-100 text-red-600" : "text-red-600",
+                "hover:bg-danger-100",
+                isActive ? "bg-danger-100 text-danger-600" : "text-danger-600",
               ]
             : [
-                "hover:bg-blue-100",
-                isActive ? "bg-blue-100 text-blue-600" : "text-gray-600",
+                "hover:bg-primary-100",
+                isActive
+                  ? "bg-primary-100 text-primary-600"
+                  : "text-secondary-600",
               ],
           device === "desktop" ? "px-4 h-10" : "p-2 h-10 w-10",
           className

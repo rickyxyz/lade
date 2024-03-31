@@ -1,10 +1,8 @@
-@import "auto.css";
-
 @layer base {
   p,
   span,
   input {
-    @apply text-zinc-800 text-base font-medium;
+    @apply text-secondary-800 text-base font-medium;
   }
   *:focus {
     outline: none;
@@ -33,10 +31,10 @@
     @apply head-style text-xl;
   }
   *:not(a) > h2 {
-    @apply text-blue-600;
+    @apply text-primary-600;
   }
   a {
-    @apply text-blue-600 hover:text-blue-500 active:text-blue-400 focus:text-blue-400;
+    @apply text-primary-600 hover:text-primary-500 active:text-primary-400 focus:text-primary-400;
   }
   .markdown ul {
     list-style-type: disc;
@@ -48,11 +46,11 @@
     margin-bottom: 1rem;
   }
   th.table {
-    @apply bg-gray-100 uppercase tracking-wider;
+    @apply bg-secondary-100 uppercase tracking-wider;
   }
   th.table,
   td.table {
-    @apply border border-gray-400;
+    @apply border border-secondary-400;
     padding: 0.5rem 1rem;
   }
 }
@@ -62,7 +60,7 @@
     display: inline;
   }
   .skeleton {
-    @apply bg-gray-100 rounded-full;
+    @apply bg-secondary-100 rounded-full;
     animation-name: skeleframe;
     animation-duration: 0.8s;
     animation-direction: alternate;
@@ -71,10 +69,10 @@
 
   @keyframes skeleframe {
     from {
-      @apply bg-gray-100;
+      @apply bg-secondary-100;
     }
     to {
-      @apply bg-gray-200;
+      @apply bg-secondary-200;
     }
   }
 }

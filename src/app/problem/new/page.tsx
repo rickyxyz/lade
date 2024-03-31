@@ -1,4 +1,4 @@
-import { ProblemCreatePage } from "@/features";
+import { ProblemCreateMultiplePage, ProblemCreatePage } from "@/features";
 
 export default function CreateProblem() {
   return <ProblemCreatePage />;

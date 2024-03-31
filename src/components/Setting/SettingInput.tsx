@@ -24,7 +24,7 @@ export function SettingInput({
             <>
               <input {...rest} {...field} className="hidden" type="text" />
               {meta.touched && meta.error && (
-                <span className="pl-4 col-start-2 text-red-500">
+                <span className="pl-4 col-start-2 text-danger-500">
                   {meta.error}
                 </span>
               )}
