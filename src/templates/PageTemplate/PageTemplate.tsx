@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { PageTemplateNav } from "./PageTemplateNav";
 import { Paragraph } from "@/components";
@@ -27,13 +27,13 @@ export function PageTemplate({
       )}
     >
       <PageTemplateNav />
-      <main className="flex flex-col w-full bg-secondary-100">
+      <main className="w-full flex flex-auto overflow-hidden flex-col bg-secondary-100">
         <div className="w-full py-3 px-8 bg-white border-b border-secondary-300">
           <Paragraph size="m" weight="semibold">
             {title}
           </Paragraph>
         </div>
-        <section className="flex flex-col w-full overflow-y-auto p-8">
+        <section className="flex flex-col overflow-y-auto p-8">
           {head}
           {children}
         </section>

@@ -41,7 +41,7 @@ export function validateProblemStatement(statement: string) {
     return "Problem statement is required.";
   } else if (statement.length < 3) {
     return "Problem statement is too short.";
-  } else if (statement.length > 200) {
+  } else if (statement.length > 512) {
     return "Problem statement is too long.";
   }
   return null;

@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Formik } from "formik";
-import { Card, Modal } from "@/components";
+import { Card } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { parseAnswer, validateFormProblem } from "@/utils";
 import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
@@ -12,7 +12,7 @@ import {
 
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
-  problem: ProblemType;
+  stateProblem: StateType<ProblemType>;
   stateLoading: StateType<boolean>;
   headElement?: ReactNode;
   onSubmit: (problem: ProblemType) => void;
@@ -20,12 +20,13 @@ interface ProblemCreateEditorProps
 
 export function ProblemCreateEditor({
   headElement,
-  problem,
+  stateProblem,
   stateLoading,
   onSubmit,
   ...rest
 }: ProblemCreateEditorProps) {
   const setLoading = stateLoading[1];
+  const problem = stateProblem[0];
   const stateAnswer = useState<unknown>({
     content: "",
   });
@@ -35,6 +36,8 @@ export function ProblemCreateEditor({
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
       if (!user) return;
+
+      setLoading(true);
 
       const common: ProblemType = {
         createdAt: new Date(),
@@ -48,11 +51,10 @@ export function ProblemCreateEditor({
         ...common,
       };
 
-      console.log(completeValues);
-
+      console.log("onSubmit");
       onSubmit(completeValues);
     },
-    [answer, onSubmit, user]
+    [answer, onSubmit, setLoading, user]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {
@@ -68,10 +70,10 @@ export function ProblemCreateEditor({
   }, [handleUpdateInitialAnswer, problem]);
 
   return (
-    <Card className="gap-8">
+    <Card className="flex-grow gap-4">
       <Formik
-        initialValues={problem}
-        validate={validateFormProblem}
+        initialValues={problem ?? PROBLEM_BLANK}
+        // validate={validateFormProblem}
         onSubmit={handleSubmit}
         validateOnChange={false}
         validateOnBlur={false}

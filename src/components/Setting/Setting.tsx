@@ -17,7 +17,7 @@ export function Setting({
   classNameChildren,
 }: SettingProps) {
   return (
-    <div className={clsx("flex flex-col md:flex-row", className)}>
+    <div className={clsx("flex flex-col", className)}>
       <span className="w-40 mt-2 text-secondary-500">{name}</span>
       <div className={clsx("flex-1", classNameChildren)}>{children}</div>
     </div>

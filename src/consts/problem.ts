@@ -17,12 +17,13 @@ import {
 
 export const PROBLEM_BLANK: ProblemType = {
   id: "",
-  statement: "",
+  statement:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a sem arcu. Nam nec consectetur nulla.",
   title: "An Untitled Problem",
   topicId: "calculus",
   subTopicId: "derivatives",
   type: "short_answer",
-  answer: "",
+  answer: "123",
   authorId: "",
 };
 
@@ -152,3 +153,5 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
   ];
 
 export const PROBLEM_PAGINATION_COUNT = 6;
+
+export const PROBLEM_AT_A_TIME_COUNT = 5;

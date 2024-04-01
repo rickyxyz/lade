@@ -18,18 +18,18 @@ import { useTopics } from "@/hooks";
 
 export interface ProblemCreateEditorFormProps {
   stateMode?: StateType<ContentViewType>;
-  stateAnswer: StateType<unknown>;
+  stateAnswers: StateType<unknown[]>;
   stateLoading: StateType<boolean>;
   disableEditId?: boolean;
   onLeaveEditor?: () => void;
 }
 
-export function ProblemCreateEditorForm({
-  stateAnswer,
+export function ProblemCreateEditorFormMultiple({
+  stateAnswers,
   stateLoading,
   onLeaveEditor,
 }: ProblemCreateEditorFormProps) {
-  const [answer, setAnswer] = stateAnswer;
+  const [answer, setAnswer] = stateAnswers;
   const [loading, setLoading] = stateLoading;
 
   const { initialized } = useProblemEditInitialized();
@@ -51,7 +51,8 @@ export function ProblemCreateEditorForm({
 
   const renderProblemSettings = useMemo(
     () => (
-      <section className="flex-grow mb-8">
+      <section className="mb-8">
+        <h2 className="mb-4">Problem Details</h2>
         <div className="flex flex-col gap-4">
           <SettingInput name="Problem Title" formName="title" />
           <SettingSelect
@@ -112,7 +113,8 @@ export function ProblemCreateEditorForm({
 
   const renderProblemEditor = useMemo(
     () => (
-      <section className="border-transparent" data-color-mode="light">
+      <section className="border-transparent mb-8" data-color-mode="light">
+        <h2 className="mb-4">Problem Statement</h2>
         <div className="mb-4">
           <MarkdownEditor
             value={statement}
@@ -149,9 +151,10 @@ export function ProblemCreateEditorForm({
     () =>
       type && (
         <section className="mb-8">
+          <h2 className="mb-4">Problem Answer</h2>
           <ProblemAnswer
             type={type}
-            stateAnswer={stateAnswer}
+            stateAnswer={stateAnswers}
             caption={
               touched["answer"] &&
               errors["answer"] && (
@@ -183,16 +186,16 @@ export function ProblemCreateEditorForm({
       {renderProblemSettings}
       {renderProblemEditor}
       {renderProblemAnswer}
-      <div className="flex flex-auto gap-4">
+      <div className="flex gap-4 mt-4">
         <Button
           loading={loading}
           disabled={!initialized || atLeastOneError}
           type="submit"
           onClick={submitForm}
-          label="Save"
+          label="Submit"
         />
         {onLeaveEditor && (
-          <Button variant="outline" onClick={onLeaveEditor} label="Cancel" />
+          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
         )}
       </div>
     </>

@@ -56,9 +56,14 @@
 }
 @tailwind base;
 @layer components {
+  .Card:hover .PreviewStatement {
+    @apply to-secondary-50;
+  }
+
   mjx-container svg {
     display: inline;
   }
+
   .skeleton {
     @apply bg-secondary-100 rounded-full;
     animation-name: skeleframe;

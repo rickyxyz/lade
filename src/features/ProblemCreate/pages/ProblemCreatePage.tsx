@@ -9,8 +9,6 @@ import { useDebounce } from "@/hooks";
 import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
-import { Button } from "@/components";
-import { PROBLEM_PLACEHOLDERS } from "@/libs/firebase/placeholders";
 
 export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
@@ -54,28 +52,14 @@ export function ProblemCreatePage() {
 
   return (
     <PageTemplate title="Create Problem">
-      <Button
-        onClick={async () => {
-          await API("post_problems", {
-            body: [
-              {
-                ...PROBLEM_PLACEHOLDERS[0],
-                title: "",
-                statement: "",
-              },
-              PROBLEM_PLACEHOLDERS[0],
-            ],
-          });
-        }}
-      >
-        Test
-      </Button>
-      <ProblemCreateEditor
-        headElement={renderHead}
-        stateProblem={stateProblem}
-        stateLoading={stateLoading}
-        onSubmit={handleSubmit}
-      />
+      <div className="flex flex-row flex-wrap gap-8">
+        <ProblemCreateEditor
+          headElement={renderHead}
+          stateProblem={stateProblem}
+          stateLoading={stateLoading}
+          onSubmit={handleSubmit}
+        />
+      </div>
     </PageTemplate>
   );
 }

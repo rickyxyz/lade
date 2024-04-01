@@ -1,5 +1,5 @@
 import { ProblemCreateMultiplePage, ProblemCreatePage } from "@/features";
 
 export default function CreateProblem() {
-  return <ProblemCreatePage />;
+  return <ProblemCreateMultiplePage />;
 }

@@ -191,7 +191,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   ]);
 
   const renderQuestionMetadata = useMemo(() => {
-    const className = "grow md:max-w-[320px] h-fit";
+    const className = "flex-grow md:max-w-[320px] h-fit";
 
     if (loading || !problem)
       return <ProblemDetailMainSkeleton className={className} />;

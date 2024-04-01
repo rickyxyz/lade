@@ -1,101 +1,51 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Formik } from "formik";
-import { Card } from "@/components";
+import { Card, Paragraph } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { parseAnswer, validateFormProblem } from "@/utils";
-import { PROBLEM_BLANK, PROBLEM_DEFAULT } from "@/consts";
-import { ProblemType, StateType } from "@/types";
 import {
-  ProblemCreateEditorForm,
-  ProblemCreateEditorFormProps,
-} from "./ProblemCreateEditorForm";
+  PROBLEM_AT_A_TIME_COUNT,
+  PROBLEM_BLANK,
+  PROBLEM_DEFAULT,
+} from "@/consts";
+import { ProblemType, StateType } from "@/types";
+import { ProblemCreateEditorFormProps } from "./ProblemCreateEditorForm";
+import { ProblemCreateEditorMultipleEntry } from "./ProblemCreateEditorMultipleEntry";
+import clsx from "clsx";
 
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
   stateProblems: StateType<ProblemType[]>;
   stateLoading: StateType<boolean>;
-  headElement?: ReactNode;
-  onSubmit: (problem: ProblemType[]) => void;
+  onEdit: (index: number) => void;
+  onDelete: (index: number) => void;
+  onAdd: () => void;
 }
 
 export function ProblemCreateEditorMultiple({
-  headElement,
   stateProblems,
-  stateLoading,
-  onSubmit,
-  ...rest
+  onEdit,
+  onDelete,
+  onAdd,
 }: ProblemCreateEditorProps) {
-  const setLoading = stateLoading[1];
   const problems = stateProblems[0];
-  const stateAnswers = useState<unknown[]>([
-    {
-      content: "",
-    },
-  ]);
-  const [answer, setAnswer] = stateAnswers;
-  const user = useAppSelector("user");
 
-  const handleSubmit = useCallback(
-    async (values: { problems: ProblemType[] }) => {
-      if (!user) return;
-
-      setLoading(true);
-
-      console.log("onSubmit");
-      onSubmit(
-        values.problems.map((problem) => {
-          const common: ProblemType = {
-            createdAt: new Date(),
-            ...problem,
-            answer: JSON.stringify(answer),
-            authorId: user.id,
-          };
-
-          const completeValues: ProblemType = {
-            ...PROBLEM_DEFAULT,
-            ...common,
-          };
-
-          return completeValues;
-        })
-      );
-    },
-    [answer, onSubmit, setLoading, user]
+  const renderProblems = useMemo(
+    () =>
+      problems.map((problem, index) => (
+        <ProblemCreateEditorMultipleEntry
+          key={problem.id}
+          problem={problem as any}
+          onEdit={() => onEdit(index)}
+          onDelete={() => {
+            onDelete(index);
+          }}
+        />
+      )),
+    [onDelete, onEdit, problems]
   );
 
-  const handleUpdateInitialAnswer = useCallback(() => {
-    if (problems) {
-      console.log("Set Initial Answer");
-      const castAnswers = problems.map((problem) =>
-        parseAnswer(problem.type, problem.answer)
-      );
-      setAnswer(castAnswers);
-    }
-  }, [problems, setAnswer]);
-
-  useEffect(() => {
-    handleUpdateInitialAnswer();
-  }, [handleUpdateInitialAnswer, problems]);
-
   return (
-    <Card>
-      {headElement}
-      <Formik
-        initialValues={{
-          problems,
-        }}
-        // validate={validateFormProblem}
-        onSubmit={handleSubmit}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        {/* <ProblemCreateEditorFormMultiple
-          stateProblems={stateProblems}
-          stateAnswers={stateAnswers}
-          stateLoading={stateLoading}
-          {...rest}
-        /> */}
-      </Formik>
-    </Card>
+    <div className="flex-grow grid grid-cols-1 gap-8">{renderProblems}</div>
   );
 }

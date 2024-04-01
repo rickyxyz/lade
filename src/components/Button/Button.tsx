@@ -53,7 +53,6 @@ export function Button({
   style,
   onClick,
 }: ButtonProps) {
-  console.log(BUTTON_VARIOUS_STYLE[variant][color]);
   return (
     <button
       className={clsx(
@@ -98,9 +97,9 @@ export function Button({
 }
 
 const BUTTON_BASE_STYLE = [
-  "flex flex-row items-center",
+  "flex flex-row justify-center items-center",
   "duration-100 text-base font-semibold",
-  "disabled:cursor-not-allowed disabled:bg-opacity-50",
+  "disabled:cursor-not-allowed disabled:opacity-50",
 ];
 
 const BUTTON_ORDER_STYLE: Record<
