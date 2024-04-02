@@ -120,12 +120,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   );
 
   const handleDeleteProblem = useCallback(async () => {
-    await api
-      .delete("/problem", {
-        params: {
-          id,
-        },
-      })
+    await API("delete_problem", {
+      params: { id },
+    })
       .then(() => {
         console.log("problem deleted");
         router.push("/");

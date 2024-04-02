@@ -4,6 +4,13 @@
   input {
     @apply text-secondary-800 text-base font-medium;
   }
+  p,
+  span,
+  h1,
+  h2,
+  h3 {
+    text-wrap: pretty;
+  }
   *:focus {
     outline: none;
   }
@@ -20,15 +27,15 @@
   }
   h1,
   .h1 {
-    @apply head-style font-semibold text-xl;
+    @apply head-style font-semibold text-lg;
   }
   h2,
   .h2 {
-    @apply head-style text-xl;
+    @apply head-style text-lg;
   }
   h3,
   .h3 {
-    @apply head-style text-xl;
+    @apply head-style text-lg;
   }
   *:not(a) > h2 {
     @apply text-primary-600;

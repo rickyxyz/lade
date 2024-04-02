@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
 import { ButtonIcon, Card, More, Paragraph } from "@/components";
-import { getPermissionForContent, md } from "@/utils";
+import { getPermissionForContent, md, parseAnswer } from "@/utils";
 import { ProblemDatabaseType, ProblemType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
-import { CheckCircle, Close, Delete, Person } from "@mui/icons-material";
+import { CheckCircle, Close, Delete, Edit, Person } from "@mui/icons-material";
 import { on } from "events";
 import clsx from "clsx";
+import { ProblemCreateEditorAnswer } from "./ProblemCreateEditorAnswer";
 
 export interface ProblemCreateEditorMultipleEntryProps {
   problem: ProblemType;
@@ -18,22 +19,28 @@ export interface ProblemCreateEditorMultipleEntryProps {
 
 export function ProblemCreateEditorMultipleEntry({
   problem,
+  isDeletable,
   onEdit,
   onDelete,
 }: ProblemCreateEditorMultipleEntryProps) {
-  const { statement, title, topicId, subTopicId } = problem;
+  const { statement, title, topic, subTopic, answer, type } = problem;
+
+  const parsedAnswer = useMemo(() => parseAnswer(type, answer), [answer, type]);
 
   const statementRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics
-        className="mb-4"
-        topic={topicId}
-        subTopic={subTopicId}
-      />
-    ),
-    [subTopicId, topicId]
+    () =>
+      topic && subTopic ? (
+        <ProblemDetailTopics
+          className="mb-4"
+          topic={topic.name}
+          subTopic={subTopic.name}
+        />
+      ) : (
+        <></>
+      ),
+    [subTopic, topic]
   );
 
   const renderMain = useMemo(
@@ -43,7 +50,15 @@ export function ProblemCreateEditorMultipleEntry({
           <Paragraph as="h2" size="l">
             {title}
           </Paragraph>
-          <div>
+          <div className="flex gap-2">
+            <ButtonIcon
+              variant="ghost"
+              icon={Edit}
+              onClick={(e) => {
+                onEdit();
+                e.stopPropagation();
+              }}
+            />
             <ButtonIcon
               variant="ghost"
               icon={Delete}
@@ -52,6 +67,7 @@ export function ProblemCreateEditorMultipleEntry({
                 onDelete();
                 e.stopPropagation();
               }}
+              disabled={isDeletable}
             />
           </div>
         </div>
@@ -66,9 +82,21 @@ export function ProblemCreateEditorMultipleEntry({
             )}
           ></div>
         </div>
+        <div className="flex items-center gap-4">
+          <Paragraph>Answer</Paragraph>
+          <div
+            className={clsx(
+              "relative flex items-center justify-center overflow-y-visible",
+              "bg-secondary-200 border border-secondary-300 py-2 px-4",
+              "rounded-sm"
+            )}
+          >
+            <ProblemCreateEditorAnswer answer={parsedAnswer} type={type} />
+          </div>
+        </div>
       </>
     ),
-    [onDelete, renderTags, title]
+    [isDeletable, onDelete, onEdit, parsedAnswer, renderTags, title, type]
   );
 
   const handleRenderMarkdown = useCallback(() => {

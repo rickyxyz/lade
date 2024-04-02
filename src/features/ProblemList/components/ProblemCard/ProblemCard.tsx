@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { Card, More } from "@/components";
+import { Card, More, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -51,7 +51,9 @@ export function ProblemCard({ problem }: ProblemCardProps) {
       <>
         <div className="relative flex justify-between mb-4">
           <Link href={`/problem/${id}`}>
-            <h2 className="text-primary-600 hover:text-primary-700">{title}</h2>
+            <Paragraph className="mr-16" as="h2" color="primary-6">
+              {title}
+            </Paragraph>
           </Link>
           <More
             className="!absolute !right-0"

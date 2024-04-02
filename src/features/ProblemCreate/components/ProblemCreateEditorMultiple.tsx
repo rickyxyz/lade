@@ -40,6 +40,7 @@ export function ProblemCreateEditorMultiple({
           onDelete={() => {
             onDelete(index);
           }}
+          isDeletable={problems.length === 1}
         />
       )),
     [onDelete, onEdit, problems]

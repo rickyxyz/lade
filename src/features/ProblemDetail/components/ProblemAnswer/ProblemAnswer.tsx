@@ -76,7 +76,7 @@ export function ProblemAnswer({
                   key={`Matrix-${j}-${i}`}
                   variant="solid"
                   className="!w-24 text-center"
-                  defaultValue={content[j] ? content[j][i] : undefined}
+                  value={content[j] ? content[j][i] : undefined}
                   onBlur={onBlur}
                   onChange={(e) => {
                     setAnswer((prev: unknown) => {

@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROBLEM_BLANK } from "@/consts";
 import { ProblemCreateEditor, ProblemCreateEditorForm } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemType } from "@/types";
 import { crudData } from "@/libs/firebase";
-import { useDebounce } from "@/hooks";
+import { useDebounce, useTopics } from "@/hooks";
 import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
@@ -14,23 +14,13 @@ import { PROBLEM_PLACEHOLDERS } from "@/libs/firebase/placeholders";
 import { ProblemCreateEditorMultiple } from "../components/ProblemCreateEditorMultiple";
 import { ProblemCreateEditorMultipleList } from "../components/ProblemCreateEditorMultipleList";
 import { ProblemCreateEditorFormMultiple } from "../components/ProblemCreateEditorFormMultiple";
+import { makeAnswer } from "@/utils";
 
 export function ProblemCreateMultiplePage() {
   const stateProblems = useState<ProblemType[]>([
     {
       ...PROBLEM_BLANK,
-      title: "Name1",
       id: "0",
-    } as unknown as ProblemType,
-    {
-      ...PROBLEM_BLANK,
-      title: "Name2",
-      id: "1",
-    } as unknown as ProblemType,
-    {
-      ...PROBLEM_BLANK,
-      title: "Name3",
-      id: "2",
     } as unknown as ProblemType,
   ]);
   const [problems, setProblems] = stateProblems;
@@ -40,8 +30,6 @@ export function ProblemCreateMultiplePage() {
   const debounce = useDebounce();
   const router = useRouter();
   const user = useAppSelector("user");
-  const stateModal = useState(false);
-  const setModal = stateModal[1];
   const stateProblemIndex = useState<number | null>(null);
   const [problemIndex, setProblemIndex] = stateProblemIndex;
   const problem = useMemo(
@@ -52,18 +40,78 @@ export function ProblemCreateMultiplePage() {
     [problemIndex, problems]
   );
 
+  const {
+    allTopics: { topics, subTopics },
+  } = useTopics();
+
   const handleSubmitAll = useCallback(async () => {
     setLoading(true);
     await API("post_problems", {
-      body: problems,
+      body: problems.map((problem) => ({
+        ...problem,
+        topic: undefined,
+        subTopic: undefined,
+      })),
     })
       .then(() => {
         router.push("/");
       })
-      .catch(() => {
+      .catch((e) => {
         setLoading(false);
+        console.log(e);
       });
   }, [problems, router, setLoading]);
+
+  const handleUpdateInitialTopics = useCallback(() => {
+    setProblems((prev) =>
+      prev.map((problem) => ({
+        ...problem,
+        topic: topics.filter(({ id }) => problem.topicId === id)[0],
+        subTopic: subTopics.filter(({ id }) => problem.subTopicId === id)[0],
+      }))
+    );
+  }, [setProblems, subTopics, topics]);
+
+  useEffect(() => {
+    handleUpdateInitialTopics();
+  }, [handleUpdateInitialTopics]);
+
+  const handleEditProblem = useCallback(
+    (index: number) => {
+      setProblemIndex(index);
+    },
+    [setProblemIndex]
+  );
+
+  const handleDeleteProblem = useCallback(
+    (index: number) => {
+      setProblems((prev) => prev.filter((_, idx) => index !== idx));
+    },
+    [setProblems]
+  );
+
+  const handleAddProblem = useCallback(() => {
+    setProblems((prev) => {
+      const lastProblem = prev.at(-1);
+
+      let newProblem: ProblemType = {
+        ...PROBLEM_BLANK,
+        id: new Date().getTime(),
+      };
+
+      if (lastProblem) {
+        newProblem = {
+          ...newProblem,
+          topic: lastProblem.topic,
+          topicId: lastProblem.topicId,
+          subTopic: lastProblem.subTopic,
+          subTopicId: lastProblem.subTopicId,
+        } as unknown as ProblemType;
+      }
+
+      return [...prev, newProblem];
+    });
+  }, [setProblems]);
 
   const renderContent = useMemo(
     () =>
@@ -90,34 +138,23 @@ export function ProblemCreateMultiplePage() {
           <ProblemCreateEditorMultiple
             stateProblems={stateProblems}
             stateLoading={stateLoading}
-            onEdit={(index) => {
-              setProblemIndex(index);
-            }}
-            onAdd={() => {}}
-            onDelete={(index) => {
-              setProblems((prev) => prev.filter((_, idx) => index !== idx));
-            }}
+            onEdit={handleEditProblem}
+            onAdd={handleAddProblem}
+            onDelete={handleDeleteProblem}
           />
           <ProblemCreateEditorMultipleList
             stateLoading={stateLoading}
             problems={problems}
-            onAdd={() => {
-              setProblems((prev) => [
-                ...prev,
-                {
-                  ...PROBLEM_BLANK,
-                  id: new Date().getTime(),
-                },
-              ]);
-            }}
-            onDelete={(index) => {
-              setProblems((prev) => prev.filter((_, idx) => index !== idx));
-            }}
+            onAdd={handleAddProblem}
+            onDelete={handleDeleteProblem}
             onSubmit={handleSubmitAll}
           />
         </div>
       ),
     [
+      handleAddProblem,
+      handleDeleteProblem,
+      handleEditProblem,
       handleSubmitAll,
       problem,
       problemIndex,

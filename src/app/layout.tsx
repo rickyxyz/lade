@@ -58,6 +58,9 @@ export default function RootLayout({
         .MathJax[display="true"] {
           overflow-x: auto;
         }
+        .MathJax svg {
+          height: min-content !important;
+        }
       `}</style>
       <body className={noto.className}>
         <ProviderWrapper layout={layout} stateInitialized={stateInitialized}>

@@ -9,6 +9,7 @@ import {
   ProblemCreateEditorForm,
   ProblemCreateEditorFormProps,
 } from "./ProblemCreateEditorForm";
+import { useTopics } from "@/hooks";
 
 interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
@@ -31,6 +32,13 @@ export function ProblemCreateEditor({
   });
   const [answer, setAnswer] = stateAnswer;
   const user = useAppSelector("user");
+  const {
+    allTopics: { topics, subTopics },
+  } = useTopics();
+
+  useEffect(() => {
+    console.log(answer);
+  }, [answer]);
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
@@ -43,22 +51,29 @@ export function ProblemCreateEditor({
         authorId: user.id,
       };
 
+      const topicObjects = {
+        topic: topics.filter((topic) => topic.id === values.topicId)[0],
+        subTopic: subTopics.filter(
+          (subTopic) => subTopic.id === values.subTopicId
+        )[0],
+      };
+
       const completeValues: ProblemType = {
         ...PROBLEM_DEFAULT,
         ...common,
+        ...topicObjects,
       };
-
-      console.log(completeValues);
 
       onSubmit(completeValues);
     },
-    [answer, onSubmit, user]
+    [answer, onSubmit, subTopics, topics, user]
   );
 
   const handleUpdateInitialAnswer = useCallback(() => {
     if (problem) {
-      console.log("Set Initial Answer");
       const newAnswer = parseAnswer(problem.type, problem.answer);
+      console.log("new Answer");
+      console.log(newAnswer);
       if (newAnswer) setAnswer(newAnswer);
     }
   }, [problem, setAnswer]);

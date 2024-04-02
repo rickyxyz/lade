@@ -165,6 +165,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  console.log("DELETE");
   let response = NextResponse.json(
     {
       message: API_FAIL_MESSAGE,
@@ -180,10 +181,10 @@ export async function DELETE(req: NextRequest) {
 
     const user = await getAuthUserNext();
 
-    if (typeof id === "number") {
+    if (id) {
       const out = await prisma.problem.findUnique({
         where: {
-          id,
+          id: id as any,
         },
         include: {
           solveds: true,
@@ -197,13 +198,16 @@ export async function DELETE(req: NextRequest) {
       const allowDelete =
         user && (user.id === temp.authorId || user.role === "admin");
 
+      console.log("user: ", user);
+      console.log("author: ", out);
+
       if (!allowDelete) {
         throw Error("unauthorized");
       }
 
       await prisma.problem.delete({
         where: {
-          id,
+          id: id as any,
         },
       });
 

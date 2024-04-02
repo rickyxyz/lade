@@ -4,6 +4,7 @@ import { ProblemType, StateType } from "@/types";
 import { ProblemDetailTopics } from "@/features/ProblemDetail";
 import { Delete } from "@mui/icons-material";
 import { PROBLEM_AT_A_TIME_COUNT } from "@/consts";
+import { useTopics } from "@/hooks";
 
 export interface ProblemCreateEditorMultipleListProps {
   className?: string;
@@ -34,10 +35,10 @@ export function ProblemCreateEditorMultipleList({
         Problems ({problems.length} / {PROBLEM_AT_A_TIME_COUNT})
       </Paragraph>
       <div className="flex flex-col gap-2 mt-2">
-        {problems.map((problem, index) => (
-          <div key={problem.id}>
+        {problems.map(({ id, title }, index) => (
+          <div key={id}>
             <div className="flex items-center justify-between">
-              <Paragraph>{problem.title}</Paragraph>
+              <Paragraph>{title}</Paragraph>
               <ButtonIcon
                 className="!p-1 !h-6"
                 icon={Delete}
@@ -46,13 +47,9 @@ export function ProblemCreateEditorMultipleList({
                 onClick={() => {
                   onDelete(index);
                 }}
+                disabled={problems.length === 1}
               />
             </div>
-            <ProblemDetailTopics
-              className="mt-1"
-              topic={problem.topicId}
-              subTopic={problem.subTopicId}
-            />
           </div>
         ))}
       </div>

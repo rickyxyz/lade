@@ -13,7 +13,7 @@ export function ProblemEditPage({
   onEdit?: () => void;
   onLeaveEditor?: () => void;
 }) {
-  const setProblem = stateProblem[1];
+  const [problem, setProblem] = stateProblem;
 
   const stateLoading = useState(false);
   const [, setLoading] = stateLoading;
@@ -44,7 +44,7 @@ export function ProblemEditPage({
     <PageTemplate title="Edit Problem">
       <ProblemCreateEditor
         headElement={renderHead}
-        stateProblem={stateProblem}
+        problem={problem}
         stateLoading={stateLoading}
         onSubmit={handleSubmit}
         onLeaveEditor={onLeaveEditor}

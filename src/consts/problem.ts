@@ -14,6 +14,7 @@ import {
   ContestBaseType,
   ContestType,
 } from "@/types";
+import { makeAnswer } from "@/utils";
 
 export const PROBLEM_BLANK: ProblemType = {
   id: "",
@@ -23,15 +24,17 @@ export const PROBLEM_BLANK: ProblemType = {
   topicId: "calculus",
   subTopicId: "derivatives",
   type: "short_answer",
-  answer: "123",
+  answer: "",
   authorId: "",
+  ...makeAnswer("short_answer", {
+    content: "123",
+  }),
 };
 
 export const PROBLEM_DEFAULT: ProblemType = {
   ...PROBLEM_BLANK,
   createdAt: new Date(),
   solveds: [],
-  views: 0,
 };
 
 export const CONTEST_DEFAULT: ContestType = {
