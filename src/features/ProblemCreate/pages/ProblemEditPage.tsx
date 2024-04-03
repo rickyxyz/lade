@@ -24,6 +24,7 @@ export function ProblemEditPage({
 
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
+      setLoading(true);
       await API("patch_problem", {
         body: values,
       })
