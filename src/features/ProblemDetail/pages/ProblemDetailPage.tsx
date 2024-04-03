@@ -378,7 +378,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderViewProblem = useMemo(
     () => (
       <PageTemplate title={title} className="w-full">
-        <Loader />
         <div className="flex flex-row flex-wrap gap-8">
           {renderQuestion}
           {renderQuestionMetadata}

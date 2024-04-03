@@ -14,7 +14,7 @@ export function MarkdownEditorLoader() {
   return (
     <Card className="flex flex-col items-center justify-center h-64 text-primary-700">
       <Loader />
-      <span className="mt-2 text-primary-700">loading editor...</span>
+      <span className="mt-2 text-primary-700">loading editor</span>
     </Card>
   );
 }
