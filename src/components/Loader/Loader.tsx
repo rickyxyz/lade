@@ -1,45 +1,40 @@
-export function Loader() {
+import clsx from "clsx";
+import { FONT_COLOR, FontColor } from "@/consts/style";
+
+type LoaderSize = "sm" | "md";
+
+interface LoaderProps {
+  frontColor?: FontColor;
+  backColor?: FontColor;
+  size?: LoaderSize;
+}
+
+export function Loader({
+  frontColor = "primary-6",
+  backColor = "secondary-3",
+  size = "md",
+}: LoaderProps) {
   return (
-    <div className="relative w-4 h-4">
-      <svg
-        className="absolute top-0 animate-spin"
-        width={16}
-        height={16}
-        viewBox="0 0 16 16"
-        style={{
-          strokeDasharray: 100,
-          strokeDashoffset: 0,
-        }}
-      >
-        <circle
-          className="stroke-secondary-300"
-          cx="8"
-          cy="8"
-          r="6"
-          stroke="red"
-          fill="rgba(124,240,10,0)"
-          strokeWidth="4"
-        />
-      </svg>
-      <svg
-        className="absolute top-0 animate-spin"
-        width={16}
-        height={16}
-        viewBox="0 0 16 16"
-        style={{
-          strokeDasharray: 30,
-          strokeDashoffset: 0,
-        }}
-      >
-        <circle
-          className="stroke-primary-600"
-          cx="8"
-          cy="8"
-          r="6"
-          fill="rgba(124,240,10,0)"
-          strokeWidth="4"
-        />
-      </svg>
+    <div className={clsx("lds-ring !border-0", LOADER_SIZE_STYLE[size])}>
+      <div
+        className={clsx(
+          "lds-ring-back",
+          FONT_COLOR[backColor],
+          LOADER_SIZE_STYLE[size]
+        )}
+      ></div>
+      <div
+        className={clsx(
+          "lds-ring-front",
+          FONT_COLOR[frontColor],
+          LOADER_SIZE_STYLE[size]
+        )}
+      ></div>
     </div>
   );
 }
+
+const LOADER_SIZE_STYLE: Record<LoaderSize, string> = {
+  md: "w-8 h-8 border-[6px]",
+  sm: "w-4 h-4 border-[4px]",
+};

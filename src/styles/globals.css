@@ -63,6 +63,35 @@
 }
 @tailwind base;
 @layer components {
+  .lds-ring {
+    position: relative;
+  }
+  .lds-ring-front {
+    position: absolute;
+    box-sizing: border-box;
+    display: block;
+    border: solid currentColor;
+    border-radius: 50%;
+    animation: lds-ring 1.2s ease infinite;
+    border-color: currentColor transparent transparent transparent;
+  }
+  .lds-ring-back {
+    position: absolute;
+    box-sizing: border-box;
+    display: block;
+    border: solid currentColor;
+    border-radius: 100%;
+  }
+
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .Card:hover .PreviewStatement {
     @apply to-secondary-50;
   }

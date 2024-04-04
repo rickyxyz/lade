@@ -16,6 +16,7 @@ import {
   GenericColorType,
 } from "@/types";
 import { BUTTON_VARIOUS_STYLE } from "@/consts/style";
+import { Loader } from "../Loader";
 
 export interface ButtonProps
   extends DetailedHTMLProps<
@@ -87,10 +88,7 @@ export function Button({
           {children}
         </>
       ) : (
-        <Icon
-          IconComponent={HourglassEmpty}
-          className="my-1 justify-self-center animate-spin"
-        />
+        <Loader size="sm" frontColor="secondary-1" backColor="secondary-4" />
       )}
     </button>
   );

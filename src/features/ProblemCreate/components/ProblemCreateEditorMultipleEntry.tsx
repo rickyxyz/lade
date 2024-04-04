@@ -83,7 +83,9 @@ export function ProblemCreateEditorMultipleEntry({
           ></div>
         </div>
         <div className="flex items-center gap-4">
-          <Paragraph>Answer</Paragraph>
+          <Paragraph size="s" color="secondary-4">
+            ANSWER
+          </Paragraph>
           <div
             className={clsx(
               "relative flex items-center justify-center overflow-y-visible",
