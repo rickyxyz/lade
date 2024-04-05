@@ -168,12 +168,11 @@ export function ContestCreateEditorForm({
           }
         </Field>
         <div className="mb-4">
-          <div className="border border-secondary-300 rounded-md overflow-hidden">
+          <div className="relative border border-secondary-300 rounded-md overflow-hidden">
             <MarkdownEditor
+              className="relative"
+              height="200px"
               value={description}
-              renderPreview={({ source }) => {
-                return <Markdown markdown={source ?? ""} />;
-              }}
               onChange={(newValue) => {
                 setFieldValue("description", newValue);
               }}
@@ -190,6 +189,11 @@ export function ContestCreateEditorForm({
               ]}
               toolbarsMode={[]}
             />
+            {initialized && (
+              <div className="absolute bottom-4 right-8 text-right">
+                {description.length} / 200
+              </div>
+            )}
           </div>
           {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
@@ -346,7 +350,7 @@ export function ContestCreateEditorForm({
               <ButtonIcon
                 icon={X}
                 size="s"
-                variant="ghost-danger"
+                variant="ghost"
                 onClick={() => handleRemoveProblem(idx)}
               />
             </div>

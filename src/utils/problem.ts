@@ -140,7 +140,7 @@ export function validateFormContest(contest: ContestType) {
     errors.description = "Description is required.";
   } else if (description.length < 3) {
     errors.description = "Description is too short.";
-  } else if (title.length > 200) {
+  } else if (description.length > 200) {
     errors.description = "Description is too long.";
   }
 

@@ -115,6 +115,7 @@ export function ProblemCreateEditorForm({
       <section className="border-transparent" data-color-mode="light">
         <div className="mb-4">
           <MarkdownEditor
+            height="200px"
             value={statement}
             renderPreview={({ source }) => {
               return <Markdown markdown={source ?? ""} />;

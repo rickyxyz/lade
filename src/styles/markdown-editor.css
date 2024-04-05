@@ -154,6 +154,10 @@
   color: white !important;
 }
 
+.cm-scroller {
+  overflow-y: scroll !important;
+}
+
 .md-editor * {
   font-size: 14px !important;
   font-weight: 500 !important;

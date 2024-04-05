@@ -117,6 +117,7 @@ export function ProblemCreateEditorFormMultiple({
         <h2 className="mb-4">Problem Statement</h2>
         <div className="mb-4">
           <MarkdownEditor
+            height="200px"
             value={statement}
             renderPreview={({ source }) => {
               return <Markdown markdown={source ?? ""} />;

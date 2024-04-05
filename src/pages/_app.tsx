@@ -22,7 +22,7 @@ import { noto } from "@/libs/fonts";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);
-  const [initialized, setInitialized] = useState(false);
+  const stateInitialized = useState(false);
 
   const handleUpdateLayout = useCallback(() => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -66,9 +66,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SessionProvider session={pageProps.session}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <ProblemEditInitializedContext.Provider
-              value={[initialized, setInitialized]}
-            >
+            <ProblemEditInitializedContext.Provider value={stateInitialized}>
               <LayoutContext.Provider value={layout}>
                 <div
                   className={clsx(
