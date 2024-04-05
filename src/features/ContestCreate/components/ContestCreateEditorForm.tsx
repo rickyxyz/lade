@@ -150,7 +150,7 @@ export function ContestCreateEditorForm({
 
   const renderContestEditor = useMemo(
     () => (
-      <section className="border-transparent mb-8" data-color-mode="light">
+      <section className="mb-8" data-color-mode="light">
         <h2 className="mb-4">Contest Details</h2>
         <Field name="title">
           {
@@ -168,26 +168,29 @@ export function ContestCreateEditorForm({
           }
         </Field>
         <div className="mb-4">
-          <MarkdownEditor
-            value={description}
-            renderPreview={({ source }) => {
-              return <Markdown markdown={source ?? ""} />;
-            }}
-            onChange={(newValue) => {
-              setFieldValue("description", newValue);
-            }}
-            onBlur={() => {
-              setFieldTouched("description", true);
-            }}
-            toolbars={[
-              "bold",
-              "italic",
-              "strike",
-              "ulist",
-              "olist",
-              FormulaToolbar,
-            ]}
-          />
+          <div className="border border-secondary-300 rounded-md overflow-hidden">
+            <MarkdownEditor
+              value={description}
+              renderPreview={({ source }) => {
+                return <Markdown markdown={source ?? ""} />;
+              }}
+              onChange={(newValue) => {
+                setFieldValue("description", newValue);
+              }}
+              onBlur={() => {
+                setFieldTouched("description", true);
+              }}
+              toolbars={[
+                "bold",
+                "italic",
+                "strike",
+                "ulist",
+                "olist",
+                FormulaToolbar,
+              ]}
+              toolbarsMode={[]}
+            />
+          </div>
           {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
               {errors["description"]}

@@ -1,3 +1,6 @@
+@import "./markdown-editor.css";
+@import "./markdown.css";
+
 @layer base {
   p,
   span,

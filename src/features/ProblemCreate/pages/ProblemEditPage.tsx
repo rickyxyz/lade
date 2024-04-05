@@ -15,7 +15,7 @@ export function ProblemEditPage({
 }) {
   const [problem, setProblem] = stateProblem;
 
-  const stateLoading = useState(true);
+  const stateLoading = useState(false);
   const [, setLoading] = stateLoading;
 
   const renderHead = useMemo(() => {
