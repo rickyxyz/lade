@@ -146,10 +146,10 @@
   color: white !important;
 }
 
-.ͼ16 .cm-focused .cm-selectionBackground,
-.ͼ16 .cm-line::selection,
-.ͼ16 .cm-selectionLayer .cm-selectionBackground,
-.ͼ16 .cm-content ::selection {
+.cm-editor.cm-focused .cm-selectionBackground,
+.cm-editor .cm-line::selection,
+.cm-editor .cm-selectionLayer .cm-selectionBackground,
+.cm-editor .cm-content ::selection {
   background: #3367d1 !important;
   color: white !important;
 }
