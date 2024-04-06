@@ -115,25 +115,13 @@ export function ProblemCreateEditorForm({
       <section className="border-transparent" data-color-mode="light">
         <div className="mb-4">
           <MarkdownEditor
-            height="200px"
             value={statement}
-            renderPreview={({ source }) => {
-              return <Markdown markdown={source ?? ""} />;
-            }}
             onChange={(newValue) => {
               setFieldValue("statement", newValue);
             }}
             onBlur={() => {
               setFieldTouched("statement", true);
             }}
-            toolbars={[
-              "bold",
-              "italic",
-              "strike",
-              "ulist",
-              "olist",
-              FormulaToolbar,
-            ]}
           />
           {errors["statement"] && touched["statement"] && (
             <Paragraph color="danger-6" className="mt-2">

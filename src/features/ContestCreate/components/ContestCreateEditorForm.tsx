@@ -168,33 +168,15 @@ export function ContestCreateEditorForm({
           }
         </Field>
         <div className="mb-4">
-          <div className="relative border border-secondary-300 rounded-md overflow-hidden">
-            <MarkdownEditor
-              className="relative"
-              height="200px"
-              value={description}
-              onChange={(newValue) => {
-                setFieldValue("description", newValue);
-              }}
-              onBlur={() => {
-                setFieldTouched("description", true);
-              }}
-              toolbars={[
-                "bold",
-                "italic",
-                "strike",
-                "ulist",
-                "olist",
-                FormulaToolbar,
-              ]}
-              toolbarsMode={[]}
-            />
-            {initialized && (
-              <div className="absolute bottom-4 right-8 text-right">
-                {description.length} / 200
-              </div>
-            )}
-          </div>
+          <MarkdownEditor
+            value={description}
+            onChange={(newValue) => {
+              setFieldValue("description", newValue);
+            }}
+            onBlur={() => {
+              setFieldTouched("description", true);
+            }}
+          />
           {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
               {errors["description"]}

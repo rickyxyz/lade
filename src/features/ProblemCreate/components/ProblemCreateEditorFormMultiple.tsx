@@ -117,25 +117,13 @@ export function ProblemCreateEditorFormMultiple({
         <h2 className="mb-4">Problem Statement</h2>
         <div className="mb-4">
           <MarkdownEditor
-            height="200px"
             value={statement}
-            renderPreview={({ source }) => {
-              return <Markdown markdown={source ?? ""} />;
-            }}
             onChange={(newValue) => {
               setFieldValue("statement", newValue);
             }}
             onBlur={() => {
               setFieldTouched("statement", true);
             }}
-            toolbars={[
-              "bold",
-              "italic",
-              "strike",
-              "ulist",
-              "olist",
-              FormulaToolbar,
-            ]}
           />
           {errors["statement"] && touched["statement"] && (
             <Paragraph color="danger-6" className="mt-2">
@@ -171,7 +159,7 @@ export function ProblemCreateEditorFormMultiple({
           />
         </section>
       ),
-    [errors, initialized, setFieldTouched, stateAnswer, touched, type]
+    [errors, initialized, setFieldTouched, stateAnswers, touched, type]
   );
 
   useEffect(() => {

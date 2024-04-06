@@ -1,16 +1,6 @@
-import { useProblemEditInitialized } from "@/hooks";
-import { Card, Loader } from "../";
-import { useEffect } from "react";
+import { Loader } from "../";
 
 export function MarkdownEditorLoader() {
-  const { setInitialized } = useProblemEditInitialized();
-
-  useEffect(() => {
-    return () => {
-      setInitialized(true);
-    };
-  }, [setInitialized]);
-
   return (
     <div className="flex flex-col items-center justify-center h-64 text-primary-700">
       <Loader />
