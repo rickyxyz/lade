@@ -120,11 +120,13 @@
 .md-editor,
 .cm-content,
 .cm-selectionMatch,
-.cm-activeLine {
+.cm-activeLine,
+.md-editor .md-editor-content .cm-editor {
   background: white !important;
   border: 0px solid !important;
   outline: 0px !important;
-  stroke: 0px !important;
+  stroke: 0 !important;
+  border-radius: 0 !important;
   box-shadow: none;
   text-shadow: none;
 }
@@ -135,10 +137,6 @@
 
 .cm-line {
   padding: 0 8px !important;
-}
-
-.md-editor-preview {
-  display: none !important;
 }
 
 ::selection {
@@ -166,7 +164,6 @@
 
 .md-editor-toolbar-warp {
   background: white;
-  border: 0px !important;
   box-shadow: none;
   text-shadow: none;
 }

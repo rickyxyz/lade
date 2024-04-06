@@ -46,6 +46,12 @@
   a {
     @apply text-primary-600 hover:text-primary-500 active:text-primary-400 focus:text-primary-400;
   }
+
+  .markdown,
+  .markdown * {
+    text-wrap: wrap;
+    word-wrap: break-word;
+  }
   .markdown ul {
     list-style-type: disc;
   }

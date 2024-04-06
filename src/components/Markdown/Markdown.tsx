@@ -1,11 +1,13 @@
 import { md } from "@/utils";
+import clsx from "clsx";
 import { useCallback, useEffect, useRef } from "react";
 
 export interface MarkdownProps {
+  className?: string;
   markdown: string;
 }
 
-export function Markdown({ markdown = "" }: MarkdownProps) {
+export function Markdown({ markdown = "", className }: MarkdownProps) {
   const statementRef = useRef<HTMLDivElement>(null);
 
   const handleRenderMarkdown = useCallback(() => {
@@ -17,5 +19,5 @@ export function Markdown({ markdown = "" }: MarkdownProps) {
     handleRenderMarkdown();
   }, [handleRenderMarkdown]);
 
-  return <div className="markdown" ref={statementRef}></div>;
+  return <div className={clsx("markdown", className)} ref={statementRef}></div>;
 }
