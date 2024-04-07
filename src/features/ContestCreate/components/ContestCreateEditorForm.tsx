@@ -6,6 +6,7 @@ import {
   Icon,
   Paragraph,
   ButtonIcon,
+  Card,
 } from "@/components";
 import {
   ContentViewType,
@@ -24,7 +25,8 @@ import { crudData } from "@/libs/firebase";
 import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
 import { API } from "@/api";
 import clsx from "clsx";
-import { North, South, X } from "@mui/icons-material";
+import { Delete, North, South, X } from "@mui/icons-material";
+import { CardTab, CardTabType } from "@/components/Card/CardTab";
 
 export interface ContestEditFormProps {
   contest?: ContestType;
@@ -35,16 +37,18 @@ export interface ContestEditFormProps {
   onLeaveEditor?: () => void;
 }
 
+type ContestCreateEditorTabType = "main" | "problems";
+
 export function ContestCreateEditorForm({
   stateLoading,
   stateProblems,
-  stateMode,
   onLeaveEditor,
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
+  const [tab, setTab] = useState<"main" | "problems">("main");
+  const [problems, setProblems] = stateProblems;
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const [problems, setProblems] = stateProblems;
   const [problem, setProblem] = useState<ProblemType | null>();
 
   const [query, setQuery] = useState("");
@@ -169,6 +173,7 @@ export function ContestCreateEditorForm({
         </Field>
         <div className="mb-4">
           <MarkdownEditor
+            placeholder="Enter the contest description here..."
             value={description}
             onChange={(newValue) => {
               setFieldValue("description", newValue);
@@ -284,10 +289,7 @@ export function ContestCreateEditorForm({
     }, 500);
   }, [debounce, handleGetProblem]);
 
-  const renderContestProblems = useMemo(
-    () =>
-      problems.map(({ problem: { id, title }, score }, idx) => (
-        <tr key={id}>
+  /*
           <td>{title}</td>
           <td>
             <Input
@@ -337,9 +339,72 @@ export function ContestCreateEditorForm({
               />
             </div>
           </td>
+	*/
+
+  const renderContestProblems = useMemo(
+    () =>
+      problems.map(({ problem: { id, title }, score }, idx) => (
+        <tr
+          key={id}
+          className={clsx(
+            idx < problems.length - 1 && "border-b border-b-secondary-200"
+          )}
+        >
+          <td>
+            <Paragraph>{title}</Paragraph>
+          </td>
+          <td>
+            <Input
+              value={score}
+              onChange={(e) => {
+                let value = Number(e.target.value);
+
+                if (isNaN(value)) value = 10;
+                else if (value < 1) value = 10;
+                else if (value > 1000) value = 1000;
+
+                setProblems((prev) => {
+                  const previous = [...prev];
+                  return previous.map((entry) =>
+                    entry.problem.id === id
+                      ? {
+                          ...entry,
+                          score: value,
+                        }
+                      : entry
+                  );
+                });
+              }}
+            />
+          </td>
+          <td>
+            <div className="flex gap-2">
+              <ButtonIcon
+                icon={North}
+                size="s"
+                variant="ghost"
+                disabled={idx === 0}
+                onClick={() => handleReorderProblem(idx, -1)}
+              />
+              <ButtonIcon
+                icon={South}
+                size="s"
+                variant="ghost"
+                disabled={problems.length - 1 === idx}
+                onClick={() => handleReorderProblem(idx, 1)}
+              />
+              <ButtonIcon
+                icon={Delete}
+                size="s"
+                variant="ghost"
+                color="danger"
+                onClick={() => handleRemoveProblem(idx)}
+              />
+            </div>
+          </td>
         </tr>
       )),
-    [handleRemoveProblem, handleReorderProblem, problems, setProblems]
+    [problems]
   );
 
   const renderStatus = useMemo(() => {
@@ -396,27 +461,43 @@ export function ContestCreateEditorForm({
             </Button>
           </div>
         </Setting>
-        <Setting className="mt-2">{renderStatus}</Setting>
-        <table className="table mt-8">
-          <thead>
-            <tr>
-              <th className="w-full">Problem</th>
-              <th>Points</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {problems.length > 0 ? (
-              renderContestProblems
-            ) : (
+        {/* <Setting className="mt-2">{renderStatus}</Setting> */}
+        {/* {renderContestProblems} */}
+        {/* <Button
+          variant="outline"
+          label="Edit Problems"
+          onClick={() => {
+            setTab("problems");
+          }}
+        /> */}
+        <div className="mt-4 border border-secondary-300 rounded-md overflow-hidden">
+          <table className="table">
+            <thead className="border-b border-secondary-300">
               <tr>
-                <td className="text-center" colSpan={3}>
-                  This contest has no problems.
-                </td>
+                <th className="w-full">
+                  <Paragraph>Problem</Paragraph>
+                </th>
+                <th>
+                  <Paragraph>Points</Paragraph>
+                </th>
+                <th>
+                  <Paragraph>Actions</Paragraph>
+                </th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {problems.length > 0 ? (
+                renderContestProblems
+              ) : (
+                <tr>
+                  <td className="text-center" colSpan={3}>
+                    This contest has no problems.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     ),
     [
@@ -438,27 +519,69 @@ export function ContestCreateEditorForm({
     setFieldValue("problems", JSON.stringify(problems));
   }, [problems, setFieldValue]);
 
-  return (
-    <>
-      {renderContestSettings}
-      {renderContestEditor}
-      {renderContestProblemTable}
+  const renderContent = useMemo(() => {
+    if (tab === "main") {
+      return (
+        <>
+          {renderContestSettings}
+          {renderContestEditor}
+          {renderContestProblemTable}
+          <div className="flex gap-4 mt-4">
+            <Button
+              loading={loading}
+              disabled={!initialized}
+              onClick={() => {
+                setFieldValue("problems", JSON.stringify(problems));
+                submitForm();
+              }}
+              label="Create"
+            />
+          </div>
+          <div className="flex gap-4 mt-4"></div>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div className="flex gap-4 mt-4">
+            <Button
+              loading={loading}
+              disabled={!initialized}
+              onClick={() => {
+                setTab("main");
+              }}
+              label="Back"
+              variant="outline"
+            />
+            <Button
+              loading={loading}
+              disabled={!initialized}
+              onClick={() => {
+                setFieldValue("problems", JSON.stringify(problems));
+                submitForm();
+              }}
+              label="Create"
+              variant="outline"
+            />
+            {onLeaveEditor && (
+              <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
+            )}
+          </div>
+        </>
+      );
+    }
+  }, [
+    initialized,
+    loading,
+    onLeaveEditor,
+    problems,
+    renderContestEditor,
+    renderContestProblemTable,
+    renderContestSettings,
+    setFieldValue,
+    submitForm,
+    tab,
+  ]);
 
-      <div className="flex gap-4 mt-4">
-        <Button
-          loading={loading}
-          disabled={!initialized}
-          type="submit"
-          onClick={() => {
-            setFieldValue("problems", JSON.stringify(problems));
-            submitForm();
-          }}
-          label="Submit"
-        />
-        {onLeaveEditor && (
-          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
-        )}
-      </div>
-    </>
-  );
+  return <Card>{renderContent}</Card>;
 }

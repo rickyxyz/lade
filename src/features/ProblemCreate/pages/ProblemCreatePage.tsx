@@ -14,6 +14,7 @@ export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
     PROBLEM_BLANK as unknown as ProblemType
   );
+  const problem = stateProblem[0];
 
   const stateLoading = useState(false);
   const [, setLoading] = stateLoading;
@@ -54,8 +55,7 @@ export function ProblemCreatePage() {
     <PageTemplate title="Create Problem">
       <div className="flex flex-row flex-wrap gap-8">
         <ProblemCreateEditor
-          headElement={renderHead}
-          stateProblem={stateProblem}
+          problem={problem}
           stateLoading={stateLoading}
           onSubmit={handleSubmit}
         />

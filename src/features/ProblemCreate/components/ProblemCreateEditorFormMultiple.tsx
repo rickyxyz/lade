@@ -65,7 +65,7 @@ export function ProblemCreateEditorFormMultiple({
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
                 setFieldValue("answer", JSON.stringify(defaultAnswer));
-                setAnswer(defaultAnswer);
+                setAnswer(defaultAnswer as any);
               }
             }}
             disabled={!initialized}

@@ -61,12 +61,11 @@
   .markdown li:last-child {
     margin-bottom: 1rem;
   }
-  th.table {
-    @apply bg-secondary-100 uppercase tracking-wider;
+  table.table th {
+    @apply bg-secondary-100 text-left;
   }
-  th.table,
-  td.table {
-    @apply border border-secondary-400;
+  table.table th,
+  table.table td {
     padding: 0.5rem 1rem;
   }
 }

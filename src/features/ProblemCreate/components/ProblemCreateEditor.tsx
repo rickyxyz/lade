@@ -15,18 +15,15 @@ interface ProblemCreateEditorProps
   extends Partial<ProblemCreateEditorFormProps> {
   problem: ProblemType;
   stateLoading: StateType<boolean>;
-  headElement?: ReactNode;
   onSubmit: (problem: ProblemType) => void;
 }
 
 export function ProblemCreateEditor({
-  headElement,
   problem,
   stateLoading,
   onSubmit,
   ...rest
 }: ProblemCreateEditorProps) {
-  const setLoading = stateLoading[1];
   const stateAnswer = useState<unknown>({
     content: "",
   });

@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { validateFormContest } from "@/utils";
 import {
   ContentEditType,
@@ -15,16 +15,15 @@ import {
 } from "./ContestCreateEditorForm";
 import { Card } from "@/components";
 import { useAppSelector } from "@/libs/redux";
+import { CardTab, CardTabType } from "@/components/Card/CardTab";
 
 interface ContestEditProps extends ContestEditFormProps {
-  headElement?: ReactNode;
   stateMode?: StateType<ContentViewType>;
   stateLoading: StateType<boolean>;
   onSubmit: (problem: ContestType) => void;
 }
 
 export function ContestCreateEditor({
-  headElement,
   stateMode,
   stateLoading,
   contest,
@@ -103,21 +102,19 @@ export function ContestCreateEditor({
   );
 
   return (
-    <Card>
-      {headElement}
-      <Formik
-        initialValues={contest ?? CONTEST_DEFAULT}
-        validate={validateFormContest}
-        onSubmit={handleSubmit}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        <ContestCreateEditorForm
-          stateMode={stateMode}
-          stateLoading={stateLoading}
-          {...rest}
-        />
-      </Formik>
-    </Card>
+    <Formik
+      initialValues={contest ?? CONTEST_DEFAULT}
+      validate={validateFormContest}
+      onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      <ContestCreateEditorForm
+        stateMode={stateMode}
+        stateLoading={stateLoading}
+        contest={contest}
+        {...rest}
+      />
+    </Formik>
   );
 }

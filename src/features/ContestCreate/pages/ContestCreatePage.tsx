@@ -49,7 +49,6 @@ export function ContestCreatePage() {
   return (
     <PageTemplate title="Create Contest">
       <ContestCreateEditor
-        headElement={renderHead}
         contest={contest}
         onSubmit={handleSubmit}
         stateLoading={stateLoading}
