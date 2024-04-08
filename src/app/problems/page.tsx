@@ -1,4 +1,4 @@
-import { ProblemListPageNew } from "@/features";
+import { ProblemListPage } from "@/features";
 import { ProblemQuery } from "@/types";
 
 export default async function Page({
@@ -14,5 +14,6 @@ export default async function Page({
     subTopic,
     topic,
   };
-  return <ProblemListPageNew query={query} />;
+
+  return <ProblemListPage query={query} />;
 }

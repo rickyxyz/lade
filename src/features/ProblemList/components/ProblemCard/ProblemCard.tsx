@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
 import { Card, More, Paragraph } from "@/components";
@@ -9,9 +16,17 @@ import { CheckCircle, Person } from "@mui/icons-material";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
+  className?: string;
+  isLink?: boolean;
+  onClick?: () => void;
 }
 
-export function ProblemCard({ problem }: ProblemCardProps) {
+export function ProblemCard({
+  problem,
+  className,
+  isLink,
+  onClick,
+}: ProblemCardProps) {
   const {
     id,
     statement,
@@ -49,13 +64,19 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   const renderMain = useMemo(
     () => (
       <>
-        <div className="relative flex justify-between mb-4">
-          <Link href={`/problem/${id}`}>
+        <div className="relative flex justify-between mb-2">
+          {isLink ? (
+            <Link href={`/problem/${id}`}>
+              <Paragraph className="mr-16" as="h2" color="primary-6">
+                {title}
+              </Paragraph>
+            </Link>
+          ) : (
             <Paragraph className="mr-16" as="h2" color="primary-6">
               {title}
             </Paragraph>
-          </Link>
-          <More
+          )}
+          {/* <More
             className="!absolute !right-0"
             options={
               permission === "author"
@@ -70,13 +91,13 @@ export function ProblemCard({ problem }: ProblemCardProps) {
                   ]
                 : []
             }
-          />
+          /> */}
         </div>
         {renderTags}
         <article className="mb-5" ref={statementRef}></article>
       </>
     ),
-    [id, permission, renderTags, title]
+    [id, isLink, renderTags, title]
   );
 
   const renderStats = useMemo(
@@ -99,7 +120,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
   }, [handleRenderMarkdown]);
 
   return (
-    <Card>
+    <Card className={className} onClick={onClick}>
       {renderMain}
       {renderStats}
     </Card>

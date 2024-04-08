@@ -1,7 +1,13 @@
 "use client";
-import { useMemo, useEffect, useCallback, useState, useRef } from "react";
+import {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+  ReactNode,
+} from "react";
 import { API } from "@/api";
-import { PageTemplate } from "@/templates";
 import {
   Button,
   ButtonIcon,
@@ -19,27 +25,25 @@ import {
   ProblemTopicNameType,
   ProblemType,
 } from "@/types";
-import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "../components";
-import { ParsedUrlQuery } from "querystring";
-import {
-  ReadonlyURLSearchParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "..";
+import { usePathname, useRouter } from "next/navigation";
 import { Search } from "@mui/icons-material";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 
-interface ProblemListPageProps {
+interface ProblemListProps {
   query: ProblemQuery;
+  renderProblems: (problems: ProblemType[], loading?: boolean) => ReactNode;
 }
 
-export function ProblemListPageNew({ query }: ProblemListPageProps) {
+export function ProblemList({
+  query,
+  renderProblems: handleRenderProblems,
+}: ProblemListProps) {
   const pathname = usePathname();
   const {
-    topic: userTopic,
-    subTopic: userSubTopic,
-    search: userSearch,
+    topic: userTopic = undefined,
+    subTopic: userSubTopic = undefined,
+    search: userSearch = "",
     sort: userSort = "newest",
     page: userPage = 1,
   } = query;
@@ -230,26 +234,6 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
     [handleUpdateQuery, loading, pagination]
   );
 
-  const renderProblems = useMemo(
-    () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {loading ? (
-          <>
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-          </>
-        ) : (
-          problems.map((problem) => (
-            <ProblemCard key={problem.id} problem={problem} />
-          ))
-        )}
-      </div>
-    ),
-    [loading, problems]
-  );
-
   const renderAdvanced = useMemo(
     () =>
       device === "mobile" ? (
@@ -357,9 +341,15 @@ export function ProblemListPageNew({ query }: ProblemListPageProps) {
     ]
   );
 
+  const renderProblems = useMemo(
+    () => handleRenderProblems(problems as unknown as ProblemType[], loading),
+    [handleRenderProblems, loading, problems]
+  );
+
   return (
-    <PageTemplate title="Problems" head={renderHead}>
+    <>
+      {renderHead}
       {renderProblems}
-    </PageTemplate>
+    </>
   );
 }
