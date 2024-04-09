@@ -158,3 +158,5 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
 export const PROBLEM_PAGINATION_COUNT = 6;
 
 export const PROBLEM_AT_A_TIME_COUNT = 5;
+
+export const CONTEST_PROBLEM_MAX = 5;

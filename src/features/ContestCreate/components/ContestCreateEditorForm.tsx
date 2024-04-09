@@ -17,7 +17,11 @@ import {
   ProblemType,
   StateType,
 } from "@/types";
-import { PROBLEM_SUBTOPIC_OPTIONS, PROBLEM_TOPIC_OPTIONS } from "@/consts";
+import {
+  CONTEST_PROBLEM_MAX,
+  PROBLEM_SUBTOPIC_OPTIONS,
+  PROBLEM_TOPIC_OPTIONS,
+} from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useDebounce, useProblemEditInitialized, useTopics } from "@/hooks";
@@ -33,36 +37,27 @@ import {
   ProblemList,
 } from "@/features/ProblemList";
 import { useSearchParams } from "next/navigation";
+import { ContestCreateEditorList } from "./ContestCreateEditorProblemList";
 
 export interface ContestEditFormProps {
   contest?: ContestType;
   stateMode?: StateType<ContentViewType>;
   stateProblems: StateType<ProblemContestType[]>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stateTab: StateType<"main" | "problems">;
   stateLoading: StateType<boolean>;
   onLeaveEditor?: () => void;
 }
 
-type ContestCreateEditorTabType = "main" | "problems";
-
 export function ContestCreateEditorForm({
   stateLoading,
   stateProblems,
+  stateTab,
   onLeaveEditor,
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
-  const [tab, setTab] = useState<"main" | "problems">("main");
   const [problems, setProblems] = stateProblems;
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [problem, setProblem] = useState<ProblemType | null>();
-
-  const [query, setQuery] = useState("");
-  const [fetching, setFetching] = useState(false);
-  const [status, setStatus] = useState<
-    "loading" | "loaded" | "invalid" | "added" | "duplicate" | undefined
-  >();
-  console.log(status);
+  const [tab, setTab] = stateTab;
   const { subTopicOptions, topicOptions } = useTopics();
   const debounce = useDebounce();
 
@@ -212,66 +207,6 @@ export function ContestCreateEditorForm({
     [description, errors, touched, initialized, setFieldValue, setFieldTouched]
   );
 
-  const handleGetProblem = useCallback(async () => {
-    // const problem = await crudData("get_problem", {
-    //   id: query,
-    // });
-    if (query.length === 0) return;
-
-    setStatus("loading");
-    await API("get_problem", {
-      params: {
-        id: query,
-      },
-    })
-      .then(({ data }) => {
-        if (!data || Object.keys(data).length === 0) throw Error("");
-
-        setStatus("loaded");
-
-        setProblem(data as unknown as ProblemType);
-      })
-      .catch(() => {
-        setProblem(null);
-        setStatus("invalid");
-        return null;
-      })
-      .finally(() => {
-        setFetching(false);
-      });
-  }, [query]);
-
-  const handleAddProblem = useCallback(() => {
-    const input = inputRef.current;
-
-    if (
-      problem &&
-      problems.filter(({ problem: { id } }) => id === problem.id).length > 0
-    ) {
-      setStatus("duplicate");
-      return;
-    }
-
-    if (problem) {
-      if (input) {
-        input.value = "";
-      }
-      setQuery("");
-      setStatus("added");
-      setProblems((prev) => [
-        ...prev,
-        {
-          problem,
-          score: 10,
-          order: prev.length,
-        },
-      ]);
-      return;
-    }
-
-    setProblem(null);
-  }, [problem, problems, setProblems]);
-
   const handleReorderProblem = useCallback(
     (idx: number, change: 1 | -1) => {
       setProblems((prev) => {
@@ -298,68 +233,6 @@ export function ContestCreateEditorForm({
     [setProblems]
   );
 
-  // useEffect(() => {
-  //   if (query.length > 0) setFetching(true);
-  // }, [query]);
-
-  useEffect(() => {
-    debounce(() => {
-      handleGetProblem();
-    }, 500);
-  }, [debounce, handleGetProblem]);
-
-  /*
-          <td>{title}</td>
-          <td>
-            <Input
-              value={score}
-              onChange={(e) => {
-                let value = Number(e.target.value);
-
-                if (isNaN(value)) value = 10;
-                else if (value < 1) value = 10;
-                else if (value > 1000) value = 1000;
-
-                setProblems((prev) => {
-                  const previous = [...prev];
-                  return previous.map((entry) =>
-                    entry.problem.id === id
-                      ? {
-                          ...entry,
-                          score: value,
-                        }
-                      : entry
-                  );
-                });
-              }}
-            />
-          </td>
-          <td>
-            <div className="flex gap-2">
-              <ButtonIcon
-                icon={North}
-                size="s"
-                variant="ghost"
-                disabled={idx === 0}
-                onClick={() => handleReorderProblem(idx, -1)}
-              />
-              <ButtonIcon
-                icon={South}
-                size="s"
-                variant="ghost"
-                disabled={problems.length - 1 === idx}
-                onClick={() => handleReorderProblem(idx, 1)}
-              />
-              <ButtonIcon
-                icon={X}
-                size="s"
-                variant="ghost"
-                onClick={() => handleRemoveProblem(idx)}
-              />
-            </div>
-          </td>
-	*/
-
   const renderContestProblems = useMemo(
     () =>
       problems.map(({ problem: { id, title }, score }, idx) => (
@@ -370,7 +243,7 @@ export function ContestCreateEditorForm({
           <td>
             <Input
               style={{
-                minWidth: "50px",
+                minWidth: "66px",
               }}
               value={score}
               onChange={(e) => {
@@ -424,60 +297,10 @@ export function ContestCreateEditorForm({
     [handleRemoveProblem, handleReorderProblem, problems, setProblems]
   );
 
-  const renderStatus = useMemo(() => {
-    const text = (() => {
-      switch (status) {
-        case "added":
-          return "Problem added.";
-        case "duplicate":
-          return "Problem already added.";
-        case "invalid":
-          return "Problem does not exist.";
-        case "loaded":
-          return problem?.title;
-        case "loading":
-          return "Loading...";
-      }
-    })();
-
-    return (
-      <Paragraph
-        className={clsx(status === "loaded" && "font-bold")}
-        color={status === "invalid" ? "danger-5" : undefined}
-      >
-        {text}
-      </Paragraph>
-    );
-  }, [problem?.title, status]);
-
   const renderContestProblemTable = useMemo(
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
         <h2 className="mb-4">Contest Problems</h2>
-        <Setting name="Problem ID">
-          <div className="flex gap-4 col-span-2">
-            <Input
-              ref={inputRef}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setStatus(undefined);
-              }}
-              onKeyUp={(e) => {
-                if (e.key === "Enter" || e.keyCode === 13) {
-                  handleAddProblem();
-                }
-              }}
-            />
-            <Button
-              variant="outline"
-              disabled={status !== "loaded"}
-              className="!w-fit"
-              onClick={handleAddProblem}
-            >
-              Add
-            </Button>
-          </div>
-        </Setting>
         {/* <Setting className="mt-2">{renderStatus}</Setting> */}
         {/* {renderContestProblems} */}
         {/* <Button
@@ -520,7 +343,7 @@ export function ContestCreateEditorForm({
         </div>
       </section>
     ),
-    [handleAddProblem, renderContestProblems, status]
+    [renderContestProblems, setTab]
   );
 
   useEffect(() => {
@@ -535,31 +358,31 @@ export function ContestCreateEditorForm({
 
   const handleImportProblem = useCallback(
     (problem: ProblemType) => {
-      const existingIndex = problems.filter(
-        ({ problem: { id } }) => id === problem.id
-      ).length;
+      setProblems((prev) => {
+        const existingIndex = prev.filter(
+          ({ problem: { id } }) => id === problem.id
+        ).length;
 
-      if (existingIndex > 0) {
-        console.log("Remove ", problem.id);
-        setProblems((prev) => {
+        if (existingIndex > 0) {
           const tempProblems = [...prev];
           return tempProblems.filter(
             ({ problem: { id } }) => id !== problem.id
           );
-        });
-      } else {
-        console.log("Add ", problem.id);
-        setProblems((prev) => [
-          ...prev,
-          {
-            problem,
-            score: 10,
-            order: prev.length,
-          },
-        ]);
-      }
+        } else {
+          if (prev.length >= CONTEST_PROBLEM_MAX) return prev;
+
+          return [
+            ...prev,
+            {
+              problem,
+              score: 10,
+              order: prev.length,
+            },
+          ];
+        }
+      });
     },
-    [problems, setProblems]
+    [setProblems]
   );
 
   const renderListProblem = useCallback(
@@ -572,7 +395,7 @@ export function ContestCreateEditorForm({
           className={clsx(
             "cursor-pointer transition-colors bg-secondary-50 rounded-md",
             isAdded
-              ? "border-primary-300 outline outline-4 outline-primary-100"
+              ? "!border-primary-400 outline outline-4 outline-primary-200"
               : "bg-white hover:bg-secondary-50"
           )}
           key={p.id}
@@ -588,7 +411,6 @@ export function ContestCreateEditorForm({
 
   const renderListProblems = useCallback(
     (listProblems: ProblemType[], loading?: boolean) => {
-      console.log("Rerender");
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {loading ? (
@@ -625,6 +447,13 @@ export function ContestCreateEditorForm({
                 }}
                 label="Create"
               />
+              {onLeaveEditor && (
+                <Button
+                  variant="ghost"
+                  onClick={onLeaveEditor}
+                  label="Cancel"
+                />
+              )}
             </div>
             <div className="flex gap-4 mt-4"></div>
           </>
@@ -632,26 +461,26 @@ export function ContestCreateEditorForm({
       );
     } else {
       return (
-        <>
-          <ProblemList
-            query={queryObject}
-            renderProblems={renderListProblems}
-          />
-          <div className="flex gap-4 mt-4">
-            <Button
-              loading={loading}
-              disabled={!initialized}
-              onClick={() => {
-                setTab("main");
-              }}
-              label="Back"
-              variant="outline"
+        <div className="relative flex-grow flex flex-col-reverse lg:flex-row gap-8">
+          <div className="flex-grow w-fit">
+            <ProblemList
+              query={queryObject}
+              renderProblems={renderListProblems}
             />
           </div>
-        </>
+          <ContestCreateEditorList
+            onDelete={handleRemoveProblem}
+            onReorder={handleReorderProblem}
+            problems={problems.map((p) => p.problem)}
+            stateLoading={stateLoading}
+            className=""
+          />
+        </div>
       );
     }
   }, [
+    handleRemoveProblem,
+    handleReorderProblem,
     initialized,
     loading,
     problems,
@@ -661,6 +490,7 @@ export function ContestCreateEditorForm({
     renderContestSettings,
     renderListProblems,
     setFieldValue,
+    stateLoading,
     submitForm,
     tab,
   ]);

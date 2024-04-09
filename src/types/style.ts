@@ -11,4 +11,4 @@ export type ButtonOrderType = "first" | "middle" | "last";
 
 export type ButtonDirectionType = "row" | "column";
 
-export type ButtonSizeType = "m" | "s";
+export type ButtonSizeType = "m" | "s" | "xs";

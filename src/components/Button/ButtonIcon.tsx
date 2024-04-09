@@ -25,4 +25,5 @@ export function ButtonIcon({
 const BUTTON_SIZE_STYLE: Record<ButtonSizeType, string> = {
   m: "!w-10 !h-10",
   s: "!w-8 !h-8",
+  xs: "!w-6 !h-6 !py-0",
 };

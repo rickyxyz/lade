@@ -13,17 +13,25 @@ import {
   ContestCreateEditorForm,
   ContestEditFormProps,
 } from "./ContestCreateEditorForm";
-import { Card } from "@/components";
+import { ButtonIcon, Card } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { CardTab, CardTabType } from "@/components/Card/CardTab";
+import { PageTemplate } from "@/templates";
+import {
+  ArrowLeft,
+  KeyboardArrowLeft,
+  KeyboardBackspace,
+} from "@mui/icons-material";
 
-interface ContestEditProps extends ContestEditFormProps {
+interface ContestEditProps extends Omit<ContestEditFormProps, "stateTab"> {
+  title?: string;
   stateMode?: StateType<ContentViewType>;
   stateLoading: StateType<boolean>;
   onSubmit: (problem: ContestType) => void;
 }
 
 export function ContestCreateEditor({
+  title = "Create Contest",
   stateMode,
   stateLoading,
   contest,
@@ -32,6 +40,8 @@ export function ContestCreateEditor({
 }: ContestEditProps) {
   const setLoading = stateLoading[1];
   const user = useAppSelector("user");
+  const stateTab = useState<"main" | "problems">("main");
+  const [tab, setTab] = stateTab;
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
@@ -101,20 +111,47 @@ export function ContestCreateEditor({
     [onSubmit, setLoading, user]
   );
 
+  const renderTitle = useMemo(
+    () => (tab === "problems" ? "Edit Contest Problems" : title),
+    [tab, title]
+  );
+
+  const renderLeftAction = useMemo(
+    () =>
+      tab === "problems" ? (
+        <div className="mr-2">
+          <ButtonIcon
+            size="xs"
+            variant="ghost"
+            icon={KeyboardBackspace}
+            onClick={() => {
+              setTab("main");
+            }}
+          />
+        </div>
+      ) : (
+        <></>
+      ),
+    [setTab, tab]
+  );
+
   return (
-    <Formik
-      initialValues={contest ?? CONTEST_DEFAULT}
-      validate={validateFormContest}
-      onSubmit={handleSubmit}
-      validateOnChange={false}
-      validateOnBlur={false}
-    >
-      <ContestCreateEditorForm
-        stateMode={stateMode}
-        stateLoading={stateLoading}
-        contest={contest}
-        {...rest}
-      />
-    </Formik>
+    <PageTemplate title={renderTitle} leftTitle={renderLeftAction}>
+      <Formik
+        initialValues={contest ?? CONTEST_DEFAULT}
+        validate={validateFormContest}
+        onSubmit={handleSubmit}
+        validateOnChange={false}
+        validateOnBlur={false}
+      >
+        <ContestCreateEditorForm
+          stateTab={stateTab}
+          stateMode={stateMode}
+          stateLoading={stateLoading}
+          contest={contest}
+          {...rest}
+        />
+      </Formik>
+    </PageTemplate>
   );
 }

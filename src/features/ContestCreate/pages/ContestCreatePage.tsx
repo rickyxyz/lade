@@ -14,14 +14,10 @@ export function ContestCreatePage() {
   const stateProblems = useState<ProblemContestType[]>([]);
 
   const stateLoading = useState(false);
-  const [, setLoading] = stateLoading;
+  const setLoading = stateLoading[1];
   const debounce = useDebounce();
   const router = useRouter();
   const user = useAppSelector("user");
-
-  const renderHead = useMemo(() => {
-    return <h1 className="mb-8">Create Contest</h1>;
-  }, []);
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
@@ -47,13 +43,11 @@ export function ContestCreatePage() {
   );
 
   return (
-    <PageTemplate title="Create Contest">
-      <ContestCreateEditor
-        contest={contest}
-        onSubmit={handleSubmit}
-        stateLoading={stateLoading}
-        stateProblems={stateProblems}
-      />
-    </PageTemplate>
+    <ContestCreateEditor
+      contest={contest}
+      onSubmit={handleSubmit}
+      stateLoading={stateLoading}
+      stateProblems={stateProblems}
+    />
   );
 }

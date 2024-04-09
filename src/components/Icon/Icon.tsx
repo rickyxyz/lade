@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { CSSProperties, useMemo } from "react";
 import { SvgIconComponent } from "@mui/icons-material";
 
-export type IconSizeType = "m" | "s" | "l";
+export type IconSizeType = "l" | "m" | "s" | "xs";
 
 export interface IconProps {
   IconComponent: SvgIconComponent;

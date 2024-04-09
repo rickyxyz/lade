@@ -16,13 +16,8 @@ export function ContestEditPage({
   onLeaveEditor?: () => void;
 }) {
   const [contest, setContest] = stateContest;
-
   const stateLoading = useState(false);
-  const [, setLoading] = stateLoading;
-
-  const renderHead = useMemo(() => {
-    return <h1 className="mb-8">Edit Contest</h1>;
-  }, []);
+  const setLoading = stateLoading[1];
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
@@ -45,14 +40,13 @@ export function ContestEditPage({
   );
 
   return (
-    <PageTemplate title="Edit Contest">
-      <ContestCreateEditor
-        stateProblems={stateProblems}
-        stateLoading={stateLoading}
-        contest={contest}
-        onSubmit={handleSubmit}
-        onLeaveEditor={onLeaveEditor}
-      />
-    </PageTemplate>
+    <ContestCreateEditor
+      title="Edit Page"
+      stateProblems={stateProblems}
+      stateLoading={stateLoading}
+      contest={contest}
+      onSubmit={handleSubmit}
+      onLeaveEditor={onLeaveEditor}
+    />
   );
 }
