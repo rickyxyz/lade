@@ -37,7 +37,7 @@ export function SettingDate({ name, dateNum, onChange }: SettingDate) {
 
       const newDate = new Date(existing);
       newDate.setFullYear(year);
-      newDate.setMonth(month);
+      newDate.setMonth(month - 1);
       newDate.setDate(date);
 
       onChange && onChange(newDate.getTime());
