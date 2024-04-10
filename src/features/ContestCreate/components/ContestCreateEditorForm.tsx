@@ -57,6 +57,10 @@ export function ContestCreateEditorForm({
 }: ContestEditFormProps) {
   const { initialized } = useProblemEditInitialized();
   const [problems, setProblems] = stateProblems;
+  const contestProblemsFull = useMemo(
+    () => problems.length >= CONTEST_PROBLEM_MAX,
+    [problems.length]
+  );
   const [tab, setTab] = stateTab;
   const { subTopicOptions, topicOptions } = useTopics();
   const debounce = useDebounce();
@@ -401,10 +405,15 @@ export function ContestCreateEditorForm({
       return (
         <ProblemCard
           className={clsx(
-            "cursor-pointer transition-colors bg-secondary-50 rounded-md",
+            "rounded-md transition-colors bg-white hover:bg-secondary-50",
             isAdded
-              ? "!border-primary-400 outline outline-4 outline-primary-200"
-              : "bg-white hover:bg-secondary-50"
+              ? "!border-primary-400 cursor-pointer outline outline-4 outline-primary-200"
+              : [
+                  contestProblemsFull
+                    ? "cursor-not-allowed !bg-secondary-100 opacity-50"
+                    : "cursor-pointer",
+                  // "bg-white hover:bg-secondary-50"
+                ]
           )}
           key={p.id}
           problem={p as any}
@@ -414,7 +423,7 @@ export function ContestCreateEditorForm({
         />
       );
     },
-    [handleImportProblem, problems]
+    [contestProblemsFull, handleImportProblem, problems]
   );
 
   const renderListProblems = useCallback(

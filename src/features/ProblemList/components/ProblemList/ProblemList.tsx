@@ -295,6 +295,7 @@ export function ProblemList({
       <>
         <div className="flex flex-col">
           <Input
+            placeholder="Search..."
             externalWrapperClassName="flex-1"
             wrapperClassName="flex"
             className="!rounded-none !rounded-l-md"
