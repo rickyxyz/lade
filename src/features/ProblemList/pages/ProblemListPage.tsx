@@ -3,6 +3,7 @@ import { PageTemplate } from "@/templates";
 import { ProblemQuery, ProblemType } from "@/types";
 import { useCallback } from "react";
 import { ProblemCard, ProblemCardSkeleton, ProblemList } from "../components";
+import Link from "next/link";
 
 interface ProblemListPageProps {
   query: ProblemQuery;
@@ -22,7 +23,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             </>
           ) : (
             problems.map((problem) => (
-              <ProblemCard key={problem.id} problem={problem as any} />
+              <ProblemCard key={problem.id} problem={problem as any} isLink />
             ))
           )}
         </div>

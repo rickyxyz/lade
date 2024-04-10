@@ -233,6 +233,28 @@ export function ContestCreateEditorForm({
     [setProblems]
   );
 
+  const handleUpdateScoreProblem = useCallback(
+    (index: number, value: any) => {
+      value = parseInt(value);
+      if (isNaN(value)) value = 10;
+      else if (value < 1) value = 10;
+      else if (value > 1000) value = 1000;
+
+      setProblems((prev) => {
+        const previous = [...prev];
+        return previous.map((entry, idx) =>
+          idx === index
+            ? {
+                ...entry,
+                score: value,
+              }
+            : entry
+        );
+      });
+    },
+    [setProblems]
+  );
+
   const renderContestProblems = useMemo(
     () =>
       problems.map(({ problem: { id, title }, score }, idx) => (
@@ -242,29 +264,10 @@ export function ContestCreateEditorForm({
           </td>
           <td>
             <Input
-              style={{
-                minWidth: "66px",
-              }}
+              className="text-center"
+              width={66}
               value={score}
-              onChange={(e) => {
-                let value = Number(e.target.value);
-
-                if (isNaN(value)) value = 10;
-                else if (value < 1) value = 10;
-                else if (value > 1000) value = 1000;
-
-                setProblems((prev) => {
-                  const previous = [...prev];
-                  return previous.map((entry) =>
-                    entry.problem.id === id
-                      ? {
-                          ...entry,
-                          score: value,
-                        }
-                      : entry
-                  );
-                });
-              }}
+              onChange={(e) => handleUpdateScoreProblem(idx, e.target.value)}
             />
           </td>
           <td>
@@ -294,7 +297,12 @@ export function ContestCreateEditorForm({
           </td>
         </tr>
       )),
-    [handleRemoveProblem, handleReorderProblem, problems, setProblems]
+    [
+      handleRemoveProblem,
+      handleReorderProblem,
+      handleUpdateScoreProblem,
+      problems,
+    ]
   );
 
   const renderContestProblemTable = useMemo(
@@ -471,7 +479,8 @@ export function ContestCreateEditorForm({
           <ContestCreateEditorList
             onDelete={handleRemoveProblem}
             onReorder={handleReorderProblem}
-            problems={problems.map((p) => p.problem)}
+            onUpdateScore={handleUpdateScoreProblem}
+            problems={problems}
             stateLoading={stateLoading}
             className=""
           />
@@ -481,8 +490,10 @@ export function ContestCreateEditorForm({
   }, [
     handleRemoveProblem,
     handleReorderProblem,
+    handleUpdateScoreProblem,
     initialized,
     loading,
+    onLeaveEditor,
     problems,
     queryObject,
     renderContestEditor,

@@ -112,7 +112,7 @@ export function ContestCreateEditor({
   );
 
   const renderTitle = useMemo(
-    () => (tab === "problems" ? "Edit Contest Problems" : title),
+    () => (tab === "problems" ? "Import Problems" : title),
     [tab, title]
   );
 

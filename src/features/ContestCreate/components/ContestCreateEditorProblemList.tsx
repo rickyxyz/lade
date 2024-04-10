@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from "react";
-import { Button, ButtonIcon, Card, Paragraph } from "@/components";
-import { ProblemType, StateType } from "@/types";
+import { Button, ButtonIcon, Card, Input, Paragraph } from "@/components";
+import { ProblemContestType, ProblemType, StateType } from "@/types";
 import { ProblemDetailTopics } from "@/features/ProblemDetail";
 import { ArrowDownward, ArrowUpward, Delete } from "@mui/icons-material";
 import { CONTEST_PROBLEM_MAX, PROBLEM_AT_A_TIME_COUNT } from "@/consts";
@@ -8,10 +8,11 @@ import { useTopics } from "@/hooks";
 
 export interface ContestCreateEditorListProps {
   className?: string;
-  problems: ProblemType[];
+  problems: ProblemContestType[];
   stateLoading: StateType<boolean>;
   onReorder: (index: number, direction: 1 | -1) => void;
   onDelete: (index: number) => void;
+  onUpdateScore: (index: number, score: number | string) => void;
 }
 
 export function ContestCreateEditorList({
@@ -19,12 +20,13 @@ export function ContestCreateEditorList({
   problems,
   onDelete,
   onReorder,
+  onUpdateScore,
 }: ContestCreateEditorListProps) {
   const renderProblems = useMemo(
     () => (
       <div className="flex flex-col gap-2 mt-2">
         {problems.length > 0 ? (
-          problems.map(({ id, title }, index) => (
+          problems.map(({ problem: { id, title }, score }, index) => (
             <div key={id} className="flex items-center justify-between gap-2">
               <Paragraph
                 style={{
@@ -42,23 +44,14 @@ export function ContestCreateEditorList({
                 <Paragraph>{title}</Paragraph>
               </Paragraph>
               <div className="flex gap-2">
-                <ButtonIcon
-                  size="xs"
-                  icon={ArrowUpward}
-                  variant="ghost"
-                  onClick={() => {
-                    onReorder(index, -1);
+                <Input
+                  className="text-center"
+                  size="s"
+                  width={58}
+                  value={score}
+                  onChange={(e) => {
+                    onUpdateScore(index, e.target.value);
                   }}
-                  disabled={index === 0}
-                />
-                <ButtonIcon
-                  size="xs"
-                  icon={ArrowDownward}
-                  variant="ghost"
-                  onClick={() => {
-                    onReorder(index, 1);
-                  }}
-                  disabled={index === problems.length - 1}
                 />
                 <ButtonIcon
                   size="xs"
@@ -79,7 +72,7 @@ export function ContestCreateEditorList({
         )}
       </div>
     ),
-    [onDelete, onReorder, problems]
+    [onDelete, onUpdateScore, problems]
   );
 
   return (

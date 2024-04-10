@@ -11,10 +11,14 @@ import { SvgIconComponent } from "@mui/icons-material";
 
 export type InputVariantType = "basic" | "solid";
 
+type InputSizeType = "m" | "s";
+
+type InputWidthType = "full" | number;
+
 export interface InputProps
-  extends DetailedHTMLProps<
-    InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
+  extends Omit<
+    DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+    "size" | "width"
   > {
   variant?: InputVariantType;
   label?: string;
@@ -26,6 +30,8 @@ export interface InputProps
   rightElement?: ReactNode;
   externalWrapperClassName?: string;
   wrapperClassName?: string;
+  size?: InputSizeType;
+  width?: InputWidthType;
   errorText?: string;
 }
 
@@ -44,6 +50,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       externalWrapperClassName,
       wrapperClassName,
       errorText,
+      size = "m",
+      width = "full",
       ...rest
     },
     ref
@@ -71,10 +79,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={clsx(
               INPUT_BASE_STYLE,
+              INPUT_SIZE_STYLE[size],
               variant === "basic" && INPUT_BASIC_STYLE,
               variant === "solid" && INPUT_SOLID_STYLE,
               className
             )}
+            style={{
+              ...inputWidthStyle(width),
+            }}
           />
           {iconRight && (
             <Icon
@@ -94,7 +106,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-const INPUT_BASE_STYLE = "w-full h-10 px-4 rounded-md";
+const INPUT_BASE_STYLE = "rounded-md";
 
 const INPUT_BASIC_STYLE = [
   "border border-secondary-300",
@@ -102,3 +114,20 @@ const INPUT_BASIC_STYLE = [
 ];
 
 const INPUT_SOLID_STYLE = ["bg-secondary-100 focus:bg-secondary-200"];
+
+const INPUT_SIZE_STYLE: Record<InputSizeType, string> = {
+  m: "h-10 px-4",
+  s: "h-6 px-2",
+};
+
+function inputWidthStyle(size: InputWidthType) {
+  if (size === "full") {
+    return {
+      width: "100%",
+    };
+  } else {
+    return {
+      width: `${size}px`,
+    };
+  }
+}
