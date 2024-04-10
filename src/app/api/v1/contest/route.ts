@@ -212,7 +212,8 @@ export async function GET(req: NextRequest) {
   );
 
   try {
-    const { id } = await req.json();
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get("id");
 
     const user = await getAuthUserNext();
 
@@ -254,6 +255,8 @@ export async function GET(req: NextRequest) {
           },
         }));
       }
+
+      console.log(contest);
 
       response = NextResponse.json(JSON.parse(json(contest)));
     } else {
