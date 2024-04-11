@@ -7,6 +7,7 @@ import {
   Paragraph,
   ButtonIcon,
   Card,
+  Tag,
 } from "@/components";
 import {
   ContentViewType,
@@ -264,6 +265,9 @@ export function ContestCreateEditorForm({
       problems.map(({ problem: { id, title }, score }, idx) => (
         <tr key={id} className={clsx("border-b border-b-secondary-300")}>
           <td>
+            <Paragraph>{idx + 1}</Paragraph>
+          </td>
+          <td>
             <Paragraph>{title}</Paragraph>
           </td>
           <td>
@@ -311,8 +315,21 @@ export function ContestCreateEditorForm({
 
   const renderContestProblemTable = useMemo(
     () => (
-      <section className="border-transparent mb-8" data-color-mode="light">
-        <h2 className="mb-4">Contest Problems</h2>
+      <section className="border-transparent mb-8">
+        <div className="flex flex-row items-center gap-2 mb-4">
+          <h2>Contest Problems</h2>
+          <Tag
+            color={
+              problems.length === CONTEST_PROBLEM_MAX
+                ? "danger"
+                : problems.length === 0
+                ? "warning"
+                : "primary"
+            }
+          >
+            {problems.length} / {CONTEST_PROBLEM_MAX}
+          </Tag>
+        </div>
         {/* <Setting className="mt-2">{renderStatus}</Setting> */}
         {/* {renderContestProblems} */}
         {/* <Button
@@ -326,6 +343,9 @@ export function ContestCreateEditorForm({
           <table className="table">
             <thead className="border-b border-secondary-300">
               <tr>
+                <th>
+                  <Paragraph>No</Paragraph>
+                </th>
                 <th className="w-full">
                   <Paragraph>Problem</Paragraph>
                 </th>
@@ -345,7 +365,7 @@ export function ContestCreateEditorForm({
                   onClick={() => {
                     setTab("problems");
                   }}
-                  colSpan={3}
+                  colSpan={4}
                 >
                   <Paragraph color="primary-6">Import problems</Paragraph>
                 </td>

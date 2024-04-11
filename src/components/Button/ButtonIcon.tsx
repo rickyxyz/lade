@@ -7,17 +7,23 @@ import { ButtonSizeType } from "@/types";
 interface ButtonIcon extends ButtonProps {
   icon: SvgIconComponent;
   iconSize?: IconSizeType;
+  iconClassName?: string;
 }
 
 export function ButtonIcon({
   icon,
   size,
   iconSize = "m",
+  iconClassName,
   ...rest
 }: ButtonIcon) {
   return (
     <Button className={clsx("!px-0", BUTTON_SIZE_STYLE[size ?? "m"])} {...rest}>
-      <Icon size={iconSize} className="m-auto" IconComponent={icon} />
+      <Icon
+        size={iconSize}
+        className={clsx("m-auto", iconClassName)}
+        IconComponent={icon}
+      />
     </Button>
   );
 }
