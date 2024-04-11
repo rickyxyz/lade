@@ -1,0 +1,2 @@
+import { GenericColorType } from "@/types"
+export const TAG_COLOR_STYLE: Record<GenericColorType, string[]> = {"primary":["bg-primary-100 text-primary-600"],"secondary":["bg-secondary-100 text-secondary-600"],"warning":["bg-warning-100 text-warning-600"],"success":["bg-success-100 text-success-600"],"danger":["bg-danger-100 text-danger-600"]};

@@ -1,20 +1,22 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
 import { Paragraph } from "../Paragraph";
+import { FontColor, TAG_COLOR_STYLE } from "@/consts/style";
+import { GenericColorType } from "@/types";
 
-export type TagColorType = "red" | "blue" | "green" | "yellow";
+export type TagSizeType = "m" | "s";
 
 export interface TagProps {
   children: ReactNode;
-  color?: TagColorType;
+  color?: GenericColorType;
 }
 
-export function Tag({ children }: TagProps) {
+export function Tag({ children, color = "primary" }: TagProps) {
   return (
     <Paragraph
       as="span"
-      className={clsx(TAG_BASE_STYLE)}
-      color="primary-6"
+      className={clsx(TAG_BASE_STYLE, TAG_COLOR_STYLE[color])}
+      color={`${color}-6` as FontColor}
       size="s"
     >
       {children}
@@ -22,4 +24,4 @@ export function Tag({ children }: TagProps) {
   );
 }
 
-const TAG_BASE_STYLE = ["px-2 py-0.5 bg-primary-100 rounded-md"];
+const TAG_BASE_STYLE = ["px-2 py-0.5 h-fit rounded-md transition-colors"];
