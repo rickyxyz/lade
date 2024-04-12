@@ -51,13 +51,15 @@ export function ProblemCard({
   const statementRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics
-        className="mb-4"
-        topic={topic.name}
-        subTopic={subTopic.name}
-      />
-    ),
+    () =>
+      topic &&
+      subTopic && (
+        <ProblemDetailTopics
+          className="mb-4"
+          topic={topic.name}
+          subTopic={subTopic.name}
+        />
+      ),
     [subTopic, topic]
   );
 

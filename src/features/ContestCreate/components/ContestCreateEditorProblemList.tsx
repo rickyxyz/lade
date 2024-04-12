@@ -9,7 +9,11 @@ import {
   Numbers,
   SyncAlt,
 } from "@mui/icons-material";
-import { CONTEST_PROBLEM_MAX, PROBLEM_AT_A_TIME_COUNT } from "@/consts";
+import {
+  CONTEST_MAX_PROBLEMS,
+  CONTEST_MIN_PROBLEMS,
+  PROBLEM_CREATE_SIMULTANEOUS_COUNT,
+} from "@/consts";
 import { useTopics } from "@/hooks";
 import clsx from "clsx";
 
@@ -127,14 +131,14 @@ export function ContestCreateEditorList({
         </Paragraph>
         <Tag
           color={
-            problems.length === CONTEST_PROBLEM_MAX
+            problems.length === CONTEST_MAX_PROBLEMS
               ? "danger"
-              : problems.length === 0
+              : problems.length < CONTEST_MIN_PROBLEMS
               ? "warning"
               : "primary"
           }
         >
-          {problems.length} / {CONTEST_PROBLEM_MAX}
+          {problems.length} / {CONTEST_MAX_PROBLEMS}
         </Tag>
         <ButtonIcon
           icon={mode === "score" ? Numbers : SyncAlt}

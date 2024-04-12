@@ -7,12 +7,8 @@ import {
   ProblemSubtopicNameType,
   ProblemSortByType,
   ProblemSortOptionType,
-  ContestBlankType,
-  ContestDatabaseType,
   ProblemType,
   AnswerObjectType,
-  ContestBaseType,
-  ContestType,
 } from "@/types";
 import { makeAnswer } from "@/utils";
 
@@ -35,22 +31,6 @@ export const PROBLEM_DEFAULT: ProblemType = {
   ...PROBLEM_BLANK,
   createdAt: new Date(),
   solveds: [],
-};
-
-export const CONTEST_DEFAULT: ContestType = {
-  id: "",
-  description: "",
-  title: "An Untitled Contest",
-  topicId: "calculus",
-  subTopicId: "derivatives",
-  problems: "[]",
-  authorId: "",
-  startDate: new Date().getTime(),
-  endDate: (() => {
-    const date = new Date();
-    date.setHours(date.getHours() + 1);
-    return date;
-  })().getTime(),
 };
 
 export const PROBLEM_ANSWER_DEFAULT_VALUES: AnswerObjectType = {
@@ -156,7 +136,8 @@ export const PROBLEM_SORT_BY_OPTIONS: ProblemSortOptionType<ProblemSortByType>[]
   ];
 
 export const PROBLEM_PAGINATION_COUNT = 6;
-
-export const PROBLEM_AT_A_TIME_COUNT = 5;
-
-export const CONTEST_PROBLEM_MAX = 5;
+export const PROBLEM_CREATE_SIMULTANEOUS_COUNT = 5;
+export const PROBLEM_MAX_DESCRIPTION_LENGTH = 1024;
+export const PROBLEM_MIN_DESCRIPTION_LENGTH = 8;
+export const PROBLEM_MAX_TITLE_LENGTH = 64;
+export const PROBLEM_MIN_TITLE_LENGTH = 4;

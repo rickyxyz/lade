@@ -19,7 +19,9 @@ import {
   StateType,
 } from "@/types";
 import {
-  CONTEST_PROBLEM_MAX,
+  CONTEST_MAX_DESCRIPTION_LENGTH,
+  CONTEST_MAX_PROBLEMS,
+  CONTEST_MIN_PROBLEMS,
   PROBLEM_SUBTOPIC_OPTIONS,
   PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
@@ -59,7 +61,7 @@ export function ContestCreateEditorForm({
   const { initialized } = useProblemEditInitialized();
   const [problems, setProblems] = stateProblems;
   const contestProblemsFull = useMemo(
-    () => problems.length >= CONTEST_PROBLEM_MAX,
+    () => problems.length >= CONTEST_MAX_PROBLEMS,
     [problems.length]
   );
   const [tab, setTab] = stateTab;
@@ -200,6 +202,7 @@ export function ContestCreateEditorForm({
             onBlur={() => {
               setFieldTouched("description", true);
             }}
+            maxLength={CONTEST_MAX_DESCRIPTION_LENGTH}
           />
           {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
@@ -234,8 +237,10 @@ export function ContestCreateEditorForm({
 
         return tempProblems.filter((_, index) => index !== idx);
       });
+
+      setFieldTouched("problems", true);
     },
-    [setProblems]
+    [setFieldTouched, setProblems]
   );
 
   const handleUpdateScoreProblem = useCallback(
@@ -320,14 +325,14 @@ export function ContestCreateEditorForm({
           <h2>Contest Problems</h2>
           <Tag
             color={
-              problems.length === CONTEST_PROBLEM_MAX
+              problems.length === CONTEST_MAX_PROBLEMS
                 ? "danger"
-                : problems.length === 0
+                : problems.length < CONTEST_MIN_PROBLEMS
                 ? "warning"
                 : "primary"
             }
           >
-            {problems.length} / {CONTEST_PROBLEM_MAX}
+            {problems.length} / {CONTEST_MAX_PROBLEMS}
           </Tag>
         </div>
         {/* <Setting className="mt-2">{renderStatus}</Setting> */}
@@ -373,9 +378,14 @@ export function ContestCreateEditorForm({
             </tbody>
           </table>
         </div>
+        {errors["problems"] && touched["problems"] && (
+          <Paragraph color="danger-6" className="mt-2">
+            {errors["problems"]}
+          </Paragraph>
+        )}
       </section>
     ),
-    [renderContestProblems, setTab]
+    [errors, problems.length, renderContestProblems, setTab, touched]
   );
 
   useEffect(() => {
@@ -401,7 +411,7 @@ export function ContestCreateEditorForm({
             ({ problem: { id } }) => id !== problem.id
           );
         } else {
-          if (prev.length >= CONTEST_PROBLEM_MAX) return prev;
+          if (prev.length >= CONTEST_MAX_PROBLEMS) return prev;
 
           return [
             ...prev,

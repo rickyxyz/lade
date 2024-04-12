@@ -1,12 +1,21 @@
 import {
   AnswerType,
-  ContestBaseType,
-  ContestBlankType,
   ContestType,
   ProblemAnswerType,
   ProblemType,
 } from "@/types";
-import { parseMatrixSize } from "./matrix";
+import {
+  CONTEST_MAX_DESCRIPTION_LENGTH,
+  CONTEST_MAX_PROBLEMS,
+  CONTEST_MAX_TITLE_LENGTH,
+  CONTEST_MIN_DESCRIPTION_LENGTH,
+  CONTEST_MIN_PROBLEMS,
+  CONTEST_MIN_TITLE_LENGTH,
+  PROBLEM_MAX_DESCRIPTION_LENGTH,
+  PROBLEM_MAX_TITLE_LENGTH,
+  PROBLEM_MIN_DESCRIPTION_LENGTH,
+  PROBLEM_MIN_TITLE_LENGTH,
+} from "@/consts";
 
 export function validateProblemId(id: string) {
   const regex = new RegExp("^[a-z0-9_]*$");
@@ -28,9 +37,9 @@ export function validateProblemId(id: string) {
 export function validateProblemTitle(title: string) {
   if (title === "") {
     return "Title must not be empty.";
-  } else if (title.length < 3) {
+  } else if (title.length < PROBLEM_MIN_TITLE_LENGTH) {
     return "Title is too short.";
-  } else if (title.length > 24) {
+  } else if (title.length > PROBLEM_MAX_TITLE_LENGTH) {
     return "Title is too long.";
   }
   return null;
@@ -39,9 +48,9 @@ export function validateProblemTitle(title: string) {
 export function validateProblemStatement(statement: string) {
   if (statement === "") {
     return "Problem statement is required.";
-  } else if (statement.length < 3) {
+  } else if (statement.length < PROBLEM_MIN_DESCRIPTION_LENGTH) {
     return "Problem statement is too short.";
-  } else if (statement.length > 512) {
+  } else if (statement.length > PROBLEM_MAX_DESCRIPTION_LENGTH) {
     return "Problem statement is too long.";
   }
   return null;
@@ -130,17 +139,17 @@ export function validateFormContest(contest: ContestType) {
 
   if (title === "") {
     errors.title = "Title must not be empty.";
-  } else if (title.length < 3) {
+  } else if (title.length < CONTEST_MIN_TITLE_LENGTH) {
     errors.title = "Title is too short.";
-  } else if (title.length > 24) {
+  } else if (title.length > CONTEST_MAX_TITLE_LENGTH) {
     errors.title = "Title is too long.";
   }
 
   if (description === "") {
     errors.description = "Description is required.";
-  } else if (description.length < 3) {
+  } else if (description.length < CONTEST_MIN_DESCRIPTION_LENGTH) {
     errors.description = "Description is too short.";
-  } else if (description.length > 200) {
+  } else if (description.length > CONTEST_MAX_DESCRIPTION_LENGTH) {
     errors.description = "Description is too long.";
   }
 
@@ -152,9 +161,10 @@ export function validateFormContest(contest: ContestType) {
 
   const count = Object.keys(problems).length;
 
-  if (count < 3) errors.problems = "Contest cannot have less than 3 problems.";
-  else if (count > 10)
-    errors.problems = "Contest cannot have more than 10 problems";
+  if (count < CONTEST_MIN_PROBLEMS)
+    errors.problems = `Contest cannot have less than ${CONTEST_MIN_PROBLEMS} problems.`;
+  else if (count > CONTEST_MAX_PROBLEMS)
+    errors.problems = `Contest cannot have more than ${CONTEST_MAX_PROBLEMS} problems`;
 
   console.log(errors);
   return errors;

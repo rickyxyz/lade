@@ -3,7 +3,7 @@ import { Button, ButtonIcon, Card, Paragraph } from "@/components";
 import { ProblemType, StateType } from "@/types";
 import { ProblemDetailTopics } from "@/features/ProblemDetail";
 import { Delete } from "@mui/icons-material";
-import { PROBLEM_AT_A_TIME_COUNT } from "@/consts";
+import { PROBLEM_CREATE_SIMULTANEOUS_COUNT } from "@/consts";
 import { useTopics } from "@/hooks";
 
 export interface ProblemCreateEditorMultipleListProps {
@@ -25,14 +25,14 @@ export function ProblemCreateEditorMultipleList({
   const loading = stateLoading[0];
 
   const canCreateMore = useMemo(
-    () => problems.length < PROBLEM_AT_A_TIME_COUNT,
+    () => problems.length < PROBLEM_CREATE_SIMULTANEOUS_COUNT,
     [problems.length]
   );
 
   return (
     <Card className="flex flex-col flex-grow lg:max-w-[320px] h-fit lg:sticky lg:top-0">
       <Paragraph as="h2" size="l">
-        Problems ({problems.length} / {PROBLEM_AT_A_TIME_COUNT})
+        Problems ({problems.length} / {PROBLEM_CREATE_SIMULTANEOUS_COUNT})
       </Paragraph>
       <div className="flex flex-col gap-2 mt-2">
         {problems.map(({ id, title }, index) => (

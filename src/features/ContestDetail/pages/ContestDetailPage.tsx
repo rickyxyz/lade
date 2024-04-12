@@ -13,6 +13,7 @@ import {
   ProblemContestType,
   ContentViewType,
   ContentAccessType,
+  ContestDatabaseType,
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
@@ -20,6 +21,7 @@ import { ContestDetailMain, ContestDetailMainSkeleton } from "../components";
 import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { ContestEditPage } from "./ContestEditPage";
 import { MoreVert, West } from "@mui/icons-material";
+import { ContestDetailData } from "../components/ContestDetailData";
 
 interface ContestData {
   label: string;
@@ -130,16 +132,21 @@ export function ContestDetailPage({ id, user }: ContestProps) {
   );
 
   const renderQuestion = useMemo(() => {
-    if (loading || !contest) return <ContestDetailMainSkeleton />;
+    const className = "flex-1";
+
+    if (loading || !contest)
+      return <ContestDetailMainSkeleton className={className} />;
 
     return (
       <ContestDetailMain
-        stateContest={stateContest}
+        className={className}
+        contest={contest as any}
+        stateLoading={stateLoading}
         stateAccept={stateAccept}
         stateMode={stateMode}
       />
     );
-  }, [loading, contest, stateContest, stateAccept, stateMode]);
+  }, [loading, contest, stateLoading, stateAccept, stateMode]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -272,19 +279,37 @@ export function ContestDetailPage({ id, user }: ContestProps) {
     ),
     [device, renderMobileAction, renderContestAction, renderContestData]
   );
+  const renderQuestionMetadata = useMemo(() => {
+    const className = "flex-grow md:max-w-[320px] h-fit lg:sticky lg:top-0";
+
+    if (loading || !contest)
+      return <ContestDetailMainSkeleton className={className} />;
+
+    return (
+      <ContestDetailData
+        className={className}
+        contest={contest as unknown as ContestDatabaseType}
+        showAuthorMenu={!!user && contest.authorId === user?.id}
+        onEdit={() => {
+          setMode("edit");
+        }}
+        // onDelete={() => {
+        //   handleDeleteProblem();
+        // }}
+      />
+    );
+  }, [contest, loading, setMode, user]);
 
   const renderViewContest = useMemo(
     () => (
-      <PageTemplate
-        title={title}
-        className="w-full"
-        head={!loading && renderHead}
-        side={!loading && renderSide}
-      >
-        {renderQuestion}
+      <PageTemplate title={title} className="w-full">
+        <div className="relative flex flex-row flex-wrap gap-8">
+          {renderQuestion}
+          {renderQuestionMetadata}
+        </div>
       </PageTemplate>
     ),
-    [loading, renderHead, renderQuestion, renderSide, title]
+    [renderQuestion, renderQuestionMetadata, title]
   );
 
   const renderEditContest = useMemo(

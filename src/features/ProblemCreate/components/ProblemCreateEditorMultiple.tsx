@@ -4,7 +4,7 @@ import { Card, Paragraph } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { parseAnswer, validateFormProblem } from "@/utils";
 import {
-  PROBLEM_AT_A_TIME_COUNT,
+  PROBLEM_CREATE_SIMULTANEOUS_COUNT,
   PROBLEM_BLANK,
   PROBLEM_DEFAULT,
 } from "@/consts";

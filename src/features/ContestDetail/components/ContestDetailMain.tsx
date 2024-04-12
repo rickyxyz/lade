@@ -7,23 +7,41 @@ import {
   ContentViewType,
   StateType,
   ContestMainTabType,
+  ProblemType,
+  ContestDatabaseType,
 } from "@/types";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { API } from "@/api";
 import { CardTab, CardTabType } from "@/components/Card/CardTab";
+import { ProblemCard, ProblemCardSkeleton } from "@/features/ProblemList";
 
 export interface ContestMainProps {
-  stateContest: StateType<ContestType>;
+  className?: string;
+  contest: ContestDatabaseType;
   stateAccept: StateType<unknown>;
   stateMode: StateType<ContentViewType>;
+  stateLoading: StateType<boolean>;
 }
 
 export function ContestDetailMain({
-  stateContest,
+  className,
+  contest,
   stateMode,
+  stateLoading,
 }: ContestMainProps) {
-  const [contest, setContest] = stateContest;
-  const { id, description, title, topicId, subTopicId } = contest;
+  const loading = stateLoading[0];
+  const {
+    id,
+    description,
+    title,
+    topicId,
+    subTopicId,
+    startDate,
+    endDate,
+    problemsData,
+  } = contest;
+
+  console.log(contest);
 
   const descriptionRef = useRef<HTMLDivElement>(null);
   const stateTab = useState<ContestMainTabType>("contest");
@@ -50,8 +68,12 @@ export function ContestDetailMain({
   );
 
   const renderMain = useMemo(
-    () => <article className="mb-8" ref={descriptionRef}></article>,
-    []
+    () => (
+      <Card className={className}>
+        <article className="mb-8" ref={descriptionRef}></article>
+      </Card>
+    ),
+    [className]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -59,22 +81,33 @@ export function ContestDetailMain({
       descriptionRef.current.innerHTML = md.render(description);
   }, [description]);
 
+  const renderProblems = useMemo(() => {
+    return (
+      <div className="grid grid-cols-1 gap-8">
+        {loading ? (
+          <>
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+            <ProblemCardSkeleton />
+          </>
+        ) : (
+          problemsData.map(({ problem }) => (
+            <ProblemCard key={problem.id} problem={problem as any} isLink />
+          ))
+        )}
+      </div>
+    );
+  }, [loading, problemsData]);
+
   useEffect(() => {
     handleRenderMarkdown();
   }, [tab, handleRenderMarkdown]);
 
-  const renderContent = useMemo(() => {
-    switch (tab) {
-      case "contest":
-        return <>{renderMain}</>;
-      case "discussion":
-        return <div>Discussion</div>;
-    }
-  }, [renderMain, tab]);
-
   return (
-    <CardTab tabs={tabs} activeTab={tab}>
-      {renderContent}
-    </CardTab>
+    <div className="flex flex-col flex-1 gap-8">
+      {renderMain}
+      {renderProblems}
+    </div>
   );
 }
