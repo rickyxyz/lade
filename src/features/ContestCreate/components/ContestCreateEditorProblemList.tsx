@@ -39,76 +39,79 @@ export function ContestCreateEditorList({
     () => (
       <div className="flex flex-col gap-2 mt-2">
         {problems.length > 0 ? (
-          problems.map(({ problem: { id, title }, score }, index) => (
-            <div
-              key={id}
-              className={clsx(
-                "flex items-center justify-between",
-                mode === "score" ? "gap-4" : "gap-2"
-              )}
-            >
-              <Paragraph
-                style={{
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  wordWrap: "break-word",
-                  overflow: "hidden",
-                  maxHeight: "1.8em",
-                  lineHeight: "1.8em",
-                }}
-              >
-                <Paragraph color="primary-6" weight="bold" className="mr-2">
-                  {index + 1}.
-                </Paragraph>
-                <Paragraph>{title}</Paragraph>
-              </Paragraph>
-              <div className="flex gap-1">
-                {mode === "order" ? (
-                  <>
-                    <ButtonIcon
-                      size="xs"
-                      icon={ArrowUpward}
-                      variant="ghost"
-                      onClick={() => {
-                        onReorder(index, -1);
-                      }}
-                      disabled={index === 0}
-                    />
-                    <ButtonIcon
-                      size="xs"
-                      icon={ArrowDownward}
-                      variant="ghost"
-                      onClick={() => {
-                        onReorder(index, 1);
-                      }}
-                      disabled={index === problems.length - 1}
-                    />
-                    <ButtonIcon
-                      size="xs"
-                      icon={Delete}
-                      variant="ghost"
-                      color="danger"
-                      onClick={() => {
-                        onDelete(index);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Input
-                      className="text-center"
-                      size="s"
-                      width={58}
-                      value={score}
-                      onChange={(e) => {
-                        onUpdateScore(index, e.target.value);
-                      }}
-                    />
-                  </>
+          <ul>
+            {problems.map(({ problem: { id, title }, score }, index) => (
+              <li
+                key={id}
+                className={clsx(
+                  "flex items-center justify-between",
+                  mode === "score" ? "gap-4" : "gap-2",
+                  index > 0 && "mt-2"
                 )}
-              </div>
-            </div>
-          ))
+              >
+                <Paragraph
+                  style={{
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    wordWrap: "break-word",
+                    overflow: "hidden",
+                    maxHeight: "1.8em",
+                    lineHeight: "1.8em",
+                  }}
+                >
+                  <Paragraph color="primary-6" weight="bold" className="mr-2">
+                    {String.fromCharCode(65 + index)}.
+                  </Paragraph>
+                  <Paragraph>{title}</Paragraph>
+                </Paragraph>
+                <div className="flex gap-1">
+                  {mode === "order" ? (
+                    <>
+                      <ButtonIcon
+                        size="xs"
+                        icon={ArrowUpward}
+                        variant="ghost"
+                        onClick={() => {
+                          onReorder(index, -1);
+                        }}
+                        disabled={index === 0}
+                      />
+                      <ButtonIcon
+                        size="xs"
+                        icon={ArrowDownward}
+                        variant="ghost"
+                        onClick={() => {
+                          onReorder(index, 1);
+                        }}
+                        disabled={index === problems.length - 1}
+                      />
+                      <ButtonIcon
+                        size="xs"
+                        icon={Delete}
+                        variant="ghost"
+                        color="danger"
+                        onClick={() => {
+                          onDelete(index);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Input
+                        className="text-center"
+                        size="s"
+                        width={58}
+                        value={score}
+                        onChange={(e) => {
+                          onUpdateScore(index, e.target.value);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         ) : (
           <div>
             <Paragraph>This contest has no problems.</Paragraph>

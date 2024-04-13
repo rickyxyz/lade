@@ -270,7 +270,7 @@ export function ContestCreateEditorForm({
       problems.map(({ problem: { id, title }, score }, idx) => (
         <tr key={id} className={clsx("border-b border-b-secondary-300")}>
           <td>
-            <Paragraph>{idx + 1}</Paragraph>
+            <Paragraph>{String.fromCharCode(65 + idx)}</Paragraph>
           </td>
           <td>
             <Paragraph>{title}</Paragraph>
@@ -349,7 +349,7 @@ export function ContestCreateEditorForm({
             <thead className="border-b border-secondary-300">
               <tr>
                 <th>
-                  <Paragraph>No</Paragraph>
+                  <Paragraph></Paragraph>
                 </th>
                 <th className="w-full">
                   <Paragraph>Problem</Paragraph>
