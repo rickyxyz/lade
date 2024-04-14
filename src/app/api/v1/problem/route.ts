@@ -6,6 +6,7 @@ import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormProblem } from "@/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
+import { firebase } from "@/libs/firebase-admin";
 
 export async function PATCH(req: NextRequest) {
   let errors: Record<string, string> = {};
@@ -37,20 +38,49 @@ export async function PATCH(req: NextRequest) {
       throw errors;
     }
 
-    await prisma.problem.update({
-      where: {
-        id: id as number,
-      },
-      data: {
-        title,
-        statement,
-        answer,
-        authorId,
-        topicId,
-        subTopicId,
-        type,
-        updatedAt: new Date(),
-      },
+    const docRef = firebase
+      .firestore()
+      .collection("problems")
+      .doc(id as any);
+
+    await prisma.$transaction(async (tx) => {
+      const before = await tx.problem.findUnique({
+        where: {
+          id: id as number,
+        },
+      });
+
+      if (!before) throw "";
+
+      if (before.type !== type) {
+        errors.type = "Problem type cannot be changed.";
+        throw "";
+      }
+
+      if (before.answer !== answer) {
+        await docRef.set(
+          {
+            answerLastUpdated: new Date().getTime(),
+          },
+          { merge: true }
+        );
+      }
+
+      await tx.problem.update({
+        where: {
+          id: id as number,
+        },
+        data: {
+          title,
+          statement,
+          answer,
+          authorId,
+          topicId,
+          subTopicId,
+          type,
+          updatedAt: new Date(),
+        },
+      });
     });
 
     response = NextResponse.json({
@@ -58,6 +88,15 @@ export async function PATCH(req: NextRequest) {
     });
   } catch (e) {
     console.log(e);
+    response = NextResponse.json(
+      {
+        message: API_FAIL_MESSAGE,
+        ...(Object.keys(errors).length > 0 ? { errors } : {}),
+      },
+      {
+        status: 500,
+      }
+    );
   }
   await prisma.$disconnect();
 
@@ -79,7 +118,7 @@ export async function POST(req: NextRequest) {
     errors = validateFormProblem(body);
 
     if (Object.keys(errors).length > 0) {
-      throw errors;
+      throw "fail";
     }
 
     const problem = await prisma.problem.create({

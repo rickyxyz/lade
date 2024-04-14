@@ -7,7 +7,7 @@ const cert: ServiceAccount = {
   privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
 };
 
-export const firebaseAdmin =
+export const firebase =
   admin.apps[0] ??
   admin.initializeApp({
     credential: admin.credential.cert(cert),

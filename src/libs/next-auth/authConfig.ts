@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthOptions, NextAuthOptions } from "next-auth";
-import { firebaseAdmin } from "@/libs/firebase/admin";
+import { firebase } from "@/libs/firebase-admin";
 import { api } from "@/utils/api";
 import { API } from "@/api";
 import NextAuth from "next-auth/next";
@@ -13,7 +13,7 @@ export const authConfig: AuthOptions = {
       authorize: async ({ idToken }: any, _req) => {
         if (idToken) {
           try {
-            const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
+            const decoded = await firebase.auth().verifyIdToken(idToken);
             const user = await API("get_user", {
               params: {
                 uid: decoded.uid,

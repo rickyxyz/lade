@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     console.log(problem);
 
     if (!result) {
-      throw Error("fail1");
+      throw Error("fail");
     }
 
     if (user) {
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!problem) throw Error("fail2");
+    if (!problem) throw Error("fail");
 
     const { answer: accept } = problem;
 
