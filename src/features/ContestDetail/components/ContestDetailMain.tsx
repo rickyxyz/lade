@@ -14,6 +14,7 @@ import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { API } from "@/api";
 import { CardTab, CardTabType } from "@/components/Card/CardTab";
 import { ProblemCard, ProblemCardSkeleton } from "@/features/ProblemList";
+import { ContestDetailProblemCard } from "../../ContestProblems/components/ContestProblemsProblemCard";
 
 export interface ContestMainProps {
   className?: string;
@@ -71,6 +72,7 @@ export function ContestDetailMain({
     () => (
       <Card className={className}>
         <article className="mb-8" ref={descriptionRef}></article>
+        <Button>Participate</Button>
       </Card>
     ),
     [className]
@@ -81,33 +83,9 @@ export function ContestDetailMain({
       descriptionRef.current.innerHTML = md.render(description);
   }, [description]);
 
-  const renderProblems = useMemo(() => {
-    return (
-      <div className="grid grid-cols-1 gap-8">
-        {loading ? (
-          <>
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-            <ProblemCardSkeleton />
-          </>
-        ) : (
-          problemsData.map(({ problem }) => (
-            <ProblemCard key={problem.id} problem={problem as any} isLink />
-          ))
-        )}
-      </div>
-    );
-  }, [loading, problemsData]);
-
   useEffect(() => {
     handleRenderMarkdown();
   }, [tab, handleRenderMarkdown]);
 
-  return (
-    <div className="flex flex-col flex-1 gap-8">
-      {renderMain}
-      {renderProblems}
-    </div>
-  );
+  return <div className="flex flex-col flex-1 gap-8">{renderMain}</div>;
 }

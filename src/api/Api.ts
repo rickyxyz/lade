@@ -56,6 +56,7 @@ interface ApiParams {
     id: number | string;
   };
   patch_contest: Empty;
+  post_contest_answer: Empty;
 }
 
 interface ApiBody {
@@ -78,6 +79,12 @@ interface ApiBody {
   get_contest: Empty;
   post_contest: ContestType;
   patch_contest: ContestType;
+  post_contest_answer: {
+    contestId: string;
+    problemId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    answer: any;
+  };
 }
 
 interface ApiReturn {
@@ -121,6 +128,7 @@ interface ApiReturn {
     id: string;
   };
   patch_contest: ApiMessage;
+  post_contest_answer: ApiMessage;
 }
 
 const ROUTES = {
@@ -183,6 +191,10 @@ const ROUTES = {
   patch_contest: {
     path: "/v1/contest",
     method: "PATCH",
+  },
+  post_contest_answer: {
+    path: "/v1/contest/answer",
+    method: "POST",
   },
 };
 
