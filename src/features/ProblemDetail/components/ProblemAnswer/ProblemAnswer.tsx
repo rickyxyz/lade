@@ -1,5 +1,5 @@
 import { ReactNode, useMemo } from "react";
-import { Input } from "@/components";
+import { Input, Paragraph } from "@/components";
 import { AnswerType, ProblemAnswerType, StateType } from "@/types";
 
 interface ProblemAnswerProps {
@@ -104,9 +104,9 @@ export function ProblemAnswer({
               ))}
             </div>
           ))}
-        <span>
+        <Paragraph size="s" color="secondary-5">
           Matrix Size: {matrixHeight} x {matrixWidth}
-        </span>
+        </Paragraph>
         {caption}
       </div>
     );

@@ -22,6 +22,7 @@ import {
   ContentAccessType,
   ContestDatabaseType,
   ProblemType,
+  ContestSubmissionType,
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
@@ -33,6 +34,8 @@ import { ContestProblemsList } from "../components/ContestProblemsList";
 import { ContestDetailData } from "@/features/ContestDetail/components/ContestDetailData";
 import { ContestDetailProblemCard } from "@/features/ContestDetail/components/ContestDetailProblemCard";
 import { ContestProblemsProblemCard } from "../components/ContestProblemsProblemCard";
+import { useListenContestSubmission } from "../hooks";
+import { ContestProblemsData } from "../components/ContestProblemsData";
 
 interface ContestData {
   label: string;
@@ -57,9 +60,7 @@ export function ContestProblemsPage({ id, user }: ContestProps) {
   const [problems, setProblems] = stateProblems;
   const [contest, setContest] = stateContest;
   const { title, authorId, createdAt = 0 } = contest;
-  const stateAccept = useState<unknown>({
-    content: "",
-  });
+
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
   const stateMode = useState<ContentViewType>("view");
@@ -68,6 +69,7 @@ export function ContestProblemsPage({ id, user }: ContestProps) {
   const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
   const [cooldown, setCooldown] = useState(0);
   const [submitted, setSubmitted] = useState(0);
+
   const stateAnswerLoading = useState<string | null>();
   const [answerLoading, setAnswerLoading] = stateAnswerLoading;
 
@@ -82,6 +84,8 @@ export function ContestProblemsPage({ id, user }: ContestProps) {
     () => allUserSolved && allUserSolved[id],
     [allUserSolved, id]
   );
+
+  const submission = useListenContestSubmission(id);
 
   const permission = useMemo<ContentAccessType>(() => {
     if (user && contest) {
@@ -367,9 +371,8 @@ export function ContestProblemsPage({ id, user }: ContestProps) {
 
     return (
       <div className={className}>
-        <ContestDetailData
+        <ContestProblemsData
           contest={contest as unknown as ContestDatabaseType}
-          showAuthorMenu={!!user && contest.authorId === user?.id}
           onEdit={() => {
             setMode("edit");
           }}
@@ -377,10 +380,16 @@ export function ContestProblemsPage({ id, user }: ContestProps) {
           //   handleDeleteProblem();
           // }}
         />
-        <ContestProblemsList problems={problems} />
+        {user && submission && (
+          <ContestProblemsList
+            problems={problems}
+            submission={submission}
+            userId={user.id}
+          />
+        )}
       </div>
     );
-  }, [contest, loading, problems, setMode, user]);
+  }, [contest, loading, problems, setMode, submission, user]);
 
   return (
     <PageTemplate title={title} className="w-full">

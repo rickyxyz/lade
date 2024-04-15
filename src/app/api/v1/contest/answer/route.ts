@@ -7,6 +7,8 @@ import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
 import { firebase } from "@/libs/firebase-admin";
+import { getDatabase, ref, runTransaction } from "firebase/database";
+import { rb } from "@/libs/firebase";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -81,27 +83,37 @@ export async function POST(req: NextRequest) {
     console.log(JSON.parse(accept));
     console.log(answer);
 
-    const docRef = firebase
-      .firestore()
-      .collection("contests")
-      .doc(contestId as any)
-      .collection("problems")
-      .doc(problemId as any)
-      .collection("submissions")
-      .doc(user.id as any);
-    const db = firebase.firestore();
-    db.runTransaction(async (test) => {
-      const snap = await test.get(docRef);
-
-      const prev = snap.data();
-      const data = {
-        score: verdict ? 10 : 0,
-        attempts: prev ? prev.attempts + 1 : 1,
-      };
-      if (prev) {
-        test.update(docRef, data);
+    const docRef = ref(rb, `contests/${contestId}`);
+    const resultingData = {
+      score: verdict ? 10 : -10,
+      lastSubmitted: new Date().getTime(),
+    };
+    runTransaction(docRef, (result) => {
+      console.log("Previous");
+      console.log(result);
+      if (result) {
+        return {
+          ...result,
+          [problemId]: {
+            ...(result[problemId] ?? {}),
+            [user.id]: {
+              ...resultingData,
+              attempts:
+                (result[problemId] && result[problemId][user.id]
+                  ? result[problemId][user.id].attempts
+                  : 0) + 1,
+            },
+          },
+        };
       } else {
-        test.set(docRef, data);
+        return {
+          [problemId]: {
+            [user.id]: {
+              ...resultingData,
+              attempts: 1,
+            },
+          },
+        };
       }
     });
 

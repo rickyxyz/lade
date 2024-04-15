@@ -165,7 +165,7 @@ export function PageTemplateNav() {
                 .filter(({ permission: linkPerm }) =>
                   checkPermissionLink(permission, linkPerm)
                 )
-                .map(({ label, href, icon, danger }) => (
+                .map(({ label, href, icon, danger, onClick }) => (
                   <PageTemplateNavButton
                     key={label}
                     label={label}
@@ -174,6 +174,7 @@ export function PageTemplateNav() {
                     device={device}
                     isDanger={danger}
                     isActive={href === pathname}
+                    onClick={onClick}
                   />
                 ))}
             </li>

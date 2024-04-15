@@ -132,12 +132,14 @@ export function ContestProblemsProblemCard({
   }, []);
 
   const renderAnswerVerdict = useMemo(() => {
-    if (submitted) {
-      return solved ? (
+    if (solved)
+      return (
         <Paragraph weight="semibold" color="success-5">
           Correct answer
         </Paragraph>
-      ) : (
+      );
+    if (submitted)
+      return (
         Boolean(cooldown > 0 && Math.ceil(cooldown / 1000)) && (
           <Paragraph color="danger-5">
             Incorrect answer. You can answer again in{" "}
@@ -145,7 +147,6 @@ export function ContestProblemsProblemCard({
           </Paragraph>
         )
       );
-    }
   }, [cooldown, solved, submitted]);
 
   return (
@@ -157,6 +158,7 @@ export function ContestProblemsProblemCard({
         onBlur={() => {
           setSubmitted(false);
         }}
+        disabled={solved || cooldown > 0}
       />
       {renderAnswerVerdict}
       <Button
@@ -170,7 +172,7 @@ export function ContestProblemsProblemCard({
               setSubmitted(true);
             });
         }}
-        disabled={cooldown > 0}
+        disabled={cooldown > 0 || solved}
         loading={loading}
       >
         Submit
