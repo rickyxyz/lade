@@ -85,8 +85,9 @@ export async function POST(req: NextRequest) {
 
     const docRef = ref(rb, `contests/${contestId}`);
     const resultingData = {
-      score: verdict ? 10 : -10,
-      lastSubmitted: new Date().getTime(),
+      score: verdict ? score : 0,
+      submittedAt: new Date().getTime(),
+      answer: JSON.stringify(answer),
     };
     runTransaction(docRef, (result) => {
       console.log("Previous");

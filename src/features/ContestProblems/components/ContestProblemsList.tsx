@@ -1,32 +1,13 @@
-import { Fragment, ReactNode, useCallback, useMemo, useState } from "react";
-import { Button, ButtonIcon, Card, Input, Paragraph, Tag } from "@/components";
-import {
-  ContestSubmissionType,
-  ProblemContestType,
-  ProblemType,
-  StateType,
-} from "@/types";
-import { ProblemDetailTopics } from "@/features/ProblemDetail";
-import {
-  ArrowDownward,
-  ArrowUpward,
-  Delete,
-  Numbers,
-  SyncAlt,
-} from "@mui/icons-material";
-import {
-  CONTEST_MAX_PROBLEMS,
-  CONTEST_MIN_PROBLEMS,
-  PROBLEM_CREATE_SIMULTANEOUS_COUNT,
-} from "@/consts";
-import { useTopics } from "@/hooks";
+import { Fragment, useCallback, useMemo } from "react";
 import clsx from "clsx";
+import { Card, Paragraph } from "@/components";
+import { ContestSubmissionType, ProblemContestType } from "@/types";
 
 export interface ContestCreateEditorListProps {
   className?: string;
   problems: ProblemContestType[];
-  submission: ContestSubmissionType;
-  userId: string;
+  submission?: ContestSubmissionType;
+  userId?: string;
 }
 
 export function ContestProblemsList({
@@ -36,10 +17,10 @@ export function ContestProblemsList({
 }: ContestCreateEditorListProps) {
   const renderProblem = useCallback(
     ({ problem: { id, title } }: ProblemContestType, index: number) => {
-      const score =
-        submission[id] &&
-        submission[id][userId] &&
-        submission[id][userId].score;
+      const entry =
+        submission && userId && submission[id] && submission[id][userId];
+
+      const score = entry ? entry.score - entry.attempts : null;
 
       return (
         <li className={clsx("flex items-center justify-between")}>

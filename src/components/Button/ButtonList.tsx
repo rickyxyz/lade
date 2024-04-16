@@ -1,6 +1,7 @@
-import { useDevice } from "@/hooks";
-import { Button, ButtonOrderType } from "./Button";
 import clsx from "clsx";
+import { useDevice } from "@/hooks";
+import { ButtonOrderType } from "@/types";
+import { Button } from "./Button";
 
 export interface ButtonListEntry {
   label: string;

@@ -1,12 +1,10 @@
 import { ReactNode } from "react";
-import { Button, Card, Paragraph } from "@/components";
+import { Card, Paragraph } from "@/components";
 import { ContestDatabaseType } from "@/types";
 
 export interface ContestProblemsDataProps {
   contest: ContestDatabaseType;
   className?: string;
-  onEdit?: () => void;
-  onDelete?: () => void;
 }
 
 function DataRow({ name, value }: { name: string; value: ReactNode }) {
@@ -27,10 +25,8 @@ function DataRow({ name, value }: { name: string; value: ReactNode }) {
 export function ContestProblemsData({
   className,
   contest,
-  onEdit,
-  onDelete,
 }: ContestProblemsDataProps) {
-  const { title, authorId, createdAt, startDate, endDate } = contest;
+  const { title, authorId } = contest;
 
   return (
     <Card className={className}>

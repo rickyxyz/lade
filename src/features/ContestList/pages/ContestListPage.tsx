@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useEffect, useCallback, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Search } from "@mui/icons-material";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import {
@@ -21,7 +22,6 @@ import {
   ProblemType,
 } from "@/types";
 import { ContestCard, ContestCardSkeleton, ProblemFilter } from "@/features";
-import { Search } from "@mui/icons-material";
 
 interface ProblemListPageProps {
   query: ProblemQuery;

@@ -217,51 +217,53 @@ export async function GET(req: NextRequest) {
 
     const user = await getAuthUserNext();
 
-    if (typeof id !== "undefined") {
-      const rawContest = await prisma.contest.findUnique({
-        where: {
-          id: id as unknown as number,
-        },
-        include: {
-          toProblems: {
-            // include: {
-            //   problem: true,
-            // },
-            select: {
-              problem: true,
-              score: true,
-              order: true,
-            },
-          },
-          topic: true,
-          subTopic: true,
-        },
-      });
-
-      if (!rawContest) throw Error("");
-
-      const contest = { ...(rawContest as unknown as ContestDatabaseType) };
-      contest.toProblems ??= [];
-      contest.problems = contest.toProblems.length;
-      contest.problemsData = contest.toProblems;
-      delete contest.toProblems;
-
-      if (!user || (contest.authorId !== user.id && user.role !== "admin")) {
-        contest.problemsData = contest.problemsData.map((entry) => ({
-          ...entry,
-          problem: {
-            ...entry.problem,
-            answer: "{}",
-          },
-        }));
-      }
-
-      console.log(contest);
-
-      response = NextResponse.json(JSON.parse(json(contest)));
-    } else {
+    if (!id) {
       throw Error("id undefined");
     }
+
+    console.log("This is ID");
+    console.log(id);
+    const rawContest = await prisma.contest.findUnique({
+      where: {
+        id: id as unknown as number,
+      },
+      include: {
+        toProblems: {
+          // include: {
+          //   problem: true,
+          // },
+          select: {
+            problem: true,
+            score: true,
+            order: true,
+          },
+        },
+        topic: true,
+        subTopic: true,
+      },
+    });
+
+    if (!rawContest) throw Error("");
+
+    const contest = { ...(rawContest as unknown as ContestDatabaseType) };
+    contest.toProblems ??= [];
+    contest.problems = contest.toProblems.length;
+    contest.problemsData = contest.toProblems;
+    delete contest.toProblems;
+
+    if (!user || (contest.authorId !== user.id && user.role !== "admin")) {
+      contest.problemsData = contest.problemsData.map((entry) => ({
+        ...entry,
+        problem: {
+          ...entry.problem,
+          answer: "{}",
+        },
+      }));
+    }
+
+    console.log(contest);
+
+    response = NextResponse.json(JSON.parse(json(contest)));
   } catch (e) {
     console.log(e);
   }

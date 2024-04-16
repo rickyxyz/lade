@@ -8,5 +8,5 @@ export default async function Page({
   params: { id: string };
 }) {
   const user = await getAuthUserNext();
-  return <ContestDetailPage id={id} user={user} />;
+  return <ContestDetailPage contestId={id} user={user} />;
 }

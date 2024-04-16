@@ -22,7 +22,6 @@ import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
   className?: string;
-  isSubmittable?: boolean;
   cooldown: number;
   loading: boolean;
   onClick?: () => void;
@@ -32,7 +31,6 @@ export interface ProblemCardProps {
 export function ContestProblemsProblemCard({
   problem,
   className,
-  isSubmittable,
   cooldown,
   loading,
   onClick,
@@ -45,42 +43,9 @@ export function ContestProblemsProblemCard({
   const [solved, setSolved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const {
-    id,
-    statement,
-    title,
-    topic,
-    subTopic,
-    solveds = [],
-    authorId,
-    type,
-  } = problem;
-
-  const user = useAppSelector("user");
-
-  const permission = useMemo(
-    () =>
-      getPermissionForContent({
-        content: problem,
-        user,
-      }),
-    [problem, user]
-  );
+  const { id, statement, title, type } = problem;
 
   const statementRef = useRef<HTMLDivElement>(null);
-
-  const renderTags = useMemo(
-    () =>
-      topic &&
-      subTopic && (
-        <ProblemDetailTopics
-          className="mb-4"
-          topic={topic.name}
-          subTopic={subTopic.name}
-        />
-      ),
-    [subTopic, topic]
-  );
 
   const renderMain = useMemo(
     () => (
@@ -89,28 +54,11 @@ export function ContestProblemsProblemCard({
           <Paragraph className="mr-16" as="h2" color="primary-6">
             {title}
           </Paragraph>
-          {/* <More
-            className="!absolute !right-0"
-            options={
-              permission === "author"
-                ? [
-                    {
-                      id: "edit",
-                      element: "Edit",
-                      onClick: () => {
-                        console.log("Edit");
-                      },
-                    },
-                  ]
-                : []
-            }
-          /> */}
         </div>
-        {renderTags}
         <article className="mb-5" ref={statementRef}></article>
       </>
     ),
-    [renderTags, title]
+    [title]
   );
 
   const handleRenderMarkdown = useCallback(() => {

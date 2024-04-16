@@ -34,11 +34,11 @@ interface ContestAction extends ButtonListEntry {
 }
 
 interface ContestProps {
-  id: string;
+  contestId: string;
   user?: UserType | null;
 }
 
-export function ContestDetailPage({ id, user }: ContestProps) {
+export function ContestDetailPage({ contestId, user }: ContestProps) {
   const stateContest = useState<ContestType>(
     CONTEST_DEFAULT as unknown as ContestType
   );
@@ -62,8 +62,8 @@ export function ContestDetailPage({ id, user }: ContestProps) {
   const { device } = useDevice();
 
   const solveCache = useMemo(
-    () => allUserSolved && allUserSolved[id],
-    [allUserSolved, id]
+    () => allUserSolved && allUserSolved[contestId],
+    [allUserSolved, contestId]
   );
 
   const permission = useMemo<ContentAccessType>(() => {
@@ -75,26 +75,11 @@ export function ContestDetailPage({ id, user }: ContestProps) {
     return "viewer";
   }, [contest, user]);
 
-  const contestData = useMemo<ContestData[]>(
-    () => [
-      {
-        label: "Author",
-        value: authorId,
-      },
-      {
-        label: "Date",
-        value: new Date(createdAt).toLocaleDateString("en-GB"),
-        tooltip: `${new Date(createdAt).toLocaleString("en-GB")}`,
-      },
-    ],
-    [authorId, createdAt]
-  );
-
   const handleDeleteContest = useCallback(async () => {
     await api
       .delete("/contest", {
         params: {
-          id,
+          id: contestId,
         },
       })
       .then(() => {
@@ -106,7 +91,7 @@ export function ContestDetailPage({ id, user }: ContestProps) {
         console.log(e);
         return null;
       });
-  }, [id, router]);
+  }, [contestId, router]);
 
   const contestAction = useMemo<ContestAction[]>(
     () => [
@@ -137,16 +122,8 @@ export function ContestDetailPage({ id, user }: ContestProps) {
     if (loading || !contest)
       return <ContestDetailMainSkeleton className={className} />;
 
-    return (
-      <ContestDetailMain
-        className={className}
-        contest={contest as any}
-        stateLoading={stateLoading}
-        stateAccept={stateAccept}
-        stateMode={stateMode}
-      />
-    );
-  }, [loading, contest, stateLoading, stateAccept, stateMode]);
+    return <ContestDetailMain className={className} contest={contest as any} />;
+  }, [loading, contest]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -161,9 +138,9 @@ export function ContestDetailPage({ id, user }: ContestProps) {
 
     setLoading(true);
 
-    const result = await API("get_contest", {
+    await API("get_contest", {
       params: {
-        id,
+        id: contestId,
       },
     })
       .then(({ data }) => {
@@ -179,106 +156,12 @@ export function ContestDetailPage({ id, user }: ContestProps) {
         return id;
       })
       .catch(() => null);
-  }, [loading, setLoading, id, setContest, setProblems]);
+  }, [loading, setLoading, contestId, setContest, setProblems]);
 
   useEffect(() => {
     handleGetContests();
   }, [handleGetContests]);
 
-  const renderNavigation = useMemo(
-    () => (
-      <IconText
-        IconComponent={West}
-        text="Back"
-        className="mb-4 text-primary-600 cursor-pointer"
-        onClick={handleGoBack}
-      />
-    ),
-    [handleGoBack]
-  );
-
-  const renderHead = useMemo(
-    () => (
-      <>
-        {renderNavigation}
-        <div className="flex  justify-between mb-4">
-          <div className="flex-1">
-            <h1 className="mt-2 mb-4">{title}</h1>
-            {/* {topic && subTopic && (
-              <ContestDetailTopics
-                className="mb-8"
-                topic={topic.name}
-                subTopic={subTopic.name}
-              />
-            )} */}
-          </div>
-          {device === "mobile" && (
-            <ButtonIcon
-              variant="outline"
-              onClick={() => {
-                setMobileAction((prev) => !prev);
-              }}
-              icon={MoreVert}
-            />
-          )}
-        </div>
-      </>
-    ),
-    [device, renderNavigation, setMobileAction, title]
-  );
-
-  const renderContestData = useMemo(
-    () => (
-      <ul className="md:w-48">
-        {contestData.map(({ label, value, tooltip }, idx) => (
-          <li
-            className={clsx("flex justify-between", idx > 0 && "mt-1")}
-            key={label}
-          >
-            <Paragraph color="secondary-5">{label}</Paragraph>
-            {tooltip ? (
-              <Tooltip
-                optionWidth={0}
-                triggerElement={<Paragraph>{value}</Paragraph>}
-                hiddenElement={
-                  <Paragraph className="whitespace-nowrap">{tooltip}</Paragraph>
-                }
-                classNameInner="w-fit px-4 py-2"
-                topOffset={32}
-                direction="left"
-                showOnHover
-              />
-            ) : (
-              <Paragraph>{value}</Paragraph>
-            )}
-          </li>
-        ))}
-      </ul>
-    ),
-    [contestData]
-  );
-
-  const renderContestAction = useMemo(() => {
-    const actions = contestAction.filter(({ permission: perm }) =>
-      checkPermission(permission, perm)
-    );
-    return <ButtonList list={actions} className="w-48" />;
-  }, [permission, contestAction]);
-
-  const renderMobileAction = useMemo(
-    () => <Modal stateVisible={stateMobileAction}>{renderContestAction}</Modal>,
-    [renderContestAction, stateMobileAction]
-  );
-
-  const renderSide = useMemo(
-    () => (
-      <div className="flex flex-col gap-8">
-        {renderContestData}
-        {device === "mobile" ? renderMobileAction : renderContestAction}
-      </div>
-    ),
-    [device, renderMobileAction, renderContestAction, renderContestData]
-  );
   const renderQuestionMetadata = useMemo(() => {
     const className = "flex-grow md:max-w-[320px] h-fit lg:sticky lg:top-0";
 
@@ -293,12 +176,12 @@ export function ContestDetailPage({ id, user }: ContestProps) {
         onEdit={() => {
           setMode("edit");
         }}
-        // onDelete={() => {
-        //   handleDeleteProblem();
-        // }}
+        onDelete={() => {
+          handleDeleteContest();
+        }}
       />
     );
-  }, [contest, loading, setMode, user]);
+  }, [contest, handleDeleteContest, loading, setMode, user]);
 
   const renderViewContest = useMemo(
     () => (

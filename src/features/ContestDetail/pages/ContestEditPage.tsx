@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { API } from "@/api";
-import { PageTemplate } from "@/templates";
-import { ContestType, ProblemContestType, StateType } from "@/types";
 import { ContestCreateEditor } from "@/features";
+import { ContestType, ProblemContestType, StateType } from "@/types";
 
 export function ContestEditPage({
   stateContest,
