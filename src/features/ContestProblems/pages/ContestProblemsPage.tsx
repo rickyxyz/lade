@@ -47,7 +47,7 @@ export function ContestProblemsPage({ contestId, user }: ContestProps) {
 
   const router = useRouter();
 
-  const submission = useListenContestSubmission(contestId);
+  const { submission } = useListenContestSubmission(contestId);
 
   const handleCheckAnswer = useCallback(
     async (problemId: string, answer: any) => {

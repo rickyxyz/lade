@@ -344,7 +344,7 @@ export function ContestCreateEditorForm({
             setTab("problems");
           }}
         /> */}
-        <div className="mt-4 border border-secondary-300 rounded-md overflow-hidden">
+        <div className="table-container mt-4">
           <table className="table">
             <thead className="border-b border-secondary-300">
               <tr>
@@ -354,10 +354,10 @@ export function ContestCreateEditorForm({
                 <th className="w-full">
                   <Paragraph>Problem</Paragraph>
                 </th>
-                <th>
+                <th className="text-center">
                   <Paragraph>Points</Paragraph>
                 </th>
-                <th>
+                <th className="text-center">
                   <Paragraph>Actions</Paragraph>
                 </th>
               </tr>
