@@ -40,13 +40,15 @@ export type ContestBlankType = {
 
 export type ContestMainTabType = "contest" | "result" | "discussion";
 
+export interface ContestSingleSubmissionType {
+  attempts: number;
+  score: number;
+  answer: string;
+  submittedAt: number;
+}
+
 export interface ContestSubmissionType {
-  [problemId: string]: {
-    [userId: string]: {
-      attempts: number;
-      score: number;
-      answer: string;
-      submittedAt: number;
-    };
+  [key1: string]: {
+    [key2: string]: ContestSingleSubmissionType;
   };
 }

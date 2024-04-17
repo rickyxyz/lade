@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { rb } from "@/libs/firebase";
-import { ContestSubmissionType } from "@/types";
+import { ContestSingleSubmissionType, ContestSubmissionType } from "@/types";
 import { onValue, ref } from "firebase/database";
 
 export function useListenContestSubmission(contestId: string) {
@@ -9,10 +9,10 @@ export function useListenContestSubmission(contestId: string) {
   const users = useMemo(() => {
     if (!data) return [];
 
-    const result: string[] = [];
-    Object.values(data).forEach((problemSubmission) => {
-      Object.keys(problemSubmission).forEach((userId) => {
-        result.push(userId);
+    const result: ContestSubmissionType = {};
+    Object.entries(data).forEach(([problemId, problemSubmissions]) => {
+      Object.entries(problemSubmissions).forEach(([userId, userSubmission]) => {
+        result[userId][problemId] = userSubmission;
       });
     });
 
@@ -31,8 +31,13 @@ export function useListenContestSubmission(contestId: string) {
     };
   }, [contestId]);
 
-  return {
-    submission: data,
-    users,
-  };
+  return useMemo(
+    () => ({
+      problemSubmissions: data,
+      userSubmissions: users,
+      problemCount: Object.values(data ?? {}).length,
+      userCount: Object.values(users ?? {}).length,
+    }),
+    [data, users]
+  );
 }

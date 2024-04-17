@@ -47,7 +47,7 @@ export function ContestProblemsPage({ contestId, user }: ContestProps) {
 
   const router = useRouter();
 
-  const { submission } = useListenContestSubmission(contestId);
+  const { problemSubmissions } = useListenContestSubmission(contestId);
 
   const handleCheckAnswer = useCallback(
     async (problemId: string, answer: any) => {
@@ -178,12 +178,12 @@ export function ContestProblemsPage({ contestId, user }: ContestProps) {
         />
         <ContestProblemsList
           problems={problems}
-          submission={submission}
+          submission={problemSubmissions}
           userId={user?.id}
         />
       </div>
     );
-  }, [contest, loading, problems, submission, user]);
+  }, [contest, loading, problems, problemSubmissions, user]);
 
   return (
     <PageTemplate title={title} className="w-full">
