@@ -125,4 +125,5 @@ const BUTTON_TEXT_ALIGN_STYLE = {
 const BUTTON_SIZE_STYLE: Record<ButtonSizeType, string> = {
   m: "h-10 px-4 py-2",
   s: "h-8",
+  xs: "h-6",
 };

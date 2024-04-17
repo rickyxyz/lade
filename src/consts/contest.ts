@@ -1,5 +1,3 @@
-import { ContestType } from "@/types";
-
 export const CONTEST_DEFAULT: ContestType = {
   id: "",
   description: "",

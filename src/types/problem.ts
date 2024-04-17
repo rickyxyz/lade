@@ -52,7 +52,7 @@ export type ProblemAnswerType = keyof AnswerObjectType;
 export type ProblemSubtopicMapType<K extends ProblemTopicNameType> =
   (typeof PROBLEM_TOPICS_RELATIONSHIP_OBJECT)[K][number];
 
-type ProblemMapTypeTopicType<
+export type ProblemMapTypeTopicType<
   K extends ProblemTopicNameType = ProblemTopicNameType
 > = {
   [P in K]: { topicId: P } & {
@@ -103,57 +103,18 @@ export interface SolvedType {
   problemId: string;
   answer: string;
 }
-
-export interface ContestBaseType {
-  title: string;
-  description: string;
-  problems: string;
-  participants?: number;
-  views?: number;
-  createdAt?: number;
-  updatedAt?: number;
-  startDate: number;
-  endDate: number;
-  authorId: string;
-}
-
-export type ContestType = ContestBaseType &
-  ProblemMapTypeTopicType & {
-    id: string;
-  };
-
 export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
   id?: string | number;
   topic: ProblemTopicType;
   subTopic: ProblemTopicType;
 };
 
-export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
-  id: string | number;
-  toProblems?: ProblemContestType[];
-  _count?: {
-    toProblems: number;
-  };
-  problemsData: ProblemContestType[];
-  problems: number;
-  topic: ProblemTopicType;
-  subTopic: ProblemTopicType;
-};
-
-export type ContestBlankType = {
-  [P in keyof ContestBaseType]: string;
-};
-
 export type ProblemMainTabType = "problem" | "discussion";
-export type ContestMainTabType = "contest" | "result" | "discussion";
 
-export interface ContestSubmissionType {
-  [problemId: string]: {
-    [userId: string]: {
-      attempts: number;
-      score: number;
-      answer: string;
-      submittedAt: number;
-    };
-  };
+export interface ProblemQuery {
+  search?: string;
+  topic?: ProblemTopicNameType;
+  subTopic?: ProblemSubtopicNameType;
+  sort?: ProblemSortByType;
+  page?: number;
 }

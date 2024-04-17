@@ -1,12 +1,12 @@
-import { ButtonIcon } from "../Button";
-import { PaginationData } from "@/types/pagination";
-import { Paragraph } from "../Paragraph";
-import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import { useMemo } from "react";
-import { useDevice } from "@/hooks";
 import clsx from "clsx";
-import { PaginationButton } from "./PaginationButton";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { useDevice } from "@/hooks";
+import { PROBLEM_PAGINATION_COUNT } from "@/consts";
+import { PaginationData } from "@/types";
+import { ButtonIcon } from "../Button";
+import { Paragraph } from "../Paragraph";
+import { PaginationButton } from "./PaginationButton";
 
 interface PaginationProps {
   pagination: PaginationData;
