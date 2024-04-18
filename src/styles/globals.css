@@ -76,8 +76,6 @@
 
   table.table th {
     @apply bg-secondary-100;
-  }
-  table.table th {
     text-align: unset;
   }
   table.table th,

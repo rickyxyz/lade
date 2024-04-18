@@ -246,8 +246,8 @@ export function ContestCreateEditorForm({
   const handleUpdateScoreProblem = useCallback(
     (index: number, value: any) => {
       value = parseInt(value);
-      if (isNaN(value)) value = 10;
-      else if (value < 1) value = 10;
+      if (isNaN(value)) value = 50;
+      else if (value < 50) value = 50;
       else if (value > 1000) value = 1000;
 
       setProblems((prev) => {

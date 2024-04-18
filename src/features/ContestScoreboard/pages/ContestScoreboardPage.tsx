@@ -15,6 +15,9 @@ import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
 import { useListenContestSubmission } from "../../ContestProblems/hooks";
 import clsx from "clsx";
+import { ContestScoreboard } from "../components";
+import { ContestDetailMainSkeleton } from "@/features/ContestDetail";
+import { ContestDetailData } from "@/features/ContestDetail/components/ContestDetailData";
 
 interface ContestProps {
   contestId: string;
@@ -75,72 +78,49 @@ export function ContestScoreboardPage({ contestId, user }: ContestProps) {
     handleGetContests();
   }, [handleGetContests]);
 
-  const renderUserSubmission = useMemo(
-    () =>
-      userSubmissions.map(({ userId, totalScore, answers }, index) => (
-        <tr key={userId} className="border-t border-secondary-300">
-          <td className="text-center">
-            <Paragraph>{index + 1}</Paragraph>
-          </td>
-          <td>
-            <Paragraph>{userId}</Paragraph>
-          </td>
-          {answers.map(({ problemId, finalScore = 0, attempts }) => {
-            return (
-              <td
-                className={clsx(
-                  "text-center",
-                  finalScore > 0
-                    ? "bg-success-200"
-                    : attempts > 0
-                    ? "bg-danger-200"
-                    : ""
-                )}
-                key={problemId}
-              >
-                <Paragraph>{finalScore}</Paragraph>
-              </td>
-            );
-          })}
-          <td className="text-center">
-            <Paragraph>{totalScore}</Paragraph>
-          </td>
-        </tr>
-      )),
-    [userSubmissions]
-  );
+  const renderScoreboard = useMemo(() => {
+    const className = "flex-1";
+
+    if (loading || !contest)
+      return <ContestDetailMainSkeleton className={className} />;
+
+    return (
+      <Card className={className}>
+        <ContestScoreboard
+          contest={contest as unknown as ContestDatabaseType}
+          userSubmissions={userSubmissions}
+        />
+      </Card>
+    );
+  }, [contest, loading, userSubmissions]);
+
+  const renderContestMetadata = useMemo(() => {
+    const className = "flex-grow md:max-w-[320px] h-fit lg:sticky lg:top-0";
+
+    if (loading || !contest)
+      return <ContestDetailMainSkeleton className={className} />;
+
+    return (
+      <ContestDetailData
+        className={className}
+        contest={contest as unknown as ContestDatabaseType}
+        showAuthorMenu={!!user && contest.authorId === user?.id}
+        onEdit={() => {
+          //
+        }}
+        onDelete={() => {
+          //
+        }}
+      />
+    );
+  }, [contest, loading, user]);
 
   return (
     <PageTemplate title={title} className="w-full">
-      <Card>
-        <div className="relative flex flex-row flex-wrap gap-8">
-          <div className="table-container w-full">
-            <table className="table table-auto w-full">
-              <thead>
-                <tr className="font-bold">
-                  <th className="!text-center">
-                    <Paragraph weight="inherit">Rank</Paragraph>
-                  </th>
-                  <th>
-                    <Paragraph weight="inherit">User</Paragraph>
-                  </th>
-                  {problems.map(({ problem }, idx) => (
-                    <th className="!text-center" key={problem.id}>
-                      <Paragraph weight="inherit">
-                        {String.fromCharCode(65 + idx)}
-                      </Paragraph>
-                    </th>
-                  ))}
-                  <th className="!text-center">
-                    <Paragraph weight="inherit">Score</Paragraph>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{renderUserSubmission}</tbody>
-            </table>
-          </div>
-        </div>
-      </Card>
+      <div className="relative flex flex-row flex-wrap gap-8">
+        {renderScoreboard}
+        {renderContestMetadata}
+      </div>
     </PageTemplate>
   );
 }

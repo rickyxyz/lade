@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { Button, Card, Paragraph } from "@/components";
 import { ContestDatabaseType } from "@/types";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export interface ContestDetailDataProps {
   contest: ContestDatabaseType;
@@ -10,21 +12,6 @@ export interface ContestDetailDataProps {
   onDelete?: () => void;
 }
 
-function DataRow({ name, value }: { name: string; value: ReactNode }) {
-  return (
-    <tr>
-      <th className="text-left align-text-top p-0">
-        <Paragraph color="secondary-4" size="s">
-          {name}
-        </Paragraph>
-      </th>
-      <td className="p-0">
-        <Paragraph>{value}</Paragraph>
-      </td>
-    </tr>
-  );
-}
-
 export function ContestDetailData({
   className,
   contest,
@@ -32,7 +19,7 @@ export function ContestDetailData({
   onEdit,
   onDelete,
 }: ContestDetailDataProps) {
-  const { title, authorId, createdAt, startDate, endDate } = contest;
+  const { title, authorId, createdAt, startDate, endDate, id } = contest;
 
   return (
     <Card className={className}>
@@ -83,9 +70,40 @@ export function ContestDetailData({
           />
         </tbody>
       </table>
+      <div className="grid grid-cols-1 gap-4 mt-4">
+        <Link href={`/contest/${id}`}>
+          <Button
+            className="w-full"
+            color="secondary"
+            variant="outline-2"
+            label="Description"
+          />
+        </Link>
+        <Link href={`/contest/${id}/problems`}>
+          <Button
+            className="w-full"
+            color="secondary"
+            variant="outline-2"
+            label="Problems"
+          />
+        </Link>
+        <Link href={`/contest/${id}/leaderboard`}>
+          <Button
+            className="w-full"
+            color="secondary"
+            variant="outline-2"
+            label="Leaderboard"
+          />
+        </Link>
+      </div>
       {showAuthorMenu && (
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <Button variant="outline-2" label="Edit" onClick={onEdit} />
+          <Button
+            color="secondary"
+            variant="outline-2"
+            label="Edit"
+            onClick={onEdit}
+          />
           <Button
             color="danger"
             variant="outline-2"
@@ -95,5 +113,20 @@ export function ContestDetailData({
         </div>
       )}
     </Card>
+  );
+}
+
+function DataRow({ name, value }: { name: string; value: ReactNode }) {
+  return (
+    <tr>
+      <th className="text-left align-text-top p-0">
+        <Paragraph color="secondary-4" size="s">
+          {name}
+        </Paragraph>
+      </th>
+      <td className="p-0">
+        <Paragraph>{value}</Paragraph>
+      </td>
+    </tr>
   );
 }

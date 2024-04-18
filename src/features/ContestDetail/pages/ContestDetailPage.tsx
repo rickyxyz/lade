@@ -116,7 +116,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     [handleDeleteContest, setMode]
   );
 
-  const renderQuestion = useMemo(() => {
+  const renderContest = useMemo(() => {
     const className = "flex-1";
 
     if (loading || !contest)
@@ -162,7 +162,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     handleGetContests();
   }, [handleGetContests]);
 
-  const renderQuestionMetadata = useMemo(() => {
+  const renderContestMetadata = useMemo(() => {
     const className = "flex-grow md:max-w-[320px] h-fit lg:sticky lg:top-0";
 
     if (loading || !contest)
@@ -187,12 +187,12 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     () => (
       <PageTemplate title={title} className="w-full">
         <div className="relative flex flex-row flex-wrap gap-8">
-          {renderQuestion}
-          {renderQuestionMetadata}
+          {renderContest}
+          {renderContestMetadata}
         </div>
       </PageTemplate>
     ),
-    [renderQuestion, renderQuestionMetadata, title]
+    [renderContest, renderContestMetadata, title]
   );
 
   const renderEditContest = useMemo(
