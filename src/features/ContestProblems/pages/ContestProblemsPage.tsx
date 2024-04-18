@@ -47,7 +47,9 @@ export function ContestProblemsPage({ contestId, user }: ContestProps) {
 
   const router = useRouter();
 
-  const { problemSubmissions } = useListenContestSubmission(contestId);
+  const { problemSubmissions } = useListenContestSubmission(
+    contest as unknown as ContestDatabaseType
+  );
 
   const handleCheckAnswer = useCallback(
     async (problemId: string, answer: any) => {

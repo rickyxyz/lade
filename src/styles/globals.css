@@ -170,6 +170,9 @@
   .font-black {
     font-variation-settings: "wght" 900;
   }
+  .font-inherit {
+    font-variation-settings: inherit;
+  }
   .w-adaptive {
     width: 1024px;
   }

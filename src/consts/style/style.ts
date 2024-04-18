@@ -20,6 +20,7 @@ export const FONT_WEIGHT = {
   light: "font-light",
   extralight: "font-extralight",
   thin: "font-thin",
+  inherit: "font-inherit",
 };
 
 export type FontWeight = keyof typeof FONT_WEIGHT;
