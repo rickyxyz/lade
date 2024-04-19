@@ -22,12 +22,13 @@ import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { ContestEditPage } from "./ContestEditPage";
 import { MoreVert, West } from "@mui/icons-material";
 import { ContestDetailData } from "../components/ContestDetailData";
+import { ContestLeaderboardPage } from "./ContestLeaderboardPage";
+import { ContestProblemsPage } from "./ContestProblemsPage";
+import { ContestDetailTemplate } from "../components/ContestDetailTemplate";
+import { useListenContestSubmission } from "../hooks";
+import { ContestDetailProblemsList } from "../components/ContestDetailProblems";
 
-interface ContestData {
-  label: string;
-  value?: string | number;
-  tooltip?: string;
-}
+type ContestTabType = "description" | "edit" | "problem" | "leaderboard";
 
 interface ContestAction extends ButtonListEntry {
   permission?: ContentAccessType;
@@ -43,7 +44,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     CONTEST_DEFAULT as unknown as ContestType
   );
   const stateProblems = useState<ProblemContestType[]>([]);
-  const setProblems = stateProblems[1];
+  const [problems, setProblems] = stateProblems;
   const [contest, setContest] = stateContest;
   const { title, authorId, createdAt = 0 } = contest;
   const stateAccept = useState<unknown>({
@@ -51,8 +52,12 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
   });
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
-  const stateMode = useState<ContentViewType>("view");
-  const [mode, setMode] = stateMode;
+  const statePage = useState<ContestTabType>("description");
+  const [page, setPage] = statePage;
+
+  const { problemSubmissions, userSubmissions } = useListenContestSubmission(
+    contest as unknown as ContestDatabaseType
+  );
 
   const stateMobileAction = useState(false);
   const setMobileAction = stateMobileAction[1];
@@ -98,7 +103,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
       {
         label: "Edit",
         handler: () => {
-          setMode("edit");
+          setPage("edit");
         },
         permission: "author",
       },
@@ -113,7 +118,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
         permission: "viewer",
       },
     ],
-    [handleDeleteContest, setMode]
+    [handleDeleteContest, setPage]
   );
 
   const renderContest = useMemo(() => {
@@ -163,34 +168,38 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
   }, [handleGetContests]);
 
   const renderContestMetadata = useMemo(() => {
-    const className = "flex-grow md:max-w-[320px] h-fit lg:sticky lg:top-0";
-
-    if (loading || !contest)
-      return <ContestDetailMainSkeleton className={className} />;
+    if (loading || !contest) return <ContestDetailMainSkeleton />;
 
     return (
       <ContestDetailData
-        className={className}
         contest={contest as unknown as ContestDatabaseType}
         showAuthorMenu={!!user && contest.authorId === user?.id}
         onEdit={() => {
-          setMode("edit");
+          setPage("edit");
         }}
         onDelete={() => {
           handleDeleteContest();
         }}
+        onNavigateDescription={() => {
+          setPage("description");
+        }}
+        onNavigateLeaderboard={() => {
+          setPage("leaderboard");
+        }}
+        onNavigateProblems={() => {
+          setPage("problem");
+        }}
       />
     );
-  }, [contest, handleDeleteContest, loading, setMode, user]);
+  }, [contest, handleDeleteContest, loading, setPage, user]);
 
   const renderViewContest = useMemo(
     () => (
-      <PageTemplate title={title} className="w-full">
-        <div className="relative flex flex-row flex-wrap gap-8">
-          {renderContest}
-          {renderContestMetadata}
-        </div>
-      </PageTemplate>
+      <ContestDetailTemplate
+        title={title}
+        mainElement={renderContest}
+        sideElement={renderContestMetadata}
+      />
     ),
     [renderContest, renderContestMetadata, title]
   );
@@ -201,15 +210,78 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
         stateContest={stateContest}
         stateProblems={stateProblems}
         onEdit={() => {
-          setMode("view");
+          setPage("description");
         }}
         onLeaveEditor={() => {
-          setMode("view");
+          setPage("description");
         }}
       />
     ),
-    [setMode, stateContest, stateProblems]
+    [setPage, stateContest, stateProblems]
   );
 
-  return mode === "edit" ? renderEditContest : renderViewContest;
+  const renderContestProblems = useMemo(
+    () => (
+      <ContestDetailTemplate
+        title={title}
+        mainElement={
+          <ContestProblemsPage
+            contest={contest as any}
+            problemSubmissions={problemSubmissions}
+            problems={problems}
+            user={user}
+          />
+        }
+        sideElement={
+          <>
+            {renderContestMetadata}
+            <ContestDetailProblemsList
+              problems={problems}
+              submission={problemSubmissions}
+              userId={user?.id}
+            />
+          </>
+        }
+      />
+    ),
+    [contest, problemSubmissions, problems, renderContestMetadata, title, user]
+  );
+
+  const renderContestLeaderboard = useMemo(
+    () => (
+      <ContestDetailTemplate
+        title={title}
+        mainElement={
+          <ContestLeaderboardPage
+            contest={contest as any}
+            problems={problems}
+            userSubmissions={userSubmissions}
+          />
+        }
+        sideElement={renderContestMetadata}
+      />
+    ),
+    [contest, problems, renderContestMetadata, userSubmissions]
+  );
+
+  const renderContestPage = useMemo(() => {
+    switch (page) {
+      case "edit":
+        return renderEditContest;
+      case "leaderboard":
+        return renderContestLeaderboard;
+      case "problem":
+        return renderContestProblems;
+      default:
+        return renderViewContest;
+    }
+  }, [
+    page,
+    renderContestLeaderboard,
+    renderContestProblems,
+    renderEditContest,
+    renderViewContest,
+  ]);
+
+  return renderContestPage;
 }

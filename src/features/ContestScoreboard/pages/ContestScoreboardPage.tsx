@@ -13,7 +13,7 @@ import {
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
-import { useListenContestSubmission } from "../../ContestProblems/hooks";
+import { useListenContestSubmission } from "../../ContestDetail/hooks";
 import clsx from "clsx";
 import { ContestScoreboard } from "../components";
 import { ContestDetailMainSkeleton } from "@/features/ContestDetail";

@@ -10,6 +10,9 @@ export interface ContestDetailDataProps {
   showAuthorMenu?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  onNavigateDescription?: () => void;
+  onNavigateLeaderboard?: () => void;
+  onNavigateProblems?: () => void;
 }
 
 export function ContestDetailData({
@@ -18,6 +21,9 @@ export function ContestDetailData({
   showAuthorMenu,
   onEdit,
   onDelete,
+  onNavigateDescription,
+  onNavigateLeaderboard,
+  onNavigateProblems,
 }: ContestDetailDataProps) {
   const { title, authorId, createdAt, startDate, endDate, id } = contest;
 
@@ -71,30 +77,24 @@ export function ContestDetailData({
         </tbody>
       </table>
       <div className="grid grid-cols-1 gap-4 mt-4">
-        <Link href={`/contest/${id}`}>
-          <Button
-            className="w-full"
-            color="secondary"
-            variant="outline-2"
-            label="Description"
-          />
-        </Link>
-        <Link href={`/contest/${id}/problems`}>
-          <Button
-            className="w-full"
-            color="secondary"
-            variant="outline-2"
-            label="Problems"
-          />
-        </Link>
-        <Link href={`/contest/${id}/leaderboard`}>
-          <Button
-            className="w-full"
-            color="secondary"
-            variant="outline-2"
-            label="Leaderboard"
-          />
-        </Link>
+        <Button
+          color="secondary"
+          variant="outline-2"
+          label="Description"
+          onClick={onNavigateDescription}
+        />
+        <Button
+          color="secondary"
+          variant="outline-2"
+          label="Problems"
+          onClick={onNavigateProblems}
+        />
+        <Button
+          color="secondary"
+          variant="outline-2"
+          label="Leaderboard"
+          onClick={onNavigateLeaderboard}
+        />
       </div>
       {showAuthorMenu && (
         <div className="grid grid-cols-2 gap-4 mt-4">

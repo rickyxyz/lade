@@ -10,8 +10,8 @@ import {
 import { onValue, ref } from "firebase/database";
 
 export function useListenContestSubmission(contest: ContestDatabaseType) {
+  const [loading, setLoading] = useState(true);
   const { id: contestId, problemsData = [] } = contest;
-
   const [data, setData] = useState<ContestSubmissionType>();
 
   const users = useMemo(() => {
@@ -79,6 +79,7 @@ export function useListenContestSubmission(contest: ContestDatabaseType) {
       });
 
       setData(rawData);
+      setLoading(false);
     });
 
     return () => {
@@ -88,9 +89,10 @@ export function useListenContestSubmission(contest: ContestDatabaseType) {
 
   return useMemo(
     () => ({
+      loading,
       problemSubmissions: data,
       userSubmissions: users,
     }),
-    [data, users]
+    [data, loading, users]
   );
 }

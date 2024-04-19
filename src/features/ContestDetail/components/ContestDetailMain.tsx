@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Button, Card } from "@/components";
+import { Card } from "@/components";
 import { md } from "@/utils";
-import { ContentViewType, StateType, ContestDatabaseType } from "@/types";
+import { ContestDatabaseType } from "@/types";
 
 export interface ContestMainProps {
   className?: string;
@@ -11,15 +11,12 @@ export interface ContestMainProps {
 export function ContestDetailMain({ className, contest }: ContestMainProps) {
   const { description } = contest;
 
-  console.log(contest);
-
   const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderMain = useMemo(
     () => (
       <Card className={className}>
         <article className="mb-8" ref={descriptionRef}></article>
-        <Button>Participate</Button>
       </Card>
     ),
     [className]

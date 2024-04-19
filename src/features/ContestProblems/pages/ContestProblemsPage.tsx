@@ -13,7 +13,7 @@ import {
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
-import { useListenContestSubmission } from "../hooks";
+import { useListenContestSubmission } from "../../ContestDetail/hooks";
 import {
   ContestDetailMainSkeleton,
   ContestProblemsList,
