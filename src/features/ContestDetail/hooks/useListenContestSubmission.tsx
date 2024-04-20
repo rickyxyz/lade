@@ -9,52 +9,67 @@ import {
 } from "@/types";
 import { onValue, ref } from "firebase/database";
 
-export function useListenContestSubmission(contest: ContestDatabaseType) {
-  const [loading, setLoading] = useState(true);
+export interface SubmissionData {
+  problemSubmissions?: ContestSubmissionType;
+  userSubmissions: ContestParticipantType[];
+}
+
+export function useListenContestSubmission(
+  contest: ContestDatabaseType,
+  onUpdate?: (data: SubmissionData) => void
+) {
   const { id: contestId, problemsData = [] } = contest;
-  const [data, setData] = useState<ContestSubmissionType>();
+  const [data, setData] = useState<SubmissionData>({
+    problemSubmissions: {},
+    userSubmissions: [],
+  });
 
-  const users = useMemo(() => {
-    if (!data) return [];
+  const handleMakeUserList = useCallback(
+    (problemSubmissions: ContestSubmissionType) => {
+      if (!problemSubmissions) return [];
 
-    const result: ContestSubmissionType = {};
-    const userSubmissions: ContestParticipantType[] = [];
-    Object.entries(data).forEach(([problemId, problemSubmissions]) => {
-      Object.entries(problemSubmissions).forEach(([userId, userSubmission]) => {
-        if (!result[userId]) result[userId] = {};
-        result[userId][problemId] = userSubmission;
+      const result: ContestSubmissionType = {};
+      const userSubmissions: ContestParticipantType[] = [];
+      Object.entries(problemSubmissions).forEach(
+        ([problemId, problemSubmissions]) => {
+          Object.entries(problemSubmissions).forEach(
+            ([userId, userSubmission]) => {
+              if (!result[userId]) result[userId] = {};
+              result[userId][problemId] = userSubmission;
+            }
+          );
+        }
+      );
+
+      Object.entries(result).forEach(([userId, problemSubmissions]) => {
+        const participant: ContestParticipantType = {
+          userId,
+          answers: problemsData.map(({ problem: { id: problemId } }) => ({
+            ...{
+              answer: "",
+              attempts: 0,
+              score: 0,
+              submittedAt: new Date().getTime(),
+            },
+            ...(problemSubmissions[problemId] ?? {}),
+          })),
+          totalScore: Object.entries(problemSubmissions).reduce(
+            (prev, [_id, { finalScore = 0 }]) => finalScore + prev,
+            0
+          ),
+        };
+        userSubmissions.push(participant);
       });
-    });
 
-    Object.entries(result).forEach(([userId, problemSubmissions]) => {
-      const participant: ContestParticipantType = {
-        userId,
-        answers: problemsData.map(({ problem: { id: problemId } }) => ({
-          ...{
-            answer: "",
-            attempts: 0,
-            score: 0,
-            submittedAt: new Date().getTime(),
-          },
-          ...(problemSubmissions[problemId] ?? {}),
-        })),
-        totalScore: Object.entries(problemSubmissions).reduce(
-          (prev, [_id, { finalScore = 0 }]) => finalScore + prev,
-          0
-        ),
-      };
-      userSubmissions.push(participant);
-    });
+      userSubmissions.sort((a, b) => b.totalScore - a.totalScore);
 
-    userSubmissions.sort((a, b) => b.totalScore - a.totalScore);
-
-    console.log(userSubmissions);
-    return userSubmissions;
-  }, [data, problemsData]);
+      return userSubmissions;
+    },
+    [problemsData]
+  );
 
   const handleCalculateScore = useCallback(
     ({ answer, attempts, score, submittedAt }: ContestSingleSubmissionType) => {
-      console.log("Attempts: ", score - attempts);
       return score - attempts;
     },
     []
@@ -69,7 +84,6 @@ export function useListenContestSubmission(contest: ContestDatabaseType) {
       Object.entries(rawData).forEach(([problemId, problemSubmissions]) => {
         Object.entries(problemSubmissions).forEach(
           ([userId, userSubmission]) => {
-            console.log(userSubmission);
             rawData[problemId][userId] = {
               ...rawData[problemId][userId],
               finalScore: handleCalculateScore(userSubmission),
@@ -78,21 +92,19 @@ export function useListenContestSubmission(contest: ContestDatabaseType) {
         );
       });
 
-      setData(rawData);
-      setLoading(false);
+      const newData: SubmissionData = {
+        problemSubmissions: rawData,
+        userSubmissions: handleMakeUserList(rawData),
+      };
+
+      onUpdate && onUpdate(newData);
+      setData(newData);
     });
 
     return () => {
       listener();
     };
-  }, [contestId, handleCalculateScore]);
+  }, [contestId, handleCalculateScore, handleMakeUserList, onUpdate]);
 
-  return useMemo(
-    () => ({
-      loading,
-      problemSubmissions: data,
-      userSubmissions: users,
-    }),
-    [data, loading, users]
-  );
+  return useMemo(() => data, [data]);
 }

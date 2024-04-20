@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useEffect, useCallback, useState } from "react";
+import { useMemo, useEffect, useCallback, useState, ReactNode } from "react";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { API } from "@/api";
 import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
 import { useAppSelector } from "@/libs/redux";
-import { useDevice } from "@/hooks";
+import { useDebounce, useDevice } from "@/hooks";
 import { checkPermission, api } from "@/utils";
 import {
   ContestType,
@@ -14,6 +14,9 @@ import {
   ContentViewType,
   ContentAccessType,
   ContestDatabaseType,
+  ContestQuery,
+  ContestTabType,
+  ContestParticipantType,
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { PageTemplate } from "@/templates";
@@ -25,10 +28,8 @@ import { ContestDetailData } from "../components/ContestDetailData";
 import { ContestLeaderboardPage } from "./ContestLeaderboardPage";
 import { ContestProblemsPage } from "./ContestProblemsPage";
 import { ContestDetailTemplate } from "../components/ContestDetailTemplate";
-import { useListenContestSubmission } from "../hooks";
+import { SubmissionData, useListenContestSubmission } from "../hooks";
 import { ContestDetailProblemsList } from "../components/ContestDetailProblems";
-
-type ContestTabType = "description" | "edit" | "problem" | "leaderboard";
 
 interface ContestAction extends ButtonListEntry {
   permission?: ContentAccessType;
@@ -36,10 +37,16 @@ interface ContestAction extends ButtonListEntry {
 
 interface ContestProps {
   contestId: string;
+  contestQuery: ContestQuery;
   user?: UserType | null;
 }
 
-export function ContestDetailPage({ contestId, user }: ContestProps) {
+export function ContestDetailPage({
+  contestQuery,
+  contestId,
+  user,
+}: ContestProps) {
+  const { tab: userPage } = contestQuery;
   const stateContest = useState<ContestType>(
     CONTEST_DEFAULT as unknown as ContestType
   );
@@ -47,16 +54,36 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
   const [problems, setProblems] = stateProblems;
   const [contest, setContest] = stateContest;
   const { title, authorId, createdAt = 0 } = contest;
-  const stateAccept = useState<unknown>({
-    content: "",
-  });
+
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
-  const statePage = useState<ContestTabType>("description");
+  const statePage = useState<ContestTabType>(userPage);
   const [page, setPage] = statePage;
+  const debounce = useDebounce();
 
-  const { problemSubmissions, userSubmissions } = useListenContestSubmission(
-    contest as unknown as ContestDatabaseType
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [userSubmissions, setUserSubmissions] = useState<
+    ContestParticipantType[]
+  >([]);
+
+  const handleDebounceSubmissions = useCallback(
+    (data: SubmissionData) => {
+      setLeaderboardLoading(true);
+      debounce(() => {
+        setUserSubmissions(data.userSubmissions);
+        setLeaderboardLoading(false);
+      }, 2000);
+    },
+    [debounce]
+  );
+
+  useEffect(() => {
+    console.log("leaderboard loading ", leaderboardLoading);
+  }, [leaderboardLoading]);
+
+  const { problemSubmissions } = useListenContestSubmission(
+    contest as unknown as ContestDatabaseType,
+    handleDebounceSubmissions
   );
 
   const stateMobileAction = useState(false);
@@ -121,15 +148,6 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     [handleDeleteContest, setPage]
   );
 
-  const renderContest = useMemo(() => {
-    const className = "flex-1";
-
-    if (loading || !contest)
-      return <ContestDetailMainSkeleton className={className} />;
-
-    return <ContestDetailMain className={className} contest={contest as any} />;
-  }, [loading, contest]);
-
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
       router.back();
@@ -167,45 +185,83 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     handleGetContests();
   }, [handleGetContests]);
 
-  const renderContestMetadata = useMemo(() => {
-    if (loading || !contest) return <ContestDetailMainSkeleton />;
-
-    return (
-      <ContestDetailData
-        contest={contest as unknown as ContestDatabaseType}
-        showAuthorMenu={!!user && contest.authorId === user?.id}
-        onEdit={() => {
-          setPage("edit");
-        }}
-        onDelete={() => {
-          handleDeleteContest();
-        }}
-        onNavigateDescription={() => {
-          setPage("description");
-        }}
-        onNavigateLeaderboard={() => {
-          setPage("leaderboard");
-        }}
-        onNavigateProblems={() => {
-          setPage("problem");
-        }}
-      />
-    );
-  }, [contest, handleDeleteContest, loading, setPage, user]);
-
-  const renderViewContest = useMemo(
-    () => (
-      <ContestDetailTemplate
-        title={title}
-        mainElement={renderContest}
-        sideElement={renderContestMetadata}
-      />
-    ),
-    [renderContest, renderContestMetadata, title]
+  const renderMainLoading = useMemo(
+    () => <ContestDetailMainSkeleton className="flex-1" />,
+    []
   );
 
-  const renderEditContest = useMemo(
+  const renderSideLoading = useMemo(() => <ContestDetailMainSkeleton />, []);
+
+  const renderLoading = useMemo(
     () => (
+      <ContestDetailTemplate
+        mainElement={<ContestDetailMainSkeleton className="flex-1" />}
+        sideElement={<ContestDetailMainSkeleton />}
+      />
+    ),
+    []
+  );
+
+  const renderContestMetadata = useCallback(
+    (sideElement?: ReactNode) => {
+      if (loading) return renderSideLoading;
+
+      return (
+        <>
+          <ContestDetailData
+            contest={contest as unknown as ContestDatabaseType}
+            showAuthorMenu={!!user && contest.authorId === user?.id}
+            onEdit={() => {
+              setPage("edit");
+            }}
+            onDelete={() => {
+              handleDeleteContest();
+            }}
+            onNavigateDescription={() => {
+              setPage("description");
+            }}
+            onNavigateLeaderboard={() => {
+              setPage("leaderboard");
+            }}
+            onNavigateProblems={() => {
+              setPage("problems");
+            }}
+          />
+          {sideElement}
+        </>
+      );
+    },
+    [contest, handleDeleteContest, loading, renderSideLoading, setPage, user]
+  );
+
+  const renderContest = useMemo(() => {
+    const className = "flex-1";
+    if (loading) return renderMainLoading;
+
+    return <ContestDetailMain className={className} contest={contest as any} />;
+  }, [contest, loading, renderMainLoading]);
+
+  const renderViewContest = useMemo(() => {
+    const className = "flex-1";
+    const mainElement = loading ? (
+      renderMainLoading
+    ) : (
+      <ContestDetailMain className={className} contest={contest as any} />
+    );
+    const sideElement = renderContestMetadata();
+
+    return (
+      <ContestDetailTemplate
+        title={title}
+        mainElement={mainElement}
+        sideElement={sideElement}
+      />
+    );
+  }, [contest, loading, renderContestMetadata, renderMainLoading, title]);
+
+  const renderEditContest = useMemo(() => {
+    if (loading) return renderMainLoading;
+    return (
       <ContestEditPage
         stateContest={stateContest}
         stateProblems={stateProblems}
@@ -216,53 +272,76 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
           setPage("description");
         }}
       />
-    ),
-    [setPage, stateContest, stateProblems]
-  );
+    );
+  }, [loading, renderMainLoading, setPage, stateContest, stateProblems]);
 
-  const renderContestProblems = useMemo(
-    () => (
+  const renderContestProblems = useMemo(() => {
+    const mainElement = loading ? (
+      renderMainLoading
+    ) : (
+      <ContestProblemsPage
+        contest={contest as any}
+        problemSubmissions={problemSubmissions}
+        problems={problems}
+        user={user}
+      />
+    );
+    const sideElement = renderContestMetadata(
+      <ContestDetailProblemsList
+        problems={problems}
+        submission={problemSubmissions}
+        userId={user?.id}
+      />
+    );
+
+    return (
       <ContestDetailTemplate
         title={title}
-        mainElement={
-          <ContestProblemsPage
-            contest={contest as any}
-            problemSubmissions={problemSubmissions}
-            problems={problems}
-            user={user}
-          />
-        }
-        sideElement={
-          <>
-            {renderContestMetadata}
-            <ContestDetailProblemsList
-              problems={problems}
-              submission={problemSubmissions}
-              userId={user?.id}
-            />
-          </>
-        }
+        mainElement={mainElement}
+        sideElement={sideElement}
       />
-    ),
-    [contest, problemSubmissions, problems, renderContestMetadata, title, user]
-  );
+    );
+  }, [
+    contest,
+    loading,
+    problemSubmissions,
+    problems,
+    renderContestMetadata,
+    renderMainLoading,
+    title,
+    user,
+  ]);
 
-  const renderContestLeaderboard = useMemo(
-    () => (
+  const renderContestLeaderboard = useMemo(() => {
+    const mainElement = loading ? (
+      renderMainLoading
+    ) : (
+      <ContestLeaderboardPage
+        contest={contest as any}
+        problems={problems}
+        userSubmissions={userSubmissions}
+        loading={leaderboardLoading}
+      />
+    );
+    const sideElement = renderContestMetadata();
+
+    return (
       <ContestDetailTemplate
         title={title}
-        mainElement={
-          <ContestLeaderboardPage
-            contest={contest as any}
-            problems={problems}
-            userSubmissions={userSubmissions}
-          />
-        }
-        sideElement={renderContestMetadata}
+        mainElement={mainElement}
+        sideElement={sideElement}
       />
-    ),
-    [contest, problems, renderContestMetadata, userSubmissions]
-  );
+    );
+  }, [
+    contest,
+    leaderboardLoading,
+    loading,
+    problems,
+    renderContestMetadata,
+    renderMainLoading,
+    title,
+    userSubmissions,
+  ]);
 
   const renderContestPage = useMemo(() => {
     switch (page) {
@@ -270,7 +349,7 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
         return renderEditContest;
       case "leaderboard":
         return renderContestLeaderboard;
-      case "problem":
+      case "problems":
         return renderContestProblems;
       default:
         return renderViewContest;

@@ -60,3 +60,13 @@ export interface ContestParticipantType {
   totalScore: number;
   answers: ContestSingleSubmissionType[];
 }
+
+export interface ContestQuery {
+  tab: ContestTabType;
+}
+
+export type ContestTabType =
+  | "description"
+  | "edit"
+  | "problems"
+  | "leaderboard";

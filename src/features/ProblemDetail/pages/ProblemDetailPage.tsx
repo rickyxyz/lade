@@ -9,7 +9,7 @@ import {
   ButtonIcon,
   Card,
   IconText,
-  Loader,
+  Spinner,
   Modal,
   Paragraph,
   Tooltip,

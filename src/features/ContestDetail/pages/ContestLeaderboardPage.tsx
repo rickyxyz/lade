@@ -9,32 +9,31 @@ import {
   ContestParticipantType,
 } from "@/types";
 import { ContestScoreboard } from "../components/ContestDetailLeaderboard";
+import { Loader } from "@/components/Loader";
 
 interface ContestProps {
   contest: ContestDatabaseType;
   problems: ProblemContestType[];
   userSubmissions: ContestParticipantType[];
   user?: UserType | null;
+  loading?: boolean;
 }
 
 export function ContestLeaderboardPage({
   contest,
   userSubmissions,
+  loading,
 }: ContestProps) {
   const renderScoreboard = useMemo(() => {
-    const className = "flex-1";
-
-    if (!contest) return <ContestDetailMainSkeleton className={className} />;
+    if (loading) return <Loader caption="fetching leaderboard" />;
 
     return (
-      <Card className={className}>
-        <ContestScoreboard
-          contest={contest as unknown as ContestDatabaseType}
-          userSubmissions={userSubmissions}
-        />
-      </Card>
+      <ContestScoreboard
+        contest={contest as unknown as ContestDatabaseType}
+        userSubmissions={userSubmissions}
+      />
     );
-  }, [contest, userSubmissions]);
+  }, [contest, loading, userSubmissions]);
 
-  return renderScoreboard;
+  return <Card className="flex-1 h-fit">{renderScoreboard}</Card>;
 }

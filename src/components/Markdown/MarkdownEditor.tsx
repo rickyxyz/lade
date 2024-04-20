@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { MarkdownEditorLoader } from "./MarkdownEditorLoader";
 import { IMarkdownEditor } from "@uiw/react-markdown-editor";
 import { useProblemEditInitialized } from "@/hooks";
 import { useCallback, useMemo, useState } from "react";
@@ -9,12 +8,13 @@ import { FormulaToolbar } from "./FormulaToolbar";
 import { PreviewToolbar } from "./PreviewToolbar";
 import { Markdown } from "./Markdown";
 import { Paragraph } from "../Paragraph";
+import { Loader } from "../Loader";
 
 export const MarkdownEditorRaw = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
   {
     ssr: false,
-    loading: () => <MarkdownEditorLoader />,
+    loading: () => <Loader caption="loading editor" />,
   }
 );
 

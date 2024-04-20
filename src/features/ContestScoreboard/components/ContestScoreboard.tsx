@@ -24,7 +24,7 @@ export function ContestScoreboard({
           <td>
             <Paragraph>{userId}</Paragraph>
           </td>
-          {answers.map(({ problemId, finalScore = 0, attempts }) => {
+          {answers.map(({ problemId, finalScore = 0, attempts }, index2) => {
             return (
               <td
                 className={clsx(
@@ -35,7 +35,7 @@ export function ContestScoreboard({
                     ? "bg-danger-200"
                     : ""
                 )}
-                key={problemId}
+                key={index2}
               >
                 <Paragraph>{finalScore}</Paragraph>
               </td>

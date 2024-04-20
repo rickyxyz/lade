@@ -16,7 +16,7 @@ import {
   GenericColorType,
 } from "@/types";
 import { BUTTON_VARIOUS_STYLE } from "@/consts/style";
-import { Loader } from "../Loader";
+import { Spinner } from "../Spinner";
 
 export interface ButtonProps
   extends DetailedHTMLProps<
@@ -88,7 +88,7 @@ export function Button({
           {children}
         </>
       ) : (
-        <Loader size="sm" frontColor="secondary-1" backColor="secondary-4" />
+        <Spinner size="sm" frontColor="secondary-1" backColor="secondary-4" />
       )}
     </button>
   );
