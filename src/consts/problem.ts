@@ -141,3 +141,10 @@ export const PROBLEM_MAX_DESCRIPTION_LENGTH = 1024;
 export const PROBLEM_MIN_DESCRIPTION_LENGTH = 8;
 export const PROBLEM_MAX_TITLE_LENGTH = 64;
 export const PROBLEM_MIN_TITLE_LENGTH = 4;
+
+export const PROBLEM_SORT_CRITERIA = [
+  "least-solved",
+  "oldest",
+  "most-solved",
+  "newest",
+];

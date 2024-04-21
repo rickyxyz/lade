@@ -1,3 +1,4 @@
+import { CONTEST_TAB } from "@/consts";
 import {
   ProblemContestType,
   ProblemMapTypeTopicType,
@@ -65,8 +66,4 @@ export interface ContestQuery {
   tab: ContestTabType;
 }
 
-export type ContestTabType =
-  | "description"
-  | "edit"
-  | "problems"
-  | "leaderboard";
+export type ContestTabType = (typeof CONTEST_TAB)[number];

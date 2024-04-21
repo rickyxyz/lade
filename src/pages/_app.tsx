@@ -16,7 +16,6 @@ import {
 import { Provider } from "react-redux";
 import { persistor, store } from "@/libs/redux";
 import clsx from "clsx";
-import { PageTemplateNav } from "@/templates";
 import { PersistGate } from "redux-persist/integration/react";
 import { noto } from "@/libs/fonts";
 

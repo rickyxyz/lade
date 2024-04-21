@@ -6,11 +6,13 @@ import { ContestDatabaseType, ContestParticipantType } from "@/types";
 interface ContestScoreboardProps {
   contest: ContestDatabaseType;
   userSubmissions: ContestParticipantType[];
+  loading?: boolean;
 }
 
 export function ContestScoreboard({
   contest,
   userSubmissions,
+  loading,
 }: ContestScoreboardProps) {
   const { problemsData: problems = [] } = contest;
 

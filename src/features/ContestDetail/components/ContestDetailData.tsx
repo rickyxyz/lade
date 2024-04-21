@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import { Button, Card, Paragraph } from "@/components";
-import { ContestDatabaseType } from "@/types";
+import { ContestDatabaseType, ContestTabType } from "@/types";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -10,9 +10,7 @@ export interface ContestDetailDataProps {
   showAuthorMenu?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
-  onNavigateDescription?: () => void;
-  onNavigateLeaderboard?: () => void;
-  onNavigateProblems?: () => void;
+  onNavigate?: (tab?: ContestTabType) => void;
 }
 
 export function ContestDetailData({
@@ -21,9 +19,7 @@ export function ContestDetailData({
   showAuthorMenu,
   onEdit,
   onDelete,
-  onNavigateDescription,
-  onNavigateLeaderboard,
-  onNavigateProblems,
+  onNavigate,
 }: ContestDetailDataProps) {
   const { title, authorId, createdAt, startDate, endDate, id } = contest;
 
@@ -81,19 +77,19 @@ export function ContestDetailData({
           color="secondary"
           variant="outline-2"
           label="Description"
-          onClick={onNavigateDescription}
+          onClick={() => onNavigate && onNavigate("description")}
         />
         <Button
           color="secondary"
           variant="outline-2"
           label="Problems"
-          onClick={onNavigateProblems}
+          onClick={() => onNavigate && onNavigate("problems")}
         />
         <Button
           color="secondary"
           variant="outline-2"
           label="Leaderboard"
-          onClick={onNavigateLeaderboard}
+          onClick={() => onNavigate && onNavigate("leaderboard")}
         />
       </div>
       {showAuthorMenu && (

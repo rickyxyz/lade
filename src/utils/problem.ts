@@ -1,7 +1,9 @@
 import {
   AnswerType,
+  ContestQuery,
   ContestType,
   ProblemAnswerType,
+  ProblemQuery,
   ProblemType,
 } from "@/types";
 import {
@@ -11,10 +13,12 @@ import {
   CONTEST_MIN_DESCRIPTION_LENGTH,
   CONTEST_MIN_PROBLEMS,
   CONTEST_MIN_TITLE_LENGTH,
+  CONTEST_TAB,
   PROBLEM_MAX_DESCRIPTION_LENGTH,
   PROBLEM_MAX_TITLE_LENGTH,
   PROBLEM_MIN_DESCRIPTION_LENGTH,
   PROBLEM_MIN_TITLE_LENGTH,
+  PROBLEM_SORT_CRITERIA,
 } from "@/consts";
 
 export function validateProblemId(id: string) {
@@ -168,4 +172,16 @@ export function validateFormContest(contest: ContestType) {
 
   console.log(errors);
   return errors;
+}
+
+export function validateProblemQuery(query: ProblemQuery): ProblemQuery {
+  const { page = 1, sort = "newest" } = query;
+  query.page = isNaN(page) ? 1 : page;
+  if (!PROBLEM_SORT_CRITERIA.includes(sort)) query.sort = "newest";
+  return query;
+}
+
+export function validateContestQuery({ tab }: ContestQuery): ContestQuery {
+  const validTabs = CONTEST_TAB.filter((t) => t !== "edit");
+  return validTabs.includes(tab) ? { tab } : { tab: "description" };
 }

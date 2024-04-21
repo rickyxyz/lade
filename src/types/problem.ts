@@ -1,4 +1,7 @@
-import { PROBLEM_TOPICS_RELATIONSHIP_OBJECT } from "@/consts";
+import {
+  PROBLEM_SORT_CRITERIA,
+  PROBLEM_TOPICS_RELATIONSHIP_OBJECT,
+} from "@/consts";
 import { SelectOptionType } from "./component";
 
 export type ProblemTopicNameType = "calculus" | "linear-algebra";
@@ -83,11 +86,7 @@ export type ProblemContestType = {
   order: number;
 };
 
-export type ProblemSortByType =
-  | "least-solved"
-  | "oldest"
-  | "most-solved"
-  | "newest";
+export type ProblemSortByType = (typeof PROBLEM_SORT_CRITERIA)[number];
 
 export type ProblemSortOptionType<K = string> = SelectOptionType<K> & {
   key: keyof ProblemType;

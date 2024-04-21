@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState, ReactNode } from "react";
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { API } from "@/api";
 import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
 import { useAppSelector } from "@/libs/redux";
@@ -30,6 +30,7 @@ import { ContestProblemsPage } from "./ContestProblemsPage";
 import { ContestDetailTemplate } from "../components/ContestDetailTemplate";
 import { SubmissionData, useListenContestSubmission } from "../hooks";
 import { ContestDetailProblemsList } from "../components/ContestDetailProblems";
+import { useQueryParam } from "use-query-params";
 
 interface ContestAction extends ButtonListEntry {
   permission?: ContentAccessType;
@@ -46,6 +47,9 @@ export function ContestDetailPage({
   contestId,
   user,
 }: ContestProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const { tab: userPage } = contestQuery;
   const stateContest = useState<ContestType>(
     CONTEST_DEFAULT as unknown as ContestType
@@ -57,7 +61,7 @@ export function ContestDetailPage({
 
   const stateLoading = useState(true);
   const [loading, setLoading] = stateLoading;
-  const statePage = useState<ContestTabType>(userPage);
+  const statePage = useQueryParam<ContestTabType>("tab");
   const [page, setPage] = statePage;
   const debounce = useDebounce();
 
@@ -89,7 +93,6 @@ export function ContestDetailPage({
   const stateMobileAction = useState(false);
   const setMobileAction = stateMobileAction[1];
 
-  const router = useRouter();
   const allUserSolved = useAppSelector("solveds");
   const { device } = useDevice();
 
@@ -148,14 +151,6 @@ export function ContestDetailPage({
     [handleDeleteContest, setPage]
   );
 
-  const handleGoBack = useCallback(() => {
-    if (window.history?.length) {
-      router.back();
-    } else {
-      router.replace("/");
-    }
-  }, [router]);
-
   const handleGetContests = useCallback(async () => {
     if (!loading) return;
 
@@ -183,7 +178,7 @@ export function ContestDetailPage({
 
   useEffect(() => {
     handleGetContests();
-  }, [handleGetContests]);
+  }, []);
 
   const renderMainLoading = useMemo(
     () => <ContestDetailMainSkeleton className="flex-1" />,
@@ -191,16 +186,6 @@ export function ContestDetailPage({
   );
 
   const renderSideLoading = useMemo(() => <ContestDetailMainSkeleton />, []);
-
-  const renderLoading = useMemo(
-    () => (
-      <ContestDetailTemplate
-        mainElement={<ContestDetailMainSkeleton className="flex-1" />}
-        sideElement={<ContestDetailMainSkeleton />}
-      />
-    ),
-    []
-  );
 
   const renderContestMetadata = useCallback(
     (sideElement?: ReactNode) => {
@@ -217,14 +202,8 @@ export function ContestDetailPage({
             onDelete={() => {
               handleDeleteContest();
             }}
-            onNavigateDescription={() => {
-              setPage("description");
-            }}
-            onNavigateLeaderboard={() => {
-              setPage("leaderboard");
-            }}
-            onNavigateProblems={() => {
-              setPage("problems");
+            onNavigate={(newTab) => {
+              newTab && setPage(newTab);
             }}
           />
           {sideElement}
@@ -233,13 +212,6 @@ export function ContestDetailPage({
     },
     [contest, handleDeleteContest, loading, renderSideLoading, setPage, user]
   );
-
-  const renderContest = useMemo(() => {
-    const className = "flex-1";
-    if (loading) return renderMainLoading;
-
-    return <ContestDetailMain className={className} contest={contest as any} />;
-  }, [contest, loading, renderMainLoading]);
 
   const renderViewContest = useMemo(() => {
     const className = "flex-1";

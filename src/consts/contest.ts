@@ -22,3 +22,10 @@ export const CONTEST_MAX_DESCRIPTION_LENGTH = 1024;
 export const CONTEST_MIN_DESCRIPTION_LENGTH = 0;
 export const CONTEST_MAX_TITLE_LENGTH = 64;
 export const CONTEST_MIN_TITLE_LENGTH = 4;
+
+export const CONTEST_TAB = [
+  "description",
+  "edit",
+  "problems",
+  "leaderboard",
+] as const;
