@@ -25,30 +25,37 @@ import {
   ProblemTopicNameType,
   ProblemType,
 } from "@/types";
-import { ProblemCard, ProblemCardSkeleton, ProblemFilter } from "..";
-import { usePathname, useRouter } from "next/navigation";
+import { ProblemFilter } from "..";
 import { Search } from "@mui/icons-material";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
+import { validateProblemQuery } from "@/utils";
+import { NumberParam, StringParam, useQueryParams } from "use-query-params";
 
 interface ProblemListProps {
-  query: ProblemQuery;
+  query?: ProblemQuery;
   renderProblems: (problems: ProblemType[], loading?: boolean) => ReactNode;
 }
 
 export function ProblemList({
-  query,
   renderProblems: handleRenderProblems,
 }: ProblemListProps) {
-  const pathname = usePathname();
+  const [query, setQuery] = useQueryParams({
+    page: NumberParam,
+    sort: StringParam,
+    search: StringParam,
+    topic: StringParam,
+    subTopic: StringParam,
+  });
+
   const {
     topic: userTopic = undefined,
     subTopic: userSubTopic = undefined,
     search: userSearch = "",
     sort: userSort = "newest",
     page: userPage = 1,
-  } = query;
-  const router = useRouter();
+  } = useMemo(() => validateProblemQuery(query as any), [query]);
 
+  const [lastUpdated, setLastUpdated] = useState(0);
   const [problems, setProblems] = useState<ProblemDatabaseType[]>([]);
   const [loading, setLoading] = useState(true);
   const stateTopic = useState<ProblemTopicNameType | undefined>(userTopic);
@@ -62,77 +69,42 @@ export function ProblemList({
   const stateAdvanced = useState(false);
   const [search, setSearch] = useState(userSearch ?? "");
   const [advanced, setAdvanced] = stateAdvanced;
-  const initialized = useRef(false);
+
   const [pagination, setPagination] = useState({
     page: userPage,
     maxPages: 1,
     count: 1,
     initialized: false,
   });
+  const { page } = pagination;
   const { device } = useDevice();
   const debounce = useDebounce();
   const lastQuery = useRef<ProblemQuery>();
 
-  const handleUpdateStateOnQueryUpdate = useCallback(
-    (newPage = userPage) => {
-      setTopic(userTopic);
-      setSubTopic(userSubTopic);
-      setSortBy(userSort);
-      setSearch(userSearch ?? "");
-      setPagination((prev) => {
-        const currentMax = prev.maxPages;
-        let newValue = isNaN(newPage) ? 1 : Number(newPage);
-        if (newValue > currentMax) newValue = currentMax;
-        if (newValue <= 0) newValue = 1;
-
-        return {
-          ...prev,
-          page: newValue,
-        };
-      });
-    },
-    [
-      setSortBy,
-      setSubTopic,
-      setTopic,
-      userPage,
-      userSearch,
-      userSort,
-      userSubTopic,
-      userTopic,
-    ]
-  );
-
   const handleUpdateQuery = useCallback(
-    (newPage = userPage) => {
+    (newPage: number) => {
+      setLastUpdated(new Date().getTime());
+
       const queryObject: any = {
-        search,
+        search: search === "" ? undefined : search,
         topic,
         subTopic: subtopic,
         sort: sortBy ?? "newest",
         page: String(newPage),
       };
-      if (search === "") delete queryObject.search;
-      if (!topic) delete queryObject.topic;
-      if (!subtopic) delete queryObject.subTopic;
 
-      const newParams = new URLSearchParams(queryObject);
+      setPagination((prev) => ({
+        ...prev,
+        page: newPage,
+      }));
 
-      if (initialized.current) {
-        router.push(`${pathname}?${newParams}`);
-      }
-
-      initialized.current = true;
+      setQuery(queryObject);
     },
-    [pathname, router, search, sortBy, subtopic, topic, userPage]
+    [search, setQuery, sortBy, subtopic, topic]
   );
 
   const handleGetProblem = useCallback(async () => {
-    if (JSON.stringify(query) === JSON.stringify(lastQuery.current)) {
-      return;
-    }
-
-    handleUpdateStateOnQueryUpdate();
+    if (JSON.stringify(query) === JSON.stringify(lastQuery.current)) return;
 
     setLoading(true);
 
@@ -163,15 +135,15 @@ export function ProblemList({
 
     await API("get_problems", {
       params: {
-        ...(userTopic ? { topic: userTopic } : {}),
-        ...(userSubTopic ? { subTopic: userSubTopic } : {}),
-        ...queryParams[userSort],
-        ...(userSearch !== ""
+        ...(topic ? { topic: topic } : {}),
+        ...(subtopic ? { subTopic: subtopic } : {}),
+        ...queryParams[sortBy],
+        ...(search !== ""
           ? {
-              search: userSearch,
+              search,
             }
           : {}),
-        page: isNaN(userPage) ? 1 : userPage,
+        page: isNaN(page) ? 1 : page,
         count: PROBLEM_PAGINATION_COUNT,
       },
     })
@@ -182,8 +154,6 @@ export function ProblemList({
             pagination: { total_records, current_page, total_pages },
           },
         }) => {
-          lastQuery.current = query;
-
           setProblems(data);
 
           setPagination({
@@ -199,15 +169,7 @@ export function ProblemList({
         console.log("Result:");
         console.log(e);
       });
-  }, [
-    handleUpdateStateOnQueryUpdate,
-    query,
-    userPage,
-    userSearch,
-    userSort,
-    userSubTopic,
-    userTopic,
-  ]);
+  }, [page, query, search, sortBy, subtopic, topic]);
 
   const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {
@@ -218,7 +180,7 @@ export function ProblemList({
   useEffect(() => {
     handleUpdateDataOnQueryUpdate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [lastUpdated]);
 
   const renderPagination = useMemo(
     () => (

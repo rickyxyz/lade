@@ -10,7 +10,7 @@ import { PaginationButton } from "./PaginationButton";
 
 interface PaginationProps {
   pagination: PaginationData;
-  onClick: (page?: number) => void;
+  onClick: (page: number) => void;
 }
 
 export function Pagination({ pagination, onClick }: PaginationProps) {

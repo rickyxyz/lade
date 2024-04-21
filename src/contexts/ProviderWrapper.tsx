@@ -11,6 +11,8 @@ import { LayoutContext } from "@/contexts";
 import { persistor, store } from "@/libs/redux";
 import { ProblemEditInitializedContext } from "@/hooks";
 import { LayoutContextType, StateType } from "@/types";
+import { QueryParamProvider } from "use-query-params";
+import NextAdapterApp from "next-query-params/app";
 
 export default function ProviderWrapper({
   children,
@@ -23,17 +25,19 @@ export default function ProviderWrapper({
 }) {
   return (
     <>
-      <SessionProvider>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <ProblemEditInitializedContext.Provider value={stateInitialized}>
-              <LayoutContext.Provider value={layout}>
-                {children}
-              </LayoutContext.Provider>
-            </ProblemEditInitializedContext.Provider>
-          </PersistGate>
-        </Provider>
-      </SessionProvider>
+      <QueryParamProvider adapter={NextAdapterApp}>
+        <SessionProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <ProblemEditInitializedContext.Provider value={stateInitialized}>
+                <LayoutContext.Provider value={layout}>
+                  {children}
+                </LayoutContext.Provider>
+              </ProblemEditInitializedContext.Provider>
+            </PersistGate>
+          </Provider>
+        </SessionProvider>
+      </QueryParamProvider>
     </>
   );
 }
