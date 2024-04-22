@@ -23,6 +23,8 @@ export type ContestType = ContestBaseType &
     id: string;
   };
 
+export type ContestStatusType = "waiting" | "ongoing" | "closed";
+
 export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   id: string | number;
   toProblems?: ProblemContestType[];
@@ -33,6 +35,7 @@ export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
   problems: number;
   topic: ProblemTopicType;
   subTopic: ProblemTopicType;
+  status: ContestStatusType;
 };
 
 export type ContestBlankType = {

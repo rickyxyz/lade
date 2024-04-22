@@ -1,7 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from "@/libs/prisma";
 import { json } from "@/utils/api";
-import { ContestDatabaseType, ContestType, ProblemContestType } from "@/types";
+import {
+  ContestDatabaseType,
+  ContestStatusType,
+  ContestType,
+  ProblemContestType,
+} from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { validateFormContest } from "@/utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -221,8 +226,6 @@ export async function GET(req: NextRequest) {
       throw Error("id undefined");
     }
 
-    console.log("This is ID");
-    console.log(id);
     const rawContest = await prisma.contest.findUnique({
       where: {
         id: id as unknown as number,
@@ -246,22 +249,38 @@ export async function GET(req: NextRequest) {
     if (!rawContest) throw Error("");
 
     const contest = { ...(rawContest as unknown as ContestDatabaseType) };
+
+    const currentTime = new Date().getTime();
+    const startTime = new Date(contest.startDate).getTime();
+    const endTime = new Date().getTime();
+    const status: ContestStatusType = (() => {
+      if (currentTime < startTime) return "waiting";
+      if (currentTime > endTime) return "closed";
+      return "ongoing";
+    })();
+
     contest.toProblems ??= [];
     contest.problems = contest.toProblems.length;
     contest.problemsData = contest.toProblems;
     delete contest.toProblems;
 
-    if (!user || (contest.authorId !== user.id && user.role !== "admin")) {
-      contest.problemsData = contest.problemsData.map((entry) => ({
-        ...entry,
-        problem: {
-          ...entry.problem,
-          answer: "{}",
-        },
-      }));
-    }
+    const isAuthorized =
+      user && (contest.authorId === user.id || user.role === "admin");
 
-    console.log(contest);
+    if (!isAuthorized) {
+      if (status === "waiting") {
+        contest.problemsData = [];
+      } else {
+        contest.problemsData = contest.problemsData.map((entry) => ({
+          ...entry,
+          problem: {
+            ...entry.problem,
+            answer: "{}",
+          },
+        }));
+      }
+    }
+    contest.status = status;
 
     response = NextResponse.json(JSON.parse(json(contest)));
   } catch (e) {
