@@ -26,14 +26,15 @@ export function ContestScoreboard({
           <td>
             <Paragraph>{userId}</Paragraph>
           </td>
-          {answers.map(({ problemId, finalScore = 0, attempts }) => {
+          {answers.map(({ problemId, finalScore = 0, attempts, official }) => {
             return (
               <td
                 className={clsx(
                   "text-center",
+                  !official && attempts > 0 && "opacity-20",
                   finalScore > 0
                     ? "bg-success-200"
-                    : attempts > 0
+                    : finalScore < 0 && attempts > 0
                     ? "bg-danger-200"
                     : ""
                 )}

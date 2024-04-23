@@ -51,6 +51,7 @@ export interface ContestSingleSubmissionType {
   answer: string;
   submittedAt?: number;
   finalScore?: number;
+  official?: boolean;
 }
 
 export interface ContestSubmissionType {

@@ -18,7 +18,7 @@ export function useListenContestSubmission(
   contest: ContestDatabaseType,
   onUpdate?: (data: SubmissionData) => void
 ) {
-  const { id: contestId, problemsData = [] } = contest;
+  const { id: contestId, problemsData = [], endDate } = contest;
   const [data, setData] = useState<SubmissionData>({
     problemSubmissions: {},
     userSubmissions: [],
@@ -54,7 +54,8 @@ export function useListenContestSubmission(
             ...(problemSubmissions[problemId] ?? {}),
           })),
           totalScore: Object.entries(problemSubmissions).reduce(
-            (prev, [_id, { finalScore = 0 }]) => finalScore + prev,
+            (prev, [_id, { finalScore = 0, official }]) =>
+              official ? finalScore + prev : prev,
             0
           ),
         };
@@ -63,13 +64,20 @@ export function useListenContestSubmission(
 
       userSubmissions.sort((a, b) => b.totalScore - a.totalScore);
 
+      console.log(userSubmissions);
+
       return userSubmissions;
     },
     [problemsData]
   );
 
   const handleCalculateScore = useCallback(
-    ({ answer, attempts, score, submittedAt }: ContestSingleSubmissionType) => {
+    (
+      { answer, attempts, score }: ContestSingleSubmissionType,
+      official?: boolean
+    ) => {
+      // if(!official) return 0;
+
       return score - attempts;
     },
     []
@@ -81,12 +89,19 @@ export function useListenContestSubmission(
     const listener = onValue(docRef, (snapshot) => {
       const rawData: ContestSubmissionType = snapshot.val();
 
+      const end = new Date(endDate).getTime();
+
       Object.entries(rawData).forEach(([problemId, problemSubmissions]) => {
         Object.entries(problemSubmissions).forEach(
           ([userId, userSubmission]) => {
+            const official = userSubmission.submittedAt
+              ? end > userSubmission.submittedAt
+              : false;
+
             rawData[problemId][userId] = {
               ...rawData[problemId][userId],
-              finalScore: handleCalculateScore(userSubmission),
+              finalScore: handleCalculateScore(userSubmission, official),
+              official,
             };
           }
         );
@@ -104,7 +119,7 @@ export function useListenContestSubmission(
     return () => {
       listener();
     };
-  }, [contestId, handleCalculateScore, handleMakeUserList, onUpdate]);
+  }, [contestId, endDate, handleCalculateScore, handleMakeUserList, onUpdate]);
 
   return useMemo(() => data, [data]);
 }
