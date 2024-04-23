@@ -84,12 +84,14 @@ export function ContestDetailData({
           variant="outline-2"
           label="Problems"
           onClick={() => onNavigate && onNavigate("problems")}
+          disabled={contest.status === "waiting"}
         />
         <Button
           color="secondary"
           variant="outline-2"
           label="Leaderboard"
           onClick={() => onNavigate && onNavigate("leaderboard")}
+          disabled={contest.status === "waiting"}
         />
       </div>
       {showAuthorMenu && (

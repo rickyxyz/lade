@@ -252,7 +252,8 @@ export async function GET(req: NextRequest) {
 
     const currentTime = new Date().getTime();
     const startTime = new Date(contest.startDate).getTime();
-    const endTime = new Date().getTime();
+    const endTime = new Date(contest.endDate).getTime();
+
     const status: ContestStatusType = (() => {
       if (currentTime < startTime) return "waiting";
       if (currentTime > endTime) return "closed";
