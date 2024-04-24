@@ -16,36 +16,48 @@ export function ContestScoreboard({
 
   const renderUserSubmission = useMemo(
     () =>
-      userSubmissions.map(({ userId, totalScore, answers }, index) => (
-        <tr key={userId} className="border-t border-secondary-300">
-          <td className="text-center">
-            <Paragraph>{index + 1}</Paragraph>
-          </td>
-          <td>
-            <Paragraph>{userId}</Paragraph>
-          </td>
-          {answers.map(({ problemId, finalScore = 0, attempts }, index2) => {
-            return (
-              <td
-                className={clsx(
-                  "text-center",
-                  finalScore > 0
-                    ? "bg-success-200"
-                    : attempts > 0
-                    ? "bg-danger-200"
-                    : ""
-                )}
-                key={index2}
-              >
-                <Paragraph>{finalScore}</Paragraph>
-              </td>
-            );
-          })}
-          <td className="text-center">
-            <Paragraph>{totalScore}</Paragraph>
-          </td>
-        </tr>
-      )),
+      userSubmissions.map(
+        ({ userId, finalScore: totalScore, answers }, index) => (
+          <tr key={userId} className="border-t border-secondary-300">
+            <td className="text-center">
+              <Paragraph>{index + 1}</Paragraph>
+            </td>
+            <td>
+              <Paragraph>{userId}</Paragraph>
+            </td>
+            {answers.map(
+              (
+                {
+                  finalScore = 0,
+                  unofficialScore = 0,
+                  attempts,
+                  unofficialCount,
+                },
+                index2
+              ) => {
+                return (
+                  <td
+                    className={clsx(
+                      "text-center",
+                      finalScore > 0
+                        ? "bg-success-200"
+                        : attempts > 0
+                        ? "bg-danger-200"
+                        : ""
+                    )}
+                    key={index2}
+                  >
+                    <Paragraph>{finalScore}</Paragraph>
+                  </td>
+                );
+              }
+            )}
+            <td className="text-center">
+              <Paragraph>{totalScore}</Paragraph>
+            </td>
+          </tr>
+        )
+      ),
     [userSubmissions]
   );
 

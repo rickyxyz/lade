@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import clsx from "clsx";
-import { Paragraph } from "@/components";
-import { ContestDatabaseType, ContestParticipantType } from "@/types";
+import { Button, Paragraph } from "@/components";
+import {
+  ContestDatabaseType,
+  ContestParticipantType,
+  StateType,
+} from "@/types";
 
 interface ContestScoreboardProps {
   contest: ContestDatabaseType;
@@ -14,7 +18,7 @@ export function ContestScoreboard({
   userSubmissions,
   loading,
 }: ContestScoreboardProps) {
-  const { problemsData: problems = [] } = contest;
+  const { problemsData: problems = [], endDate } = contest;
 
   const renderUserSubmission = useMemo(
     () =>
@@ -26,24 +30,38 @@ export function ContestScoreboard({
           <td>
             <Paragraph>{userId}</Paragraph>
           </td>
-          {answers.map(({ problemId, finalScore = 0, attempts, official }) => {
-            return (
-              <td
-                className={clsx(
-                  "text-center",
-                  !official && attempts > 0 && "opacity-20",
-                  finalScore > 0
-                    ? "bg-success-200"
-                    : finalScore < 0 && attempts > 0
-                    ? "bg-danger-200"
-                    : ""
-                )}
-                key={problemId}
-              >
-                <Paragraph>{finalScore}</Paragraph>
-              </td>
-            );
-          })}
+          {answers.map(
+            ({
+              problemId,
+              score = 0,
+              attempts,
+              unofficialCount = 0,
+              unofficialScore = 0,
+            }) => {
+              const officialCount = attempts.length - unofficialCount;
+
+              const displayScore = unofficialScore ?? score;
+
+              return (
+                <td
+                  className={clsx(
+                    "text-center",
+                    score === 0 &&
+                      (unofficialCount > 0 || unofficialScore) &&
+                      "opacity-30",
+                    displayScore > 0
+                      ? "bg-success-200 text-success-700"
+                      : displayScore < 0 &&
+                          (officialCount || unofficialCount) &&
+                          "bg-danger-200 text-danger-700"
+                  )}
+                  key={problemId}
+                >
+                  <Paragraph color="inherit">{displayScore}</Paragraph>
+                </td>
+              );
+            }
+          )}
           <td className="text-center">
             <Paragraph>{totalScore}</Paragraph>
           </td>

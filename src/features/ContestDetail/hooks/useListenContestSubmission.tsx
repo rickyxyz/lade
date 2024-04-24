@@ -19,6 +19,7 @@ export function useListenContestSubmission(
   onUpdate?: (data: SubmissionData) => void
 ) {
   const { id: contestId, problemsData = [], endDate } = contest;
+  const endAt = useMemo(() => new Date(endDate).getTime(), [endDate]);
   const [data, setData] = useState<SubmissionData>({
     problemSubmissions: {},
     userSubmissions: [],
@@ -47,24 +48,29 @@ export function useListenContestSubmission(
           answers: problemsData.map(({ problem: { id: problemId } }) => ({
             ...{
               answer: "",
-              attempts: 0,
+              attempts: [],
               score: 0,
-              submittedAt: new Date().getTime(),
             },
             ...(problemSubmissions[problemId] ?? {}),
           })),
           totalScore: Object.entries(problemSubmissions).reduce(
-            (prev, [_id, { finalScore = 0, official }]) =>
-              official ? finalScore + prev : prev,
+            (prev, [, { score = 0 }]) => score + prev,
+            0
+          ),
+          unofficialScore: Object.entries(problemSubmissions).reduce(
+            (prev, [, { unofficialScore = 0 }]) => unofficialScore + prev,
             0
           ),
         };
         userSubmissions.push(participant);
       });
 
-      userSubmissions.sort((a, b) => b.totalScore - a.totalScore);
+      userSubmissions.sort((a, b) => {
+        // if (b.totalScore === a.totalScore)
+        //   return b.unofficialScore - a.unofficialScore;
 
-      console.log(userSubmissions);
+        return b.totalScore - a.totalScore;
+      });
 
       return userSubmissions;
     },
@@ -72,15 +78,23 @@ export function useListenContestSubmission(
   );
 
   const handleCalculateScore = useCallback(
-    (
-      { answer, attempts, score }: ContestSingleSubmissionType,
-      official?: boolean
-    ) => {
-      // if(!official) return 0;
+    ({ attempts = [] }: ContestSingleSubmissionType) => {
+      const attemptCount = attempts.length;
+      let officialScore = 0;
+      let unofficialScore = 0;
+      attempts.forEach(({ score = 0, submittedAt }) => {
+        if (endAt > submittedAt) {
+          officialScore =
+            Math.max(score, officialScore) -
+            attempts.filter((attempt) => endAt > attempt.submittedAt).length +
+            1;
+        }
+        unofficialScore = Math.max(score, unofficialScore) - attemptCount + 1;
+      });
 
-      return score - attempts;
+      return [officialScore, unofficialScore];
     },
-    []
+    [endAt]
   );
 
   useEffect(() => {
@@ -89,19 +103,20 @@ export function useListenContestSubmission(
     const listener = onValue(docRef, (snapshot) => {
       const rawData: ContestSubmissionType = snapshot.val();
 
-      const end = new Date(endDate).getTime();
-
       Object.entries(rawData).forEach(([problemId, problemSubmissions]) => {
         Object.entries(problemSubmissions).forEach(
           ([userId, userSubmission]) => {
-            const official = userSubmission.submittedAt
-              ? end > userSubmission.submittedAt
-              : false;
-
+            const [finalScore, unofficialScore] =
+              handleCalculateScore(userSubmission);
             rawData[problemId][userId] = {
               ...rawData[problemId][userId],
-              finalScore: handleCalculateScore(userSubmission, official),
-              official,
+              score: finalScore,
+              unofficialScore,
+              unofficialCount: (userSubmission.attempts ?? []).filter(
+                ({ submittedAt }) => {
+                  return endAt <= submittedAt;
+                }
+              ).length,
             };
           }
         );
@@ -119,7 +134,7 @@ export function useListenContestSubmission(
     return () => {
       listener();
     };
-  }, [contestId, endDate, handleCalculateScore, handleMakeUserList, onUpdate]);
+  }, [contestId, endAt, handleCalculateScore, handleMakeUserList, onUpdate]);
 
   return useMemo(() => data, [data]);
 }

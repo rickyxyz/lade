@@ -45,12 +45,17 @@ export type ContestBlankType = {
 export type ContestMainTabType = "contest" | "result" | "discussion";
 
 export interface ContestSingleSubmissionType {
-  problemId?: string;
-  attempts: number;
+  problemId: string;
+  attempts: ContestSingleAttemptType[];
+  score: number;
+  unofficialScore?: number;
+  unofficialCount?: number;
+}
+
+export interface ContestSingleAttemptType {
   score: number;
   answer: string;
-  submittedAt?: number;
-  finalScore?: number;
+  submittedAt: number;
   official?: boolean;
 }
 
@@ -63,6 +68,7 @@ export interface ContestSubmissionType {
 export interface ContestParticipantType {
   userId: string;
   totalScore: number;
+  unofficialScore: number;
   answers: ContestSingleSubmissionType[];
 }
 

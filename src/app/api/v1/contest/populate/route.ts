@@ -4,6 +4,8 @@ import { prisma } from "@/libs/prisma";
 import { json, makeAnswer, validateAnswer } from "@/utils";
 import {
   ContestDatabaseType,
+  ContestSingleAttemptType,
+  ContestSingleSubmissionType,
   ContestSubmissionType,
   ProblemAnswerType,
   ProblemType,
@@ -81,12 +83,26 @@ export async function POST(req: NextRequest) {
         ? endAt + 1
         : startAt + Math.floor((endAt - startAt) * Math.random());
 
-      const result = {
-        score: attemptScore,
-        attempts: attemptCount,
-        answer: "",
-        submittedAt: attemptCount === 0 ? startAt : submittedAt,
-        // official: !lateSubmit,
+      const attempts: ContestSingleAttemptType[] = [];
+
+      for (let j = 1; j <= attemptCount; j++) {
+        const correct = Math.random() < 1 / (1 + attemptCount - j);
+
+        attempts.push({
+          score: correct ? score : 0,
+          answer: "",
+          submittedAt: (lateSubmit ? endAt : startAt) + 10000 * j,
+        });
+
+        if (Math.random() < 0.3) break;
+        if (correct) break;
+      }
+
+      const result: ContestSingleSubmissionType = {
+        problemId: id,
+        attempts,
+        score: 0,
+        unofficialScore: 0,
       };
 
       placeholders[id] = {

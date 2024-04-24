@@ -7,6 +7,7 @@ import {
   ProblemContestType,
   ContestDatabaseType,
   ContestParticipantType,
+  StateType,
 } from "@/types";
 import { ContestScoreboard } from "../components/ContestDetailLeaderboard";
 import { Loader } from "@/components/Loader";
