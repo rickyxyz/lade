@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
-import { ContestDetailMainSkeleton } from "@/features/ContestDetail";
 import { Card } from "@/components";
 import {
   UserType,
@@ -9,7 +8,7 @@ import {
   ContestParticipantType,
   StateType,
 } from "@/types";
-import { ContestScoreboard } from "../components/ContestDetailLeaderboard";
+import { ContestLeaderboard } from "../components/ContestDetailLeaderboard";
 import { Loader } from "@/components/Loader";
 
 interface ContestProps {
@@ -25,16 +24,16 @@ export function ContestLeaderboardPage({
   userSubmissions,
   loading,
 }: ContestProps) {
-  const renderScoreboard = useMemo(() => {
+  const renderLeaderboard = useMemo(() => {
     if (loading) return <Loader caption="fetching leaderboard" />;
 
     return (
-      <ContestScoreboard
+      <ContestLeaderboard
         contest={contest as unknown as ContestDatabaseType}
         userSubmissions={userSubmissions}
       />
     );
   }, [contest, loading, userSubmissions]);
 
-  return <Card className="flex-1 h-fit">{renderScoreboard}</Card>;
+  return <Card className="flex-1 h-fit">{renderLeaderboard}</Card>;
 }

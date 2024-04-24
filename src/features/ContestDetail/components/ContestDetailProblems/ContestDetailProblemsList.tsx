@@ -20,7 +20,7 @@ export function ContestDetailProblemsList({
       const entry =
         submission && userId && submission[id] && submission[id][userId];
 
-      const score = entry ? entry.score - entry.attempts : null;
+      const score = entry ? entry.score : null;
 
       return (
         <li className={clsx("flex items-center justify-between")}>

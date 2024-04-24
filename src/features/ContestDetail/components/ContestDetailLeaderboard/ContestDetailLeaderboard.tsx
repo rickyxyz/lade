@@ -1,23 +1,19 @@
 import { useMemo } from "react";
 import clsx from "clsx";
-import { Button, Paragraph } from "@/components";
-import {
-  ContestDatabaseType,
-  ContestParticipantType,
-  StateType,
-} from "@/types";
+import { Paragraph } from "@/components";
+import { ContestDatabaseType, ContestParticipantType } from "@/types";
 
-interface ContestScoreboardProps {
+interface ContestLeaderboardProps {
   contest: ContestDatabaseType;
   userSubmissions: ContestParticipantType[];
   loading?: boolean;
 }
 
-export function ContestScoreboard({
+export function ContestLeaderboard({
   contest,
   userSubmissions,
   loading,
-}: ContestScoreboardProps) {
+}: ContestLeaderboardProps) {
   const { problemsData: problems = [], endDate } = contest;
 
   const renderUserSubmission = useMemo(
