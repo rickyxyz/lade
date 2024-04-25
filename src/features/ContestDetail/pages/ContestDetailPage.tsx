@@ -261,7 +261,7 @@ export function ContestDetailPage({
     const sideElement = renderContestMetadata(
       <ContestDetailProblemsList
         problems={problems}
-        submission={problemSubmissions}
+        participants={userSubmissions}
         userId={user?.id}
       />
     );
@@ -282,6 +282,7 @@ export function ContestDetailPage({
     renderMainLoading,
     title,
     user,
+    userSubmissions,
   ]);
 
   const renderContestLeaderboard = useMemo(() => {

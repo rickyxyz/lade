@@ -1,26 +1,39 @@
 import { Fragment, useCallback, useMemo } from "react";
 import clsx from "clsx";
 import { Card, Paragraph } from "@/components";
-import { ContestSubmissionType, ProblemContestType } from "@/types";
+import {
+  ContestParticipantType,
+  ContestSingleSubmissionType,
+  ContestSubmissionType,
+  ProblemContestType,
+} from "@/types";
 
 export interface ContestDetailProblemsListProps {
   className?: string;
   problems: ProblemContestType[];
-  submission?: ContestSubmissionType;
+  participants: ContestParticipantType[];
   userId?: string;
 }
 
 export function ContestDetailProblemsList({
   problems,
-  submission,
+  participants,
   userId,
 }: ContestDetailProblemsListProps) {
   const renderProblem = useCallback(
     ({ problem: { id, title } }: ProblemContestType, index: number) => {
-      const entry =
-        submission && userId && submission[id] && submission[id][userId];
+      const attempt: ContestSingleSubmissionType | undefined = participants
+        .find((participant) => participant.userId === userId)
+        ?.answers.find((answer) => answer.problemId === id);
 
-      const score = entry ? entry.score : null;
+      const displayScore = attempt
+        ? attempt.unofficialScore ?? attempt.score
+        : null;
+
+      const unofficial = attempt
+        ? attempt.score === 0 &&
+          !!(attempt.unofficialCount || attempt.unofficialScore)
+        : false;
 
       return (
         <li className={clsx("flex items-center justify-between")}>
@@ -39,20 +52,20 @@ export function ContestDetailProblemsList({
             </Paragraph>
             <Paragraph>{title}</Paragraph>
           </Paragraph>
-          {typeof score === "number" && (
-            <div className="flex gap-1">
+          {typeof displayScore === "number" && (
+            <div className={clsx("flex gap-1", unofficial && "opacity-40")}>
               <Paragraph
-                color={score > 0 ? "success-6" : "danger-6"}
+                color={displayScore > 0 ? "success-6" : "danger-6"}
                 weight="bold"
               >
-                {score}
+                {displayScore}
               </Paragraph>
             </div>
           )}
         </li>
       );
     },
-    [submission, userId]
+    [participants, userId]
   );
 
   const renderProblems = useMemo(

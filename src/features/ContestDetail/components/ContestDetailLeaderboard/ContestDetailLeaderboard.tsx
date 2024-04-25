@@ -43,7 +43,7 @@ export function ContestLeaderboard({
                   className={clsx(
                     "text-center",
                     score === 0 &&
-                      (unofficialCount > 0 || unofficialScore) &&
+                      (unofficialCount || unofficialScore) &&
                       "opacity-30",
                     displayScore > 0
                       ? "bg-success-200 text-success-700"
