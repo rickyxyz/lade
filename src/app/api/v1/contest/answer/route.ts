@@ -2,7 +2,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/libs/prisma";
 import { makeAnswer, validateAnswer } from "@/utils";
-import { ProblemAnswerType, ProblemType } from "@/types";
+import {
+  ContestSingleAttemptType,
+  ContestSingleSubmissionType,
+  ContestSubmissionType,
+  ProblemAnswerType,
+  ProblemType,
+} from "@/types";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
@@ -84,35 +90,51 @@ export async function POST(req: NextRequest) {
     console.log(answer);
 
     const docRef = ref(rb, `contests/${contestId}`);
-    const resultingData = {
+    const resultingAttempt: ContestSingleAttemptType = {
       score: verdict ? score : 0,
       submittedAt: new Date().getTime(),
       answer: JSON.stringify(answer),
     };
+
     runTransaction(docRef, (result) => {
       console.log("Previous");
-      console.log(result);
+
       if (result) {
+        let pastSubmission: ContestSingleSubmissionType = {
+          attempts: [],
+          problemId,
+          score: 0,
+        };
+
+        if (result[problemId] && result[problemId][user.id]) {
+          pastSubmission = {
+            ...pastSubmission,
+            ...result[problemId][user.id],
+          };
+        }
+
+        console.log(pastSubmission);
+
+        pastSubmission = {
+          ...pastSubmission,
+          attempts: [...pastSubmission.attempts, resultingAttempt],
+        };
+
         return {
           ...result,
           [problemId]: {
             ...(result[problemId] ?? {}),
-            [user.id]: {
-              ...resultingData,
-              attempts:
-                (result[problemId] && result[problemId][user.id]
-                  ? result[problemId][user.id].attempts
-                  : 0) + 1,
-            },
+            [user.id]: pastSubmission,
           },
         };
       } else {
         return {
           [problemId]: {
             [user.id]: {
-              ...resultingData,
-              attempts: 1,
-            },
+              attempts: [resultingAttempt],
+              problemId,
+              score: 0,
+            } as ContestSingleSubmissionType,
           },
         };
       }
