@@ -88,8 +88,10 @@ export function useListenContestSubmission(
             Math.max(score, officialScore) -
             attempts.filter((attempt) => endAt > attempt.submittedAt).length +
             1;
+          if (score === 0) officialScore--;
         }
         unofficialScore = Math.max(score, unofficialScore) - attemptCount + 1;
+        if (score === 0) unofficialScore--;
       });
 
       return [officialScore, unofficialScore];
