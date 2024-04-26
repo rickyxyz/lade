@@ -59,6 +59,7 @@ export function useListenContestSubmission(
               score: 0,
             },
             ...(problemSubmissions[problemId] ?? {}),
+            problemId: String(problemId),
           })),
           totalScore: Object.entries(problemSubmissions).reduce(
             (prev, [, { score = 0 }]) => score + prev,

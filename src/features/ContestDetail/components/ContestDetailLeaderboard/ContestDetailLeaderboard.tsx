@@ -51,7 +51,7 @@ export function ContestLeaderboard({
                           (officialCount || unofficialCount) &&
                           "bg-danger-200 text-danger-700"
                   )}
-                  key={problemId}
+                  key={`${problemId}`}
                 >
                   <Paragraph color="inherit">{displayScore}</Paragraph>
                 </td>
