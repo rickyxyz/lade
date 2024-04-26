@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { rb } from "@/libs/firebase";
 import {
   ContestDatabaseType,
+  ContestParticipantObjectType,
   ContestParticipantType,
   ContestSingleSubmissionType,
   ContestSubmissionType,
@@ -10,8 +11,9 @@ import {
 import { onValue, ref } from "firebase/database";
 
 export interface SubmissionData {
-  problemSubmissions?: ContestSubmissionType;
-  userSubmissions: ContestParticipantType[];
+  problemSubmissions: ContestSubmissionType;
+  userSubmissionsArray: ContestParticipantType[];
+  userSubmissions: ContestSubmissionType;
 }
 
 export function useListenContestSubmission(
@@ -22,12 +24,17 @@ export function useListenContestSubmission(
   const endAt = useMemo(() => new Date(endDate).getTime(), [endDate]);
   const [data, setData] = useState<SubmissionData>({
     problemSubmissions: {},
-    userSubmissions: [],
+    userSubmissionsArray: [],
+    userSubmissions: {},
   });
 
   const handleMakeUserList = useCallback(
     (problemSubmissions: ContestSubmissionType) => {
-      if (!problemSubmissions) return [];
+      if (!problemSubmissions)
+        return {
+          userSubmissionsArray: [],
+          userSubmissions: {},
+        };
 
       const result: ContestSubmissionType = {};
       const userSubmissions: ContestParticipantType[] = [];
@@ -72,7 +79,10 @@ export function useListenContestSubmission(
         return b.totalScore - a.totalScore;
       });
 
-      return userSubmissions;
+      return {
+        userSubmissionsArray: userSubmissions,
+        userSubmissions: result,
+      };
     },
     [problemsData]
   );
@@ -124,9 +134,12 @@ export function useListenContestSubmission(
         );
       });
 
+      const { userSubmissionsArray, userSubmissions } =
+        handleMakeUserList(rawData);
       const newData: SubmissionData = {
         problemSubmissions: rawData,
-        userSubmissions: handleMakeUserList(rawData),
+        userSubmissions,
+        userSubmissionsArray,
       };
 
       onUpdate && onUpdate(newData);

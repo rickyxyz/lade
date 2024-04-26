@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ProblemAnswer } from "@/features";
 import { Button, Card, Paragraph } from "@/components";
-import { md } from "@/utils";
+import { md, parseAnswer } from "@/utils";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
-import { ProblemDatabaseType } from "@/types";
+import { ContestSingleSubmissionType, ProblemDatabaseType } from "@/types";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
+  submission?: ContestSingleSubmissionType;
   className?: string;
   cooldown: number;
   loading: boolean;
@@ -16,6 +17,7 @@ export interface ProblemCardProps {
 
 export function ContestDetailProblemsProblemCard({
   problem,
+  submission,
   className,
   cooldown,
   loading,
@@ -60,10 +62,27 @@ export function ContestDetailProblemsProblemCard({
     setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
   }, [setAnswer, type]);
 
+  const handleInitExistingAnswer = useCallback(() => {
+    const lastCorrectAnswer = submission
+      ? submission.attempts.find((attempt) => attempt.score > 0)
+      : null;
+
+    const parsed = parseAnswer(type, lastCorrectAnswer?.answer);
+
+    if (parsed) {
+      setAnswer(parsed);
+      setSolved(true);
+    }
+  }, [setAnswer, submission, type]);
+
   useEffect(() => {
     handleInitDefaultAnswer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    handleInitExistingAnswer();
+  }, [handleInitExistingAnswer]);
 
   const renderAnswerVerdict = useMemo(() => {
     if (solved)

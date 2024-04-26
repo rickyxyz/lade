@@ -74,7 +74,7 @@ export function ContestDetailPage({
     (data: SubmissionData) => {
       setLeaderboardLoading(true);
       debounce(() => {
-        setUserSubmissions(data.userSubmissions);
+        setUserSubmissions(data.userSubmissionsArray);
         setLeaderboardLoading(false);
       }, 2000);
     },
@@ -85,10 +85,11 @@ export function ContestDetailPage({
     console.log("leaderboard loading ", leaderboardLoading);
   }, [leaderboardLoading]);
 
-  const { problemSubmissions } = useListenContestSubmission(
-    contest as unknown as ContestDatabaseType,
-    handleDebounceSubmissions
-  );
+  const { problemSubmissions, userSubmissions: userSubmissionsObject } =
+    useListenContestSubmission(
+      contest as unknown as ContestDatabaseType,
+      handleDebounceSubmissions
+    );
 
   const stateMobileAction = useState(false);
   const setMobileAction = stateMobileAction[1];
@@ -253,7 +254,7 @@ export function ContestDetailPage({
     ) : (
       <ContestProblemsPage
         contest={contest as any}
-        problemSubmissions={problemSubmissions}
+        userSubmissions={userSubmissionsObject}
         problems={problems}
         user={user}
       />

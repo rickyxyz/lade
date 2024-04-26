@@ -72,6 +72,15 @@ export interface ContestParticipantType {
   answers: ContestSingleSubmissionType[];
 }
 
+export type ContestParticipantObjectType = Record<
+  string,
+  {
+    totalScore: number;
+    unofficialScore: number;
+    answers: Record<string, ContestSingleSubmissionType>;
+  }
+>;
+
 export interface ContestQuery {
   tab: ContestTabType;
 }
