@@ -7,6 +7,7 @@ import {
   ContestSubmissionType,
   ProblemContestType,
 } from "@/types";
+import { getFinalScore } from "../../utils";
 
 export interface ContestDetailProblemsListProps {
   className?: string;
@@ -26,14 +27,7 @@ export function ContestDetailProblemsList({
         .find((participant) => participant.userId === userId)
         ?.answers.find((answer) => answer.problemId === id);
 
-      const displayScore = attempt
-        ? attempt.unofficialScore ?? attempt.score
-        : null;
-
-      const unofficial = attempt
-        ? attempt.score === 0 &&
-          !!(attempt.unofficialCount || attempt.unofficialScore)
-        : false;
+      const { displayScore, isOfficial, status } = getFinalScore(attempt);
 
       return (
         <li className={clsx("flex items-center justify-between")}>
@@ -53,9 +47,15 @@ export function ContestDetailProblemsList({
             <Paragraph>{title}</Paragraph>
           </Paragraph>
           {typeof displayScore === "number" && (
-            <div className={clsx("flex gap-1", unofficial && "opacity-40")}>
+            <div className={clsx("flex gap-1", !isOfficial && "opacity-40")}>
               <Paragraph
-                color={displayScore > 0 ? "success-6" : "danger-6"}
+                color={
+                  status === "success"
+                    ? "success-6"
+                    : status === "attempted"
+                    ? "danger-6"
+                    : "inherit"
+                }
                 weight="bold"
               >
                 {displayScore}

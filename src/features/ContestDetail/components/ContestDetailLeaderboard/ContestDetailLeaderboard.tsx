@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import clsx from "clsx";
 import { Paragraph } from "@/components";
 import { ContestDatabaseType, ContestParticipantType } from "@/types";
+import { getFinalScore } from "../../utils";
 
 interface ContestLeaderboardProps {
   contest: ContestDatabaseType;
@@ -26,38 +27,27 @@ export function ContestLeaderboard({
           <td>
             <Paragraph>{userId}</Paragraph>
           </td>
-          {answers.map(
-            ({
-              problemId,
-              score = 0,
-              attempts,
-              unofficialCount = 0,
-              unofficialScore = 0,
-            }) => {
-              const officialCount = attempts.length - unofficialCount;
+          {answers.map((answer) => {
+            const { displayScore, isOfficial, status } = getFinalScore(answer);
 
-              const displayScore = unofficialScore ?? score;
-
-              return (
-                <td
-                  className={clsx(
-                    "text-center",
-                    score === 0 &&
-                      (unofficialCount || unofficialScore) &&
-                      "opacity-30",
-                    displayScore > 0
-                      ? "bg-success-200 text-success-700"
-                      : displayScore < 0 &&
-                          (officialCount || unofficialCount) &&
-                          "bg-danger-200 text-danger-700"
-                  )}
-                  key={`${problemId}`}
-                >
-                  <Paragraph color="inherit">{displayScore}</Paragraph>
-                </td>
-              );
-            }
-          )}
+            return (
+              <td
+                className={clsx(
+                  "text-center",
+                  !isOfficial && "opacity-30",
+                  status === "success"
+                    ? "bg-success-200 text-success-700 font-bold"
+                    : status === "attempted" &&
+                        "bg-danger-200 text-danger-700 font-bold"
+                )}
+                key={`${answer.problemId}`}
+              >
+                <Paragraph color="inherit" weight="inherit">
+                  {displayScore}
+                </Paragraph>
+              </td>
+            );
+          })}
           <td className="text-center">
             <Paragraph>{totalScore}</Paragraph>
           </td>
