@@ -349,16 +349,16 @@ export function ContestCreateEditorForm({
             <thead className="border-b border-secondary-300">
               <tr>
                 <th>
-                  <Paragraph></Paragraph>
+                  <Paragraph weight="semibold">#</Paragraph>
                 </th>
                 <th className="w-full">
-                  <Paragraph>Problem</Paragraph>
+                  <Paragraph weight="semibold">Problem</Paragraph>
                 </th>
                 <th className="text-center">
-                  <Paragraph>Points</Paragraph>
+                  <Paragraph weight="semibold">Points</Paragraph>
                 </th>
                 <th className="text-center">
-                  <Paragraph>Actions</Paragraph>
+                  <Paragraph weight="semibold">Actions</Paragraph>
                 </th>
               </tr>
             </thead>

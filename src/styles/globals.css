@@ -82,6 +82,9 @@
   table.table td {
     padding: 0.5rem 1rem;
   }
+  table.table :is(th:not(:first-child), td:not(:first-child)) {
+    @apply border-l border-secondary-300;
+  }
 }
 @tailwind base;
 @layer components {

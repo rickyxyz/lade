@@ -48,6 +48,7 @@ export interface ContestSingleSubmissionType {
   problemId: string;
   attempts: ContestSingleAttemptType[];
   score: number;
+  penalty: number;
   unofficialScore?: number;
   unofficialCount?: number;
 }
@@ -68,6 +69,7 @@ export interface ContestSubmissionType {
 export interface ContestParticipantType {
   userId: string;
   totalScore: number;
+  totalPenalty: number;
   unofficialScore: number;
   answers: ContestSingleSubmissionType[];
 }
@@ -76,6 +78,7 @@ export type ContestParticipantObjectType = Record<
   string,
   {
     totalScore: number;
+    totalPenalty: number;
     unofficialScore: number;
     answers: Record<string, ContestSingleSubmissionType>;
   }

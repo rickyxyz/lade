@@ -20,7 +20,8 @@ export function useListenContestSubmission(
   contest: ContestDatabaseType,
   onUpdate?: (data: SubmissionData) => void
 ) {
-  const { id: contestId, problemsData = [], endDate } = contest;
+  const { id: contestId, problemsData = [], startDate, endDate } = contest;
+  const startAt = useMemo(() => new Date(startDate).getTime(), [startDate]);
   const endAt = useMemo(() => new Date(endDate).getTime(), [endDate]);
   const [data, setData] = useState<SubmissionData>({
     problemSubmissions: {},
@@ -52,6 +53,12 @@ export function useListenContestSubmission(
       Object.entries(result).forEach(([userId, problemSubmissions]) => {
         const participant: ContestParticipantType = {
           userId,
+          totalPenalty: Math.floor(
+            Object.entries(problemSubmissions).reduce(
+              (prev, [, { penalty }]) => penalty + prev,
+              0
+            ) / 1000
+          ),
           answers: problemsData.map(({ problem: { id: problemId } }) => ({
             ...{
               answer: "",
@@ -74,8 +81,15 @@ export function useListenContestSubmission(
       });
 
       userSubmissions.sort((a, b) => {
-        // if (b.totalScore === a.totalScore)
-        //   return b.unofficialScore - a.unofficialScore;
+        // let weightsA = a.totalScore - a.totalPenalty;
+        // let weightsA = a.totalScore - a.totalPenalty;
+        if (b.totalScore === a.totalScore) {
+          if (b.totalPenalty === a.totalPenalty) {
+            return b.unofficialScore - a.unofficialScore;
+          }
+
+          return a.totalPenalty - b.totalPenalty;
+        }
 
         return b.totalScore - a.totalScore;
       });
@@ -93,6 +107,7 @@ export function useListenContestSubmission(
       const attemptCount = attempts.length;
       let officialScore = 0;
       let unofficialScore = 0;
+      let penalty = 0;
       attempts.forEach(({ score = 0, submittedAt }) => {
         if (endAt > submittedAt) {
           officialScore =
@@ -100,14 +115,17 @@ export function useListenContestSubmission(
             attempts.filter((attempt) => endAt > attempt.submittedAt).length +
             1;
           if (score === 0) officialScore--;
+          if (officialScore > 0) {
+            penalty = submittedAt - startAt;
+          }
         }
-        unofficialScore = Math.max(score, unofficialScore) - attemptCount + 1;
+        unofficialScore = Math.max(score, unofficialScore);
         if (score === 0) unofficialScore--;
       });
 
-      return [officialScore, unofficialScore];
+      return [officialScore, unofficialScore, penalty];
     },
-    [endAt]
+    [endAt, startAt]
   );
 
   useEffect(() => {
@@ -119,12 +137,13 @@ export function useListenContestSubmission(
       Object.entries(rawData).forEach(([problemId, problemSubmissions]) => {
         Object.entries(problemSubmissions).forEach(
           ([userId, userSubmission]) => {
-            const [finalScore, unofficialScore] =
+            const [finalScore, unofficialScore, penalty] =
               handleCalculateScore(userSubmission);
             rawData[problemId][userId] = {
               ...rawData[problemId][userId],
               score: finalScore,
               unofficialScore,
+              penalty,
               unofficialCount: (userSubmission.attempts ?? []).filter(
                 ({ submittedAt }) => {
                   return endAt <= submittedAt;

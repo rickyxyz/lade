@@ -85,13 +85,26 @@ export async function POST(req: NextRequest) {
 
       const attempts: ContestSingleAttemptType[] = [];
 
+      const tempStart =
+        startAt + Math.floor(((endAt - startAt) * Math.random()) / 2);
+
+      let prevSubmittedAt = startAt;
       for (let j = 1; j <= attemptCount; j++) {
         const correct = Math.random() < 1 / (1 + attemptCount - j);
+
+        const newSubmittedAt =
+          Math.floor(
+            ((lateSubmit ? endAt : prevSubmittedAt) +
+              Math.ceil(Math.random() * (endAt - prevSubmittedAt))) /
+              1000
+          ) * 1000;
+
+        prevSubmittedAt = newSubmittedAt;
 
         attempts.push({
           score: correct ? score : 0,
           answer: "",
-          submittedAt: (lateSubmit ? endAt : startAt) + 10000 * j,
+          submittedAt: newSubmittedAt,
         });
 
         if (Math.random() < 0.3) break;
@@ -103,6 +116,7 @@ export async function POST(req: NextRequest) {
         attempts,
         score: 0,
         unofficialScore: 0,
+        penalty: 0,
       };
 
       placeholders[id] = {
