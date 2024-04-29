@@ -10,3 +10,13 @@ export function getHMS(time: number) {
   const seconds = time;
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
+
+export function getDateString(date: Date) {
+  return date.toLocaleString("en-GB", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+}
