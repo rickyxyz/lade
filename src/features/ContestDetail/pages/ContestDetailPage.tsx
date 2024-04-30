@@ -233,7 +233,20 @@ export function ContestDetailPage({
   }, [contest, loading, renderContestMetadata, renderMainLoading, title]);
 
   const renderEditContest = useMemo(() => {
-    if (loading) return renderMainLoading;
+    const mainElement = loading ? (
+      renderMainLoading
+    ) : (
+      <ContestDetailMain className="flex-1" contest={contest as any} />
+    );
+    const sideElement = renderContestMetadata();
+    if (loading)
+      return (
+        <ContestDetailTemplate
+          title={title}
+          mainElement={mainElement}
+          sideElement={sideElement}
+        />
+      );
     return (
       <ContestEditPage
         stateContest={stateContest}
@@ -246,7 +259,16 @@ export function ContestDetailPage({
         }}
       />
     );
-  }, [loading, renderMainLoading, setPage, stateContest, stateProblems]);
+  }, [
+    contest,
+    loading,
+    renderContestMetadata,
+    renderMainLoading,
+    setPage,
+    stateContest,
+    stateProblems,
+    title,
+  ]);
 
   const renderContestProblems = useMemo(() => {
     const mainElement = loading ? (
