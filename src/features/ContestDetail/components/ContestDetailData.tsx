@@ -28,28 +28,37 @@ export function ContestDetailData({
     end?: string;
   }>({});
 
-  const { startString, endString, createdString } = useMemo(() => {
+  const {
+    startString,
+    endString,
+    createdString,
+    showCountStart,
+    showCountEnd,
+  } = useMemo(() => {
     const start = new Date(startDate as unknown as string);
     const end = new Date(endDate as unknown as string);
     const created = new Date(createdAt as unknown as string);
 
+    const showCountStart = count?.start !== undefined;
+    const showCountEnd = count?.end !== undefined;
+
     return {
-      startString: getDateString(start),
-      endString: getDateString(end),
+      startString: count?.start ?? getDateString(start),
+      endString: count?.end ?? getDateString(end),
       createdString: getDateString(created),
+      showCountStart,
+      showCountEnd,
     };
-  }, [createdAt, endDate, startDate]);
+  }, [count?.end, count?.start, createdAt, endDate, startDate]);
 
   useEffect(() => {
-    let start = new Date(startDate as unknown as string).getTime();
-    let end = new Date(endDate as unknown as string).getTime();
+    const start = new Date(startDate as unknown as string).getTime();
+    const end = new Date(endDate as unknown as string).getTime();
     let now = new Date().getTime();
     let interval: NodeJS.Timer;
 
     if (end > now) {
       interval = setInterval(() => {
-        start = new Date(startDate as unknown as string).getTime();
-        end = new Date(endDate as unknown as string).getTime();
         now = new Date().getTime();
 
         setCount({
@@ -73,8 +82,14 @@ export function ContestDetailData({
         <tbody>
           <DataRow name="CREATED BY" value={authorId} />
           <DataRow name="POSTED AT" value={createdString} />
-          <DataRow name="START" value={count?.start ?? startString} />
-          <DataRow name="END" value={count?.end ?? endString} />
+          <DataRow
+            name={`STARTS ${showCountStart ? "IN" : "AT"}`}
+            value={startString}
+          />
+          <DataRow
+            name={`ENDS ${showCountEnd ? "IN" : "AT"}`}
+            value={endString}
+          />
         </tbody>
       </table>
       <div className="grid grid-cols-1 gap-4 mt-4">
