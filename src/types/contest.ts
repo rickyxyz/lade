@@ -25,17 +25,16 @@ export type ContestType = ContestBaseType &
 
 export type ContestStatusType = "waiting" | "ongoing" | "closed";
 
-export type ContestDatabaseType = Omit<ContestType, "id" | "problems"> & {
-  id: string | number;
+export type ContestDatabaseType = ContestType & {
   toProblems?: ProblemContestType[];
   _count?: {
     toProblems: number;
   };
-  problemsData: ProblemContestType[];
-  problems: number;
-  topic: ProblemTopicType;
-  subTopic: ProblemTopicType;
-  status: ContestStatusType;
+  problemsData?: ProblemContestType[];
+  problemsCount?: number;
+  topic?: ProblemTopicType;
+  subTopic?: ProblemTopicType;
+  status?: ContestStatusType;
 };
 
 export type ContestBlankType = {

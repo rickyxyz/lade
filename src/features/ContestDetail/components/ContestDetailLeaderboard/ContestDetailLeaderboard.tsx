@@ -14,9 +14,8 @@ interface ContestLeaderboardProps {
 export function ContestLeaderboard({
   contest,
   userSubmissions,
-  loading,
 }: ContestLeaderboardProps) {
-  const { problemsData: problems = [], endDate } = contest;
+  const { problemsData: problems = [] } = contest;
 
   const renderUserSubmission = useMemo(
     () =>

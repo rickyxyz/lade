@@ -165,11 +165,9 @@ export function ContestDetailPage({
       .then(({ data }) => {
         if (!data) throw Error("");
 
-        const { id } = data;
-        setContest(data as any);
-        setProblems(
-          data.problemsData.sort((pd1, pd2) => pd1.order - pd2.order)
-        );
+        const { id, problemsData = [] } = data;
+        setContest(data);
+        setProblems(problemsData.sort((pd1, pd2) => pd1.order - pd2.order));
         setLoading(false);
 
         return id;
@@ -195,7 +193,7 @@ export function ContestDetailPage({
       return (
         <>
           <ContestDetailData
-            contest={contest as unknown as ContestDatabaseType}
+            contest={contest}
             showAuthorMenu={!!user && contest.authorId === user?.id}
             onEdit={() => {
               setPage("edit");
@@ -219,7 +217,7 @@ export function ContestDetailPage({
     const mainElement = loading ? (
       renderMainLoading
     ) : (
-      <ContestDetailMain className={className} contest={contest as any} />
+      <ContestDetailMain className={className} contest={contest} />
     );
     const sideElement = renderContestMetadata();
 
@@ -236,7 +234,7 @@ export function ContestDetailPage({
     const mainElement = loading ? (
       renderMainLoading
     ) : (
-      <ContestDetailMain className="flex-1" contest={contest as any} />
+      <ContestDetailMain className="flex-1" contest={contest} />
     );
     const sideElement = renderContestMetadata();
     if (loading)
@@ -275,7 +273,7 @@ export function ContestDetailPage({
       renderMainLoading
     ) : (
       <ContestProblemsPage
-        contest={contest as any}
+        contest={contest}
         userSubmissions={userSubmissionsObject}
         problems={problems}
         user={user}
@@ -299,13 +297,13 @@ export function ContestDetailPage({
   }, [
     contest,
     loading,
-    problemSubmissions,
     problems,
     renderContestMetadata,
     renderMainLoading,
     title,
     user,
     userSubmissions,
+    userSubmissionsObject,
   ]);
 
   const renderContestLeaderboard = useMemo(() => {
@@ -313,7 +311,7 @@ export function ContestDetailPage({
       renderMainLoading
     ) : (
       <ContestLeaderboardPage
-        contest={contest as any}
+        contest={contest}
         problems={problems}
         userSubmissions={userSubmissions}
         loading={leaderboardLoading}

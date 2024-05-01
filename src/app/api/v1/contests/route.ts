@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
       JSON.parse(json(contests)) as ContestDatabaseType[]
     ).map((contest) => {
       const custom = { ...contest };
-      custom.problems = custom._count ? custom._count.toProblems : 0;
+      custom.problemsCount = custom._count ? custom._count.toProblems : 0;
       delete custom._count;
       return custom;
     }) as ContestDatabaseType[];

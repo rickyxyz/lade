@@ -261,7 +261,7 @@ export async function GET(req: NextRequest) {
     })();
 
     contest.toProblems ??= [];
-    contest.problems = contest.toProblems.length;
+    contest.problemsCount = contest.toProblems.length;
     contest.problemsData = contest.toProblems;
     delete contest.toProblems;
 
