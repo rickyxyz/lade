@@ -64,7 +64,7 @@ export type ProblemMapTypeTopicType<
 }[K];
 
 export interface ProblemBaseType {
-  id: number | string;
+  id: string;
   title: string;
   statement: string;
   solveds?: unknown[];
@@ -102,10 +102,9 @@ export interface SolvedType {
   problemId: string;
   answer: string;
 }
-export type ProblemDatabaseType = Omit<ProblemType, "id"> & {
-  id?: string | number;
-  topic: ProblemTopicType;
-  subTopic: ProblemTopicType;
+export type ProblemDatabaseType = ProblemType & {
+  topic?: ProblemTopicType;
+  subTopic?: ProblemTopicType;
 };
 
 export type ProblemMainTabType = "problem" | "discussion";

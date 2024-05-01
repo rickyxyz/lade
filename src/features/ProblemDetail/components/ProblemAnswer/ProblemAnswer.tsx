@@ -80,6 +80,7 @@ export function ProblemAnswer({
                   onBlur={onBlur}
                   onChange={(e) => {
                     setAnswer((prev: unknown) => {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const temp = (prev as any).content;
                       temp[j][i] = e.target.value;
                       for (let y = 0; y <= j; y++) {

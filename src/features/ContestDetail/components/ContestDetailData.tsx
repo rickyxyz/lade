@@ -22,7 +22,7 @@ export function ContestDetailData({
   onDelete,
   onNavigate,
 }: ContestDetailDataProps) {
-  const { title, authorId, createdAt, startDate, endDate, id } = contest;
+  const { title, authorId, createdAt, startDate, endDate } = contest;
   const [count, setCount] = useState<{
     start?: string;
     end?: string;

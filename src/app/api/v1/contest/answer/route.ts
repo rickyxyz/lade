@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     const type = problem.type as unknown as ProblemAnswerType;
 
-    const verdict = validateAnswer(type as any, JSON.parse(accept), answer);
+    const verdict = validateAnswer(type, JSON.parse(accept), answer);
     console.log(JSON.parse(accept));
     console.log(answer);
 
@@ -104,6 +104,7 @@ export async function POST(req: NextRequest) {
           attempts: [],
           problemId,
           score: 0,
+          penalty: 0,
         };
 
         if (result[problemId] && result[problemId][user.id]) {

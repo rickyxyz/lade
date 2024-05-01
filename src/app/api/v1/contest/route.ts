@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest) {
     await prisma.$transaction(async (tx) => {
       await tx.contestToProblem.findMany({
         where: {
-          contestId: id as any,
+          contestId: id as unknown as number,
         },
       });
 
@@ -73,13 +73,13 @@ export async function PATCH(req: NextRequest) {
 
       await tx.contestToProblem.deleteMany({
         where: {
-          contestId: id as any,
+          contestId: id as unknown as number,
         },
       });
 
       await tx.contest.update({
         where: {
-          id: id as any,
+          id: id as unknown as number,
         },
         data: {
           authorId,
@@ -91,6 +91,7 @@ export async function PATCH(req: NextRequest) {
           ...(startDate ? { startDate: new Date(startDate) } : {}),
           ...(endDate ? { endDate: new Date(endDate) } : {}),
           toProblems: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             create: convertedProblems as any,
           },
         },
@@ -182,6 +183,7 @@ export async function POST(req: NextRequest) {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         toProblems: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           create: convertedProblems as any,
         },
       },
@@ -311,7 +313,7 @@ export async function DELETE(req: NextRequest) {
       if (id !== undefined) {
         const rawContest = await tx.contest.findUnique({
           where: {
-            id: id as any,
+            id: id as unknown as number,
           },
         });
 
@@ -326,13 +328,13 @@ export async function DELETE(req: NextRequest) {
 
         await tx.contestToProblem.deleteMany({
           where: {
-            contestId: id as any,
+            contestId: id as unknown as number,
           },
         });
 
         await tx.contest.delete({
           where: {
-            id: id as any,
+            id: id as unknown as number,
           },
         });
 

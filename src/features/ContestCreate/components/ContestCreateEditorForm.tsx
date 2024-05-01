@@ -446,7 +446,7 @@ export function ContestCreateEditorForm({
                 ]
           )}
           key={p.id}
-          problem={p as any}
+          problem={p}
           onClick={() => {
             handleImportProblem(p);
           }}

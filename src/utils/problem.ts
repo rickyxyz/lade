@@ -174,11 +174,16 @@ export function validateFormContest(contest: ContestType) {
   return errors;
 }
 
-export function validateProblemQuery(query: ProblemQuery): ProblemQuery {
-  const { page = 1, sort = "newest" } = query;
-  query.page = isNaN(page) ? 1 : page;
-  if (!PROBLEM_SORT_CRITERIA.includes(sort)) query.sort = "newest";
-  return query;
+export function validateProblemQuery(query: unknown): ProblemQuery {
+  let { page = 1, sort = "newest" } = query as ProblemQuery;
+  page = isNaN(page) ? 1 : page;
+  if (!PROBLEM_SORT_CRITERIA.includes(sort)) sort = "newest";
+
+  return {
+    ...(query as ProblemQuery),
+    page,
+    sort,
+  };
 }
 
 export function validateContestQuery({ tab }: ContestQuery): ContestQuery {

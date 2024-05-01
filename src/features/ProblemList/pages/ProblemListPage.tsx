@@ -23,7 +23,7 @@ export function ProblemListPage({ query }: ProblemListPageProps) {
             </>
           ) : (
             problems.map((problem) => (
-              <ProblemCard key={problem.id} problem={problem as any} isLink />
+              <ProblemCard key={problem.id} problem={problem} isLink />
             ))
           )}
         </div>

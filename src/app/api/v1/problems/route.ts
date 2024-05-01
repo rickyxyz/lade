@@ -63,20 +63,22 @@ export async function GET(req: NextRequest) {
 
     const searchQuery = (() => {
       if (search) {
-        return {
+        const object = {
           title: {
             contains: search,
             mode: "insensitive",
           },
         };
+        return object;
       }
+      return {};
     })();
 
     const problemCount = await prisma.problem.count({
       where: {
-        ...(topicQuery as any),
-        ...(subTopicQuery as any),
-        ...(searchQuery as any),
+        ...topicQuery,
+        ...subTopicQuery,
+        ...searchQuery,
       },
     });
     const maxPages = Math.ceil(problemCount / count);
@@ -91,11 +93,12 @@ export async function GET(req: NextRequest) {
         solveds: true,
       },
       where: {
-        ...(topicQuery as any),
-        ...(subTopicQuery as any),
-        ...(searchQuery as any),
+        ...topicQuery,
+        ...subTopicQuery,
+        ...searchQuery,
       },
       orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ...(sortQuery as any),
       },
       skip: (Number(page) - 1) * Number(count),

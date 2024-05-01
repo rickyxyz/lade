@@ -65,6 +65,7 @@ export function ProblemCreateEditorFormMultiple({
               if (option) {
                 const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
                 setFieldValue("answer", JSON.stringify(defaultAnswer));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 setAnswer(defaultAnswer as any);
               }
             }}

@@ -35,7 +35,7 @@ export default async function handler(
 
     const contests = await prisma.contestToProblem.findMany({
       where: {
-        contestId: id as any,
+        contestId: id as unknown as number,
       },
     });
 

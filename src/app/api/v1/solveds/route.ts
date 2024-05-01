@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     result = await prisma.solved.findMany({
       where: {
-        userId: userId as any,
+        userId,
       },
     });
   } catch (e) {

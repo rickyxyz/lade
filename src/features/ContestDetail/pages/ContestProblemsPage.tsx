@@ -99,7 +99,7 @@ export function ContestProblemsPage({
           return (
             <ContestDetailProblemsProblemCard
               key={p.problem.id}
-              problem={p.problem as any}
+              problem={p.problem}
               onSubmit={handleCheckAnswer}
               cooldown={cooldown}
               loading={answerLoading === p.problem.id}

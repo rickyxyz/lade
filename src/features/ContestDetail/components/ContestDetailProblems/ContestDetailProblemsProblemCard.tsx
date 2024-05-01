@@ -117,7 +117,7 @@ export function ContestDetailProblemsProblemCard({
       <Button
         className="mt-4"
         onClick={() => {
-          onSubmit(id as any, answer)
+          onSubmit(id, answer)
             .then((v) => {
               if (v !== null) setSolved(v);
             })

@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest) {
     await prisma.$transaction(async (tx) => {
       const before = await tx.problem.findUnique({
         where: {
-          id: id as number,
+          id: id as unknown as number,
         },
       });
 
@@ -68,7 +68,7 @@ export async function PATCH(req: NextRequest) {
 
       await tx.problem.update({
         where: {
-          id: id as number,
+          id: id as unknown as number,
         },
         data: {
           title,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { json } from "@/utils/api";
@@ -18,8 +19,8 @@ export async function GET(req: NextRequest) {
 
     result = await prisma.solved.findFirst({
       where: {
-        userId: userId as any,
-        problemId: problemId as any,
+        userId: userId,
+        problemId: problemId as unknown as number,
       },
     });
   } catch (e) {

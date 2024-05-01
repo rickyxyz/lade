@@ -51,9 +51,7 @@ interface ProblemProps {
 }
 
 export function ProblemDetailPage({ id, user }: ProblemProps) {
-  const stateProblem = useState<ProblemType>(
-    PROBLEM_BLANK as unknown as ProblemType
-  );
+  const stateProblem = useState<ProblemType>(PROBLEM_BLANK);
   const [problem, setProblem] = stateProblem;
   const {
     title,

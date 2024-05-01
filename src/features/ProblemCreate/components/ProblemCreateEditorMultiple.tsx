@@ -35,7 +35,7 @@ export function ProblemCreateEditorMultiple({
       problems.map((problem, index) => (
         <ProblemCreateEditorMultipleEntry
           key={problem.id}
-          problem={problem as any}
+          problem={problem}
           onEdit={() => onEdit(index)}
           onDelete={() => {
             onDelete(index);

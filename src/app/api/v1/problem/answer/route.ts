@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const result = await prisma.problem.findUnique({
       where: {
-        id: id as number,
+        id: id as unknown as number,
       },
       include: {
         solveds: true,
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    problem = result as any;
+    problem = result as unknown as ProblemType;
 
     console.log(problem);
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     if (user) {
       const existing = await prisma.solved.findFirst({
         where: {
-          problemId: id as number,
+          problemId: id as unknown as number,
           userId: user.id,
         },
       });
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     const type = problem.type as unknown as ProblemAnswerType;
 
-    const verdict = validateAnswer(type as any, JSON.parse(accept), answer);
+    const verdict = validateAnswer(type, JSON.parse(accept), answer);
     console.log(JSON.parse(accept));
     console.log(answer);
 

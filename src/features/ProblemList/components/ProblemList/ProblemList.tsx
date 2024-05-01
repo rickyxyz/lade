@@ -53,7 +53,7 @@ export function ProblemList({
     search: userSearch = "",
     sort: userSort = "newest",
     page: userPage = 1,
-  } = useMemo(() => validateProblemQuery(query as any), [query]);
+  } = useMemo(() => validateProblemQuery(query), [query]);
 
   const [lastUpdated, setLastUpdated] = useState(0);
   const [problems, setProblems] = useState<ProblemDatabaseType[]>([]);

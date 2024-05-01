@@ -25,6 +25,8 @@ export const authConfig: AuthOptions = {
             if (user && user.data.id && user.data.role) {
               decoded.username = user.data.id;
               decoded.role = user.data.role;
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               return { ...decoded } as any;
             }
 
