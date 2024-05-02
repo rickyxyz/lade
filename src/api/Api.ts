@@ -7,14 +7,9 @@ import {
   SolvedType,
   UserType,
 } from "@/types";
+import { Empty, ApiMessage, ApiPagination } from "@/types";
 import { api } from "@/utils";
 import { AxiosResponse } from "axios";
-
-type Empty = Record<string, never>;
-
-interface ApiMessage {
-  message: string;
-}
 
 interface ApiParams {
   get_problem: {
@@ -91,13 +86,7 @@ interface ApiReturn {
   get_problem: ProblemType;
   get_problems: {
     data: ProblemDatabaseType[];
-    pagination: {
-      total_records: number;
-      next_page: number;
-      current_page: number;
-      prev_page: number;
-      total_pages: number;
-    };
+    pagination: ApiPagination;
   };
   post_problem: ApiMessage & {
     id: string;
@@ -115,13 +104,7 @@ interface ApiReturn {
   };
   get_contests: {
     data: ContestDatabaseType[];
-    pagination: {
-      total_records: number;
-      next_page: number;
-      current_page: number;
-      prev_page: number;
-      total_pages: number;
-    };
+    pagination: ApiPagination;
   };
   get_contest: ContestDatabaseType;
   post_contest: ApiMessage & {
@@ -205,7 +188,6 @@ export async function API<X extends keyof typeof ROUTES>(
     body?: ApiBody[X];
   }
 ) {
-  console.log("Execute API");
   const { method, path } = ROUTES[type];
   const { params, body } = config;
 

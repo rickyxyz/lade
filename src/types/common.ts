@@ -10,3 +10,5 @@ export type Only<T, U> = {
 };
 
 export type Either<T, U> = Only<T, U> | Only<U, T>;
+
+export type Empty = Record<string, never>;
