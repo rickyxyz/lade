@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { Button, Card, More } from "@/components";
+import { Button, Card, More, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ContestDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -9,9 +9,10 @@ import { Person } from "@mui/icons-material";
 
 export interface ContestCardProps {
   contest: ContestDatabaseType;
+  isLink?: boolean;
 }
 
-export function ContestCard({ contest }: ContestCardProps) {
+export function ContestCard({ contest, isLink }: ContestCardProps) {
   const {
     id,
     title,
@@ -35,24 +36,34 @@ export function ContestCard({ contest }: ContestCardProps) {
   const statementRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
-    () => (
-      <ProblemDetailTopics
-        className="mb-4"
-        topic={topic.name}
-        subTopic={subTopic.name}
-      />
-    ),
+    () =>
+      topic &&
+      subTopic && (
+        <ProblemDetailTopics
+          className="mb-4"
+          topic={topic.name}
+          subTopic={subTopic.name}
+        />
+      ),
     [subTopic, topic]
   );
 
   const renderMain = useMemo(
     () => (
       <>
-        <div className="relative flex justify-between mb-4">
-          <Link href={`/contest/${id}`}>
-            <h2 className="text-primary-600 hover:text-primary-700">{title}</h2>
-          </Link>
-          <More
+        <div className="relative flex justify-between mb-2">
+          {isLink ? (
+            <Link href={`/problem/${id}`}>
+              <Paragraph className="mr-16" as="h2" color="primary-6">
+                {title}
+              </Paragraph>
+            </Link>
+          ) : (
+            <Paragraph className="mr-16" as="h2" color="primary-6">
+              {title}
+            </Paragraph>
+          )}
+          {/* <More
             className="!absolute !right-0"
             options={
               permission === "author"
@@ -67,19 +78,21 @@ export function ContestCard({ contest }: ContestCardProps) {
                   ]
                 : []
             }
-          />
+          /> */}
         </div>
         {renderTags}
-        <article className="mb-5" ref={statementRef}></article>
+        <article
+          className="mb-5 overflow-hidden max-h-[4.4rem]"
+          ref={statementRef}
+        ></article>
       </>
     ),
-    [id, permission, renderTags, title]
+    [id, isLink, renderTags, title]
   );
 
   const renderStats = useMemo(
     () => (
       <div className="flex items-center justify-between">
-        <Button>Participate</Button>
         <div className="flex items-center text-sm text-secondary-600 gap-6">
           <ProblemDetailStats text={String(authorId)} icon={Person} />
         </div>

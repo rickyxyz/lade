@@ -322,6 +322,7 @@ export function ContestListPage({ query }: ProblemListPageProps) {
                 icon={Search}
               />
             }
+            placeholder="Search..."
           />
           <Paragraph
             color="primary-6"

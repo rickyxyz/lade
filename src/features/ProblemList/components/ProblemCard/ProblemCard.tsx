@@ -96,7 +96,10 @@ export function ProblemCard({
           /> */}
         </div>
         {renderTags}
-        <article className="mb-5" ref={statementRef}></article>
+        <article
+          className="mb-5 overflow-hidden max-h-[4.4rem]"
+          ref={statementRef}
+        ></article>
       </>
     ),
     [id, isLink, renderTags, title]

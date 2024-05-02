@@ -22,6 +22,9 @@ export function PaginationButton({
       orderDirection="row"
       label={String(page)}
       onClick={onClick}
+      style={{
+        background: isActive ? undefined : "white",
+      }}
     />
   );
 }

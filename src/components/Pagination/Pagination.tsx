@@ -145,6 +145,9 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           onClick={() => {
             onClick(Math.max(0, page - 1));
           }}
+          style={{
+            background: page === 1 ? undefined : "white",
+          }}
         />
         {(() => {
           switch (style) {
@@ -166,6 +169,9 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           iconSize={device === "mobile" ? "s" : "m"}
           onClick={() => {
             onClick(Math.min(maxPages, page + 1));
+          }}
+          style={{
+            background: page === maxPages ? undefined : "white",
           }}
         />
       </div>
