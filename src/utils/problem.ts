@@ -160,7 +160,7 @@ export function validateFormContest(contest: ContestType) {
   if (startDate && endDate && startDate > endDate)
     errors.endDate = "End date cannot be earlier than start date.";
 
-  const problems = JSON.parse(contest.problems as unknown as string);
+  const problems = JSON.parse((contest.problems ?? "{}") as unknown as string);
   console.log(problems);
 
   const count = Object.keys(problems).length;

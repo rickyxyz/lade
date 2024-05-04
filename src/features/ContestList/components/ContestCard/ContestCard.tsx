@@ -53,7 +53,7 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
       <>
         <div className="relative flex justify-between mb-2">
           {isLink ? (
-            <Link href={`/problem/${id}`}>
+            <Link href={`/contest/${id}`}>
               <Paragraph className="mr-16" as="h2" color="primary-6">
                 {title}
               </Paragraph>

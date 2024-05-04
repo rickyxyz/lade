@@ -233,7 +233,7 @@ export function ContestListPage({ query }: ProblemListPageProps) {
           </>
         ) : (
           problems.map((problem) => (
-            <ContestCard key={problem.id} contest={problem} />
+            <ContestCard key={problem.id} contest={problem} isLink />
           ))
         )}
       </div>

@@ -13,7 +13,15 @@ interface SettingSelectProps<X extends string, Y extends SelectOptionType<X>[]>
 export function SettingSelect<
   X extends string,
   Y extends SelectOptionType<X>[]
->({ formName, name, onBlur, ...rest }: SettingSelectProps<X, Y>) {
+>({
+  formName,
+  name,
+  onBlur,
+  onSelectOption,
+  selectedOption,
+  allowClearSelection,
+  ...rest
+}: SettingSelectProps<X, Y>) {
   const { setFieldTouched } = useFormikContext<any>();
 
   return (
@@ -27,6 +35,8 @@ export function SettingSelect<
           }}
           optional
           allowClearSelection={false}
+          onSelectOption={onSelectOption}
+          selectedOption={selectedOption}
           {...rest}
         />
         <Field name={formName}>
