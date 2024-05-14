@@ -15,6 +15,7 @@ import {
   Modal,
   Paragraph,
   Pagination,
+  IconText,
 } from "@/components";
 import { useDebounce, useDevice } from "@/hooks";
 import {
@@ -26,7 +27,7 @@ import {
   ProblemType,
 } from "@/types";
 import { ProblemFilter } from "..";
-import { Search } from "@mui/icons-material";
+import { Filter, FilterAlt, Search } from "@mui/icons-material";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import { validateProblemQuery } from "@/utils";
 import { NumberParam, StringParam, useQueryParams } from "use-query-params";
@@ -205,7 +206,7 @@ export function ProblemList({
             stateSortBy={stateSortBy}
             stateSubTopic={stateSubtopic}
             stateTopic={stateTopic}
-            wrapperClassName="flex-col bg-white w-80"
+            wrapperClassName="flex-col w-80"
             buttonElement={
               <Button
                 className="mt-4"
@@ -226,7 +227,7 @@ export function ProblemList({
               stateSortBy={stateSortBy}
               stateSubTopic={stateSubtopic}
               stateTopic={stateTopic}
-              wrapperClassName="bg-slate-200 flex-col"
+              wrapperClassName="flex-col"
               buttonElement={
                 <Button
                   className="mt-4 w-fit"
@@ -256,38 +257,43 @@ export function ProblemList({
     () => (
       <>
         <div className="flex flex-col">
-          <Input
-            placeholder="Search..."
-            externalWrapperClassName="flex-1"
-            wrapperClassName="flex"
-            className="!rounded-none !rounded-l-md"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.currentTarget.value);
-            }}
-            rightElement={
+          <div className="flex gap-4 mb-8">
+            <div className="flex-1 relative">
+              <Input
+                placeholder="Search..."
+                externalWrapperClassName="flex-1"
+                wrapperClassName="flex"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.currentTarget.value);
+                }}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    handleUpdateQuery(1);
+                  }
+                }}
+              />
+
               <ButtonIcon
-                className="!px-4"
-                variant="outline"
-                order="last"
-                orderDirection="row"
+                className="absolute right-0 top-0 !bg-transparent"
                 onClick={() => {
                   handleUpdateQuery(1);
                 }}
                 disabled={loading}
                 icon={Search}
+                variant="ghost"
               />
-            }
-          />
-          <Paragraph
-            color="primary-6"
-            className="leading-8 my-2 self-end cursor-pointer select-none"
-            onClick={() => {
-              setAdvanced((prev) => !prev);
-            }}
-          >
-            Advanced Search
-          </Paragraph>
+            </div>
+            <ButtonIcon
+              className="!px-4 !w-10 bg-white"
+              onClick={() => {
+                setAdvanced((prev) => !prev);
+              }}
+              disabled={loading}
+              icon={FilterAlt}
+              variant="outline"
+            />
+          </div>
           {renderAdvanced}
         </div>
         {pagination.initialized && renderPagination}

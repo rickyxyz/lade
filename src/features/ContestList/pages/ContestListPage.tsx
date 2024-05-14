@@ -271,7 +271,7 @@ export function ContestListPage({ query }: ProblemListPageProps) {
               stateSortBy={stateSortBy}
               stateSubTopic={stateSubtopic}
               stateTopic={stateTopic}
-              wrapperClassName="bg-slate-200 flex-col"
+              wrapperClassName="bg-primary-50 flex-col"
               buttonElement={
                 <Button
                   className="mt-4 w-fit"

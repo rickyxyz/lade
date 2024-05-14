@@ -33,7 +33,12 @@ export function ProblemFilter({
   const { topicOptions, subTopicOptions, loading } = useTopics();
 
   return (
-    <div className={clsx("flex rounded-lg !p-4 mb-8", wrapperClassName)}>
+    <div
+      className={clsx(
+        "flex rounded-lg !p-4 mb-8 bg-blue-50 border border-blue-200",
+        wrapperClassName
+      )}
+    >
       <div className={clsx("flex gap-4", className)}>
         <div className="flex-1">
           <Paragraph weight="semibold">Topics</Paragraph>

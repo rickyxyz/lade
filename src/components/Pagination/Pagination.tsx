@@ -62,7 +62,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
             <PaginationButton
               size={device === "mobile" ? "s" : "m"}
               key={i}
-              page={i}
+              label={String(i)}
               onClick={() => {
                 if (!chosen) onClick(i);
               }}
@@ -83,7 +83,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
             <PaginationButton
               size={device === "mobile" ? "s" : "m"}
               key={i}
-              page={i}
+              label={String(i)}
               onClick={() => {
                 if (!chosen) onClick(page + i);
               }}
@@ -107,7 +107,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
             <PaginationButton
               size={device === "mobile" ? "s" : "m"}
               key={i}
-              page={i}
+              label={String(i)}
               onClick={() => {
                 if (!chosen) onClick(i);
               }}
@@ -135,6 +135,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
       </div>
       <div className="flex">
         <ButtonIcon
+          className={clsx(page !== 1 && "bg-white")}
           variant="outline"
           order="first"
           orderDirection="row"
@@ -144,9 +145,6 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           iconSize={device === "mobile" ? "s" : "m"}
           onClick={() => {
             onClick(Math.max(0, page - 1));
-          }}
-          style={{
-            background: page === 1 ? undefined : "white",
           }}
         />
         {(() => {
@@ -160,6 +158,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           }
         })()}
         <ButtonIcon
+          className={clsx(page !== maxPages && "bg-white")}
           variant="outline"
           order="last"
           orderDirection="row"
@@ -169,9 +168,6 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           iconSize={device === "mobile" ? "s" : "m"}
           onClick={() => {
             onClick(Math.min(maxPages, page + 1));
-          }}
-          style={{
-            background: page === maxPages ? undefined : "white",
           }}
         />
       </div>

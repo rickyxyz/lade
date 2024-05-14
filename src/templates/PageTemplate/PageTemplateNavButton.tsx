@@ -30,7 +30,7 @@ export function PageTemplateNavButton({
     () => (
       <div
         className={clsx(
-          "flex items-center rounded-md transition-colors",
+          "flex items-center rounded-md transition-colors cursor-pointer",
           isDanger
             ? [
                 "hover:bg-danger-100",

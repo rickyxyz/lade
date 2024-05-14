@@ -15,10 +15,14 @@ export function ButtonIcon({
   size,
   iconSize = "m",
   iconClassName,
+  className,
   ...rest
 }: ButtonIcon) {
   return (
-    <Button className={clsx("!px-0", BUTTON_SIZE_STYLE[size ?? "m"])} {...rest}>
+    <Button
+      className={clsx("!px-0", BUTTON_SIZE_STYLE[size ?? "m"], className)}
+      {...rest}
+    >
       <Icon
         size={iconSize}
         className={clsx("m-auto", iconClassName)}

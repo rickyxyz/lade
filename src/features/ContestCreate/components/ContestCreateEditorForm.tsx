@@ -492,7 +492,7 @@ export function ContestCreateEditorForm({
                   setFieldValue("problems", JSON.stringify(problems));
                   submitForm();
                 }}
-                label="Create"
+                label="Submit"
               />
               {onLeaveEditor && (
                 <Button

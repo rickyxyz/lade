@@ -88,11 +88,6 @@ export function PageTemplateNav() {
             icon: LibraryBooksOutlined,
           },
           {
-            label: "Leaderboard",
-            href: "/leaderboard",
-            icon: EmojiEventsOutlined,
-          },
-          {
             label: "New Problem",
             href: "/problem/new",
             icon: NoteAddOutlined,
@@ -109,12 +104,6 @@ export function PageTemplateNav() {
       {
         name: "Account",
         links: [
-          {
-            label: "You",
-            href: "/user",
-            icon: Person,
-            permission: "user+",
-          },
           {
             label: "Log Out",
             onClick: logout,
