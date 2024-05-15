@@ -18,7 +18,7 @@ function styleTemplate(style, color) {
     `active:bg-${color}-200 focus:bg-${color}-100`,
   ];
 
-  const OUTLINE = [...GHOST, `border border-${color}-6`];
+  const OUTLINE = [...GHOST, `border border-${color}-500`];
 
   const OUTLINE_COLORLESS = [...GHOST, `border border-secondary-300`];
 
