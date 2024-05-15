@@ -3,7 +3,7 @@ import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/libs/firebase";
-import { Button, Card } from "@/components";
+import { Button, Card, Paragraph } from "@/components";
 import { validateFormSignUp } from "@/utils";
 import { SignUpFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
@@ -64,11 +64,11 @@ export function AuthSignUpPage() {
         <AuthHeader
           title="Sign Up"
           subtitle={
-            <>
+            <Paragraph>
               Already have an account?
               <br />
               <Link href="/login">Login</Link> instead.
-            </>
+            </Paragraph>
           }
         />
         <Formik
@@ -99,5 +99,5 @@ export function AuthSignUpPage() {
     [handleSignUp]
   );
 
-  return <PageTemplate hideSidebar>{renderForm}</PageTemplate>;
+  return <PageTemplate title="Sign Up">{renderForm}</PageTemplate>;
 }

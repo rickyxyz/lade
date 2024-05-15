@@ -12,7 +12,6 @@ export interface PageTemplateProps {
   children?: ReactNode;
   side?: ReactNode;
   footer?: ReactNode;
-  hideSidebar?: boolean;
 }
 
 export function PageTemplate({
@@ -21,7 +20,6 @@ export function PageTemplate({
   className,
   children,
   head,
-  side,
 }: PageTemplateProps) {
   return (
     <div

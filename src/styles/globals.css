@@ -2,6 +2,7 @@
 @import "./markdown.css";
 
 @layer base {
+  label,
   p,
   span,
   input {

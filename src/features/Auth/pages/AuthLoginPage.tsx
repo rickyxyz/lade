@@ -94,5 +94,5 @@ export function AuthLoginPage() {
     [handleLogin]
   );
 
-  return <PageTemplate hideSidebar>{renderForm}</PageTemplate>;
+  return <PageTemplate title="Login">{renderForm}</PageTemplate>;
 }

@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { ReactNode } from "react";
+import { Paragraph } from "../Paragraph";
 
 interface SettingProps {
   formName?: string;
@@ -18,7 +19,9 @@ export function Setting({
 }: SettingProps) {
   return (
     <div className={clsx("flex flex-col", className)}>
-      <span className="w-40 mt-2 text-secondary-500">{name}</span>
+      <Paragraph className="w-40 mt-2" color="secondary-5">
+        {name}
+      </Paragraph>
       <div className={clsx("flex-1", classNameChildren)}>{children}</div>
     </div>
   );

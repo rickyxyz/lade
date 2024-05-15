@@ -21,7 +21,6 @@ export function AuthInput(props: AuthInputProps) {
           externalWrapperClassName="mb-4"
           wrapperClassName="w-64"
           errorText={touched[name] ? errors[name] : undefined}
-          variant="solid"
         />
       )}
     </Field>

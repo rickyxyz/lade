@@ -1,4 +1,5 @@
 import { CSSProperties, ReactNode, useMemo } from "react";
+import clsx from "clsx";
 import {
   FONT_COLOR,
   FONT_SIZE,
@@ -6,11 +7,10 @@ import {
   FontColor,
   FontSize,
   FontWeight,
-} from "@/consts/style";
-import clsx from "clsx";
+} from "@/consts";
 
 export interface ParagraphProps {
-  as?: "span" | "p" | "h1" | "h2" | "h3" | "a";
+  as?: "p" | "span" | "h1" | "h2" | "h3" | "label";
   weight?: FontWeight;
   id?: string;
   size?: FontSize;
@@ -18,15 +18,18 @@ export interface ParagraphProps {
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  htmlFor?: string;
   onClick?: () => void;
 }
 
 export function Paragraph({
-  as = "span",
+  as = "p",
   weight = "medium",
   size = "base",
   color = "secondary-8",
   className: propsClass,
+  children,
+  htmlFor,
   ...rest
 }: ParagraphProps) {
   const className = useMemo(
@@ -43,15 +46,16 @@ export function Paragraph({
   const props = useMemo(
     () => ({
       ...rest,
+      children,
       className,
     }),
-    [rest, className]
+    [rest, children, className]
   );
 
   const render = useMemo(() => {
     switch (as) {
-      case "a":
-        return <a {...props} />;
+      case "label":
+        return <label htmlFor={htmlFor} {...props} />;
       case "span":
         return <span {...props} />;
       case "p":
@@ -63,7 +67,7 @@ export function Paragraph({
       case "h3":
         return <h3 {...props} />;
     }
-  }, [as, props]);
+  }, [as, htmlFor, props]);
 
   return render;
 }
