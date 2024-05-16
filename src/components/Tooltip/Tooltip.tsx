@@ -1,8 +1,15 @@
-import { ReactNode, RefObject, forwardRef, useMemo, useState } from "react";
+import {
+  HTMLAttributes,
+  ReactNode,
+  RefObject,
+  forwardRef,
+  useMemo,
+  useState,
+} from "react";
 import clsx from "clsx";
 import { StateType } from "@/types";
 
-export type TooltipBaseProps = {
+export interface TooltipBaseProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   classNameInner?: string;
   optionWidth?: number;
@@ -13,7 +20,7 @@ export type TooltipBaseProps = {
   showOnHover?: boolean;
   topOffset?: number;
   onBlur?: () => void;
-};
+}
 
 export type TooltipProps = {
   triggerElement: ReactNode;
@@ -34,6 +41,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       showOnHover,
       topOffset = 48,
       onBlur,
+      ...rest
     }: TooltipProps,
     ref
   ) {
@@ -91,6 +99,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         }}
         ref={ref}
         tabIndex={0}
+        {...rest}
       >
         {visible && renderHiddenElement}
         {triggerElement}

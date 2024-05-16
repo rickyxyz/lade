@@ -5,22 +5,30 @@ import { HTMLProps } from "react";
 
 interface SelectOptionProps extends HTMLProps<HTMLDivElement> {
   option: SelectOptionType<string>;
-  selected?: boolean;
+  isSelected?: boolean;
+  isHighlighted?: boolean;
 }
 
 export function SelectOption({
   onClick,
   className,
   option,
-  selected,
+  isSelected,
+  isHighlighted,
 }: SelectOptionProps) {
   return (
     <div
-      className={clsx(OPTION_BASE_STYLE, className)}
+      className={clsx(
+        OPTION_BASE_STYLE,
+        isHighlighted && "bg-blue-50",
+        className
+      )}
       onClick={onClick}
       key={option.id}
+      role="option"
+      aria-selected={isSelected}
     >
-      <span className={clsx("w-8", !selected && "invisible")}>
+      <span className={clsx("w-8", !isSelected && "invisible")}>
         <Check />
       </span>
       <span>{option.text}</span>

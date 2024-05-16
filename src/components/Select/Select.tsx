@@ -5,6 +5,7 @@ import { Icon } from "../Icon";
 import { SelectOption } from "./SelectOption";
 import { Tooltip, TooltipBaseProps } from "../Tooltip";
 import { ExpandMore, HourglassEmpty } from "@mui/icons-material";
+import { useDevice } from "@/hooks";
 
 type SelectVariant = "basic" | "solid";
 
@@ -37,13 +38,22 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
 }: SelectProps<X, Y>) {
   const stateVisible = useState(false);
   const [visible, setVisible] = stateVisible;
-  const currentOption = useMemo(() => {
-    const available = options
-      ? options.filter((option) => option.id === selectedOption)[0]
-      : undefined;
+  const [currentOption, currentIndex] = useMemo(() => {
+    let optionIndex: number | undefined;
+    let optionText = unselectedText;
 
-    return selectedOption && available ? available.text : unselectedText;
+    options.forEach((option, i) => {
+      if (option.id === selectedOption) {
+        optionText = option.text;
+        optionIndex = i;
+      }
+    });
+
+    return [optionText, optionIndex];
   }, [options, selectedOption, unselectedText]);
+  const [index, setIndex] = useState<number | undefined>(currentIndex);
+
+  const desktop = useDevice();
 
   const renderRemoveOption = useMemo(() => {
     return (
@@ -60,12 +70,14 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
             onBlur && onBlur();
             setVisible(false);
           }}
-          selected={selectedOption === undefined}
+          isSelected={selectedOption === undefined}
+          isHighlighted={index === undefined}
         />
       )
     );
   }, [
     allowClearSelection,
+    index,
     onBlur,
     onSelectOption,
     optional,
@@ -79,7 +91,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       <>
         {renderRemoveOption}
         {options ? (
-          options.map((option) => (
+          options.map((option, i) => (
             <SelectOption
               key={option.id}
               option={option}
@@ -88,8 +100,10 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
                 onSelectOption(option);
                 onBlur && onBlur();
                 setVisible(false);
+                setIndex(i);
               }}
-              selected={selectedOption === option.id}
+              isSelected={selectedOption === option.id}
+              isHighlighted={index === i}
             />
           ))
         ) : (
@@ -101,6 +115,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       renderRemoveOption,
       options,
       selectedOption,
+      index,
       onSelectOption,
       onBlur,
       setVisible,
@@ -154,6 +169,28 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       className={className}
       stateVisible={stateVisible}
       disabled={disabled}
+      onKeyDown={(e) => {
+        e.preventDefault();
+
+        setIndex((prev) => {
+          if (e.key === "ArrowUp") {
+            if (!prev || (optional && prev === 0)) return undefined;
+
+            return Math.max(0, prev - 1);
+          } else if (e.key === "ArrowDown") {
+            return prev !== undefined
+              ? Math.min(options.length - 1, prev + 1)
+              : 0;
+          }
+        });
+
+        if (e.key === "Enter") {
+          index !== undefined && onSelectOption(options[index]);
+          setIndex(index);
+          onBlur && onBlur();
+          setVisible(false);
+        }
+      }}
     />
   );
 }
