@@ -273,7 +273,6 @@ export function ProblemList({
                   }
                 }}
               />
-
               <ButtonIcon
                 className="absolute right-0 top-0 !bg-transparent"
                 onClick={() => {

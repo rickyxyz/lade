@@ -174,6 +174,7 @@ export function ProblemCreateEditorForm({
       {renderProblemAnswer}
       <div className="flex flex-auto gap-4">
         <Button
+          className="flex-1"
           loading={loading}
           disabled={!initialized || atLeastOneError}
           type="submit"
@@ -181,7 +182,12 @@ export function ProblemCreateEditorForm({
           label="Save"
         />
         {onLeaveEditor && (
-          <Button variant="outline" onClick={onLeaveEditor} label="Cancel" />
+          <Button
+            className="flex-1"
+            variant="outline-2"
+            onClick={onLeaveEditor}
+            label="Cancel"
+          />
         )}
       </div>
     </>

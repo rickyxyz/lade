@@ -23,7 +23,7 @@ export interface ParagraphProps {
 }
 
 export function Paragraph({
-  as = "p",
+  as = "span",
   weight = "medium",
   size = "base",
   color = "secondary-8",
@@ -58,14 +58,14 @@ export function Paragraph({
         return <label htmlFor={htmlFor} {...props} />;
       case "span":
         return <span {...props} />;
-      case "p":
-        return <p {...props} />;
       case "h1":
         return <h1 {...props} />;
       case "h2":
         return <h2 {...props} />;
       case "h3":
         return <h3 {...props} />;
+      default:
+        return <p {...props} />;
     }
   }, [as, htmlFor, props]);
 

@@ -33,7 +33,7 @@ export function ProblemDetailData({
   onEdit,
   onDelete,
 }: ProblemDetailDataProps) {
-  const { title, topic, subTopic, authorId, createdAt } = problem;
+  const { title, topic, subTopic, authorId, createdAt, solveds = [] } = problem;
 
   return (
     <Card className={className}>
@@ -50,7 +50,7 @@ export function ProblemDetailData({
       <table className="table-fixed w-full">
         <tbody>
           <DataRow name="CREATED BY" value={authorId} />
-          <DataRow name="SOLVED BY" value={authorId} />
+          <DataRow name="SOLVED BY" value={solveds.length} />
           <DataRow
             name="POSTED AT"
             value={new Date(createdAt as unknown as string).toLocaleString(
@@ -68,7 +68,12 @@ export function ProblemDetailData({
       </table>
       {showAuthorMenu && (
         <div className="grid grid-cols-2 gap-4 mt-4">
-          <Button variant="outline-2" label="Edit" onClick={onEdit} />
+          <Button
+            color="secondary"
+            variant="outline-2"
+            label="Edit"
+            onClick={onEdit}
+          />
           <Button
             color="danger"
             variant="outline-2"

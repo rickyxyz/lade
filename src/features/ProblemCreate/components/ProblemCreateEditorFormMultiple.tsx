@@ -185,7 +185,12 @@ export function ProblemCreateEditorFormMultiple({
           label="Submit"
         />
         {onLeaveEditor && (
-          <Button variant="ghost" onClick={onLeaveEditor} label="Cancel" />
+          <Button
+            color="secondary"
+            variant="outline-2"
+            onClick={onLeaveEditor}
+            label="Cancel"
+          />
         )}
       </div>
     </>

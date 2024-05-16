@@ -58,7 +58,8 @@ export function ProblemCreateEditorMultipleList({
         onClick={onAdd}
         alignText="center"
         label="Add Problem"
-        variant="outline"
+        variant="outline-2"
+        color="secondary"
         disabled={!canCreateMore}
       />
       <Button

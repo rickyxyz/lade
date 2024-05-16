@@ -80,7 +80,7 @@ export function Button({
               )}
               as="p"
               color="inherit"
-              weight="medium"
+              weight="semibold"
             >
               {label}
             </Paragraph>

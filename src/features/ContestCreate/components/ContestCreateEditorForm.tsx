@@ -29,7 +29,12 @@ import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
 import { useDebounce, useProblemEditInitialized, useTopics } from "@/hooks";
 import { crudData } from "@/libs/firebase";
-import { Setting, SettingDate, SettingSelect } from "@/components/Setting";
+import {
+  Setting,
+  SettingDate,
+  SettingInput,
+  SettingSelect,
+} from "@/components/Setting";
 import { API } from "@/api";
 import clsx from "clsx";
 import { Delete, North, South, X } from "@mui/icons-material";
@@ -177,22 +182,12 @@ export function ContestCreateEditorForm({
     () => (
       <section className="mb-8" data-color-mode="light">
         <h2 className="mb-4">Contest Details</h2>
-        <Field name="title">
-          {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ({ field, form: { touched, errors } }: any) => (
-              <Input
-                {...field}
-                externalWrapperClassName="mb-4"
-                wrapperClassName="w-full"
-                placeholder="Enter contest title here..."
-                errorText={touched["title"] ? errors["title"] : undefined}
-                disabled={!initialized}
-              />
-            )
-          }
-        </Field>
-        <div className="mb-4">
+        <SettingInput
+          name="Contest Title"
+          formName="title"
+          placeholder="Enter contest title here..."
+        />
+        <div className="my-4">
           <MarkdownEditor
             placeholder="Enter the contest description here..."
             value={description}
@@ -486,6 +481,7 @@ export function ContestCreateEditorForm({
             {renderContestProblemTable}
             <div className="flex gap-4 mt-4">
               <Button
+                className="flex-1"
                 loading={loading}
                 disabled={!initialized}
                 onClick={() => {
@@ -496,7 +492,8 @@ export function ContestCreateEditorForm({
               />
               {onLeaveEditor && (
                 <Button
-                  variant="ghost"
+                  className="flex-1"
+                  variant="outline-2"
                   onClick={onLeaveEditor}
                   label="Cancel"
                 />
