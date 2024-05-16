@@ -15,36 +15,22 @@ export function SettingInput({
   disabled,
   ...rest
 }: SettingInputProps) {
-  const { setFieldTouched } = useFormikContext<any>();
-
   return (
-    <Setting name={name}>
-      {/* <Field name={formName}>
-          {({ field, meta }: any) => (
-            <>
-              <input {...rest} {...field} className="hidden" type="text" />
-              {meta.touched && meta.error && (
-                <span className="pl-4 col-start-2 text-danger-500">
-                  {meta.error}
-                </span>
-              )}
-            </>
-          )}
-        </Field> */}
-      <Field name={formName}>
-        {({ field, meta }: any) => (
-          <div className="col-span-2">
-            <Input
-              {...field}
-              type="text"
-              name={formName}
-              disabled={disabled}
-              errorText={meta.touched && meta.error}
-              {...rest}
-            />
-          </div>
-        )}
-      </Field>
-    </Setting>
+    <Field name={formName}>
+      {({ field, meta }: any) => (
+        <div className="col-span-2">
+          <Input
+            {...field}
+            type="text"
+            id={formName}
+            label={name}
+            name={formName}
+            disabled={disabled}
+            errorText={meta.touched && meta.error}
+            {...rest}
+          />
+        </div>
+      )}
+    </Field>
   );
 }
