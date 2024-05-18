@@ -13,6 +13,7 @@ import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import { CheckCircle, Person } from "@mui/icons-material";
+import clsx from "clsx";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
@@ -125,7 +126,7 @@ export function ProblemCard({
   }, [handleRenderMarkdown]);
 
   return (
-    <Card className={className} onClick={onClick}>
+    <Card className={clsx(className, "h-fit")} onClick={onClick}>
       {renderMain}
       {renderStats}
     </Card>

@@ -111,7 +111,7 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
   }, [handleRenderMarkdown]);
 
   return (
-    <Card>
+    <Card className="h-fit">
       {renderMain}
       {renderStats}
     </Card>
