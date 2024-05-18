@@ -170,6 +170,8 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       stateVisible={stateVisible}
       disabled={disabled}
       onKeyDown={(e) => {
+        if (e.key === "Tab") return;
+
         e.preventDefault();
 
         setIndex((prev) => {

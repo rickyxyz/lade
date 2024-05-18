@@ -98,7 +98,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
           }
         }}
         ref={ref}
-        tabIndex={0}
+        tabIndex={disabled ? undefined : 0}
         {...rest}
       >
         {visible && renderHiddenElement}
