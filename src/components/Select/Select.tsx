@@ -42,7 +42,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     let optionIndex: number | undefined;
     let optionText = unselectedText;
 
-    options.forEach((option, i) => {
+    (options ?? []).forEach((option, i) => {
       if (option.id === selectedOption) {
         optionText = option.text;
         optionIndex = i;
