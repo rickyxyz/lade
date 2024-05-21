@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { ButtonIcon, Card, More, Paragraph } from "@/components";
+import {
+  ButtonIcon,
+  Card,
+  MarkdownPreview,
+  More,
+  Paragraph,
+} from "@/components";
 import { getPermissionForContent, md, parseAnswer } from "@/utils";
 import { ProblemDatabaseType, ProblemType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -72,16 +78,7 @@ export function ProblemCreateEditorMultipleEntry({
           </div>
         </div>
         {renderTags}
-        <div className="relative overflow-hidden h-[6rem]">
-          <article className="absolute top-0" ref={statementRef}></article>
-          <div
-            className={clsx(
-              "PreviewStatement",
-              "absolute top-0 w-full h-[6rem] bg-gradient-to-b",
-              "from-transparent via-transparent"
-            )}
-          ></div>
-        </div>
+        <article className="mb-4" ref={statementRef} />
         <div className="flex items-center gap-4">
           <Paragraph size="s" color="secondary-4">
             ANSWER

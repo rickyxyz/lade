@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
-import { Button, Card, More, Paragraph } from "@/components";
+import { Button, Card, MarkdownPreview, More, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ContestDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -81,10 +81,7 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
           /> */}
         </div>
         {renderTags}
-        <article
-          className="mb-5 overflow-hidden max-h-[4.4rem]"
-          ref={statementRef}
-        ></article>
+        <MarkdownPreview className="mb-5" ref={statementRef} />
       </>
     ),
     [id, isLink, renderTags, title]
@@ -104,6 +101,9 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
   const handleRenderMarkdown = useCallback(() => {
     if (statementRef.current)
       statementRef.current.innerHTML = md.render(statement);
+
+    console.log("Statement Ref");
+    console.log(statementRef);
   }, [statement]);
 
   useEffect(() => {

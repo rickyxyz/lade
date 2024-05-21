@@ -30,7 +30,7 @@ export function ProblemCreateEditorMultipleList({
   );
 
   return (
-    <Card className="flex flex-col flex-grow lg:max-w-[320px] h-fit lg:sticky lg:top-0">
+    <Card className="flex flex-col flex-grow lg:min-w-[320px] h-fit lg:sticky lg:top-0">
       <Paragraph as="h2" size="l">
         Problems ({problems.length} / {PROBLEM_CREATE_SIMULTANEOUS_COUNT})
       </Paragraph>

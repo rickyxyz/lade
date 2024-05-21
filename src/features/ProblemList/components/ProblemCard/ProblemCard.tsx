@@ -8,7 +8,7 @@ import {
 } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { Card, More, Paragraph } from "@/components";
+import { Card, MarkdownPreview, More, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -97,10 +97,11 @@ export function ProblemCard({
           /> */}
         </div>
         {renderTags}
-        <article
+        {/* <article
           className="mb-5 overflow-hidden max-h-[4.4rem]"
           ref={statementRef}
-        ></article>
+        ></article> */}
+        <MarkdownPreview className="mb-2" ref={statementRef} />
       </>
     ),
     [id, isLink, renderTags, title]
