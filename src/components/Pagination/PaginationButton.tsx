@@ -16,18 +16,12 @@ export function PaginationButton({
 }: PaginationButtonProps) {
   return (
     <Button
-      className={clsx(
-        size === "m" ? "w-10" : "!w-8 !h-8 !px-0",
-        !isActive && "bg-white"
-      )}
+      className={clsx(size === "m" ? "w-10" : "!w-8 !h-8 !px-0")}
       variant={isActive ? "solid" : "outline"}
       order="middle"
       orderDirection="row"
       label={label}
       onClick={onClick}
-      // style={{
-      //   background: isActive ? undefined : "white",
-      // }}
     />
   );
 }

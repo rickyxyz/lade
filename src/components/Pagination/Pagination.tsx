@@ -135,7 +135,6 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
       </div>
       <div className="flex">
         <ButtonIcon
-          className={clsx(page !== 1 && "bg-white")}
           variant="outline"
           order="first"
           orderDirection="row"
@@ -158,7 +157,6 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           }
         })()}
         <ButtonIcon
-          className={clsx(page !== maxPages && "bg-white")}
           variant="outline"
           order="last"
           orderDirection="row"

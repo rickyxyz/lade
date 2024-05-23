@@ -59,6 +59,7 @@ export function Button({
       className={clsx(
         BUTTON_BASE_STYLE,
         BUTTON_VARIOUS_STYLE[variant][color],
+        variant === "outline" && "bg-white",
         size && BUTTON_SIZE_STYLE[size],
         order && orderDirection && BUTTON_ORDER_STYLE[orderDirection][order],
         !order && "rounded",
@@ -97,7 +98,7 @@ export function Button({
 const BUTTON_BASE_STYLE = [
   "flex flex-row justify-center items-center",
   "duration-100 text-base font-semibold",
-  "disabled:cursor-not-allowed disabled:opacity-50",
+  "disabled:cursor-not-allowed disabled:opacity-30 disabled:pointer-events-none",
 ];
 
 const BUTTON_ORDER_STYLE: Record<
