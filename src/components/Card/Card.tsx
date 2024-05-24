@@ -23,4 +23,4 @@ export function Card(props: CardProps) {
 }
 
 const CARD_BASE_STYLE =
-  "Card bg-white p-8 border border-secondary-200 max-w-full";
+  "Card bg-white p-8 border border-secondary-200 max-w-full transition-none";

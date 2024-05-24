@@ -30,7 +30,7 @@ export function ProblemCreateEditorMultipleList({
   );
 
   return (
-    <Card className="flex flex-col flex-grow lg:min-w-[320px] h-fit lg:sticky lg:top-0">
+    <Card className="flex flex-col flex-grow lg:min-w-[320px] lg:max-w-[320px] h-fit lg:sticky lg:top-0">
       <Paragraph as="h2" size="l">
         Problems ({problems.length} / {PROBLEM_CREATE_SIMULTANEOUS_COUNT})
       </Paragraph>
@@ -40,7 +40,8 @@ export function ProblemCreateEditorMultipleList({
             <div className="flex items-center justify-between">
               <Paragraph>{title}</Paragraph>
               <ButtonIcon
-                className="!p-1 !h-6"
+                className="!p-1"
+                size="xs"
                 icon={Delete}
                 variant="ghost"
                 color="danger"

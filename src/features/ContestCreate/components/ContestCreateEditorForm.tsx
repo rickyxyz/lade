@@ -430,14 +430,13 @@ export function ContestCreateEditorForm({
       return (
         <ProblemCard
           className={clsx(
-            "rounded-md transition-colors bg-white hover:bg-secondary-50",
+            "rounded-md transition-colors bg-white",
             isAdded
               ? "!border-primary-400 cursor-pointer outline outline-4 outline-primary-200"
               : [
                   contestProblemsFull
                     ? "cursor-not-allowed !bg-secondary-100 opacity-50"
                     : "cursor-pointer",
-                  // "bg-white hover:bg-secondary-50"
                 ]
           )}
           key={p.id}
@@ -445,6 +444,7 @@ export function ContestCreateEditorForm({
           onClick={() => {
             handleImportProblem(p);
           }}
+          isHoverable
         />
       );
     },

@@ -81,10 +81,10 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
           /> */}
         </div>
         {renderTags}
-        <MarkdownPreview className="mb-5" ref={statementRef} />
+        <MarkdownPreview className="mb-5" markdown={statement} />
       </>
     ),
-    [id, isLink, renderTags, title]
+    [id, isLink, renderTags, statement, title]
   );
 
   const renderStats = useMemo(

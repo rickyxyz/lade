@@ -19,6 +19,7 @@ export interface ProblemCardProps {
   problem: ProblemDatabaseType;
   className?: string;
   isLink?: boolean;
+  isHoverable?: boolean;
   onClick?: () => void;
 }
 
@@ -26,6 +27,7 @@ export function ProblemCard({
   problem,
   className,
   isLink,
+  isHoverable,
   onClick,
 }: ProblemCardProps) {
   const {
@@ -101,10 +103,14 @@ export function ProblemCard({
           className="mb-5 overflow-hidden max-h-[4.4rem]"
           ref={statementRef}
         ></article> */}
-        <MarkdownPreview className="mb-2" ref={statementRef} />
+        <MarkdownPreview
+          className="mb-2"
+          classNameOverlay="PreviewStatement"
+          markdown={statement}
+        />
       </>
     ),
-    [id, isLink, renderTags, title]
+    [id, isLink, renderTags, statement, title]
   );
 
   const renderStats = useMemo(
@@ -127,7 +133,14 @@ export function ProblemCard({
   }, [handleRenderMarkdown]);
 
   return (
-    <Card className={clsx(className, "h-fit")} onClick={onClick}>
+    <Card
+      className={clsx(
+        className,
+        "h-fit",
+        isHoverable && "hover:bg-secondary-50"
+      )}
+      onClick={onClick}
+    >
       {renderMain}
       {renderStats}
     </Card>

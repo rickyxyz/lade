@@ -96,7 +96,7 @@ export function ProblemCreateMultiplePage() {
 
       let newProblem: ProblemType = {
         ...PROBLEM_BLANK,
-        id: new Date().getTime(),
+        id: new Date().getTime().toString(),
       };
 
       if (lastProblem) {
