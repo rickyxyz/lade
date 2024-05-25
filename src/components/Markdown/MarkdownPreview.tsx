@@ -1,15 +1,5 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
-import {
-  RefObject,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Paragraph } from "../Paragraph";
 import { md } from "@/utils";
 
 interface MarkdownPreviewProps {
@@ -17,17 +7,15 @@ interface MarkdownPreviewProps {
   classNameOverlay?: string;
   markdown: string;
   maxLines?: number;
+  isTruncated?: boolean;
 }
-
-type CustomHTMLElement = HTMLElement & {
-  adjustHeight?: () => void;
-};
 
 export function MarkdownPreview({
   className,
   classNameOverlay,
   markdown,
   maxLines = 3,
+  isTruncated,
 }: MarkdownPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -36,9 +24,9 @@ export function MarkdownPreview({
 
   const heightStyle = useMemo(
     () => ({
-      height: `${(maxLines * 1.5).toFixed(1)}rem`,
+      height: isTruncated ? `${(maxLines * 1.5).toFixed(1)}rem` : undefined,
     }),
-    [maxLines]
+    [isTruncated, maxLines]
   );
 
   const handleRenderMarkdown = useCallback(() => {
@@ -55,11 +43,12 @@ export function MarkdownPreview({
   useEffect(() => {
     if (!containerRef.current || !contentRef.current) return;
 
-    containerRef.current.style.height = `${Math.min(
-      contentRef.current.offsetHeight,
-      maxLines * 24
-    ).toFixed(1)}px`;
-  }, [lastRender, maxLines]);
+    if (isTruncated)
+      containerRef.current.style.height = `${Math.min(
+        contentRef.current.offsetHeight,
+        maxLines * 24
+      ).toFixed(1)}px`;
+  }, [isTruncated, lastRender, maxLines]);
 
   return (
     <>
@@ -68,16 +57,21 @@ export function MarkdownPreview({
         style={heightStyle}
         ref={containerRef}
       >
-        <article className="absolute top-0" ref={contentRef} />
-        <div
-          ref={overlayRef}
-          className={clsx(
-            classNameOverlay,
-            "absolute top-0 w-full bg-gradient-to-b",
-            "from-transparent via-transparent to-white"
-          )}
-          style={heightStyle}
+        <article
+          className={clsx(isTruncated ? "absolute top-0" : "")}
+          ref={contentRef}
         />
+        {isTruncated && (
+          <div
+            ref={overlayRef}
+            className={clsx(
+              classNameOverlay,
+              "absolute top-0 w-full bg-gradient-to-b",
+              "from-transparent via-transparent to-white"
+            )}
+            style={heightStyle}
+          />
+        )}
       </div>
     </>
   );

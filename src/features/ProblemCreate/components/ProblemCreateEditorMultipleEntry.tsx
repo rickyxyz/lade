@@ -78,7 +78,7 @@ export function ProblemCreateEditorMultipleEntry({
           </div>
         </div>
         {renderTags}
-        <article className="mb-4" ref={statementRef} />
+        <MarkdownPreview className="mb-4" markdown={statement} />
         <div className="flex items-center gap-4">
           <Paragraph size="s" color="secondary-4">
             ANSWER
@@ -95,17 +95,17 @@ export function ProblemCreateEditorMultipleEntry({
         </div>
       </>
     ),
-    [isDeletable, onDelete, onEdit, parsedAnswer, renderTags, title, type]
+    [
+      isDeletable,
+      onDelete,
+      onEdit,
+      parsedAnswer,
+      renderTags,
+      statement,
+      title,
+      type,
+    ]
   );
-
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-  }, [statement]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
 
   return (
     <Card

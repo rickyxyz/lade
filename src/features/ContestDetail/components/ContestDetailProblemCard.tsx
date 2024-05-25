@@ -8,7 +8,7 @@ import {
 } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { Card, More, Paragraph } from "@/components";
+import { Card, MarkdownPreview, More, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
@@ -96,10 +96,10 @@ export function ContestDetailProblemCard({
           /> */}
         </div>
         {renderTags}
-        <article className="mb-5" ref={statementRef}></article>
+        <MarkdownPreview className="mb-5" markdown={statement} />
       </>
     ),
-    [id, isLink, renderTags, title]
+    [id, isLink, renderTags, statement, title]
   );
 
   const renderStats = useMemo(
@@ -111,15 +111,6 @@ export function ContestDetailProblemCard({
     ),
     [authorId, solveds]
   );
-
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-  }, [statement]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
 
   return (
     <Card className={className} onClick={onClick}>

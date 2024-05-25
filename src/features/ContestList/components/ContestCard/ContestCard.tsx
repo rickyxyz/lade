@@ -81,7 +81,7 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
           /> */}
         </div>
         {renderTags}
-        <MarkdownPreview className="mb-5" markdown={statement} />
+        <MarkdownPreview className="mb-5" markdown={statement} isTruncated />
       </>
     ),
     [id, isLink, renderTags, statement, title]
@@ -97,18 +97,6 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
     ),
     [authorId]
   );
-
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-
-    console.log("Statement Ref");
-    console.log(statementRef);
-  }, [statement]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
 
   return (
     <Card className="h-fit">

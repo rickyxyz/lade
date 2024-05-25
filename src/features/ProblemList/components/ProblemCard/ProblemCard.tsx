@@ -107,6 +107,7 @@ export function ProblemCard({
           className="mb-2"
           classNameOverlay="PreviewStatement"
           markdown={statement}
+          isTruncated
         />
       </>
     ),
@@ -122,15 +123,6 @@ export function ProblemCard({
     ),
     [authorId, solveds]
   );
-
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-  }, [statement]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
 
   return (
     <Card

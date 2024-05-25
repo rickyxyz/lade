@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Crumb, Paragraph } from "@/components";
+import { Button, Card, Crumb, MarkdownPreview, Paragraph } from "@/components";
 import { useAppDispatch, useAppSelector } from "@/libs/redux";
 import { md } from "@/utils";
 import {
@@ -130,8 +130,11 @@ export function ProblemDetailMain({
   ]);
 
   const renderMain = useMemo(
-    () => <article className="mb-8" ref={statementRef}></article>,
-    []
+    () => (
+      //<article className="mb-8" ref={statementRef} />
+      <MarkdownPreview className="mb-8" markdown={statement} />
+    ),
+    [statement]
   );
 
   const renderAnswerVerdict = useMemo(() => {
@@ -197,11 +200,6 @@ export function ProblemDetailMain({
     ]
   );
 
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-  }, [statement]);
-
   const handleInitDefaultAnswer = useCallback(() => {
     setUserAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
   }, [setUserAnswer, type]);
@@ -209,10 +207,6 @@ export function ProblemDetailMain({
   useEffect(() => {
     handleInitDefaultAnswer();
   }, [handleInitDefaultAnswer]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [tab, handleRenderMarkdown]);
 
   const renderContent = useMemo(() => {
     switch (tab) {
