@@ -1,16 +1,11 @@
 import { useMemo, useEffect } from "react";
-import { Markdown, Button, Paragraph } from "@/components";
+import { Button, Paragraph } from "@/components";
 import { ContentViewType, ProblemType, StateType } from "@/types";
 import {
   PROBLEM_ANSWER_DEFAULT_VALUES,
   PROBLEM_ANSWER_TYPE_OPTIONS,
 } from "@/consts";
-import {
-  FormulaToolbar,
-  MarkdownEditor,
-  SettingInput,
-  SettingSelect,
-} from "@/components";
+import { MarkdownEditor, SettingInput, SettingSelect } from "@/components";
 import { useFormikContext } from "formik";
 import { ProblemAnswer } from "@/features";
 import { useProblemEditInitialized } from "@/hooks";

@@ -1,3 +1,4 @@
+import { MarkdownBase } from "@/components";
 import { AnswerType, ProblemAnswerType, ProblemType } from "@/types";
 import { md } from "@/utils";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -11,8 +12,6 @@ export function ProblemCreateEditorAnswer<T extends ProblemAnswerType>({
   type,
   answer,
 }: ProblemCreateEditorAnswerProps<T>) {
-  const statementRef = useRef<HTMLDivElement>(null);
-
   const latexFormula = useMemo(() => {
     if (type === "short_answer") {
       return `$\\text{${answer.content}}$`;
@@ -29,14 +28,5 @@ export function ProblemCreateEditorAnswer<T extends ProblemAnswerType>({
     }
   }, [answer, type]);
 
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(latexFormula);
-  }, [latexFormula]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
-
-  return <span ref={statementRef}></span>;
+  return <MarkdownBase markdown={latexFormula} tag="span" />;
 }

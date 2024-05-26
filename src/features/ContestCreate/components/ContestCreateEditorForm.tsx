@@ -1,14 +1,5 @@
-import { useMemo, useEffect, useState, useCallback, useRef } from "react";
-import {
-  Input,
-  Markdown,
-  Button,
-  Icon,
-  Paragraph,
-  ButtonIcon,
-  Card,
-  Tag,
-} from "@/components";
+import { useMemo, useEffect, useCallback } from "react";
+import { Input, Button, Paragraph, ButtonIcon, Card, Tag } from "@/components";
 import {
   ContentViewType,
   ContestDatabaseType,
@@ -22,8 +13,6 @@ import {
   CONTEST_MAX_DESCRIPTION_LENGTH,
   CONTEST_MAX_PROBLEMS,
   CONTEST_MIN_PROBLEMS,
-  PROBLEM_SUBTOPIC_OPTIONS,
-  PROBLEM_TOPIC_OPTIONS,
 } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";

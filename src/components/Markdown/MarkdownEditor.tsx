@@ -6,7 +6,7 @@ import { EditorView } from "@codemirror/view";
 import clsx from "clsx";
 import { FormulaToolbar } from "./FormulaToolbar";
 import { PreviewToolbar } from "./PreviewToolbar";
-import { Markdown } from "./Markdown";
+import { MarkdownBase } from "./Markdown";
 import { Paragraph } from "../Paragraph";
 import { Loader } from "../Loader";
 
@@ -49,7 +49,7 @@ export function MarkdownEditor({
         toolbars={toolbars}
         renderPreview={({ source }) => {
           return (
-            <Markdown
+            <MarkdownBase
               className="w-full h-full text-wrap"
               markdown={source ?? ""}
             />

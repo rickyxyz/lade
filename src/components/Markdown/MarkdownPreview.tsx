@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { md } from "@/utils";
+import { MarkdownBase } from "./Markdown";
+import { MarkdownTag } from "./types";
 
 interface MarkdownPreviewProps {
   className?: string;
@@ -8,6 +10,7 @@ interface MarkdownPreviewProps {
   markdown: string;
   maxLines?: number;
   isTruncated?: boolean;
+  tag?: MarkdownTag;
 }
 
 export function MarkdownPreview({
@@ -16,6 +19,7 @@ export function MarkdownPreview({
   markdown,
   maxLines = 3,
   isTruncated,
+  tag = "article",
 }: MarkdownPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -29,16 +33,9 @@ export function MarkdownPreview({
     [isTruncated, maxLines]
   );
 
-  const handleRenderMarkdown = useCallback(() => {
-    if (contentRef.current) {
-      contentRef.current.innerHTML = md.render(markdown);
-      setLastRender(new Date().getTime());
-    }
-  }, [markdown]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
+  const handleUpdateRender = useCallback(() => {
+    setLastRender(new Date().getTime());
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current || !contentRef.current) return;
@@ -57,9 +54,16 @@ export function MarkdownPreview({
         style={heightStyle}
         ref={containerRef}
       >
-        <article
+        {/* <article
           className={clsx(isTruncated ? "absolute top-0" : "")}
           ref={contentRef}
+        /> */}
+        <MarkdownBase
+          className={clsx(isTruncated ? "absolute top-0" : "")}
+          markdown={markdown}
+          ref={contentRef}
+          tag={tag}
+          onRender={handleUpdateRender}
         />
         {isTruncated && (
           <div

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ProblemAnswer } from "@/features";
-import { Button, Card, Paragraph } from "@/components";
+import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
 import { md, parseAnswer } from "@/utils";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ContestSingleSubmissionType, ProblemDatabaseType } from "@/types";
@@ -43,20 +43,11 @@ export function ContestDetailProblemsProblemCard({
             {title}
           </Paragraph>
         </div>
-        <article className="mb-5" ref={statementRef}></article>
+        <MarkdownPreview className="mb-5" markdown={statement} />
       </>
     ),
-    [title]
+    [statement, title]
   );
-
-  const handleRenderMarkdown = useCallback(() => {
-    if (statementRef.current)
-      statementRef.current.innerHTML = md.render(statement);
-  }, [statement]);
-
-  useEffect(() => {
-    handleRenderMarkdown();
-  }, [handleRenderMarkdown]);
 
   const handleInitDefaultAnswer = useCallback(() => {
     setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
