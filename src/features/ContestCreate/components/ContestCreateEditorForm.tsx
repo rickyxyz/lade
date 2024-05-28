@@ -16,7 +16,7 @@ import {
 } from "@/consts";
 import { FormulaToolbar, MarkdownEditor } from "@/components/Markdown";
 import { useFormikContext, Field } from "formik";
-import { useDebounce, useProblemEditInitialized, useTopics } from "@/hooks";
+import { useDebounce, useEditorInitialized, useTopics } from "@/hooks";
 import { crudData } from "@/libs/firebase";
 import {
   Setting,
@@ -52,7 +52,7 @@ export function ContestCreateEditorForm({
   stateTab,
   onLeaveEditor,
 }: ContestEditFormProps) {
-  const { initialized } = useProblemEditInitialized();
+  const { initialized } = useEditorInitialized();
   const [problems, setProblems] = stateProblems;
   const contestProblemsFull = useMemo(
     () => problems.length >= CONTEST_MAX_PROBLEMS,

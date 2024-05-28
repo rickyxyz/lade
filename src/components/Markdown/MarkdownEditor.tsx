@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { IMarkdownEditor } from "@uiw/react-markdown-editor";
-import { useProblemEditInitialized } from "@/hooks";
+import { useEditorInitialized } from "@/hooks";
 import { useCallback, useMemo, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import clsx from "clsx";
@@ -30,7 +30,7 @@ export function MarkdownEditor({
   toolbars = ["bold", "italic", "strike", "ulist", "olist", FormulaToolbar],
   ...rest
 }: MarkdownEditorProps) {
-  const { initialized, setInitialized } = useProblemEditInitialized();
+  const { initialized, setInitialized } = useEditorInitialized();
 
   const exceedsLimit = useMemo(
     () => value && value.length >= maxLength,

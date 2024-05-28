@@ -8,7 +8,7 @@ import {
 import { MarkdownEditor, SettingInput, SettingSelect } from "@/components";
 import { useFormikContext } from "formik";
 import { ProblemAnswer } from "@/features";
-import { useProblemEditInitialized } from "@/hooks";
+import { useEditorInitialized } from "@/hooks";
 import { useTopics } from "@/hooks";
 
 export interface ProblemCreateEditorFormProps {
@@ -27,7 +27,7 @@ export function ProblemCreateEditorForm({
   const [answer, setAnswer] = stateAnswer;
   const [loading, setLoading] = stateLoading;
 
-  const { initialized } = useProblemEditInitialized();
+  const { initialized } = useEditorInitialized();
   const {
     setFieldValue,
     submitForm,

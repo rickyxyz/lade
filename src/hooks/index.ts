@@ -1,4 +1,4 @@
 export * from "./useDebounce";
 export * from "./useLayout";
-export * from "./useProblemEditInitialized";
+export * from "./useEditorInitialized";
 export * from "./useTopics";

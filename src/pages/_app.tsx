@@ -5,7 +5,7 @@ import "@/styles/globals.css";
 import "@/styles/markdown-editor.css";
 import "@/styles/markdown.css";
 import { mathjax3, md } from "@/utils";
-import { ProblemEditInitializedContext } from "@/hooks";
+import { EditorInitializedContext } from "@/hooks";
 import { LayoutContext } from "@/contexts";
 import { DeviceScreenType, LayoutContextType } from "@/types";
 import {
@@ -65,7 +65,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SessionProvider session={pageProps.session}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <ProblemEditInitializedContext.Provider value={stateInitialized}>
+            <EditorInitializedContext.Provider value={stateInitialized}>
               <LayoutContext.Provider value={layout}>
                 <div
                   className={clsx(
@@ -76,7 +76,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   <Component {...pageProps} />
                 </div>
               </LayoutContext.Provider>
-            </ProblemEditInitializedContext.Provider>
+            </EditorInitializedContext.Provider>
           </PersistGate>
         </Provider>
       </SessionProvider>

@@ -9,7 +9,7 @@ import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { LayoutContext } from "@/contexts";
 import { persistor, store } from "@/libs/redux";
-import { ProblemEditInitializedContext } from "@/hooks";
+import { EditorInitializedContext } from "@/hooks";
 import { LayoutContextType, StateType } from "@/types";
 import { QueryParamProvider } from "use-query-params";
 import NextAdapterApp from "next-query-params/app";
@@ -29,11 +29,11 @@ export default function ProviderWrapper({
         <SessionProvider>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <ProblemEditInitializedContext.Provider value={stateInitialized}>
+              <EditorInitializedContext.Provider value={stateInitialized}>
                 <LayoutContext.Provider value={layout}>
                   {children}
                 </LayoutContext.Provider>
-              </ProblemEditInitializedContext.Provider>
+              </EditorInitializedContext.Provider>
             </PersistGate>
           </Provider>
         </SessionProvider>
