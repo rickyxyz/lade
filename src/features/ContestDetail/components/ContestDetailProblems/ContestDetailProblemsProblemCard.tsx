@@ -31,9 +31,9 @@ export function ContestDetailProblemsProblemCard({
   const [solved, setSolved] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const { id, statement, title, type } = problem;
+  const { id, description, title, type } = problem;
 
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderMain = useMemo(
     () => (
@@ -43,10 +43,10 @@ export function ContestDetailProblemsProblemCard({
             {title}
           </Paragraph>
         </div>
-        <MarkdownPreview className="mb-5" markdown={statement} />
+        <MarkdownPreview className="mb-5" markdown={description} />
       </>
     ),
-    [statement, title]
+    [description, title]
   );
 
   const handleInitDefaultAnswer = useCallback(() => {

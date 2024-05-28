@@ -104,14 +104,17 @@ model ContestToProblem {
 }
 
 model Comment {
-  id          BigInt   @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  author      User     @relation(fields: [authorId], references: [id])
+  id          BigInt    @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  author      User      @relation(fields: [authorId], references: [id])
   authorId    String
-  problem     Problem? @relation(fields: [problemId], references: [id])
+  problem     Problem?  @relation(fields: [problemId], references: [id])
   problemId   BigInt?
-  contest     Contest? @relation(fields: [contestId], references: [id])
+  contest     Contest?  @relation(fields: [contestId], references: [id])
   contestId   BigInt?
   description String
+  parentId    BigInt?
+  parent      Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  children    Comment[] @relation("CommentToComment")
 }
