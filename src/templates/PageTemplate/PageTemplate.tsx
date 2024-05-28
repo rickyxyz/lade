@@ -31,7 +31,7 @@ export function PageTemplate({
       <main className="w-full flex flex-auto overflow-hidden flex-col bg-secondary-100">
         <div
           className={clsx(
-            "flex",
+            "flex gap-2",
             "w-full py-3 px-8 bg-white",
             "border-b border-secondary-300"
           )}

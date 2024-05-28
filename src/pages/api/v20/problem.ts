@@ -14,7 +14,7 @@ async function PATCH({ req, res }: GenericAPIParams) {
     const { body } = req;
     const {
       answer,
-      statement,
+      description,
       subTopicId,
       title,
       topicId,
@@ -35,7 +35,7 @@ async function PATCH({ req, res }: GenericAPIParams) {
       },
       data: {
         title,
-        statement,
+        description,
         answer,
         authorId,
         topicId,

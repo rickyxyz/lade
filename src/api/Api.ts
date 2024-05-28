@@ -47,6 +47,9 @@ interface ApiParams {
     page?: number;
   };
   post_contest: Empty;
+  delete_contest: {
+    id: number | string;
+  };
   get_contest: {
     id: number | string;
   };
@@ -74,6 +77,7 @@ interface ApiBody {
   get_contest: Empty;
   post_contest: ContestType;
   patch_contest: ContestType;
+  delete_contest: Empty;
   post_contest_answer: {
     contestId: string;
     problemId: string;
@@ -111,6 +115,7 @@ interface ApiReturn {
     id: string;
   };
   patch_contest: ApiMessage;
+  delete_contest: ApiMessage;
   post_contest_answer: ApiMessage;
 }
 
@@ -174,6 +179,10 @@ const ROUTES = {
   patch_contest: {
     path: "/v1/contest",
     method: "PATCH",
+  },
+  delete_contest: {
+    path: "/v1/contest",
+    method: "DELETE",
   },
   post_contest_answer: {
     path: "/v1/contest/answer",

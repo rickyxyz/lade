@@ -280,10 +280,10 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
   const renderNavigation = useMemo(
     () => (
-      <IconText
-        IconComponent={West}
-        text="Back"
-        className="mb-4 text-primary-600 cursor-pointer"
+      <ButtonIcon
+        icon={West}
+        size="xs"
+        variant="ghost"
         onClick={handleGoBack}
       />
     ),
@@ -375,14 +375,18 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
   const renderViewProblem = useMemo(
     () => (
-      <PageTemplate title={title} className="w-full">
+      <PageTemplate
+        title={title}
+        leftTitle={renderNavigation}
+        className="w-full"
+      >
         <div className="flex flex-row flex-wrap gap-8">
           {renderQuestion}
           {renderQuestionMetadata}
         </div>
       </PageTemplate>
     ),
-    [renderQuestion, renderQuestionMetadata, title]
+    [renderNavigation, renderQuestion, renderQuestionMetadata, title]
   );
 
   const renderEditProblem = useMemo(

@@ -29,11 +29,11 @@ export function ProblemCreateEditorMultipleEntry({
   onEdit,
   onDelete,
 }: ProblemCreateEditorMultipleEntryProps) {
-  const { statement, title, topic, subTopic, answer, type } = problem;
+  const { description, title, topic, subTopic, answer, type } = problem;
 
   const parsedAnswer = useMemo(() => parseAnswer(type, answer), [answer, type]);
 
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
     () =>
@@ -78,7 +78,7 @@ export function ProblemCreateEditorMultipleEntry({
           </div>
         </div>
         {renderTags}
-        <MarkdownPreview className="mb-4" markdown={statement} />
+        <MarkdownPreview className="mb-4" markdown={description} />
         <div className="flex items-center gap-4">
           <Paragraph size="s" color="secondary-4">
             ANSWER
@@ -101,7 +101,7 @@ export function ProblemCreateEditorMultipleEntry({
       onEdit,
       parsedAnswer,
       renderTags,
-      statement,
+      description,
       title,
       type,
     ]

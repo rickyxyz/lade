@@ -65,8 +65,8 @@ export async function POST(req: NextRequest) {
 
     const placeholders: ContestSubmissionType = {};
 
-    const startAt = new Date(contest.startDate).getTime();
-    const endAt = new Date(contest.endDate).getTime();
+    const startAt = new Date(contest.startAt).getTime();
+    const endAt = new Date(contest.endAt).getTime();
 
     for (let i = 0; i < 60; i++) {
       const index = Math.floor(Math.random() * problems.length);

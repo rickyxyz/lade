@@ -29,7 +29,7 @@ export function ContestDetailProblemCard({
 }: ProblemCardProps) {
   const {
     id,
-    statement,
+    description,
     title,
     topic,
     subTopic,
@@ -48,7 +48,7 @@ export function ContestDetailProblemCard({
     [problem, user]
   );
 
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
     () =>
@@ -96,10 +96,10 @@ export function ContestDetailProblemCard({
           /> */}
         </div>
         {renderTags}
-        <MarkdownPreview className="mb-5" markdown={statement} />
+        <MarkdownPreview className="mb-5" markdown={description} />
       </>
     ),
-    [id, isLink, renderTags, statement, title]
+    [id, isLink, renderTags, description, title]
   );
 
   const renderStats = useMemo(

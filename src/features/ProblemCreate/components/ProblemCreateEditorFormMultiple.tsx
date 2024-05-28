@@ -38,7 +38,7 @@ export function ProblemCreateEditorFormMultiple({
     validateForm,
   } = useFormikContext<ProblemType>();
   const { subTopicOptions, topicOptions } = useTopics();
-  const { statement, subTopicId, topicId, type } = values;
+  const { description, subTopicId, topicId, type } = values;
   const atLeastOneError = useMemo(
     () => Object.entries(errors).length > 0,
     [errors]
@@ -110,26 +110,26 @@ export function ProblemCreateEditorFormMultiple({
   const renderProblemEditor = useMemo(
     () => (
       <section className="border-transparent mb-8" data-color-mode="light">
-        <h2 className="mb-4">Problem Statement</h2>
+        <h2 className="mb-4">Problem description</h2>
         <div className="mb-4">
           <MarkdownEditor
-            value={statement}
+            value={description}
             onChange={(newValue) => {
-              setFieldValue("statement", newValue);
+              setFieldValue("description", newValue);
             }}
             onBlur={() => {
-              setFieldTouched("statement", true);
+              setFieldTouched("description", true);
             }}
           />
-          {errors["statement"] && touched["statement"] && (
+          {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
-              {errors["statement"]}
+              {errors["description"]}
             </Paragraph>
           )}
         </div>
       </section>
     ),
-    [statement, errors, touched, setFieldValue, setFieldTouched]
+    [description, errors, touched, setFieldValue, setFieldTouched]
   );
 
   const renderProblemAnswer = useMemo(

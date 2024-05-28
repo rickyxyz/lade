@@ -35,7 +35,7 @@ export function ProblemDetailMain({
   stateSolvable,
 }: ProblemMainProps) {
   const [problem, setProblem] = stateProblem;
-  const { id, statement, title, topicId, subTopicId, type } = problem;
+  const { id, description, title, topicId, subTopicId, type } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userAnswer, setUserAnswer] = stateUserAnswer;
@@ -46,7 +46,7 @@ export function ProblemDetailMain({
   const [loading, setLoading] = useState(false);
   const solvable = stateSolvable[0];
   const dispatch = useAppDispatch();
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
   const stateTab = useState<ProblemMainTabType>("problem");
   const [tab, setTab] = stateTab;
 
@@ -131,10 +131,10 @@ export function ProblemDetailMain({
 
   const renderMain = useMemo(
     () => (
-      //<article className="mb-8" ref={statementRef} />
-      <MarkdownPreview className="mb-8" markdown={statement} />
+      //<article className="mb-8" ref={descriptionRef} />
+      <MarkdownPreview className="mb-8" markdown={description} />
     ),
-    [statement]
+    [description]
   );
 
   const renderAnswerVerdict = useMemo(() => {

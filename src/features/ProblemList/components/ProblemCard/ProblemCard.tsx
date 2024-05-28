@@ -32,7 +32,7 @@ export function ProblemCard({
 }: ProblemCardProps) {
   const {
     id,
-    statement,
+    description,
     title,
     topic,
     subTopic,
@@ -51,7 +51,7 @@ export function ProblemCard({
     [problem, user]
   );
 
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
     () =>
@@ -101,17 +101,17 @@ export function ProblemCard({
         {renderTags}
         {/* <article
           className="mb-5 overflow-hidden max-h-[4.4rem]"
-          ref={statementRef}
+          ref={descriptionRef}
         ></article> */}
         <MarkdownPreview
           className="mb-2"
-          classNameOverlay="PreviewStatement"
-          markdown={statement}
+          classNameOverlay={clsx(isHoverable && "Previewdescription")}
+          markdown={description}
           isTruncated
         />
       </>
     ),
-    [id, isLink, renderTags, statement, title]
+    [id, isHoverable, isLink, renderTags, description, title]
   );
 
   const renderStats = useMemo(

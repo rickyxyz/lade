@@ -22,7 +22,7 @@ export function ContestDetailData({
   onDelete,
   onNavigate,
 }: ContestDetailDataProps) {
-  const { title, authorId, createdAt, startDate, endDate } = contest;
+  const { title, authorId, createdAt, startAt, endAt } = contest;
   const [count, setCount] = useState<{
     start?: string;
     end?: string;
@@ -35,8 +35,8 @@ export function ContestDetailData({
     showCountStart,
     showCountEnd,
   } = useMemo(() => {
-    const start = new Date(startDate as unknown as string);
-    const end = new Date(endDate as unknown as string);
+    const start = new Date(startAt as unknown as string);
+    const end = new Date(endAt as unknown as string);
     const created = new Date(createdAt as unknown as string);
 
     const showCountStart = count?.start !== undefined;
@@ -49,11 +49,11 @@ export function ContestDetailData({
       showCountStart,
       showCountEnd,
     };
-  }, [count?.end, count?.start, createdAt, endDate, startDate]);
+  }, [count?.end, count?.start, createdAt, endAt, startAt]);
 
   useEffect(() => {
-    const start = new Date(startDate as unknown as string).getTime();
-    const end = new Date(endDate as unknown as string).getTime();
+    const start = new Date(startAt as unknown as string).getTime();
+    const end = new Date(endAt as unknown as string).getTime();
     let now = new Date().getTime();
     let interval: NodeJS.Timer;
 
@@ -71,7 +71,7 @@ export function ContestDetailData({
     }
 
     return () => interval && clearInterval(interval);
-  }, [endDate, startDate]);
+  }, [endAt, startAt]);
 
   return (
     <Card className={className}>

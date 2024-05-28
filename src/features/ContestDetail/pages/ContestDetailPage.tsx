@@ -112,12 +112,16 @@ export function ContestDetailPage({
   }, [contest, user]);
 
   const handleDeleteContest = useCallback(async () => {
-    await api
-      .delete("/contest", {
-        params: {
-          id: contestId,
-        },
-      })
+    await API("delete_contest", {
+      params: {
+        id: contestId,
+      },
+    })
+      // .delete("/contest", {
+      //   params: {
+      //     id: contestId,
+      //   },
+      // })
       .then(() => {
         console.log("contest deleted");
         router.push("/");

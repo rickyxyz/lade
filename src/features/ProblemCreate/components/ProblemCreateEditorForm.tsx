@@ -38,7 +38,7 @@ export function ProblemCreateEditorForm({
     validateForm,
   } = useFormikContext<ProblemType>();
   const { subTopicOptions, topicOptions } = useTopics();
-  const { statement, subTopicId, topicId, type } = values;
+  const { description, subTopicId, topicId, type } = values;
   const atLeastOneError = useMemo(
     () => Object.entries(errors).length > 0,
     [errors]
@@ -110,23 +110,23 @@ export function ProblemCreateEditorForm({
       <section className="border-transparent" data-color-mode="light">
         <div className="mb-4">
           <MarkdownEditor
-            value={statement}
+            value={description}
             onChange={(newValue) => {
-              setFieldValue("statement", newValue);
+              setFieldValue("description", newValue);
             }}
             onBlur={() => {
-              setFieldTouched("statement", true);
+              setFieldTouched("description", true);
             }}
           />
-          {errors["statement"] && touched["statement"] && (
+          {errors["description"] && touched["description"] && (
             <Paragraph color="danger-6" className="mt-2">
-              {errors["statement"]}
+              {errors["description"]}
             </Paragraph>
           )}
         </div>
       </section>
     ),
-    [statement, errors, touched, setFieldValue, setFieldTouched]
+    [description, errors, touched, setFieldValue, setFieldTouched]
   );
 
   const renderProblemAnswer = useMemo(

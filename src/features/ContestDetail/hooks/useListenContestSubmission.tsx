@@ -20,9 +20,17 @@ export function useListenContestSubmission(
   contest: ContestDatabaseType,
   onUpdate?: (data: SubmissionData) => void
 ) {
-  const { id: contestId, problemsData = [], startDate, endDate } = contest;
-  const startAt = useMemo(() => new Date(startDate).getTime(), [startDate]);
-  const endAt = useMemo(() => new Date(endDate).getTime(), [endDate]);
+  const {
+    id: contestId,
+    problemsData = [],
+    startAt: startOriginal,
+    endAt: endOriginal,
+  } = contest;
+  const startAt = useMemo(
+    () => new Date(startOriginal).getTime(),
+    [startOriginal]
+  );
+  const endAt = useMemo(() => new Date(endOriginal).getTime(), [endOriginal]);
   const [data, setData] = useState<SubmissionData>({
     problemSubmissions: {},
     userSubmissionsArray: [],

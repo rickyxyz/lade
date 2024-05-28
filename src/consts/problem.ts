@@ -14,7 +14,7 @@ import { makeAnswer } from "@/utils";
 
 export const PROBLEM_BLANK: ProblemType = {
   id: "",
-  statement:
+  description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a sem arcu. Nam nec consectetur nulla.",
   title: "An Untitled Problem",
   topicId: "calculus",

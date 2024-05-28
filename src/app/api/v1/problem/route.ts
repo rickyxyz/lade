@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const {
       answer,
-      statement,
+      description,
       subTopicId,
       title,
       topicId,
@@ -72,7 +72,7 @@ export async function PATCH(req: NextRequest) {
         },
         data: {
           title,
-          statement,
+          description,
           answer,
           authorId,
           topicId,
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     if (!user) throw Error("not allowed");
 
     const body = await req.json();
-    const { answer, statement, subTopicId, title, topicId, type } =
+    const { answer, description, subTopicId, title, topicId, type } =
       body as unknown as ProblemType;
 
     errors = validateFormProblem(body);
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
         title,
         type,
         answer,
-        statement,
+        description,
         topicId,
         subTopicId,
         createdAt: new Date(),

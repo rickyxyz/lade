@@ -66,7 +66,7 @@ export type ProblemMapTypeTopicType<
 export interface ProblemBaseType {
   id: string;
   title: string;
-  statement: string;
+  description: string;
   solveds?: unknown[];
   views?: number;
   createdAt?: Date;

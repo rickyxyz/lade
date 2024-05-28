@@ -13,14 +13,7 @@ export interface ContestCardProps {
 }
 
 export function ContestCard({ contest, isLink }: ContestCardProps) {
-  const {
-    id,
-    title,
-    topic,
-    subTopic,
-    authorId,
-    description: statement,
-  } = contest;
+  const { id, title, topic, subTopic, authorId, description } = contest;
 
   const user = useAppSelector("user");
 
@@ -33,7 +26,7 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
     [contest, user]
   );
 
-  const statementRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
 
   const renderTags = useMemo(
     () =>
@@ -81,10 +74,10 @@ export function ContestCard({ contest, isLink }: ContestCardProps) {
           /> */}
         </div>
         {renderTags}
-        <MarkdownPreview className="mb-5" markdown={statement} isTruncated />
+        <MarkdownPreview className="mb-5" markdown={description} isTruncated />
       </>
     ),
-    [id, isLink, renderTags, statement, title]
+    [id, isLink, renderTags, description, title]
   );
 
   const renderStats = useMemo(

@@ -49,19 +49,19 @@ export function validateProblemTitle(title: string) {
   return null;
 }
 
-export function validateProblemStatement(statement: string) {
-  if (statement === "") {
-    return "Problem statement is required.";
-  } else if (statement.length < PROBLEM_MIN_DESCRIPTION_LENGTH) {
-    return "Problem statement is too short.";
-  } else if (statement.length > PROBLEM_MAX_DESCRIPTION_LENGTH) {
-    return "Problem statement is too long.";
+export function validateProblemdescription(description: string) {
+  if (description === "") {
+    return "Problem description is required.";
+  } else if (description.length < PROBLEM_MIN_DESCRIPTION_LENGTH) {
+    return "Problem description is too short.";
+  } else if (description.length > PROBLEM_MAX_DESCRIPTION_LENGTH) {
+    return "Problem description is too long.";
   }
   return null;
 }
 
 export function validateFormProblem(problem: ProblemType) {
-  const { title, statement, answer, type } = problem;
+  const { title, description, answer, type } = problem;
 
   const errors: Partial<Record<keyof ProblemType, string>> = {};
 
@@ -75,7 +75,7 @@ export function validateFormProblem(problem: ProblemType) {
   }
 
   validateColumn(title, "title", validateProblemTitle);
-  validateColumn(statement, "statement", validateProblemStatement);
+  validateColumn(description, "description", validateProblemdescription);
   validateColumn(
     {
       type: type as ProblemAnswerType,
@@ -137,7 +137,7 @@ export function validateFormAnswer(problem: Partial<ProblemType>) {
 }
 
 export function validateFormContest(contest: ContestType) {
-  const { title, description, startDate, endDate } = contest;
+  const { title, description, startAt, endAt } = contest;
 
   const errors: Partial<Record<keyof ContestType, string>> = {};
 
@@ -157,8 +157,8 @@ export function validateFormContest(contest: ContestType) {
     errors.description = "Description is too long.";
   }
 
-  if (startDate && endDate && startDate > endDate)
-    errors.endDate = "End date cannot be earlier than start date.";
+  if (startAt && endAt && startAt > endAt)
+    errors.endAt = "End date cannot be earlier than start date.";
 
   const problems = JSON.parse((contest.problems ?? "{}") as unknown as string);
   console.log(problems);

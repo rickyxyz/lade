@@ -8,8 +8,8 @@ export const CONTEST_DEFAULT: ContestType = {
   subTopicId: "derivatives",
   problems: "[]",
   authorId: "",
-  startDate: new Date().getTime(),
-  endDate: (() => {
+  startAt: new Date().getTime(),
+  endAt: (() => {
     const date = new Date();
     date.setHours(date.getHours() + 1);
     return date;

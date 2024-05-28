@@ -85,12 +85,12 @@ export function ContestCreateEditorForm({
     validateForm,
   } = useFormikContext<ContestDatabaseType>();
 
-  const { description, subTopicId, topicId, startDate, endDate } = values;
+  const { description, subTopicId, topicId, startAt, endAt } = values;
 
   const loading = stateLoading[0];
 
   const handleUpdateFormDate = useCallback(
-    (field: "startDate" | "endDate", dateTime?: DateTimeType) => {
+    (field: "startAt" | "endAt", dateTime?: DateTimeType) => {
       if (!dateTime) return;
 
       const { date, time } = dateTime;
@@ -140,16 +140,16 @@ export function ContestCreateEditorForm({
           />
           <SettingDate
             name="Start Date"
-            dateNum={startDate}
+            dateNum={startAt}
             onChange={(newDate) => {
-              setFieldValue("startDate", newDate);
+              setFieldValue("startAt", newDate);
             }}
           />
           <SettingDate
             name="End Date"
-            dateNum={endDate}
+            dateNum={endAt}
             onChange={(newDate) => {
-              setFieldValue("endDate", newDate);
+              setFieldValue("endAt", newDate);
             }}
           />
         </div>
@@ -161,8 +161,8 @@ export function ContestCreateEditorForm({
       initialized,
       subTopicOptions,
       subTopicId,
-      startDate,
-      endDate,
+      startAt,
+      endAt,
       setFieldValue,
     ]
   );
