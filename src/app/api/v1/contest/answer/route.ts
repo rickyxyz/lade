@@ -41,13 +41,6 @@ export async function POST(req: NextRequest) {
       throw Error("fail1");
     }
 
-    console.log("Params");
-    console.log({
-      answer,
-      contestId,
-      problemId,
-    });
-
     const result = await prisma.contest.findUnique({
       where: {
         id: contestId as unknown as number,
@@ -95,6 +88,23 @@ export async function POST(req: NextRequest) {
       submittedAt: new Date().getTime(),
       answer: JSON.stringify(answer),
     };
+
+		const existing = await prisma.solved.findFirst({
+			where: {
+				problemId: problem.id,
+				userId: user.id,
+			},
+		});
+
+    if (user && verdict && !existing) {
+      await prisma.solved.create({
+        data: {
+          problemId: problem.id,
+          userId: user.id,
+          answer: JSON.stringify(answer),
+        },
+      });
+    }
 
     runTransaction(docRef, (result) => {
       console.log("Previous");
