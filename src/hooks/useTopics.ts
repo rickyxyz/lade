@@ -6,11 +6,14 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { API } from "@/api";
 
+interface CachedData {
+	topics: ProblemTopicType[];
+	subTopics: ProblemTopicType[];
+	expireAt?: number;
+}
+
 export function useTopics() {
-  const [topics, setTopics] = useState<{
-    topics: ProblemTopicType[];
-    subTopics: ProblemTopicType[];
-  }>({
+  const [topics, setTopics] = useState<CachedData>({
     topics: [],
     subTopics: [],
   });
@@ -53,17 +56,31 @@ export function useTopics() {
     const existing = localStorage.getItem("topics");
     setLoading(true);
 
-    console.log(existing);
+		const skipFetch = (() => {
+			if(existing) {
+				const parsed = JSON.parse(existing) as CachedData;
+				const now = new Date().getTime();
+				return Boolean(parsed.expireAt && now < parsed.expireAt)
+			}
+			
+			return false;
+		})();
 
-    if (existing) {
+    if (skipFetch && existing) {
       setTopics(JSON.parse(existing));
       setLoading(false);
     } else {
       API("get_topics", {})
         .then(({ data }) => {
           if (data) {
+						let expireAt = new Date().getTime();
+						expireAt += 1000 * 60 * 60 * 7;
+
             setTopics(data);
-            localStorage.setItem("topics", JSON.stringify(data));
+            localStorage.setItem("topics", JSON.stringify({
+							...data,
+							expireAt,
+						} as CachedData));
           }
         })
         .finally(() => {
