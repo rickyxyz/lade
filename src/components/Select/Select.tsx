@@ -6,6 +6,7 @@ import { SelectOption } from "./SelectOption";
 import { Tooltip, TooltipBaseProps } from "../Tooltip";
 import { ExpandMore, HourglassEmpty } from "@mui/icons-material";
 import { useDevice } from "@/hooks";
+import { Loader } from "../Loader";
 
 type SelectVariant = "basic" | "solid";
 
@@ -122,15 +123,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     ]
   );
 
-  const renderLoading = useMemo(
-    () => (
-      <div className="p-4 flex items-center justify-center">
-        <HourglassEmpty className="animate-spin" />
-      </div>
-    ),
-    []
-  );
-
   const renderTrigger = useMemo(
     () => (
       <div
@@ -165,7 +157,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   return (
     <Tooltip
       triggerElement={renderTrigger}
-      hiddenElement={loading ? renderLoading : renderOptions}
+      hiddenElement={loading ? <Loader /> : renderOptions}
       className={className}
       stateVisible={stateVisible}
       disabled={disabled}

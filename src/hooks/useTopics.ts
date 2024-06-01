@@ -7,9 +7,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { API } from "@/api";
 
 interface CachedData {
-	topics: ProblemTopicType[];
-	subTopics: ProblemTopicType[];
-	expireAt?: number;
+  topics: ProblemTopicType[];
+  subTopics: ProblemTopicType[];
+  expireAt?: number;
 }
 
 export function useTopics() {
@@ -56,15 +56,15 @@ export function useTopics() {
     const existing = localStorage.getItem("topics");
     setLoading(true);
 
-		const skipFetch = (() => {
-			if(existing) {
-				const parsed = JSON.parse(existing) as CachedData;
-				const now = new Date().getTime();
-				return Boolean(parsed.expireAt && now < parsed.expireAt)
-			}
-			
-			return false;
-		})();
+    const skipFetch = (() => {
+      if (existing) {
+        const parsed = JSON.parse(existing) as CachedData;
+        const now = new Date().getTime();
+        return Boolean(parsed.expireAt && now < parsed.expireAt)
+      }
+
+      return false;
+    })();
 
     if (skipFetch && existing) {
       setTopics(JSON.parse(existing));
@@ -73,14 +73,13 @@ export function useTopics() {
       API("get_topics", {})
         .then(({ data }) => {
           if (data) {
-						let expireAt = new Date().getTime();
-						expireAt += 1000 * 60 * 60 * 7;
+            const expireAt = new Date().getTime() + 1000 * 60 * 60 * 7;
 
             setTopics(data);
             localStorage.setItem("topics", JSON.stringify({
-							...data,
-							expireAt,
-						} as CachedData));
+              ...data,
+              expireAt,
+            } as CachedData));
           }
         })
         .finally(() => {
