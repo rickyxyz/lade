@@ -104,7 +104,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
                 setIndex(i);
               }}
               isSelected={selectedOption === option.id}
-              isHighlighted={index === i}
+              isHighlighted={index === i || (i == 0 && index === undefined && !optional)}
             />
           ))
         ) : (
@@ -112,15 +112,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         )}
       </>
     ),
-    [
-      renderRemoveOption,
-      options,
-      selectedOption,
-      index,
-      onSelectOption,
-      onBlur,
-      setVisible,
-    ]
+    [renderRemoveOption, options, selectedOption, index, optional, onSelectOption, onBlur, setVisible]
   );
 
   const renderTrigger = useMemo(
@@ -137,10 +129,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         )}
       >
         <span
-          className="truncate"
-          style={{
-            width: "calc(100% - 2rem)!important",
-          }}
+          className="truncate w-[calc(100%-2rem)]"
         >
           {currentOption}
         </span>
@@ -168,6 +157,8 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
 
         setIndex((prev) => {
           if (e.key === "ArrowUp") {
+            if (prev === 0 && !optional) return 0;
+
             if (!prev || (optional && prev === 0)) return undefined;
 
             return Math.max(0, prev - 1);
