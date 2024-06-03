@@ -79,7 +79,7 @@ export function Button({
                 textClassName,
                 "w-full"
               )}
-              as="p"
+              tag="p"
               color="inherit"
               weight="semibold"
             >

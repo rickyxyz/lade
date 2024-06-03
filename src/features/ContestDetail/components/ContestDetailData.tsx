@@ -75,7 +75,7 @@ export function ContestDetailData({
 
   return (
     <Card className={className}>
-      <Paragraph className="mb-2" as="h1" size="l">
+      <Paragraph className="mb-2" tag="h1" size="l">
         {title}
       </Paragraph>
       <table className="table-fixed w-full">

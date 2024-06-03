@@ -72,12 +72,12 @@ export function ProblemCard({
         <div className="relative flex justify-between mb-2">
           {isLink ? (
             <Link href={`/problem/${id}`}>
-              <Paragraph className="mr-16" as="h2" color="primary-6">
+              <Paragraph className="mr-16" tag="h2" color="primary-6">
                 {title}
               </Paragraph>
             </Link>
           ) : (
-            <Paragraph className="mr-16" as="h2" color="primary-6">
+            <Paragraph className="mr-16" tag="h2" color="primary-6">
               {title}
             </Paragraph>
           )}

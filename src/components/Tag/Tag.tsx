@@ -14,7 +14,7 @@ export interface TagProps {
 export function Tag({ children, color = "primary" }: TagProps) {
   return (
     <Paragraph
-      as="span"
+      tag="span"
       className={clsx(TAG_BASE_STYLE, TAG_COLOR_STYLE[color])}
       color={`${color}-6` as FontColor}
       size="s"

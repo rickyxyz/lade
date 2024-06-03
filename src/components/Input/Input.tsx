@@ -62,7 +62,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className={externalWrapperClassName}>
         {label && (
           <Paragraph
-            as="label"
+            tag="label"
             htmlFor={id}
             className={labelClassName}
             color="secondary-5"

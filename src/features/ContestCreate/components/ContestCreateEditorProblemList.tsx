@@ -129,7 +129,7 @@ export function ContestCreateEditorList({
   return (
     <Card className="flex flex-col flex-grow lg:min-w-[320px] lg:max-w-[320px] h-fit lg:sticky lg:top-0">
       <div className="flex flex-row items-center gap-2">
-        <Paragraph as="h2" size="l">
+        <Paragraph tag="h2" size="l">
           Problems
         </Paragraph>
         <Tag
@@ -137,8 +137,8 @@ export function ContestCreateEditorList({
             problems.length === CONTEST_MAX_PROBLEMS
               ? "danger"
               : problems.length < CONTEST_MIN_PROBLEMS
-              ? "warning"
-              : "primary"
+                ? "warning"
+                : "primary"
           }
         >
           {problems.length} / {CONTEST_MAX_PROBLEMS}

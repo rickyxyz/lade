@@ -39,7 +39,7 @@ export function ContestDetailProblemsProblemCard({
     () => (
       <>
         <div className="relative flex justify-between mb-2">
-          <Paragraph className="mr-16" as="h2" color="primary-6">
+          <Paragraph className="mr-16" tag="h2" color="primary-6">
             {title}
           </Paragraph>
         </div>

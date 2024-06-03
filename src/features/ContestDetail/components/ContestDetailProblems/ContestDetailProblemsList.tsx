@@ -53,8 +53,8 @@ export function ContestDetailProblemsList({
                   status === "success"
                     ? "success-6"
                     : status === "attempted"
-                    ? "danger-6"
-                    : "inherit"
+                      ? "danger-6"
+                      : "inherit"
                 }
                 weight="bold"
               >
@@ -90,7 +90,7 @@ export function ContestDetailProblemsList({
   return (
     <Card className="flex flex-col flex-grow lg:min-w-[320px] lg:max-w-[320px] h-fit lg:sticky lg:top-0">
       <div className="flex flex-row items-center gap-2">
-        <Paragraph as="h2" size="l">
+        <Paragraph tag="h2" size="l">
           Problems
         </Paragraph>
       </div>

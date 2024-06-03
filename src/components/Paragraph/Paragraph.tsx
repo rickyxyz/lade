@@ -10,7 +10,7 @@ import {
 } from "@/consts";
 
 export interface ParagraphProps {
-  as?: "p" | "span" | "h1" | "h2" | "h3" | "label";
+  tag?: "p" | "span" | "h1" | "h2" | "h3" | "label";
   weight?: FontWeight;
   id?: string;
   size?: FontSize;
@@ -23,7 +23,7 @@ export interface ParagraphProps {
 }
 
 export function Paragraph({
-  as = "span",
+  tag: Tag = "span",
   weight = "medium",
   size = "base",
   color = "secondary-8",
@@ -53,21 +53,11 @@ export function Paragraph({
   );
 
   const render = useMemo(() => {
-    switch (as) {
-      case "label":
-        return <label htmlFor={htmlFor} {...props} />;
-      case "span":
-        return <span {...props} />;
-      case "h1":
-        return <h1 {...props} />;
-      case "h2":
-        return <h2 {...props} />;
-      case "h3":
-        return <h3 {...props} />;
-      default:
-        return <p {...props} />;
-    }
-  }, [as, htmlFor, props]);
+    if (Tag === "label")
+      return <label htmlFor={htmlFor} {...props} />;
+
+    return <Tag {...props} />;
+  }, [Tag, htmlFor, props]);
 
   return render;
 }

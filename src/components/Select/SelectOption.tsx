@@ -2,6 +2,7 @@ import { SelectOptionType } from "@/types";
 import { Check } from "@mui/icons-material";
 import clsx from "clsx";
 import { HTMLProps } from "react";
+import { Icon } from "../Icon";
 
 interface SelectOptionProps extends HTMLProps<HTMLDivElement> {
   option: SelectOptionType<string>;
@@ -29,7 +30,7 @@ export function SelectOption({
       aria-selected={isSelected}
     >
       <span className={clsx("w-8", !isSelected && "invisible")}>
-        <Check />
+        <Icon IconComponent={Check} size="l" />
       </span>
       <span>{option.text}</span>
     </div>

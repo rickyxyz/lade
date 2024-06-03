@@ -53,7 +53,7 @@ export function ProblemCreateEditorMultipleEntry({
     () => (
       <>
         <div className="relative flex justify-between">
-          <Paragraph as="h2" size="l">
+          <Paragraph tag="h2" size="l">
             {title}
           </Paragraph>
           <div className="flex gap-2">
