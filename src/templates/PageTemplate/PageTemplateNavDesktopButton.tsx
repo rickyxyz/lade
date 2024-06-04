@@ -33,15 +33,15 @@ export function PageTemplateNavDesktopButton({
           "flex items-center rounded-md transition-colors cursor-pointer",
           isDanger
             ? [
-              "hover:bg-danger-100",
-              isActive ? "bg-danger-100 text-danger-600" : "text-danger-600",
-            ]
+                "hover:bg-danger-100",
+                isActive ? "bg-danger-100 text-danger-600" : "text-danger-600",
+              ]
             : [
-              "hover:bg-primary-100",
-              isActive
-                ? "bg-primary-100 text-primary-600"
-                : "text-secondary-600",
-            ],
+                "hover:bg-primary-100",
+                isActive
+                  ? "bg-primary-100 text-primary-600"
+                  : "text-secondary-600",
+              ],
           device === "desktop" ? "px-4 h-10" : "p-2 h-10 w-10",
           className
         )}

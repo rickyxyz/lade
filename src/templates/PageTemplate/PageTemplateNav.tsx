@@ -74,11 +74,20 @@ export function PageTemplateNav() {
   }, [user]);
 
   const renderNav = useMemo(
-    () => (
-      device === "desktop" ?
-        <PageTemplateNavDesktop device={device} pathname={pathname} permission={permission} /> :
-        <PageTemplateNavMobile device={device} pathname={pathname} permission={permission} />
-    ),
+    () =>
+      device === "desktop" ? (
+        <PageTemplateNavDesktop
+          device={device}
+          pathname={pathname}
+          permission={permission}
+        />
+      ) : (
+        <PageTemplateNavMobile
+          device={device}
+          pathname={pathname}
+          permission={permission}
+        />
+      ),
     [device, pathname, permission]
   );
 

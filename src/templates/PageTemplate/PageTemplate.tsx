@@ -28,7 +28,7 @@ export function PageTemplate({
     <div
       className={clsx(
         "relative h-full flex flex-auto overflow-hidden",
-        device === "desktop" ? "flex-row" : "flex-col-reverse",
+        device === "desktop" ? "flex-row" : "flex-col-reverse"
       )}
     >
       <PageTemplateNav />

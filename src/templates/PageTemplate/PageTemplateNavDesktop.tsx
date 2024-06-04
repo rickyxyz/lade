@@ -62,9 +62,9 @@ export function PageTemplateNavDesktop({
   device,
   pathname,
 }: {
-  permission: LinkPermissionType,
-  device: DeviceScreenType,
-  pathname: string | null,
+  permission: LinkPermissionType;
+  device: DeviceScreenType;
+  pathname: string | null;
 }) {
   const navLinks = useMemo<NavGroup[]>(
     () => [

@@ -63,9 +63,9 @@ export function PageTemplateNavMobile({
   device,
   pathname,
 }: {
-  permission: LinkPermissionType,
-  device: DeviceScreenType,
-  pathname: string | null,
+  permission: LinkPermissionType;
+  device: DeviceScreenType;
+  pathname: string | null;
 }) {
   const navLinks = useMemo<NavLink[]>(
     () => [
@@ -84,7 +84,7 @@ export function PageTemplateNavMobile({
   );
 
   const renderLinks = useMemo(
-    () => (
+    () =>
       navLinks
         .filter(({ permission: linkPerm }) =>
           checkPermissionLink(permission, linkPerm)
@@ -100,8 +100,7 @@ export function PageTemplateNavMobile({
             isActive={href === pathname}
             onClick={onClick}
           />
-        ))
-    ),
+        )),
     [device, navLinks, pathname, permission]
   );
 
@@ -110,7 +109,7 @@ export function PageTemplateNavMobile({
       className={clsx(
         "flex flex-row",
         "border-secondary-300 border-t",
-        "w-full justify-evenly",
+        "w-full justify-evenly"
       )}
     >
       {renderLinks}

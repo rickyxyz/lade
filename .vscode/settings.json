@@ -1,3 +1,10 @@
 {
-  "editor.formatOnSave": true
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "prettier.useEditorConfig": false,
+  "prettier.useTabs": false,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }
