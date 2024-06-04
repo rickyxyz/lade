@@ -20,7 +20,6 @@ import { signIn } from "next-auth/react";
 import { api } from "@/utils/api";
 import { useDebounce, useDevice } from "@/hooks";
 import { API } from "@/api";
-import { PageTemplateNavButton } from "./PageTemplateNavButton";
 import { usePathname, useRouter } from "next/navigation";
 import {
   AddToPhotosOutlined,
@@ -41,6 +40,10 @@ import {
 } from "@mui/icons-material";
 import { checkPermissionLink } from "@/utils";
 import { LinkPermissionType, RoleType } from "@/types";
+import { PageTemplateNavDesktopButton } from "./PageTemplateNavDesktopButton";
+import { PageTemplateNavMobileButton } from "./PageTemplateNavMobileButton";
+import { PageTemplateNavDesktop } from "./PageTemplateNavDesktop";
+import { PageTemplateNavMobile } from "./PageTemplateNavMobile";
 
 interface NavLink {
   label: string;
@@ -63,8 +66,6 @@ export function PageTemplateNav() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const debounce = useDebounce();
-  const stateMobileLinks = useState(false);
-  const setMobileLinks = stateMobileLinks[1];
   const { device } = useDevice();
   const pathname = usePathname();
   const permission = useMemo<RoleType>(() => {
@@ -72,105 +73,13 @@ export function PageTemplateNav() {
     return "user";
   }, [user]);
 
-  const navLinks = useMemo<NavGroup[]>(
-    () => [
-      {
-        name: "Explore",
-        links: [
-          {
-            label: "Problems",
-            href: "/",
-            icon: DescriptionOutlined,
-          },
-          {
-            label: "Contests",
-            href: "/contests",
-            icon: LibraryBooksOutlined,
-          },
-          {
-            label: "New Problem",
-            href: "/problem/new",
-            icon: NoteAddOutlined,
-            permission: "user",
-          },
-          {
-            label: "New Contest",
-            href: "/contest/new",
-            icon: AddToPhotosOutlined,
-            permission: "user",
-          },
-        ],
-      },
-      {
-        name: "Account",
-        links: [
-          {
-            label: "Log Out",
-            onClick: logout,
-            icon: Logout,
-            danger: true,
-            permission: "user+",
-          },
-          {
-            label: "Sign Up",
-            href: "/signup",
-            icon: PersonAddAltOutlined,
-            permission: "guest",
-          },
-          {
-            label: "Log In",
-            href: "/login",
-            icon: LoginOutlined,
-            permission: "guest",
-          },
-        ],
-      },
-    ],
-    []
-  );
-
-  const renderLinks = useMemo(
+  const renderNav = useMemo(
     () => (
-      <ul className="flex-grow">
-        {navLinks
-          .filter(({ permission: linkPerm }) =>
-            checkPermissionLink(permission, linkPerm)
-          )
-          .map(({ name, links }, index) => (
-            <li className={clsx("flex flex-col gap-1")} key={name}>
-              {index > 0 && device !== "desktop" && (
-                <hr className="mt-2 mb-1" />
-              )}
-              {device === "desktop" && (
-                <Paragraph
-                  className={clsx(index > 0 && "mt-8")}
-                  weight="semibold"
-                  color="secondary-4"
-                >
-                  {name}
-                </Paragraph>
-              )}
-              {links
-                .filter(({ permission: linkPerm }) =>
-                  checkPermissionLink(permission, linkPerm)
-                )
-                .map(({ label, href, icon, danger, onClick }) => (
-                  <PageTemplateNavButton
-                    key={label}
-                    label={label}
-                    href={href}
-                    icon={icon}
-                    device={device}
-                    isDanger={danger}
-                    isActive={href === pathname}
-                    onClick={onClick}
-                  />
-                ))}
-            </li>
-          ))}
-      </ul>
+      device === "desktop" ?
+        <PageTemplateNavDesktop device={device} pathname={pathname} permission={permission} /> :
+        <PageTemplateNavMobile device={device} pathname={pathname} permission={permission} />
     ),
-    [device, navLinks, pathname, permission]
+    [device, pathname, permission]
   );
 
   const handleUpdateUser = useCallback(
@@ -221,24 +130,5 @@ export function PageTemplateNav() {
     };
   }, [handleInitialize]);
 
-  return (
-    <nav
-      className={clsx(
-        "flex flex-col",
-        "border-secondary-300 border-r",
-        "py-4",
-        "max-lg:max-w-[58px] lg:min-w-[240px]",
-        "max-lg:px-2 lg:px-6"
-      )}
-    >
-      <Image
-        className="mb-8"
-        src="/lade.svg"
-        alt="LADE Logo"
-        width={72}
-        height={20}
-      />
-      {renderLinks}
-    </nav>
-  );
+  return renderNav;
 }

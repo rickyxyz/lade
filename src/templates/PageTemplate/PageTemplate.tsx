@@ -1,8 +1,9 @@
 "use client";
 import { ReactNode, useEffect, useRef } from "react";
 import clsx from "clsx";
-import { PageTemplateNav } from "./PageTemplateNav";
 import { Paragraph } from "@/components";
+import { useDevice } from "@/hooks";
+import { PageTemplateNav } from "./PageTemplateNav";
 
 export interface PageTemplateProps {
   className?: string;
@@ -21,10 +22,13 @@ export function PageTemplate({
   children,
   head,
 }: PageTemplateProps) {
+  const { device } = useDevice();
+
   return (
     <div
       className={clsx(
-        "relative h-full flex flex-row flex-auto overflow-hidden"
+        "relative h-full flex flex-auto overflow-hidden",
+        device === "desktop" ? "flex-row" : "flex-col-reverse",
       )}
     >
       <PageTemplateNav />
@@ -41,7 +45,7 @@ export function PageTemplate({
             {title}
           </Paragraph>
         </div>
-        <section className="flex flex-col overflow-y-auto p-8">
+        <section className="flex flex-col overflow-x-hidden overflow-y-auto p-8">
           {head}
           {children}
         </section>
