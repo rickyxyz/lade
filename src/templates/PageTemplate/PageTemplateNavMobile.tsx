@@ -1,62 +1,11 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import {
-  Button,
-  Icon,
-  Input,
-  User,
-  Dropdown,
-  IconText,
-  Paragraph,
-  Modal,
-  ButtonIcon,
-} from "@/components";
+import { useMemo } from "react";
 import clsx from "clsx";
-import { useAppDispatch, useAppSelector } from "@/libs/redux";
-import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
-import { crudData, logout } from "@/libs/firebase";
-import { signIn } from "next-auth/react";
-import { api } from "@/utils/api";
-import { useDebounce, useDevice } from "@/hooks";
-import { API } from "@/api";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  AddToPhotosOutlined,
-  ArrowDropDown,
-  AssignmentOutlined,
-  DescriptionOutlined,
-  EmojiEventsOutlined,
-  LibraryBooksOutlined,
-  LightbulbOutlined,
-  LoginOutlined,
-  Logout,
-  LogoutOutlined,
-  Menu,
-  NoteAddOutlined,
-  Person,
-  PersonAddAltOutlined,
-  SvgIconComponent,
-} from "@mui/icons-material";
+import { DescriptionOutlined, LibraryBooksOutlined } from "@mui/icons-material";
 import { checkPermissionLink } from "@/utils";
-import { DeviceScreenType, LinkPermissionType, RoleType } from "@/types";
+import { DeviceScreenType, LinkPermissionType } from "@/types";
 import { PageTemplateNavMobileButton } from "./PageTemplateNavMobileButton";
-
-interface NavLink {
-  label: string;
-  href?: string;
-  onClick?: () => void;
-  main?: boolean;
-  danger?: boolean;
-  icon: SvgIconComponent;
-  permission?: LinkPermissionType;
-}
-
-interface NavGroup {
-  name: string;
-  links: NavLink[];
-  permission?: LinkPermissionType;
-}
+import { NavLink } from "./PageTemplateNav.types";
 
 export function PageTemplateNavMobile({
   permission,

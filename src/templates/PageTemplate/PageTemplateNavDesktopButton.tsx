@@ -1,9 +1,9 @@
-import { Icon, Paragraph } from "@/components";
-import { DeviceScreenType } from "@/types";
-import { SvgIconComponent } from "@mui/icons-material";
+import { useMemo } from "react";
 import clsx from "clsx";
 import Link from "next/link";
-import { ReactNode, useMemo } from "react";
+import { SvgIconComponent } from "@mui/icons-material";
+import { Icon, Paragraph } from "@/components";
+import { DeviceScreenType } from "@/types";
 
 interface PageTemplateNavButton {
   icon?: SvgIconComponent;

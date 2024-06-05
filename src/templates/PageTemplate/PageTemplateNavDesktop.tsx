@@ -1,61 +1,22 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
-import {
-  Button,
-  Icon,
-  Input,
-  User,
-  Dropdown,
-  IconText,
-  Paragraph,
-  Modal,
-  ButtonIcon,
-} from "@/components";
 import clsx from "clsx";
-import { useAppDispatch, useAppSelector } from "@/libs/redux";
-import { User as UserType, getAuth, onAuthStateChanged } from "firebase/auth";
-import { crudData, logout } from "@/libs/firebase";
-import { signIn } from "next-auth/react";
-import { api } from "@/utils/api";
-import { useDebounce, useDevice } from "@/hooks";
-import { API } from "@/api";
+import { logout } from "@/libs/firebase";
+import { Paragraph } from "@/components";
 import { PageTemplateNavDesktopButton } from "./PageTemplateNavDesktopButton";
-import { usePathname, useRouter } from "next/navigation";
 import {
   AddToPhotosOutlined,
-  ArrowDropDown,
-  AssignmentOutlined,
   DescriptionOutlined,
-  EmojiEventsOutlined,
   LibraryBooksOutlined,
-  LightbulbOutlined,
   LoginOutlined,
   Logout,
-  LogoutOutlined,
-  Menu,
   NoteAddOutlined,
-  Person,
   PersonAddAltOutlined,
-  SvgIconComponent,
 } from "@mui/icons-material";
 import { checkPermissionLink } from "@/utils";
-import { DeviceScreenType, LinkPermissionType, RoleType } from "@/types";
-
-interface NavLink {
-  label: string;
-  href?: string;
-  onClick?: () => void;
-  danger?: boolean;
-  icon: SvgIconComponent;
-  permission?: LinkPermissionType;
-}
-
-interface NavGroup {
-  name: string;
-  links: NavLink[];
-  permission?: LinkPermissionType;
-}
+import { DeviceScreenType, LinkPermissionType } from "@/types";
+import { NavGroup } from "./PageTemplateNav.types";
 
 export function PageTemplateNavDesktop({
   permission,

@@ -1,9 +1,9 @@
-import { Icon, Paragraph } from "@/components";
-import { DeviceScreenType } from "@/types";
-import { SvgIconComponent } from "@mui/icons-material";
+import { useMemo } from "react";
 import clsx from "clsx";
 import Link from "next/link";
-import { ReactNode, useMemo } from "react";
+import { SvgIconComponent } from "@mui/icons-material";
+import { Icon, Paragraph } from "@/components";
+import { DeviceScreenType } from "@/types";
 
 interface PageTemplateNavButton {
   icon?: SvgIconComponent;
@@ -31,7 +31,7 @@ export function PageTemplateNavMobileButton({
       <div
         role="button"
         className={clsx(
-          "flex flex-col items-center gap-1 p-4",
+          "flex flex-col items-center gap-1 p-2",
           isActive ? "text-blue-500" : "text-gray-600"
         )}
         onClick={onClick}

@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode } from "react";
 import clsx from "clsx";
 import { Paragraph } from "@/components";
 import { useDevice } from "@/hooks";
