@@ -61,18 +61,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={externalWrapperClassName}>
         {label && (
-          <Paragraph
-            tag="label"
-            htmlFor={id}
-            className={labelClassName}
-            color="secondary-5"
-          >
-            {label}
+          <Paragraph className={labelClassName} color="secondary-5">
+            <Paragraph
+              className="block"
+              tag="label"
+              htmlFor={id}
+              color="inherit"
+            >
+              {label}
+            </Paragraph>
           </Paragraph>
         )}
-        <div
-          className={clsx("relative w-full", label && "mt-1", wrapperClassName)}
-        >
+        <div className={clsx("relative w-full", wrapperClassName)}>
           {iconLeft && (
             <Icon
               IconComponent={iconLeft}

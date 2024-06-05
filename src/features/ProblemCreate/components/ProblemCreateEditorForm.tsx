@@ -46,51 +46,49 @@ export function ProblemCreateEditorForm({
 
   const renderProblemSettings = useMemo(
     () => (
-      <section className="flex-grow mb-8">
-        <div className="flex flex-col gap-4">
-          <SettingInput name="Problem Title" formName="title" />
-          <SettingSelect
-            name="Problem Type"
-            formName="type"
-            options={PROBLEM_ANSWER_TYPE_OPTIONS}
-            selectedOption={type}
-            onSelectOption={(option) => {
-              setFieldValue("type", option ? option.id : undefined);
-              if (option) {
-                const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
-                setFieldValue("answer", JSON.stringify(defaultAnswer));
-                setAnswer(defaultAnswer);
-              }
-            }}
-            disabled={!initialized}
-          />
-          <SettingSelect
-            name="Problem Topic"
-            formName="topicId"
-            options={topicOptions}
-            selectedOption={topicId}
-            onSelectOption={(option) => {
-              setFieldValue("topicId", option ? option.id : undefined);
-              setFieldValue("subTopicId", "");
-            }}
-            disabled={!initialized}
-          />
-          <SettingSelect
-            name="Problem Subtopic"
-            formName="subTopicId"
-            options={
-              topicId
-                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  (subTopicOptions[topicId] as any)
-                : []
+      <section className="flex-grow flex flex-col gap-6">
+        <h2>Problem Settings</h2>
+        <SettingSelect
+          name="Problem Type"
+          formName="type"
+          options={PROBLEM_ANSWER_TYPE_OPTIONS}
+          selectedOption={type}
+          onSelectOption={(option) => {
+            setFieldValue("type", option ? option.id : undefined);
+            if (option) {
+              const defaultAnswer = PROBLEM_ANSWER_DEFAULT_VALUES[option.id];
+              setFieldValue("answer", JSON.stringify(defaultAnswer));
+              setAnswer(defaultAnswer);
             }
-            selectedOption={subTopicId}
-            onSelectOption={(option) => {
-              setFieldValue("subTopicId", option ? option.id : undefined);
-            }}
-            disabled={!initialized || !topicId}
-          />
-        </div>
+          }}
+          disabled={!initialized}
+        />
+        <SettingSelect
+          name="Problem Topic"
+          formName="topicId"
+          options={topicOptions}
+          selectedOption={topicId}
+          onSelectOption={(option) => {
+            setFieldValue("topicId", option ? option.id : undefined);
+            setFieldValue("subTopicId", "");
+          }}
+          disabled={!initialized}
+        />
+        <SettingSelect
+          name="Problem Subtopic"
+          formName="subTopicId"
+          options={
+            topicId
+              ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (subTopicOptions[topicId] as any)
+              : []
+          }
+          selectedOption={subTopicId}
+          onSelectOption={(option) => {
+            setFieldValue("subTopicId", option ? option.id : undefined);
+          }}
+          disabled={!initialized || !topicId}
+        />
       </section>
     ),
     [
@@ -105,35 +103,12 @@ export function ProblemCreateEditorForm({
     ]
   );
 
-  const renderProblemEditor = useMemo(
-    () => (
-      <section className="border-transparent" data-color-mode="light">
-        <div className="mb-4">
-          <MarkdownEditor
-            value={description}
-            onChange={(newValue) => {
-              setFieldValue("description", newValue);
-            }}
-            onBlur={() => {
-              setFieldTouched("description", true);
-            }}
-          />
-          {errors["description"] && touched["description"] && (
-            <Paragraph color="danger-6" className="mt-2">
-              {errors["description"]}
-            </Paragraph>
-          )}
-        </div>
-      </section>
-    ),
-    [description, errors, touched, setFieldValue, setFieldTouched]
-  );
-
   const renderProblemAnswer = useMemo(
     () =>
       type && (
-        <section className="mb-8">
+        <section>
           <ProblemAnswer
+            label="Problem Answer"
             type={type}
             stateAnswer={stateAnswer}
             caption={
@@ -154,6 +129,44 @@ export function ProblemCreateEditorForm({
     [errors, initialized, setFieldTouched, stateAnswer, touched, type]
   );
 
+  const renderProblemEditor = useMemo(
+    () => (
+      <section className="border-transparent" data-color-mode="light">
+        <div className="flex flex-col gap-6">
+          <h2>Problem Details</h2>
+          <SettingInput name="Problem Title" formName="title" />
+          <MarkdownEditor
+            label="Problem Description"
+            value={description}
+            onChange={(newValue) => {
+              setFieldValue("description", newValue);
+            }}
+            onBlur={() => {
+              setFieldTouched("description", true);
+            }}
+            caption={
+              errors["description"] &&
+              touched["description"] && (
+                <Paragraph color="danger-6" className="mt-2">
+                  {errors["description"]}
+                </Paragraph>
+              )
+            }
+          />
+          {renderProblemAnswer}
+        </div>
+      </section>
+    ),
+    [
+      description,
+      errors,
+      touched,
+      renderProblemAnswer,
+      setFieldValue,
+      setFieldTouched,
+    ]
+  );
+
   useEffect(() => {
     setFieldValue("answer", JSON.stringify(answer));
   }, [answer, setFieldValue, type]);
@@ -166,7 +179,6 @@ export function ProblemCreateEditorForm({
     <>
       {renderProblemSettings}
       {renderProblemEditor}
-      {renderProblemAnswer}
       <div className="flex flex-auto gap-4">
         <Button
           className="flex-1"

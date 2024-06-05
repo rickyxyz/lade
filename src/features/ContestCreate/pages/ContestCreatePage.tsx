@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
@@ -6,12 +6,16 @@ import { useDebounce } from "@/hooks";
 import { ContestType, ProblemContestType } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
 import { ContestCreateEditor } from "../components";
+import { PageTemplate } from "@/templates";
+import { ButtonIcon } from "@/components";
+import { KeyboardBackspace } from "@mui/icons-material";
 
 export function ContestCreatePage() {
   const stateContest = useState<ContestType>(CONTEST_DEFAULT);
   const contest = stateContest[0];
   const stateProblems = useState<ProblemContestType[]>([]);
-
+  const stateTab = useState<"main" | "problems">("main");
+  const [tab, setTab] = stateTab;
   const stateLoading = useState(false);
   const setLoading = stateLoading[1];
   const debounce = useDebounce();
@@ -41,12 +45,39 @@ export function ContestCreatePage() {
     [debounce, router, setLoading, user]
   );
 
+  const renderTitle = useMemo(
+    () => (tab === "problems" ? "Import Problems" : "Create Contest"),
+    [tab]
+  );
+
+  const renderLeftAction = useMemo(
+    () =>
+      tab === "problems" ? (
+        <div className="mr-2">
+          <ButtonIcon
+            size="xs"
+            variant="ghost"
+            icon={KeyboardBackspace}
+            onClick={() => {
+              setTab("main");
+            }}
+          />
+        </div>
+      ) : (
+        <></>
+      ),
+    [setTab, tab]
+  );
+
   return (
-    <ContestCreateEditor
-      contest={contest}
-      onSubmit={handleSubmit}
-      stateLoading={stateLoading}
-      stateProblems={stateProblems}
-    />
+    <PageTemplate title={renderTitle} leftTitle={renderLeftAction}>
+      <ContestCreateEditor
+        contest={contest}
+        onSubmit={handleSubmit}
+        stateLoading={stateLoading}
+        stateProblems={stateProblems}
+        stateTab={stateTab}
+      />
+    </PageTemplate>
   );
 }

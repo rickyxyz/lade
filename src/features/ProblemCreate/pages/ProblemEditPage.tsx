@@ -44,7 +44,6 @@ export function ProblemEditPage({
   return (
     <PageTemplate title="Edit Problem">
       <ProblemCreateEditor
-        headElement={renderHead}
         problem={problem}
         stateLoading={stateLoading}
         onSubmit={handleSubmit}

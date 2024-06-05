@@ -107,9 +107,9 @@ export function ContestCreateEditorForm({
 
   const renderContestSettings = useMemo(
     () => (
-      <section className="mb-8">
-        <h2 className="mb-4">Contest Settings</h2>
-        <div className="flex flex-col gap-4">
+      <section className="flex-grow flex flex-col gap-6">
+        <h2 className="">Contest Settings</h2>
+        <div className="flex flex-col gap-6">
           <SettingSelect
             name="Topic"
             formName="topic"
@@ -169,34 +169,39 @@ export function ContestCreateEditorForm({
 
   const renderContestEditor = useMemo(
     () => (
-      <section className="mb-8" data-color-mode="light">
-        <h2 className="mb-4">Contest Details</h2>
+      <section
+        className="flex-grow flex flex-col gap-6"
+        data-color-mode="light"
+      >
+        <h2 className="">Contest Details</h2>
         <SettingInput
           name="Contest Title"
           formName="title"
           placeholder="Enter contest title here..."
         />
-        <div className="my-4">
-          <MarkdownEditor
-            placeholder="Enter the contest description here..."
-            value={description}
-            onChange={(newValue) => {
-              setFieldValue("description", newValue);
-            }}
-            onBlur={() => {
-              setFieldTouched("description", true);
-            }}
-            maxLength={CONTEST_MAX_DESCRIPTION_LENGTH}
-          />
-          {errors["description"] && touched["description"] && (
-            <Paragraph color="danger-6" className="mt-2">
-              {errors["description"]}
-            </Paragraph>
-          )}
-        </div>
+        <MarkdownEditor
+          label="Contest Description"
+          placeholder="Enter the contest description here..."
+          value={description}
+          onChange={(newValue) => {
+            setFieldValue("description", newValue);
+          }}
+          onBlur={() => {
+            setFieldTouched("description", true);
+          }}
+          maxLength={CONTEST_MAX_DESCRIPTION_LENGTH}
+          caption={
+            errors["description"] &&
+            touched["description"] && (
+              <Paragraph color="danger-6" className="">
+                {errors["description"]}
+              </Paragraph>
+            )
+          }
+        />
       </section>
     ),
-    [description, errors, touched, initialized, setFieldValue, setFieldTouched]
+    [description, errors, touched, setFieldValue, setFieldTouched]
   );
 
   const handleReorderProblem = useCallback(
@@ -304,8 +309,8 @@ export function ContestCreateEditorForm({
 
   const renderContestProblemTable = useMemo(
     () => (
-      <section className="border-transparent mb-8">
-        <div className="flex flex-row items-center gap-2 mb-4">
+      <section className="border-transparent flex flex-col gap-6">
+        <div className="flex flex-row items-center gap-2">
           <h2>Contest Problems</h2>
           <Tag
             color={
@@ -319,16 +324,7 @@ export function ContestCreateEditorForm({
             {problems.length} / {CONTEST_MAX_PROBLEMS}
           </Tag>
         </div>
-        {/* <Setting className="mt-2">{renderStatus}</Setting> */}
-        {/* {renderContestProblems} */}
-        {/* <Button
-          variant="outline"
-          label="Edit Problems"
-          onClick={() => {
-            setTab("problems");
-          }}
-        /> */}
-        <div className="table-container mt-4">
+        <div className="table-container ">
           <table className="table">
             <thead className="border-b border-secondary-300">
               <tr>
@@ -363,7 +359,7 @@ export function ContestCreateEditorForm({
           </table>
         </div>
         {errors["problems"] && touched["problems"] && (
-          <Paragraph color="danger-6" className="mt-2">
+          <Paragraph color="danger-6" className="">
             {errors["problems"]}
           </Paragraph>
         )}
@@ -460,76 +456,83 @@ export function ContestCreateEditorForm({
     [renderListProblem]
   );
 
-  const renderContent = useMemo(() => {
-    if (tab === "main") {
-      return (
-        <Card>
-          <>
-            {renderContestSettings}
-            {renderContestEditor}
-            {renderContestProblemTable}
-            <div className="flex gap-4 mt-4">
-              <Button
-                className="flex-1"
-                loading={loading}
-                disabled={!initialized}
-                onClick={() => {
-                  setFieldValue("problems", JSON.stringify(problems));
-                  submitForm();
-                }}
-                label="Submit"
-              />
-              {onLeaveEditor && (
-                <Button
-                  className="flex-1"
-                  variant="outline-2"
-                  onClick={onLeaveEditor}
-                  label="Cancel"
-                />
-              )}
-            </div>
-            <div className="flex gap-4 mt-4"></div>
-          </>
-        </Card>
-      );
-    } else {
-      return (
-        <div className="relative flex-grow flex flex-col-reverse lg:flex-row gap-8">
-          <div className="flex-grow w-fit">
-            <ProblemList
-              query={queryObject}
-              renderProblems={renderListProblems}
+  const renderMainEditor = useMemo(
+    () => (
+      <Card className="flex flex-col gap-8">
+        {renderContestSettings}
+        {renderContestEditor}
+        {renderContestProblemTable}
+        <div className="flex gap-4 ">
+          <Button
+            className="flex-1"
+            loading={loading}
+            disabled={!initialized}
+            onClick={() => {
+              setFieldValue("problems", JSON.stringify(problems));
+              submitForm();
+            }}
+            label="Submit"
+          />
+          {onLeaveEditor && (
+            <Button
+              className="flex-1"
+              variant="outline-2"
+              onClick={onLeaveEditor}
+              label="Cancel"
             />
-          </div>
-          <ContestCreateEditorList
-            onDelete={handleRemoveProblem}
-            onReorder={handleReorderProblem}
-            onUpdateScore={handleUpdateScoreProblem}
-            problems={problems}
-            stateLoading={stateLoading}
-            className=""
+          )}
+        </div>
+      </Card>
+    ),
+    [
+      initialized,
+      loading,
+      onLeaveEditor,
+      problems,
+      renderContestEditor,
+      renderContestProblemTable,
+      renderContestSettings,
+      setFieldValue,
+      submitForm,
+    ]
+  );
+
+  const renderProblemImporter = useMemo(
+    () => (
+      <div className="relative flex-grow flex flex-col-reverse lg:flex-row gap-8">
+        <div className="flex-grow">
+          <ProblemList
+            query={queryObject}
+            renderProblems={renderListProblems}
           />
         </div>
-      );
+        <ContestCreateEditorList
+          onDelete={handleRemoveProblem}
+          onReorder={handleReorderProblem}
+          onUpdateScore={handleUpdateScoreProblem}
+          problems={problems}
+          stateLoading={stateLoading}
+        />
+      </div>
+    ),
+    [
+      handleRemoveProblem,
+      handleReorderProblem,
+      handleUpdateScoreProblem,
+      problems,
+      queryObject,
+      renderListProblems,
+      stateLoading,
+    ]
+  );
+
+  const renderContent = useMemo(() => {
+    if (tab === "main") {
+      return renderMainEditor;
+    } else {
+      return renderProblemImporter;
     }
-  }, [
-    handleRemoveProblem,
-    handleReorderProblem,
-    handleUpdateScoreProblem,
-    initialized,
-    loading,
-    onLeaveEditor,
-    problems,
-    queryObject,
-    renderContestEditor,
-    renderContestProblemTable,
-    renderContestSettings,
-    renderListProblems,
-    setFieldValue,
-    stateLoading,
-    submitForm,
-    tab,
-  ]);
+  }, [renderMainEditor, renderProblemImporter, tab]);
 
   return renderContent;
 }

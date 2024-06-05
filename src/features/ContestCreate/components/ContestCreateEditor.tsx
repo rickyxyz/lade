@@ -25,6 +25,7 @@ import {
 
 interface ContestEditProps extends Omit<ContestEditFormProps, "stateTab"> {
   title?: string;
+  stateTab: StateType<"main" | "problems">;
   stateMode?: StateType<ContentViewType>;
   stateLoading: StateType<boolean>;
   onSubmit: (problem: ContestType) => void;
@@ -40,8 +41,6 @@ export function ContestCreateEditor({
 }: ContestEditProps) {
   const setLoading = stateLoading[1];
   const user = useAppSelector("user");
-  const stateTab = useState<"main" | "problems">("main");
-  const [tab, setTab] = stateTab;
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
@@ -111,47 +110,20 @@ export function ContestCreateEditor({
     [onSubmit, setLoading, user]
   );
 
-  const renderTitle = useMemo(
-    () => (tab === "problems" ? "Import Problems" : title),
-    [tab, title]
-  );
-
-  const renderLeftAction = useMemo(
-    () =>
-      tab === "problems" ? (
-        <div className="mr-2">
-          <ButtonIcon
-            size="xs"
-            variant="ghost"
-            icon={KeyboardBackspace}
-            onClick={() => {
-              setTab("main");
-            }}
-          />
-        </div>
-      ) : (
-        <></>
-      ),
-    [setTab, tab]
-  );
-
   return (
-    <PageTemplate title={renderTitle} leftTitle={renderLeftAction}>
-      <Formik
-        initialValues={contest ?? CONTEST_DEFAULT}
-        validate={validateFormContest}
-        onSubmit={handleSubmit}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        <ContestCreateEditorForm
-          stateTab={stateTab}
-          stateMode={stateMode}
-          stateLoading={stateLoading}
-          contest={contest}
-          {...rest}
-        />
-      </Formik>
-    </PageTemplate>
+    <Formik
+      initialValues={contest ?? CONTEST_DEFAULT}
+      validate={validateFormContest}
+      onSubmit={handleSubmit}
+      validateOnChange={false}
+      validateOnBlur={false}
+    >
+      <ContestCreateEditorForm
+        stateMode={stateMode}
+        stateLoading={stateLoading}
+        contest={contest}
+        {...rest}
+      />
+    </Formik>
   );
 }

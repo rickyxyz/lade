@@ -7,6 +7,7 @@ interface ProblemAnswerProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateAnswer: StateType<any>;
   disabled?: boolean;
+  label?: string;
   caption?: ReactNode;
   onBlur?: () => void;
 }
@@ -36,15 +37,27 @@ export function ProblemAnswer({
   stateAnswer,
   disabled,
   caption,
+  label,
   onBlur,
 }: ProblemAnswerProps) {
   const [answer, setAnswer] = stateAnswer;
+
+  const renderLabel = useMemo(
+    () =>
+      label && (
+        <Paragraph className="w-40 mt-2" color="secondary-5">
+          {label}
+        </Paragraph>
+      ),
+    [label]
+  );
 
   const renderShortAnswerInput = useMemo(() => {
     const { content } = answer as AnswerType<"short_answer">;
 
     return (
       <div>
+        {renderLabel}
         <Input
           defaultValue={content}
           onChange={(e) => {
@@ -59,7 +72,7 @@ export function ProblemAnswer({
         {caption}
       </div>
     );
-  }, [answer, caption, disabled, onBlur, setAnswer]);
+  }, [answer, caption, disabled, onBlur, renderLabel, setAnswer]);
 
   const renderMatrixInput = useMemo(() => {
     const { matrixHeight, matrixWidth, content } =
@@ -68,6 +81,7 @@ export function ProblemAnswer({
     const horizontal = Array.from({ length: 3 });
     return (
       <div className="flex flex-col gap-2 mb-4">
+        {renderLabel}
         {content &&
           vertical.map((_, j) => (
             <div key={`Matrix-${j}`} className="flex gap-2">

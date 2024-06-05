@@ -80,7 +80,7 @@ export function ProblemCreateEditor({
   }, [handleUpdateInitialAnswer, problem]);
 
   return (
-    <Card className="gap-8">
+    <Card className="flex flex-col gap-8">
       <Formik
         initialValues={problem}
         validate={validateFormProblem}

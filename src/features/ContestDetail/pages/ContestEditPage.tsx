@@ -1,7 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { API } from "@/api";
 import { ContestCreateEditor } from "@/features";
 import { ContestType, ProblemContestType, StateType } from "@/types";
+import { ButtonIcon } from "@/components";
+import { KeyboardBackspace } from "@mui/icons-material";
+import { PageTemplate } from "@/templates";
 
 export function ContestEditPage({
   stateContest,
@@ -17,6 +20,8 @@ export function ContestEditPage({
   const [contest, setContest] = stateContest;
   const stateLoading = useState(false);
   const setLoading = stateLoading[1];
+  const stateTab = useState<"main" | "problems">("main");
+  const [tab, setTab] = stateTab;
 
   const handleSubmit = useCallback(
     async (values: ContestType) => {
@@ -38,14 +43,41 @@ export function ContestEditPage({
     [onEdit, setLoading, setContest]
   );
 
+  const renderTitle = useMemo(
+    () => (tab === "problems" ? "Import Problems" : "Create Contest"),
+    [tab]
+  );
+
+  const renderLeftAction = useMemo(
+    () =>
+      tab === "problems" ? (
+        <div className="mr-2">
+          <ButtonIcon
+            size="xs"
+            variant="ghost"
+            icon={KeyboardBackspace}
+            onClick={() => {
+              setTab("main");
+            }}
+          />
+        </div>
+      ) : (
+        <></>
+      ),
+    [setTab, tab]
+  );
+
   return (
-    <ContestCreateEditor
-      title="Edit Page"
-      stateProblems={stateProblems}
-      stateLoading={stateLoading}
-      contest={contest}
-      onSubmit={handleSubmit}
-      onLeaveEditor={onLeaveEditor}
-    />
+    <PageTemplate title={renderTitle} leftTitle={renderLeftAction}>
+      <ContestCreateEditor
+        title="Edit Page"
+        stateProblems={stateProblems}
+        stateLoading={stateLoading}
+        contest={contest}
+        onSubmit={handleSubmit}
+        onLeaveEditor={onLeaveEditor}
+        stateTab={stateTab}
+      />
+    </PageTemplate>
   );
 }

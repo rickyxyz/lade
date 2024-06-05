@@ -1,20 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROBLEM_BLANK } from "@/consts";
-import { ProblemCreateEditor, ProblemCreateEditorForm } from "../components";
+import { ProblemCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
 import { ProblemType } from "@/types";
-import { crudData } from "@/libs/firebase";
 import { useDebounce, useTopics } from "@/hooks";
-import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
-import { Button, Modal } from "@/components";
-import { PROBLEM_PLACEHOLDERS } from "@/libs/firebase/placeholders";
 import { ProblemCreateEditorMultiple } from "../components/ProblemCreateEditorMultiple";
 import { ProblemCreateEditorMultipleList } from "../components/ProblemCreateEditorMultipleList";
-import { ProblemCreateEditorFormMultiple } from "../components/ProblemCreateEditorFormMultiple";
-import { makeAnswer } from "@/utils";
 
 export function ProblemCreateMultiplePage() {
   const stateProblems = useState<ProblemType[]>([

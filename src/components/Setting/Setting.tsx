@@ -19,7 +19,7 @@ export function Setting({
 }: SettingProps) {
   return (
     <div className={clsx("flex flex-col", className)}>
-      <Paragraph className="w-40 mt-2" color="secondary-5">
+      <Paragraph className="w-40" color="secondary-5">
         {name}
       </Paragraph>
       <div className={clsx("flex-1", classNameChildren)}>{children}</div>

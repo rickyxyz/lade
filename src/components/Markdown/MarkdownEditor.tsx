@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { IMarkdownEditor } from "@uiw/react-markdown-editor";
 import { useEditorInitialized } from "@/hooks";
-import { useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import clsx from "clsx";
 import { FormulaToolbar } from "./FormulaToolbar";
@@ -20,14 +20,18 @@ export const MarkdownEditorRaw = dynamic(
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface MarkdownEditorProps extends IMarkdownEditor {
+  label?: string;
   maxLength?: number;
+  caption?: ReactNode;
 }
 
 export function MarkdownEditor({
+  label,
   height = "200px",
   value,
   maxLength = 200,
   toolbars = ["bold", "italic", "strike", "ulist", "olist", FormulaToolbar],
+  caption,
   ...rest
 }: MarkdownEditorProps) {
   const { initialized, setInitialized } = useEditorInitialized();
@@ -38,32 +42,40 @@ export function MarkdownEditor({
   );
 
   return (
-    <div className="relative border border-secondary-300 rounded-md overflow-hidden">
-      <MarkdownEditorRaw
-        extensions={[EditorView.lineWrapping]}
-        onCreateEditor={() => {
-          setInitialized(true);
-        }}
-        value={value}
-        height={height}
-        toolbars={toolbars}
-        renderPreview={({ source }) => {
-          return (
-            <MarkdownBase
-              className="w-full h-full text-wrap"
-              markdown={source ?? ""}
-            />
-          );
-        }}
-        {...rest}
-      />
-      {initialized && (
-        <div className="py-1.5 px-4 bg-secondary-50 border-t border-secondary-4">
-          <Paragraph>
-            {value?.length ?? 0} / {maxLength}
-          </Paragraph>
-        </div>
+    <div>
+      {label && (
+        <Paragraph className="w-40" color="secondary-5">
+          {label}
+        </Paragraph>
       )}
+      <div className="relative border border-secondary-300 rounded-md overflow-hidden">
+        <MarkdownEditorRaw
+          extensions={[EditorView.lineWrapping]}
+          onCreateEditor={() => {
+            setInitialized(true);
+          }}
+          value={value}
+          height={height}
+          toolbars={toolbars}
+          renderPreview={({ source }) => {
+            return (
+              <MarkdownBase
+                className="w-full h-full text-wrap"
+                markdown={source ?? ""}
+              />
+            );
+          }}
+          {...rest}
+        />
+        {initialized && (
+          <div className="py-1.5 px-4 bg-secondary-50 border-t border-secondary-4">
+            <Paragraph>
+              {value?.length ?? 0} / {maxLength}
+            </Paragraph>
+          </div>
+        )}
+      </div>
+      {caption}
     </div>
   );
 }
