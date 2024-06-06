@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { IMarkdownEditor } from "@uiw/react-markdown-editor";
 import { useEditorInitialized } from "@/hooks";
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import clsx from "clsx";
 import { FormulaToolbar } from "./FormulaToolbar";
@@ -9,6 +9,7 @@ import { PreviewToolbar } from "./PreviewToolbar";
 import { MarkdownBase } from "./Markdown";
 import { Paragraph } from "../Paragraph";
 import { Loader } from "../Loader";
+import { MarkdownPreview } from "./MarkdownPreview";
 
 export const MarkdownEditorRaw = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -35,11 +36,12 @@ export function MarkdownEditor({
   ...rest
 }: MarkdownEditorProps) {
   const { initialized, setInitialized } = useEditorInitialized();
+  const [lastRender, setLastRender] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const exceedsLimit = useMemo(
-    () => value && value.length >= maxLength,
-    [maxLength, value]
-  );
+  const handleUpdateRender = useCallback(() => {
+    setLastRender(new Date().getTime());
+  }, []);
 
   return (
     <div>
@@ -62,6 +64,8 @@ export function MarkdownEditor({
               <MarkdownBase
                 className="w-full h-full text-wrap"
                 markdown={source ?? ""}
+                ref={contentRef}
+                onRender={handleUpdateRender}
               />
             );
           }}
