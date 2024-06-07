@@ -3,8 +3,9 @@ import { json } from "@/utils/api";
 import { prisma } from "@/libs/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { API_FAIL_MESSAGE } from "@/consts/api";
+import { SolvedPublicType } from "@/types";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   let result: any;
 
   try {
@@ -13,10 +14,41 @@ export async function POST(req: NextRequest) {
 
     if (!userId) throw Error("fail");
 
-    result = await prisma.solved.findMany({
+    result = (await prisma.solved.findMany({
       where: {
         userId,
       },
+      select: {
+        id: true,
+        createdAt: true,
+        problemId: true,
+        problem: {
+          select: {
+            title: true,
+            topic: {
+              select: {
+                name: true,
+              },
+            },
+            subTopic: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    })) as unknown as SolvedPublicType[];
+
+    result = result.map((entry) => {
+      return {
+        ...entry,
+        problem: {
+          title: entry.problem.title,
+          topic: entry.problem.topic.name,
+          subTopic: entry.problem.subTopic.name,
+        },
+      };
     });
   } catch (e) {
     result = undefined;

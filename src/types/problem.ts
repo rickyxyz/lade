@@ -98,9 +98,20 @@ export type SolvedMapType = Record<string, string>;
 export interface SolvedType {
   id: number;
   createdAt: Date;
-  userId: string;
   problemId: string;
   answer: string;
+}
+export interface SolvedPublicType {
+  id: number;
+  createdAt: Date;
+  problemId: string;
+  problem: {
+    title: string;
+    topicId: string;
+    subTopicId: string;
+    topic: string;
+    subTopic: string;
+  };
 }
 export type ProblemDatabaseType = ProblemType & {
   topic?: ProblemTopicType;

@@ -4,7 +4,9 @@ import {
   ProblemDatabaseType,
   ProblemTopicType,
   ProblemType,
+  SolvedPublicType,
   SolvedType,
+  SolvedsType,
   UserType,
 } from "@/types";
 import { Empty, ApiMessage, ApiPagination } from "@/types";
@@ -33,10 +35,17 @@ interface ApiParams {
     userId: string;
     problemId: number | string;
   };
-  post_solved: Empty;
-  get_user: {
-    uid: string;
+  get_solveds: {
+    userId: string;
   };
+  post_solved: Empty;
+  get_user:
+    | {
+        uid: string;
+      }
+    | {
+        id: string;
+      };
   post_user: Empty;
   get_topics: Empty;
   get_contests: {
@@ -65,6 +74,7 @@ interface ApiBody {
   patch_problem: ProblemType;
   delete_problem: Empty;
   get_solved: Empty;
+  get_solveds: Empty;
   post_solved: {
     id: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +109,7 @@ interface ApiReturn {
   patch_problem: ApiMessage;
   delete_problem: ApiMessage;
   get_solved: SolvedType;
+  get_solveds: SolvedPublicType[];
   post_solved: ApiMessage;
   get_user: UserType;
   post_user: ApiMessage;
@@ -146,6 +157,10 @@ const ROUTES = {
   },
   get_solved: {
     path: "/v1/solved",
+    method: "GET",
+  },
+  get_solveds: {
+    path: "/v1/solveds",
     method: "GET",
   },
   post_solved: {
