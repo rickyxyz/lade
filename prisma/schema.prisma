@@ -18,8 +18,9 @@ enum Role {
 model User {
   id       String    @id @unique
   uid      String    @unique
-  role     Role      @default(USER)
   email    String    @unique
+  name     String?
+  role     Role      @default(USER)
   joinDate DateTime
   problems Problem[]
   solveds  Solved[]

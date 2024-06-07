@@ -1,6 +1,7 @@
 export interface UserType {
   id: string;
   uid: string;
+  name?: string;
   email: string;
   role?: string;
   joinDate: string;

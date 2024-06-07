@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const uid = searchParams.get("uid");
+    const id = searchParams.get("id");
 
     if (typeof uid === "string") {
       const out = await prisma.user.findUnique({
@@ -62,7 +63,16 @@ export async function GET(req: NextRequest) {
       });
 
       response = NextResponse.json(JSON.parse(json(out)));
-    } else {
+    } else if (typeof id === "string") {
+      const out = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      response = NextResponse.json(JSON.parse(json(out)));
+    }
+    {
       throw Error("uid undefined");
     }
   } catch (e) {
