@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     if (!userId) throw Error("fail");
 
-    result = (await prisma.solved.findMany({
+    result = await prisma.solved.findMany({
       where: {
         userId,
       },
@@ -38,7 +38,11 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-    })) as unknown as SolvedPublicType[];
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 10,
+    });
 
     result = result.map((entry) => {
       return {

@@ -38,14 +38,13 @@ export function PageTemplateNavMobile({
         .filter(({ permission: linkPerm }) =>
           checkPermissionLink(permission, linkPerm)
         )
-        .map(({ label, href, icon, danger, onClick }) => (
+        .map(({ label, href, icon, onClick }) => (
           <PageTemplateNavMobileButton
             key={label}
             label={label}
             href={href}
             icon={icon}
             device={device}
-            isDanger={danger}
             isActive={href === pathname}
             onClick={onClick}
           />

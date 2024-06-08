@@ -12,6 +12,7 @@ import {
   LoginOutlined,
   Logout,
   NoteAddOutlined,
+  Person,
   PersonAddAltOutlined,
 } from "@mui/icons-material";
 import { checkPermissionLink } from "@/utils";
@@ -19,10 +20,12 @@ import { DeviceScreenType, LinkPermissionType } from "@/types";
 import { NavGroup } from "./PageTemplateNav.types";
 
 export function PageTemplateNavDesktop({
+  userId = "",
   permission,
   device,
   pathname,
 }: {
+  userId?: string;
   permission: LinkPermissionType;
   device: DeviceScreenType;
   pathname: string | null;
@@ -59,6 +62,12 @@ export function PageTemplateNavDesktop({
       {
         name: "Account",
         links: [
+          {
+            label: "Profile",
+            href: `/profile/${userId}`,
+            icon: Person,
+            permission: "user+",
+          },
           {
             label: "Log Out",
             onClick: logout,

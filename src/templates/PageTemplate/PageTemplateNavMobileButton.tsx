@@ -8,22 +8,18 @@ import { DeviceScreenType } from "@/types";
 interface PageTemplateNavButton {
   icon?: SvgIconComponent;
   device?: DeviceScreenType;
-  className?: string;
   label?: string;
   href?: string;
   isActive?: boolean;
-  isDanger?: boolean;
   onClick?: () => void;
 }
 
 export function PageTemplateNavMobileButton({
-  className,
   label,
   device,
   icon,
   href,
   isActive,
-  isDanger,
   onClick,
 }: PageTemplateNavButton) {
   const renderButton = useMemo(

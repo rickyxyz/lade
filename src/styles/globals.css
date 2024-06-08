@@ -58,6 +58,7 @@
 
   .markdown,
   .markdown * {
+    @apply text-base;
     text-wrap: wrap;
     word-wrap: break-word;
   }

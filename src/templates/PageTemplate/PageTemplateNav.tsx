@@ -27,6 +27,7 @@ export function PageTemplateNav() {
     () =>
       device === "desktop" ? (
         <PageTemplateNavDesktop
+          userId={user?.id}
           device={device}
           pathname={pathname}
           permission={permission}
