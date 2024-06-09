@@ -90,7 +90,7 @@ export function PageTemplateNavDesktop({
         ],
       },
     ],
-    []
+    [userId]
   );
 
   const renderLinks = useMemo(

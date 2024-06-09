@@ -1,17 +1,23 @@
 "use client";
 import { useMemo } from "react";
 import clsx from "clsx";
-import { DescriptionOutlined, LibraryBooksOutlined } from "@mui/icons-material";
+import {
+  DescriptionOutlined,
+  LibraryBooksOutlined,
+  Person,
+} from "@mui/icons-material";
 import { checkPermissionLink } from "@/utils";
 import { DeviceScreenType, LinkPermissionType } from "@/types";
 import { PageTemplateNavMobileButton } from "./PageTemplateNavMobileButton";
 import { NavLink } from "./PageTemplateNav.types";
 
 export function PageTemplateNavMobile({
+  userId = "",
   permission,
   device,
   pathname,
 }: {
+  userId?: string;
   permission: LinkPermissionType;
   device: DeviceScreenType;
   pathname: string | null;
@@ -28,8 +34,13 @@ export function PageTemplateNavMobile({
         href: "/contests",
         icon: LibraryBooksOutlined,
       },
+      {
+        label: "User",
+        href: `/profile/${userId}`,
+        icon: Person,
+      },
     ],
-    []
+    [userId]
   );
 
   const renderLinks = useMemo(

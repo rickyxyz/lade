@@ -35,6 +35,7 @@ export interface ButtonProps
   textClassName?: string;
   loading?: boolean;
   style?: CSSProperties;
+  width?: "full" | "fit";
 }
 
 export function Button({
@@ -52,6 +53,7 @@ export function Button({
   orderDirection,
   type,
   style,
+  width,
   onClick,
 }: ButtonProps) {
   return (
@@ -59,6 +61,7 @@ export function Button({
       className={clsx(
         BUTTON_BASE_STYLE,
         BUTTON_VARIOUS_STYLE[variant][color],
+        width === "full" && "w-full",
         variant === "outline" && "bg-white",
         size && BUTTON_SIZE_STYLE[size],
         order && orderDirection && BUTTON_ORDER_STYLE[orderDirection][order],

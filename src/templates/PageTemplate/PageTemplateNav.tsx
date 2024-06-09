@@ -34,12 +34,13 @@ export function PageTemplateNav() {
         />
       ) : (
         <PageTemplateNavMobile
+          userId={user?.id}
           device={device}
           pathname={pathname}
           permission={permission}
         />
       ),
-    [device, pathname, permission]
+    [device, pathname, permission, user?.id]
   );
 
   const handleUpdateUser = useCallback(
