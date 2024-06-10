@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Card, Paragraph } from "@/components";
 import { UserType } from "@/types";
+import { ProfileCardSkeleton } from "./ProfileCardSkeleton";
 
 interface ProfileCardProps {
   user: UserType | null;
@@ -9,7 +10,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ user, loading }: ProfileCardProps) {
   return (
-    <Card className="flex flex-col items-center justify-center lg:min-w-[320px] lg:max-w-[320px]">
+    <Card className="flex flex-col items-center justify-center h-fit lg:min-w-[320px] lg:max-w-[320px]">
       {!loading && user ? (
         <>
           <Image
@@ -25,9 +26,7 @@ export function ProfileCard({ user, loading }: ProfileCardProps) {
           <Paragraph>{user.id}</Paragraph>
         </>
       ) : (
-        <>
-          <div className="skeleton w-1/2 h-4"></div>
-        </>
+        <ProfileCardSkeleton />
       )}
     </Card>
   );
