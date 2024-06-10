@@ -36,7 +36,7 @@ export function PageTemplateNavMobile({
       },
       {
         label: "User",
-        href: `/profile/${userId}`,
+        href: userId ? `/profile/${userId}` : "/login",
         icon: Person,
       },
     ],

@@ -6,6 +6,7 @@ import { Input, InputProps } from "@/components";
 interface AuthInputProps extends InputProps {
   name: string;
   type: HTMLInputTypeAttribute;
+  isRequired?: boolean;
 }
 
 export function AuthInput(props: AuthInputProps) {

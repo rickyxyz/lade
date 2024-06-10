@@ -1,27 +1,24 @@
 import { useCallback, useMemo } from "react";
+import { signIn } from "next-auth/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/libs/firebase";
+import { API } from "@/api";
+import { PageTemplate } from "@/templates";
 import { Button, Card, Paragraph } from "@/components";
 import { validateFormSignUp } from "@/utils";
 import { SignUpFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
-import { PageTemplate } from "@/templates";
-import { signIn } from "next-auth/react";
-import { api } from "@/utils/api";
-import { useAppDispatch } from "@/libs/redux";
-import { API } from "@/api";
 
 export function AuthSignUpPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
 
   const handleSignUp = useCallback(
     async (values: SignUpFormType, actions: FormikHelpers<SignUpFormType>) => {
       const now = new Date().toUTCString();
-      const { email, username } = values;
+      const { name, email, username } = values;
 
       await signUp(values)
         .then((credential) => ({
@@ -40,6 +37,7 @@ export function AuthSignUpPage() {
           API("post_user", {
             body: {
               id: username,
+              name,
               uid,
               email,
               joinDate: now,
@@ -82,9 +80,20 @@ export function AuthSignUpPage() {
         >
           {({ isSubmitting }) => (
             <Form>
-              <AuthInput name="email" type="email" label="Email" />
-              <AuthInput name="username" type="text" label="Username" />
-              <AuthInput name="password" type="password" label="Password" />
+              <AuthInput name="email" type="email" label="Email" isRequired />
+              <AuthInput
+                name="username"
+                type="text"
+                label="Username"
+                isRequired
+              />
+              <AuthInput name="name" type="text" label="Display Name" />
+              <AuthInput
+                name="password"
+                type="password"
+                label="Password"
+                isRequired
+              />
               <Button
                 className="w-full mt-8"
                 type="submit"

@@ -19,12 +19,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const { id, uid, email } = body as unknown as UserType;
+    const { id, uid, name, email } = body as unknown as UserType;
 
     await prisma.user.create({
       data: {
         id,
         uid,
+        name,
         email,
         role: "USER",
         joinDate: new Date(),

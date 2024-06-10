@@ -77,8 +77,13 @@ export function AuthLoginPage() {
         >
           {({ isSubmitting }) => (
             <Form>
-              <AuthInput name="email" type="email" label="Email" />
-              <AuthInput name="password" type="password" label="Password" />
+              <AuthInput name="email" type="email" label="Email" isRequired />
+              <AuthInput
+                name="password"
+                type="password"
+                label="Password"
+                isRequired
+              />
               <Button
                 className="w-full mt-8"
                 type="submit"

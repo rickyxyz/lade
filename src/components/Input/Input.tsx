@@ -33,6 +33,7 @@ export interface InputProps
   size?: InputSizeType;
   width?: InputWidthType;
   errorText?: string;
+  isRequired?: boolean;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -52,6 +53,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       errorText,
       size = "m",
       width = "full",
+      isRequired,
       ...rest
     },
     ref
@@ -69,6 +71,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               color="inherit"
             >
               {label}
+              {isRequired && <Paragraph color="danger-6">*</Paragraph>}
             </Paragraph>
           </Paragraph>
         )}
