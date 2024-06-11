@@ -185,6 +185,10 @@ export function ContestListPage({ query }: ProblemListPageProps) {
       .catch((e) => {
         console.log("Result:");
         console.log(e);
+        /**
+         * @todo
+         * show feedback
+         */
       });
   }, [
     handleUpdateStateOnQueryUpdate,

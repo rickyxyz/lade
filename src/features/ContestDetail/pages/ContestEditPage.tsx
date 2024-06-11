@@ -38,6 +38,10 @@ export function ContestEditPage({
         .catch((e) => {
           console.log(e);
           setLoading(false);
+          /**
+           * @todo
+           * show feedback
+           */
         });
     },
     [onEdit, setLoading, setContest]

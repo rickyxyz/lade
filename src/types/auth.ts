@@ -11,7 +11,7 @@ export type UserMapType = Record<string, UserType>;
 
 export interface SignUpFormType {
   email: string;
-  name?: string;
+  name: string;
   username: string;
   password: string;
 }

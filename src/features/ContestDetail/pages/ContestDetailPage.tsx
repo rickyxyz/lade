@@ -129,6 +129,10 @@ export function ContestDetailPage({
       .catch((e) => {
         console.log("Result:");
         console.log(e);
+        /**
+         * @todo
+         * show feedback
+         */
         return null;
       });
   }, [contestId, router]);

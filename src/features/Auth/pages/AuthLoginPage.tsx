@@ -48,6 +48,10 @@ export function AuthLoginPage() {
         .catch((e) => {
           console.log(e);
           console.log("Login Error");
+          /**
+           * @todo
+           * show feedback
+           */
           actions.setSubmitting(false);
         });
     },

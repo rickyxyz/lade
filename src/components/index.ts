@@ -14,5 +14,6 @@ export * from "./Quote";
 export * from "./Select";
 export * from "./Setting";
 export * from "./Tag";
+export * from "./Toast";
 export * from "./Tooltip";
 export * from "./User";

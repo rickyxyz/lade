@@ -12,6 +12,8 @@ import {
 } from "@/consts";
 import { noto } from "@/libs/fonts";
 import ProviderWrapper from "@/contexts/ProviderWrapper";
+import { ToastInternalType } from "@/contexts/ToastContext";
+import { Toast } from "@/components";
 
 export default function RootLayout({
   children,
@@ -20,6 +22,8 @@ export default function RootLayout({
 }) {
   const [layout, setLayout] = useState<LayoutContextType>(LAYOUT_DEFAULT);
   const stateInitialized = useState(false);
+  const stateToasts = useState<ToastInternalType[]>([]);
+  const [toasts, setToasts] = stateToasts;
 
   const handleUpdateLayout = useCallback(() => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -63,9 +67,24 @@ export default function RootLayout({
         }
       `}</style>
       <body className={noto.className}>
-        <ProviderWrapper layout={layout} stateInitialized={stateInitialized}>
+        <ProviderWrapper
+          layout={layout}
+          stateInitialized={stateInitialized}
+          stateToasts={stateToasts}
+        >
           {children}
         </ProviderWrapper>
+        <div className="fixed right-8 bottom-8 gap-2 flex flex-col-reverse items-end">
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              toast={toast}
+              onClose={() => {
+                setToasts((prev) => prev.filter(({ id }) => id !== toast.id));
+              }}
+            />
+          ))}
+        </div>
       </body>
     </html>
   );

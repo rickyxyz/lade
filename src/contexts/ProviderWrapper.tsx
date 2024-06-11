@@ -13,15 +13,18 @@ import { EditorInitializedContext } from "@/hooks";
 import { LayoutContextType, StateType } from "@/types";
 import { QueryParamProvider } from "use-query-params";
 import NextAdapterApp from "next-query-params/app";
+import { ToastContext, ToastInternalType } from "./ToastContext";
 
 export default function ProviderWrapper({
   children,
   layout,
   stateInitialized,
+  stateToasts,
 }: {
   children: ReactNode;
   layout: LayoutContextType;
   stateInitialized: StateType<boolean>;
+  stateToasts: StateType<ToastInternalType[]>;
 }) {
   return (
     <>
@@ -31,7 +34,9 @@ export default function ProviderWrapper({
             <PersistGate loading={null} persistor={persistor}>
               <EditorInitializedContext.Provider value={stateInitialized}>
                 <LayoutContext.Provider value={layout}>
-                  {children}
+                  <ToastContext.Provider value={stateToasts}>
+                    {children}
+                  </ToastContext.Provider>
                 </LayoutContext.Provider>
               </EditorInitializedContext.Provider>
             </PersistGate>

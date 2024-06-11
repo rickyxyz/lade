@@ -129,6 +129,10 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       .catch((e) => {
         console.log("Result:");
         console.log(e);
+        /**
+         * @todo
+         * show feedback
+         */
         return null;
       });
   }, [id, router]);
@@ -234,7 +238,12 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
         return id;
       })
-      .catch(() => null);
+      .catch(() => {
+        /**
+         * @todo
+         * show feedback
+         */
+      });
 
     if (result && user) {
       let existing: string | null;

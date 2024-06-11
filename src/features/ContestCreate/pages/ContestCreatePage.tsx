@@ -39,6 +39,10 @@ export function ContestCreatePage() {
         })
         .catch((e) => {
           console.log(e);
+          /**
+           * @todo
+           * show feedback
+           */
           setLoading(false);
         });
     },

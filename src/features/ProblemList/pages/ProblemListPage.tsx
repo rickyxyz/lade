@@ -3,7 +3,6 @@ import { PageTemplate } from "@/templates";
 import { ProblemQuery, ProblemType } from "@/types";
 import { useCallback } from "react";
 import { ProblemCard, ProblemCardSkeleton, ProblemList } from "../components";
-import Link from "next/link";
 
 interface ProblemListPageProps {
   query: ProblemQuery;

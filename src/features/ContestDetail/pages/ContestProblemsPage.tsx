@@ -60,6 +60,10 @@ export function ContestProblemsPage({
         })
         .catch((e) => {
           console.log(e);
+          /**
+           * @todo
+           * show feedback
+           */
         })
         .finally(() => {
           setAnswerLoading(null);

@@ -31,6 +31,7 @@ import { Filter, FilterAlt, Search } from "@mui/icons-material";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import { validateProblemQuery } from "@/utils";
 import { NumberParam, StringParam, useQueryParams } from "use-query-params";
+import { useToast } from "@/hooks/useToast";
 
 interface ProblemListProps {
   query?: ProblemQuery;
@@ -80,6 +81,7 @@ export function ProblemList({
   const { page } = pagination;
   const { device } = useDevice();
   const debounce = useDebounce();
+  const { handleAddToast } = useToast();
   const lastQuery = useRef<ProblemQuery>();
 
   const handleUpdateQuery = useCallback(
@@ -164,13 +166,19 @@ export function ProblemList({
             initialized: true,
           });
           setLoading(false);
+          handleAddToast({
+            text: `Finish Loading XXXXXXXXXX ${new Date().getSeconds()}`,
+          });
         }
       )
       .catch((e) => {
         console.log("Result:");
         console.log(e);
+        handleAddToast({
+          text: "NOPE",
+        });
       });
-  }, [page, query, search, sortBy, subtopic, topic]);
+  }, [handleAddToast, page, query, search, sortBy, subtopic, topic]);
 
   const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {

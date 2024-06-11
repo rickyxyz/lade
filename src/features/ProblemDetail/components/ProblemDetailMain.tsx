@@ -93,6 +93,10 @@ export function ProblemDetailMain({
       })
       .catch((e) => {
         console.log(e);
+        /**
+         * @todo
+         * show feedback
+         */
       })
       .finally(() => {
         setLoading(false);

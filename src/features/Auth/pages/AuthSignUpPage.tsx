@@ -50,6 +50,10 @@ export function AuthSignUpPage() {
         .catch((e) => {
           console.log(e);
           console.log("Register Error");
+          /**
+           * @todo
+           * show feedback
+           */
           actions.setSubmitting(false);
         });
     },
@@ -72,6 +76,7 @@ export function AuthSignUpPage() {
         <Formik
           initialValues={{
             email: "",
+            name: "",
             username: "",
             password: "",
           }}

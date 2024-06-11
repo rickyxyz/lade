@@ -21,7 +21,7 @@ export function ProfileCard({ user, loading }: ProfileCardProps) {
             alt="User Profile Picture"
           />
           <Paragraph size="l" weight="semibold">
-            {user.name ?? user.id}
+            {user.name && user.name !== "" ? user.name : user.id}
           </Paragraph>
           <Paragraph>{user.id}</Paragraph>
         </>

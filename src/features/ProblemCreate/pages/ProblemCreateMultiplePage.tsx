@@ -53,6 +53,10 @@ export function ProblemCreateMultiplePage() {
       .catch((e) => {
         setLoading(false);
         console.log(e);
+        /**
+         * @todo
+         * show feedback
+         */
       });
   }, [problems, router, setLoading]);
 

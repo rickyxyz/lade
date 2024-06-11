@@ -14,7 +14,7 @@ export function validatePassword(password: string) {
 }
 
 export function validateFormSignUp(user: SignUpFormType) {
-  const { email = "", password = "", username = "", name } = user;
+  const { email = "", password = "", username = "", name = "" } = user;
 
   const errors: Partial<Record<keyof SignUpFormType, string>> = {};
 
@@ -27,9 +27,11 @@ export function validateFormSignUp(user: SignUpFormType) {
     errors.username = "Username must be at least 4 characters.";
   else if (username.length > 32) errors.username = "Username is too long!";
 
-  if (name && name.length < 3)
+  if (name === "") {
+    /* ok */
+  } else if (name.length < 3)
     errors.name = "Name must be at least 3 characters.";
-  else if (name && name.length > 32) errors.name = "Name is too long!";
+  else if (name.length > 32) errors.name = "Name is too long!";
 
   const errorPassword = validatePassword(password);
   if (errorPassword) errors.password = errorPassword;

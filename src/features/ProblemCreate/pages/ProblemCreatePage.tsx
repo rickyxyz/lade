@@ -46,6 +46,10 @@ export function ProblemCreatePage() {
         .catch((e) => {
           console.log(e);
           setLoading(false);
+          /**
+           * @todo
+           * show feedback
+           */
         });
     },
     [debounce, router, setLoading, user]

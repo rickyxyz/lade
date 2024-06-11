@@ -29,7 +29,12 @@ export function ProfilePage({ id, self }: ProfilePageProps) {
         .then(({ data: result }) => {
           setUser(result);
         })
-        .catch(() => {})
+        .catch(() => {
+          /**
+           * @todo
+           * show feedback
+           */
+        })
         .finally(() => {
           setLoadingUser(false);
         });
@@ -42,7 +47,12 @@ export function ProfilePage({ id, self }: ProfilePageProps) {
         .then(({ data: result }) => {
           setSolveds(result);
         })
-        .catch(() => {})
+        .catch(() => {
+          /**
+           * @todo
+           * show feedback
+           */
+        })
         .finally(() => {
           setLoadingSolved(false);
         });
