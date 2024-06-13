@@ -4,10 +4,8 @@ import {
   ToastType,
 } from "@/contexts/ToastContext";
 import { useCallback, useContext, useMemo } from "react";
-import { useDevice } from "./useLayout";
 
 export function useToast() {
-  const { width } = useDevice();
   const [toasts, setToasts] = useContext(ToastContext);
 
   const handleAddToast = useCallback(
@@ -30,7 +28,7 @@ export function useToast() {
   return useMemo(
     () => ({
       toasts,
-      handleAddToast,
+      addToast: handleAddToast,
     }),
     [handleAddToast, toasts]
   );

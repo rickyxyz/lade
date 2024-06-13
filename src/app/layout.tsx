@@ -12,8 +12,8 @@ import {
 } from "@/consts";
 import { noto } from "@/libs/fonts";
 import ProviderWrapper from "@/contexts/ProviderWrapper";
-import { ToastInternalType } from "@/contexts/ToastContext";
-import { Toast } from "@/components";
+import { ToastInternalType } from "@/contexts";
+import { ToastList } from "@/components/Toast/ToastList";
 
 export default function RootLayout({
   children,
@@ -74,17 +74,7 @@ export default function RootLayout({
         >
           {children}
         </ProviderWrapper>
-        <div className="fixed right-8 bottom-8 gap-2 flex flex-col-reverse items-end">
-          {toasts.map((toast) => (
-            <Toast
-              key={toast.id}
-              toast={toast}
-              onClose={() => {
-                setToasts((prev) => prev.filter(({ id }) => id !== toast.id));
-              }}
-            />
-          ))}
-        </div>
+        <ToastList stateToasts={stateToasts} width={layout.width - 64} />
       </body>
     </html>
   );

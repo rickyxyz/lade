@@ -81,7 +81,7 @@ export function ProblemList({
   const { page } = pagination;
   const { device } = useDevice();
   const debounce = useDebounce();
-  const { handleAddToast } = useToast();
+  const { addToast } = useToast();
   const lastQuery = useRef<ProblemQuery>();
 
   const handleUpdateQuery = useCallback(
@@ -166,19 +166,15 @@ export function ProblemList({
             initialized: true,
           });
           setLoading(false);
-          handleAddToast({
-            text: `Finish Loading XXXXXXXXXX ${new Date().getSeconds()}`,
-          });
         }
       )
-      .catch((e) => {
-        console.log("Result:");
-        console.log(e);
-        handleAddToast({
-          text: "NOPE",
+      .catch(() => {
+        console.log("Error");
+        addToast({
+          text: "Failed to fetch data.",
         });
       });
-  }, [handleAddToast, page, query, search, sortBy, subtopic, topic]);
+  }, [addToast, page, query, search, sortBy, subtopic, topic]);
 
   const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {
