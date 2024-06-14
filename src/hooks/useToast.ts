@@ -1,9 +1,6 @@
-import {
-  ToastContext,
-  ToastInternalType,
-  ToastType,
-} from "@/contexts/ToastContext";
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
+import { ToastContext, ToastInternalType, ToastType } from "@/contexts";
+import { setAddToast } from "@/utils";
 
 export function useToast() {
   const [toasts, setToasts] = useContext(ToastContext);
@@ -12,18 +9,22 @@ export function useToast() {
     (toast: ToastType) => {
       const currentTime = new Date().getTime().toString();
       const currentId = `${currentTime}${Math.random()}`;
-      const newToast: ToastInternalType = {
+      const internalToast: ToastInternalType = {
         ...toast,
         id: currentId,
       };
 
-      setToasts((prev) => [...prev, newToast]);
-      // setTimeout(() => {
-      //   setToasts((prev) => prev.filter(({ id }) => id != newToast.id));
-      // }, 5 * 1000);
+      setToasts((prev) => [...prev, internalToast]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter(({ id }) => id != internalToast.id));
+      }, 7 * 1000);
     },
     [setToasts]
   );
+
+  useEffect(() => {
+    setAddToast(handleAddToast);
+  }, [handleAddToast, setToasts]);
 
   return useMemo(
     () => ({

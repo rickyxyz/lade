@@ -25,22 +25,22 @@ export function ProblemEditPage({
   const handleSubmit = useCallback(
     async (values: ProblemType) => {
       setLoading(true);
-      await API("patch_problem", {
-        body: values,
-      })
-        .then(() => {
-          setLoading(false);
-          setProblem(values);
-          onEdit && onEdit();
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-          /**
-           * @todo
-           * show feedback
-           */
-        });
+      API(
+        "patch_problem",
+        {
+          body: values,
+        },
+        {
+          onSuccess() {
+            setLoading(false);
+            setProblem(values);
+            onEdit && onEdit();
+          },
+          onFail() {
+            setLoading(false);
+          },
+        }
+      );
     },
     [onEdit, setLoading, setProblem]
   );

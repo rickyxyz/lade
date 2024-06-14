@@ -136,22 +136,24 @@ export function ProblemList({
       },
     };
 
-    await API("get_problems", {
-      params: {
-        ...(topic ? { topic: topic } : {}),
-        ...(subtopic ? { subTopic: subtopic } : {}),
-        ...queryParams[sortBy],
-        ...(search !== ""
-          ? {
-              search,
-            }
-          : {}),
-        page: isNaN(page) ? 1 : page,
-        count: PROBLEM_PAGINATION_COUNT,
+    API(
+      "get_problems",
+      {
+        params: {
+          ...(topic ? { topic: topic } : {}),
+          ...(subtopic ? { subTopic: subtopic } : {}),
+          ...queryParams[sortBy],
+          ...(search !== ""
+            ? {
+                search,
+              }
+            : {}),
+          page: isNaN(page) ? 1 : page,
+          count: PROBLEM_PAGINATION_COUNT,
+        },
       },
-    })
-      .then(
-        ({
+      {
+        onSuccess: ({
           data: {
             data,
             pagination: { total_records, current_page, total_pages },
@@ -166,15 +168,10 @@ export function ProblemList({
             initialized: true,
           });
           setLoading(false);
-        }
-      )
-      .catch(() => {
-        console.log("Error");
-        addToast({
-          text: "Failed to fetch data.",
-        });
-      });
-  }, [addToast, page, query, search, sortBy, subtopic, topic]);
+        },
+      }
+    );
+  }, [page, query, search, sortBy, subtopic, topic]);
 
   const handleUpdateDataOnQueryUpdate = useCallback(() => {
     debounce(() => {

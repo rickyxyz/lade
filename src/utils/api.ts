@@ -16,7 +16,7 @@ export const prisma =
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_PATH,
-  timeout: 10000,
+  timeout: 10 * 1000,
 });
 
 export interface GenericAPIParams {
@@ -25,7 +25,7 @@ export interface GenericAPIParams {
   prisma?: typeof prisma;
 }
 
-export const json = (param: any): any => {
+export const json = (param: unknown) => {
   return JSON.stringify(
     param,
     (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged

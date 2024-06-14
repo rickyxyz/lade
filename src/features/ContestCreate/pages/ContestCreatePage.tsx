@@ -9,6 +9,7 @@ import { ContestCreateEditor } from "../components";
 import { PageTemplate } from "@/templates";
 import { ButtonIcon } from "@/components";
 import { KeyboardBackspace } from "@mui/icons-material";
+import { addToast } from "@/utils";
 
 export function ContestCreatePage() {
   const stateContest = useState<ContestType>(CONTEST_DEFAULT);
@@ -26,25 +27,30 @@ export function ContestCreatePage() {
     async (values: ContestType) => {
       if (!user) return;
 
-      await API("post_contest", {
-        body: {
-          ...values,
-          authorId: user.id,
+      API(
+        "post_contest",
+        {
+          body: {
+            ...values,
+            authorId: user.id,
+          },
         },
-      })
-        .then(({ data }) => {
-          debounce(() => {
-            if (data.id) router.replace(`/contest/${data.id}`);
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-          /**
-           * @todo
-           * show feedback
-           */
-          setLoading(false);
-        });
+        {
+          onSuccess: ({ data }) => {
+            debounce(() => {
+              if (data.id) {
+                router.replace(`/contest/${data.id}`);
+                addToast({ text: "Contest created." });
+              }
+            });
+          },
+          onFail: () => {
+            setLoading(true);
+            addToast({ text: "Could not create the contest." });
+          },
+          showFailMessage: false,
+        }
+      );
     },
     [debounce, router, setLoading, user]
   );

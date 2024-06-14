@@ -40,24 +40,24 @@ export function ProblemCreateMultiplePage() {
 
   const handleSubmitAll = useCallback(async () => {
     setLoading(true);
-    await API("post_problems", {
-      body: problems.map((problem) => ({
-        ...problem,
-        topic: undefined,
-        subTopic: undefined,
-      })),
-    })
-      .then(() => {
-        router.push("/");
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
-        /**
-         * @todo
-         * show feedback
-         */
-      });
+    API(
+      "post_problems",
+      {
+        body: problems.map((problem) => ({
+          ...problem,
+          topic: undefined,
+          subTopic: undefined,
+        })),
+      },
+      {
+        onSuccess() {
+          router.push("/");
+        },
+        onFail() {
+          setLoading(false);
+        },
+      }
+    );
   }, [problems, router, setLoading]);
 
   const handleUpdateInitialTopics = useCallback(() => {

@@ -16,7 +16,7 @@ import {
 } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDevice } from "@/hooks";
-import { checkPermission, api } from "@/utils";
+import { checkPermission, api, addToast } from "@/utils";
 import {
   ProblemType,
   ContentViewType,
@@ -118,23 +118,26 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     [authorId, createdAt, solveds]
   );
 
-  const handleDeleteProblem = useCallback(async () => {
-    await API("delete_problem", {
-      params: { id },
-    })
-      .then(() => {
-        console.log("problem deleted");
-        router.push("/");
-      })
-      .catch((e) => {
-        console.log("Result:");
-        console.log(e);
-        /**
-         * @todo
-         * show feedback
-         */
-        return null;
-      });
+  const handleDeleteProblem = useCallback(() => {
+    API(
+      "delete_problem",
+      {
+        params: { id },
+      },
+      {
+        onSuccess() {
+          router.push("/");
+          addToast({
+            text: "Problem deleted.",
+          });
+        },
+        onFail() {
+          addToast({
+            text: "Could not delete the problem.",
+          });
+        },
+      }
+    );
   }, [id, router]);
 
   const problemAction = useMemo<ProblemAction[]>(
@@ -230,7 +233,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       },
     })
       .then(({ data }) => {
-        if (!data) throw Error("");
+        if (!data) throw Error();
 
         const { id } = data;
         setProblem(data);
@@ -238,12 +241,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
         return id;
       })
-      .catch(() => {
-        /**
-         * @todo
-         * show feedback
-         */
-      });
+      .catch();
 
     if (result && user) {
       let existing: string | null;

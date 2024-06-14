@@ -45,29 +45,28 @@ export function ContestProblemsPage({
       let verdict = false;
       setAnswerLoading(problemId);
 
-      await API("post_contest_answer", {
-        body: {
-          contestId: String(id),
-          problemId,
-          answer,
+      await API(
+        "post_contest_answer",
+        {
+          body: {
+            contestId: String(id),
+            problemId,
+            answer,
+          },
         },
-      })
-        .then((res) => {
-          console.log("Verdict ", res.data.message);
-          if (res.data.message === "correct") {
-            verdict = true;
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          /**
-           * @todo
-           * show feedback
-           */
-        })
-        .finally(() => {
-          setAnswerLoading(null);
-        });
+        {
+          onSuccess(res) {
+            console.log("Verdict ", res.data.message);
+            if (res.data.message === "correct") {
+              verdict = true;
+            }
+            setAnswerLoading(null);
+          },
+          onFail() {
+            setAnswerLoading(null);
+          },
+        }
+      );
 
       if (!verdict) {
         if (cooldownIntv) clearInterval(cooldownIntv);

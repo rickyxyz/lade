@@ -1,26 +1,25 @@
 import { useCallback, useMemo } from "react";
+import { signIn } from "next-auth/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { API } from "@/api";
 import { login } from "@/libs/firebase";
+import { useAppDispatch } from "@/libs/redux";
+import { PageTemplate } from "@/templates";
 import { Button, Card } from "@/components";
 import { validateFormLogin } from "@/utils";
-import { LoginFormType, UserType } from "@/types";
+import { LoginFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
-import { PageTemplate } from "@/templates";
-import { signIn } from "next-auth/react";
-import { useAppDispatch } from "@/libs/redux";
-import { api } from "@/utils/api";
-import { API } from "@/api";
 
 export function AuthLoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   const handleLogin = useCallback(
-    async (values: LoginFormType, actions: FormikHelpers<LoginFormType>) => {
-      await login(values)
+    (values: LoginFormType, actions: FormikHelpers<LoginFormType>) => {
+      login(values)
         .then((credential) => ({
           credential,
           idToken: credential.user.getIdToken(true),
@@ -33,11 +32,17 @@ export function AuthLoginPage() {
           return credential;
         })
         .then(({ user: { uid } }) =>
-          API("get_user", {
-            params: {
-              uid,
+          API(
+            "get_user",
+            {
+              params: {
+                uid,
+              },
             },
-          })
+            {
+              showFailMessage: false,
+            }
+          )
         )
         .then((user) => {
           console.log("Fetched User: ");

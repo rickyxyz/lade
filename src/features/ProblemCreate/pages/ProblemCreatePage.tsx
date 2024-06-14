@@ -32,25 +32,25 @@ export function ProblemCreatePage() {
 
       if (!user) return;
 
-      await API("post_problem", {
-        body: {
-          ...values,
-          authorId: user.id,
+      API(
+        "post_problem",
+        {
+          body: {
+            ...values,
+            authorId: user.id,
+          },
         },
-      })
-        .then(({ data }) => {
-          debounce(() => {
-            if (data.id) router.replace(`/problem/${data.id}`);
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-          /**
-           * @todo
-           * show feedback
-           */
-        });
+        {
+          onSuccess({ data }) {
+            debounce(() => {
+              if (data.id) router.replace(`/problem/${data.id}`);
+            });
+          },
+          onFail() {
+            setLoading(false);
+          },
+        }
+      );
     },
     [debounce, router, setLoading, user]
   );

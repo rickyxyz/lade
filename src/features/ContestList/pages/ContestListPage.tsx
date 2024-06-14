@@ -115,7 +115,7 @@ export function ContestListPage({ query }: ProblemListPageProps) {
     [pathname, router, search, sortBy, subtopic, topic, userPage]
   );
 
-  const handleGetProblem = useCallback(async () => {
+  const handleGetProblem = useCallback(() => {
     if (JSON.stringify(query) === JSON.stringify(lastQuery.current)) {
       return;
     }
@@ -149,26 +149,28 @@ export function ContestListPage({ query }: ProblemListPageProps) {
       },
     };
 
-    await API("get_contests", {
-      params: {
-        ...(userTopic ? { topic: userTopic } : {}),
-        ...(userSubTopic ? { subTopic: userSubTopic } : {}),
-        ...queryParams[userSort],
-        ...(userSearch !== ""
-          ? {
-              search: userSearch,
-            }
-          : {}),
-        page: isNaN(userPage) ? 1 : userPage,
+    API(
+      "get_contests",
+      {
+        params: {
+          ...(userTopic ? { topic: userTopic } : {}),
+          ...(userSubTopic ? { subTopic: userSubTopic } : {}),
+          ...queryParams[userSort],
+          ...(userSearch !== ""
+            ? {
+                search: userSearch,
+              }
+            : {}),
+          page: isNaN(userPage) ? 1 : userPage,
+        },
       },
-    })
-      .then(
-        ({
+      {
+        onSuccess({
           data: {
             data,
             pagination: { total_records, current_page, total_pages },
           },
-        }) => {
+        }) {
           lastQuery.current = query;
 
           setProblems(data);
@@ -180,16 +182,9 @@ export function ContestListPage({ query }: ProblemListPageProps) {
             initialized: true,
           });
           setLoading(false);
-        }
-      )
-      .catch((e) => {
-        console.log("Result:");
-        console.log(e);
-        /**
-         * @todo
-         * show feedback
-         */
-      });
+        },
+      }
+    );
   }, [
     handleUpdateStateOnQueryUpdate,
     query,

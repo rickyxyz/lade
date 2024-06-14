@@ -6,11 +6,11 @@ import {
   ProblemType,
   SolvedPublicType,
   SolvedType,
-  SolvedsType,
   UserType,
 } from "@/types";
 import { Empty, ApiMessage, ApiPagination } from "@/types";
 import { api } from "@/utils";
+import { addToast } from "@/utils/toast";
 import { AxiosResponse } from "axios";
 
 interface ApiParams {
@@ -210,16 +210,44 @@ export async function API<X extends keyof typeof ROUTES>(
   config: {
     params?: ApiParams[X];
     body?: ApiBody[X];
+  },
+  callback?: {
+    onSuccess?: (result: AxiosResponse<ApiReturn[X]>) => void;
+    onFail?: (result: AxiosResponse<ApiReturn[X]>) => void;
+    showFailMessage?: boolean;
   }
-) {
+) : Promise<AxiosResponse<ApiReturn[X]>> {
   const { method, path } = ROUTES[type];
   const { params, body } = config;
+  const {
+    onSuccess,
+    onFail,
+    showFailMessage = true,
+  } = callback ?? {
+    showFailMessage: true,
+  };
 
-  return api({
-    method,
-    url: path,
-    params,
-    data: body,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }).then((result) => result as AxiosResponse<ApiReturn[X], any>);
+  return (
+    (
+      api({
+        method,
+        url: path,
+        params,
+        data: body,
+      }) as Promise<AxiosResponse<ApiReturn[X]>>
+    )
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((result) => {
+        onSuccess && onSuccess(result);
+        return result;
+      })
+      .catch((result) => {
+        showFailMessage &&
+          addToast({
+            text: "Failed to fetch data.",
+          });
+        onFail && onFail(result);
+        return result;
+      })
+  );
 }

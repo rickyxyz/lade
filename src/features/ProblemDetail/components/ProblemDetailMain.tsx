@@ -80,27 +80,26 @@ export function ProblemDetailMain({
 
     let verdict = false;
     setLoading(true);
-    await API("post_solved", {
-      body: {
-        id: String(id),
-        answer: userAnswer,
+    await API(
+      "post_solved",
+      {
+        body: {
+          id: String(id),
+          answer: userAnswer,
+        },
       },
-    })
-      .then((res) => {
-        if (res.data.message === "correct") {
-          verdict = true;
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        /**
-         * @todo
-         * show feedback
-         */
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      {
+        onSuccess(res) {
+          if (res.data.message === "correct") {
+            verdict = true;
+          }
+          setLoading(false);
+        },
+        onFail() {
+          setLoading(false);
+        },
+      }
+    );
 
     if (cooldownIntv) clearInterval(cooldownIntv);
     setCooldown(10000);

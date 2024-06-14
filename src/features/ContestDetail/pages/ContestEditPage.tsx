@@ -24,25 +24,23 @@ export function ContestEditPage({
   const [tab, setTab] = stateTab;
 
   const handleSubmit = useCallback(
-    async (values: ContestType) => {
-      console.log("handle submit");
-
-      await API("patch_contest", {
-        body: values,
-      })
-        .then(() => {
-          setLoading(false);
-          setContest(values);
-          onEdit && onEdit();
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-          /**
-           * @todo
-           * show feedback
-           */
-        });
+    (values: ContestType) => {
+      API(
+        "patch_contest",
+        {
+          body: values,
+        },
+        {
+          onSuccess() {
+            setLoading(false);
+            setContest(values);
+            onEdit && onEdit();
+          },
+          onFail() {
+            setLoading(false);
+          },
+        }
+      );
     },
     [onEdit, setLoading, setContest]
   );

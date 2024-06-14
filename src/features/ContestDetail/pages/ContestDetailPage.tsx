@@ -6,7 +6,7 @@ import { API } from "@/api";
 import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDebounce, useDevice } from "@/hooks";
-import { checkPermission, api } from "@/utils";
+import { checkPermission, api, addToast } from "@/utils";
 import {
   ContestType,
   UserType,
@@ -111,30 +111,25 @@ export function ContestDetailPage({
     return "viewer";
   }, [contest, user]);
 
-  const handleDeleteContest = useCallback(async () => {
-    await API("delete_contest", {
-      params: {
-        id: contestId,
+  const handleDeleteContest = useCallback(() => {
+    API(
+      "delete_contest",
+      {
+        params: {
+          id: contestId,
+        },
       },
-    })
-      // .delete("/contest", {
-      //   params: {
-      //     id: contestId,
-      //   },
-      // })
-      .then(() => {
-        console.log("contest deleted");
-        router.push("/");
-      })
-      .catch((e) => {
-        console.log("Result:");
-        console.log(e);
-        /**
-         * @todo
-         * show feedback
-         */
-        return null;
-      });
+      {
+        onSuccess: () => {
+          router.push("/");
+          addToast({ text: "Contest deleted." });
+        },
+        onFail: () => {
+          addToast({ text: "Could not delete the contest." });
+        },
+        showFailMessage: false,
+      }
+    );
   }, [contestId, router]);
 
   const contestAction = useMemo<ContestAction[]>(
@@ -160,31 +155,33 @@ export function ContestDetailPage({
     [handleDeleteContest, setPage]
   );
 
-  const handleGetContests = useCallback(async () => {
+  const handleGetContest = useCallback(() => {
     if (!loading) return;
 
     setLoading(true);
 
-    await API("get_contest", {
-      params: {
-        id: contestId,
+    API(
+      "get_contest",
+      {
+        params: {
+          id: contestId,
+        },
       },
-    })
-      .then(({ data }) => {
-        if (!data) throw Error("");
+      {
+        onSuccess: ({ data }) => {
+          if (!data) throw Error("");
 
-        const { id, problemsData = [] } = data;
-        setContest(data);
-        setProblems(problemsData.sort((pd1, pd2) => pd1.order - pd2.order));
-        setLoading(false);
-
-        return id;
-      })
-      .catch(() => null);
+          const { problemsData = [] } = data;
+          setContest(data);
+          setProblems(problemsData.sort((pd1, pd2) => pd1.order - pd2.order));
+          setLoading(false);
+        },
+      }
+    );
   }, [loading, setLoading, contestId, setContest, setProblems]);
 
   useEffect(() => {
-    handleGetContests();
+    handleGetContest();
   }, []);
 
   const renderMainLoading = useMemo(
