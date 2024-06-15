@@ -9,6 +9,7 @@ import { useDebounce } from "@/hooks";
 import { api } from "@/utils/api";
 import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
+import { addToast } from "@/utils";
 
 export function ProblemCreatePage() {
   const stateProblem = useState<ProblemType>(
@@ -43,11 +44,15 @@ export function ProblemCreatePage() {
         {
           onSuccess({ data }) {
             debounce(() => {
-              if (data.id) router.replace(`/problem/${data.id}`);
+              if (data.id) {
+                router.replace(`/problem/${data.id}`);
+                addToast({ text: "Problem created." });
+              }
             });
           },
           onFail() {
             setLoading(false);
+            addToast({ text: "Could not create the problem." });
           },
         }
       );

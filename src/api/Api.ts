@@ -211,21 +211,15 @@ export async function API<X extends keyof typeof ROUTES>(
     params?: ApiParams[X];
     body?: ApiBody[X];
   },
-  callback?: {
+  callback: {
     onSuccess?: (result: AxiosResponse<ApiReturn[X]>) => void;
     onFail?: (result: AxiosResponse<ApiReturn[X]>) => void;
     showFailMessage?: boolean;
-  }
-) : Promise<AxiosResponse<ApiReturn[X]>> {
+  } = {}
+): Promise<AxiosResponse<ApiReturn[X]>> {
   const { method, path } = ROUTES[type];
   const { params, body } = config;
-  const {
-    onSuccess,
-    onFail,
-    showFailMessage = true,
-  } = callback ?? {
-    showFailMessage: true,
-  };
+  const { onSuccess, onFail, showFailMessage = true } = callback;
 
   return (
     (

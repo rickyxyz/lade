@@ -9,6 +9,7 @@ import { auth } from "../config";
 import { crudData } from "./getterSetter";
 import { SignUpFormType } from "@/types";
 import { signOut as signOutNextAuth } from "next-auth/react";
+import { addToast } from "@/utils";
 
 export function getErrorMessage(code: any) {
   switch (code) {
@@ -69,10 +70,15 @@ export async function signUp(data: SignUpFormType) {
 
 export async function logout() {
   setTimeout(async () => {
-    await signOut(auth).then(() => {
-      signOutNextAuth({
-        redirect: false,
+    await signOut(auth)
+      .then(() => {
+        signOutNextAuth({
+          redirect: false,
+        });
+        addToast({ text: "Logged out." });
+      })
+      .catch(() => {
+        addToast({ text: "Could not log out." });
       });
-    });
   }, 300);
 }

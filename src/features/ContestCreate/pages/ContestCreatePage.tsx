@@ -36,7 +36,7 @@ export function ContestCreatePage() {
           },
         },
         {
-          onSuccess: ({ data }) => {
+          onSuccess({ data }) {
             debounce(() => {
               if (data.id) {
                 router.replace(`/contest/${data.id}`);

@@ -3,6 +3,7 @@ import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import { ProblemType, StateType } from "@/types";
 import { ProblemCreateEditor } from "../components";
+import { addToast } from "@/utils";
 
 export function ProblemEditPage({
   stateProblem,
@@ -35,9 +36,11 @@ export function ProblemEditPage({
             setLoading(false);
             setProblem(values);
             onEdit && onEdit();
+            addToast({ text: "Problem updated." });
           },
           onFail() {
             setLoading(false);
+            addToast({ text: "Could not update the problem." });
           },
         }
       );

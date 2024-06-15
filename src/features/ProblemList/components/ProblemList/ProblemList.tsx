@@ -153,12 +153,12 @@ export function ProblemList({
         },
       },
       {
-        onSuccess: ({
+        onSuccess({
           data: {
             data,
             pagination: { total_records, current_page, total_pages },
           },
-        }) => {
+        }) {
           setProblems(data);
 
           setPagination({

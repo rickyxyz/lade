@@ -8,7 +8,7 @@ import { login } from "@/libs/firebase";
 import { useAppDispatch } from "@/libs/redux";
 import { PageTemplate } from "@/templates";
 import { Button, Card } from "@/components";
-import { validateFormLogin } from "@/utils";
+import { addToast, validateFormLogin } from "@/utils";
 import { LoginFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
@@ -49,15 +49,13 @@ export function AuthLoginPage() {
           console.log(user.data);
           dispatch("update_user", user.data);
           router.push("/");
+          addToast({ text: "Logged in." });
         })
         .catch((e) => {
           console.log(e);
           console.log("Login Error");
-          /**
-           * @todo
-           * show feedback
-           */
           actions.setSubmitting(false);
+          addToast({ text: "Could not log in." });
         });
     },
     [dispatch, router]

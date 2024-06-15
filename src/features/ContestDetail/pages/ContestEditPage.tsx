@@ -5,6 +5,7 @@ import { ContestType, ProblemContestType, StateType } from "@/types";
 import { ButtonIcon } from "@/components";
 import { KeyboardBackspace } from "@mui/icons-material";
 import { PageTemplate } from "@/templates";
+import { addToast } from "@/utils";
 
 export function ContestEditPage({
   stateContest,
@@ -35,10 +36,13 @@ export function ContestEditPage({
             setLoading(false);
             setContest(values);
             onEdit && onEdit();
+            addToast({ text: "Contest updated." });
           },
           onFail() {
             setLoading(false);
+            addToast({ text: "Could not update the contest." });
           },
+          showFailMessage: false,
         }
       );
     },

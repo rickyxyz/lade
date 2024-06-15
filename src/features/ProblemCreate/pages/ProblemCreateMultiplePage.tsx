@@ -9,6 +9,7 @@ import { useAppSelector } from "@/libs/redux";
 import { API } from "@/api";
 import { ProblemCreateEditorMultiple } from "../components/ProblemCreateEditorMultiple";
 import { ProblemCreateEditorMultipleList } from "../components/ProblemCreateEditorMultipleList";
+import { addToast } from "@/utils";
 
 export function ProblemCreateMultiplePage() {
   const stateProblems = useState<ProblemType[]>([
@@ -52,9 +53,11 @@ export function ProblemCreateMultiplePage() {
       {
         onSuccess() {
           router.push("/");
+          addToast({ text: "Problem(s) created." });
         },
         onFail() {
           setLoading(false);
+          addToast({ text: "Could not create the problem(s)." });
         },
       }
     );

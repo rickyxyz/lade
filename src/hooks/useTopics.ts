@@ -60,7 +60,7 @@ export function useTopics() {
       if (existing) {
         const parsed = JSON.parse(existing) as CachedData;
         const now = new Date().getTime();
-        return Boolean(parsed.expireAt && now < parsed.expireAt)
+        return Boolean(parsed.expireAt && now < parsed.expireAt);
       }
 
       return false;
@@ -70,16 +70,19 @@ export function useTopics() {
       setTopics(JSON.parse(existing));
       setLoading(false);
     } else {
-      API("get_topics", {})
+      API("get_topics", {}, {})
         .then(({ data }) => {
           if (data) {
             const expireAt = new Date().getTime() + 1000 * 60 * 60 * 7;
 
             setTopics(data);
-            localStorage.setItem("topics", JSON.stringify({
-              ...data,
-              expireAt,
-            } as CachedData));
+            localStorage.setItem(
+              "topics",
+              JSON.stringify({
+                ...data,
+                expireAt,
+              } as CachedData)
+            );
           }
         })
         .finally(() => {

@@ -7,7 +7,7 @@ import { signUp } from "@/libs/firebase";
 import { API } from "@/api";
 import { PageTemplate } from "@/templates";
 import { Button, Card, Paragraph } from "@/components";
-import { validateFormSignUp } from "@/utils";
+import { addToast, validateFormSignUp } from "@/utils";
 import { SignUpFormType } from "@/types";
 import { AuthHeader } from "../components/AuthHeader";
 import { AuthInput } from "../components/AuthInput";
@@ -46,15 +46,11 @@ export function AuthSignUpPage() {
         )
         .then(() => {
           router.push("/");
+          addToast({ text: "Logged in." });
         })
-        .catch((e) => {
-          console.log(e);
-          console.log("Register Error");
-          /**
-           * @todo
-           * show feedback
-           */
+        .catch(() => {
           actions.setSubmitting(false);
+          addToast({ text: "Could not sign up." });
         });
     },
     [router]

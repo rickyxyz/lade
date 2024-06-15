@@ -120,11 +120,11 @@ export function ContestDetailPage({
         },
       },
       {
-        onSuccess: () => {
+        onSuccess() {
           router.push("/");
           addToast({ text: "Contest deleted." });
         },
-        onFail: () => {
+        onFail() {
           addToast({ text: "Could not delete the contest." });
         },
         showFailMessage: false,
@@ -168,7 +168,7 @@ export function ContestDetailPage({
         },
       },
       {
-        onSuccess: ({ data }) => {
+        onSuccess({ data }) {
           if (!data) throw Error("");
 
           const { problemsData = [] } = data;
@@ -182,7 +182,7 @@ export function ContestDetailPage({
 
   useEffect(() => {
     handleGetContest();
-  }, []);
+  }, [handleGetContest]);
 
   const renderMainLoading = useMemo(
     () => <ContestDetailMainSkeleton className="flex-1" />,
