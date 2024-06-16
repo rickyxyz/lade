@@ -142,6 +142,17 @@ export function useListenContestSubmission(
     const listener = onValue(docRef, (snapshot) => {
       const rawData: ContestSubmissionType = snapshot.val();
 
+      if (!rawData) {
+        const empty = {
+          problemSubmissions: {},
+          userSubmissions: {},
+          userSubmissionsArray: [],
+        };
+        onUpdate && onUpdate(empty);
+        setData(empty);
+        return;
+      }
+
       Object.entries(rawData).forEach(([problemId, problemSubmissions]) => {
         Object.entries(problemSubmissions).forEach(
           ([userId, userSubmission]) => {
