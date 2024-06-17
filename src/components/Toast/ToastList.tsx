@@ -2,14 +2,14 @@ import clsx from "clsx";
 import { ToastInternalType } from "@/contexts";
 import { StateType } from "@/types";
 import { Toast } from "./Toast";
+import { useToast } from "@/hooks/useToast";
 
 interface ToastListProps {
-  stateToasts: StateType<ToastInternalType[]>;
   width: number;
 }
 
-export function ToastList({ stateToasts, width }: ToastListProps) {
-  const [toasts, setToasts] = stateToasts;
+export function ToastList({ width }: ToastListProps) {
+  const { toasts, deleteToast } = useToast();
 
   return (
     <div
@@ -24,7 +24,7 @@ export function ToastList({ stateToasts, width }: ToastListProps) {
           toast={toast}
           maxWidth={width}
           onClose={() => {
-            setToasts((prev) => prev.filter(({ id }) => id !== toast.id));
+            deleteToast(toast.id);
           }}
         />
       ))}

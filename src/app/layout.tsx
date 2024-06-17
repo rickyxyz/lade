@@ -13,7 +13,8 @@ import {
 import { noto } from "@/libs/fonts";
 import ProviderWrapper from "@/contexts/ProviderWrapper";
 import { ToastInternalType } from "@/contexts";
-import { ToastList } from "@/components/Toast/ToastList";
+import { ToastList } from "@/components";
+import { useToast } from "@/hooks/useToast";
 
 export default function RootLayout({
   children,
@@ -72,9 +73,11 @@ export default function RootLayout({
           stateInitialized={stateInitialized}
           stateToasts={stateToasts}
         >
-          {children}
+          <>
+            {children}
+            <ToastList width={layout.width - 64} />
+          </>
         </ProviderWrapper>
-        <ToastList stateToasts={stateToasts} width={layout.width - 64} />
       </body>
     </html>
   );

@@ -22,6 +22,13 @@ export function useToast() {
     [setToasts]
   );
 
+  const handleDeleteToast = useCallback(
+    (targetId: string) => {
+      setToasts((prev) => prev.filter(({ id }) => id !== targetId));
+    },
+    [setToasts]
+  );
+
   useEffect(() => {
     setAddToast(handleAddToast);
   }, [handleAddToast, setToasts]);
@@ -30,7 +37,8 @@ export function useToast() {
     () => ({
       toasts,
       addToast: handleAddToast,
+      deleteToast: handleDeleteToast,
     }),
-    [handleAddToast, toasts]
+    [handleAddToast, handleDeleteToast, toasts]
   );
 }

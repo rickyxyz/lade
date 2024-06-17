@@ -81,7 +81,6 @@ export function ProblemList({
   const { page } = pagination;
   const { device } = useDevice();
   const debounce = useDebounce();
-  const { addToast } = useToast();
   const lastQuery = useRef<ProblemQuery>();
 
   const handleUpdateQuery = useCallback(
