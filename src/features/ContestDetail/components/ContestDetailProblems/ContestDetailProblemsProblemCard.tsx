@@ -4,6 +4,8 @@ import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
 import { md, parseAnswer } from "@/utils";
 import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ContestSingleSubmissionType, ProblemDatabaseType } from "@/types";
+import { useAnswer } from "@/hooks/useAnswer";
+import { useContestAnswer } from "../../hooks/useContestAnswer";
 
 export interface ProblemCardProps {
   problem: ProblemDatabaseType;
@@ -24,16 +26,16 @@ export function ContestDetailProblemsProblemCard({
   onClick,
   onSubmit,
 }: ProblemCardProps) {
-  const stateAnswer = useState<any>({
-    content: "",
-  });
-  const [answer, setAnswer] = stateAnswer;
-  const [solved, setSolved] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const { type, title, description } = problem;
 
-  const { id, description, title, type } = problem;
-
-  const descriptionRef = useRef<HTMLDivElement>(null);
+  const { stateAnswer, stateSubmitted, stateSolved, handleAnswer } =
+    useContestAnswer({
+      onSubmit,
+      problem,
+      submission,
+    });
+  const solved = stateSolved[0];
+  const [submitted, setSubmitted] = stateSubmitted;
 
   const renderMain = useMemo(
     () => (
@@ -48,32 +50,6 @@ export function ContestDetailProblemsProblemCard({
     ),
     [description, title]
   );
-
-  const handleInitDefaultAnswer = useCallback(() => {
-    setAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
-  }, [setAnswer, type]);
-
-  const handleInitExistingAnswer = useCallback(() => {
-    const lastCorrectAnswer = submission
-      ? submission.attempts.find((attempt) => attempt.score > 0)
-      : null;
-
-    const parsed = parseAnswer(type, lastCorrectAnswer?.answer);
-
-    if (parsed) {
-      setAnswer(parsed);
-      setSolved(true);
-    }
-  }, [setAnswer, submission, type]);
-
-  useEffect(() => {
-    handleInitDefaultAnswer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    handleInitExistingAnswer();
-  }, [handleInitExistingAnswer]);
 
   const renderAnswerVerdict = useMemo(() => {
     if (solved)
@@ -107,15 +83,7 @@ export function ContestDetailProblemsProblemCard({
       {renderAnswerVerdict}
       <Button
         className="mt-4"
-        onClick={() => {
-          onSubmit(id, answer)
-            .then((v) => {
-              if (v !== null) setSolved(v);
-            })
-            .finally(() => {
-              setSubmitted(true);
-            });
-        }}
+        onClick={handleAnswer}
         disabled={cooldown > 0 || solved}
         loading={loading}
       >
