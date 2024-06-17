@@ -13,15 +13,15 @@ export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
   const [answerLoading, setAnswerLoading] = stateAnswerLoading;
 
   const handleCheckAnswer = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (problemId: string, answer: any) => {
-      const now = new Date().getTime();
+      const submittedAt = new Date().getTime();
 
-      if (submitted && now - submitted <= 1000 * 5) {
-        setCooldown(Math.max(0, submitted + 1000 * 5 - now));
+      if (submitted && submittedAt - submitted <= 1000 * 5) {
         return null;
       }
 
-      setSubmitted(now);
+      setSubmitted(submittedAt);
       setCooldown(1000 * 5);
 
       let verdict = false;
@@ -53,13 +53,16 @@ export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
       if (!verdict) {
         if (cooldownIntv) clearInterval(cooldownIntv);
 
-        setCooldown(10000);
         const interval = setInterval(() => {
-          setCooldown((prev) => Math.max(0, prev - 100));
+          const currentTime = new Date().getTime();
+          const unfreezeAt = submittedAt + 1000 * 5;
+          setCooldown(unfreezeAt - currentTime);
+          if (unfreezeAt - currentTime <= 0) {
+            clearInterval(cooldownIntv);
+          }
         }, 100);
 
-        setSubmitted(now);
-
+        setSubmitted(submittedAt);
         setCooldownIntv(interval);
       } else {
         setCooldown(0);
