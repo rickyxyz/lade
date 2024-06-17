@@ -7,33 +7,32 @@ import { useRouter } from "next/navigation";
 import { API } from "@/api";
 import {
   ButtonIcon,
-  Card,
-  IconText,
-  Spinner,
   Modal,
+  ButtonList,
+  ButtonListEntry,
   Paragraph,
   Tooltip,
 } from "@/components";
 import { useAppSelector } from "@/libs/redux";
+import { PageTemplate } from "@/templates";
+import { checkPermission, addToast } from "@/utils";
 import { useDevice } from "@/hooks";
-import { checkPermission, api, addToast } from "@/utils";
+import { PROBLEM_BLANK } from "@/consts";
 import {
   ProblemType,
   ContentViewType,
   UserType,
   ContentAccessType,
 } from "@/types";
-import { PROBLEM_BLANK } from "@/consts";
-import { PageTemplate } from "@/templates";
 import { ProblemEditPage } from "../../ProblemCreate";
 import {
   ProblemDetailMain,
   ProblemDetailMainSkeleton,
   ProblemDetailTopics,
 } from "../components";
-import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
 import { MoreVert, West } from "@mui/icons-material";
-import { ProblemDetailData } from "../components/ProblemDetailData";
+import { ProblemDetailData } from "../components";
+import { useAnswer } from "../hooks";
 
 interface ProblemData {
   label: string;
@@ -66,17 +65,29 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateAccept = useState<unknown>({
     content: "",
   });
-  const stateLoading = useState(true);
-  const [loading, setLoading] = stateLoading;
-  const stateMode = useState<ContentViewType>("view");
-  const [mode, setMode] = stateMode;
-  const stateUserAnswer = useState<any>();
+  // const stateLoading = useState(true);
+  const [mode, setMode] = useState<ContentViewType>("view");
+  const {
+    stateLoading: stateAnswerLoading,
+    stateSolvable,
+    stateSubmitted,
+    stateUserAnswer,
+    stateUserSolved,
+    stateCooldown,
+    handleCheckAnswer,
+  } = useAnswer({
+    problem,
+    user,
+  });
+  const [loading, setLoading] = useState(true);
+  // const stateUserAnswer = useState<any>();
   const setUserAnswer = stateUserAnswer[1];
-  const stateUserSolved = useState(false);
+  // const stateUserSolved = useState(false);
   const setUserSolved = stateUserSolved[1];
-  const stateSubmitted = useState<number>();
+  // const stateSubmitted = useState<number>();
   const setSubmitted = stateSubmitted[1];
-  const stateSolvable = useState(false);
+  // const stateSolvable = useState(false);
+  const setAnswerLoading = stateAnswerLoading[1];
   const setSolvable = stateSolvable[1];
   const stateMobileAction = useState(false);
   const setMobileAction = stateMobileAction[1];
@@ -174,11 +185,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         className={className}
         stateProblem={stateProblem}
         stateAccept={stateAccept}
-        stateMode={stateMode}
         stateSubmited={stateSubmitted}
         stateSolvable={stateSolvable}
         stateUserAnswer={stateUserAnswer}
         stateUserSolved={stateUserSolved}
+        stateCooldown={stateCooldown}
+        handleCheckAnswer={handleCheckAnswer}
+        stateLoading={stateAnswerLoading}
       />
     );
   }, [
@@ -186,11 +199,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     problem,
     stateProblem,
     stateAccept,
-    stateMode,
     stateSubmitted,
     stateSolvable,
     stateUserAnswer,
     stateUserSolved,
+    stateCooldown,
+    handleCheckAnswer,
+    stateAnswerLoading,
   ]);
 
   const renderQuestionMetadata = useMemo(() => {
@@ -259,6 +274,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         existing = solveCache;
       }
 
+      setAnswerLoading(false);
       if (existing) {
         setUserAnswer(existing);
         setUserSolved(true);
@@ -271,7 +287,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   }, [
     id,
     loading,
-    setLoading,
+    setAnswerLoading,
     setProblem,
     setSolvable,
     setSubmitted,

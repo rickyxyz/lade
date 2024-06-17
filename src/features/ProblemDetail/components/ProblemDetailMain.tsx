@@ -1,160 +1,71 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Card, Crumb, MarkdownPreview, Paragraph } from "@/components";
-import { useAppDispatch, useAppSelector } from "@/libs/redux";
-import { md } from "@/utils";
-import {
-  ProblemType,
-  ContentViewType,
-  StateType,
-  ProblemMainTabType,
-} from "@/types";
-import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
+import { useMemo } from "react";
+import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
+import { ProblemType, StateType } from "@/types";
 import { ProblemAnswer } from "./ProblemAnswer";
-import { API } from "@/api";
-import { CardTab, CardTabType } from "@/components/Card/CardTab";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
   stateAccept: StateType<unknown>;
-  stateMode: StateType<ContentViewType>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stateUserAnswer: StateType<any>;
   stateUserSolved: StateType<boolean>;
   stateSubmited: StateType<number | undefined>;
   stateSolvable: StateType<boolean>;
+  stateLoading: StateType<boolean>;
+  stateCooldown: StateType<number>;
+  handleCheckAnswer: () => Promise<void>;
   className?: string;
 }
 
 export function ProblemDetailMain({
   className,
   stateProblem,
-  stateMode,
   stateUserAnswer,
   stateUserSolved,
   stateSubmited,
   stateSolvable,
+  stateLoading,
+  stateCooldown,
+  handleCheckAnswer,
 }: ProblemMainProps) {
-  const [problem, setProblem] = stateProblem;
-  const { id, description, title, topicId, subTopicId, type } = problem;
+  const problem = stateProblem[0];
+  const { description, type } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [userAnswer, setUserAnswer] = stateUserAnswer;
-  const [userSolved, setUserSolved] = stateUserSolved;
-  const [submitted, setSubmitted] = stateSubmited;
-  const [cooldownIntv, setCooldownIntv] = useState<NodeJS.Timer>();
-  const [cooldown, setCooldown] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const userAnswer = stateUserAnswer[0];
+  const userSolved = stateUserSolved[0];
+  const submitted = stateSubmited[0];
+  const cooldown = stateCooldown[0];
+  const loading = stateLoading[0];
   const solvable = stateSolvable[0];
-  const dispatch = useAppDispatch();
-  const descriptionRef = useRef<HTMLDivElement>(null);
-  const stateTab = useState<ProblemMainTabType>("problem");
-  const [tab, setTab] = stateTab;
-
-  const tabs = useMemo<CardTabType<ProblemMainTabType>[]>(
-    () => [
-      {
-        id: "problem",
-        label: "Problem",
-        onClick: () => {
-          setTab("problem");
-        },
-      },
-      {
-        id: "discussion",
-        label: "Discussion",
-        onClick: () => {
-          setTab("discussion");
-        },
-      },
-    ],
-    [setTab]
-  );
-
-  const handleCheckAnswer = useCallback(async () => {
-    if (!id || !userAnswer) return;
-
-    const now = new Date().getTime();
-    if (submitted && now - submitted <= 1000 * 5) {
-      return;
-    }
-
-    let verdict = false;
-    setLoading(true);
-    await API(
-      "post_solved",
-      {
-        body: {
-          id: String(id),
-          answer: userAnswer,
-        },
-      },
-      {
-        onSuccess(res) {
-          if (res.data.message === "correct") {
-            verdict = true;
-          }
-          setLoading(false);
-        },
-        onFail() {
-          setLoading(false);
-        },
-      }
-    );
-
-    if (cooldownIntv) clearInterval(cooldownIntv);
-    setCooldown(10000);
-    const interval = setInterval(() => {
-      setCooldown((prev) => Math.max(0, prev - 100));
-    }, 100);
-
-    setSubmitted(now);
-    setUserSolved(verdict);
-
-    if (!verdict) {
-      setCooldownIntv(interval);
-    } else {
-      dispatch("update_solveds", {
-        [id]: userAnswer,
-      });
-      setProblem((prev) => ({
-        ...prev,
-        solveds: [],
-      }));
-    }
-  }, [
-    id,
-    userAnswer,
-    submitted,
-    cooldownIntv,
-    setSubmitted,
-    setUserSolved,
-    dispatch,
-    setProblem,
-  ]);
 
   const renderMain = useMemo(
-    () => (
-      //<article className="mb-8" ref={descriptionRef} />
-      <MarkdownPreview className="mb-8" markdown={description} />
-    ),
+    () => <MarkdownPreview className="mb-8" markdown={description} />,
     [description]
   );
 
   const renderAnswerVerdict = useMemo(() => {
-    if (submitted) {
-      return userSolved ? (
+    if (userSolved) {
+      return (
         <Paragraph weight="semibold" color="success-5">
           Correct answer
         </Paragraph>
-      ) : (
-        Boolean(cooldown > 0 && !userSolved && Math.ceil(cooldown / 1000)) && (
-          <Paragraph color="danger-5">
-            Incorrect answer. You can answer again in{" "}
-            {Math.ceil(cooldown / 1000)}s
-          </Paragraph>
-        )
       );
     }
+
+    if (
+      submitted &&
+      Boolean(cooldown > 0 && !userSolved && Math.ceil(cooldown / 1000))
+    ) {
+      return (
+        <Paragraph color="danger-5">
+          Incorrect answer. You can answer again in {Math.ceil(cooldown / 1000)}
+          s
+        </Paragraph>
+      );
+    }
+
+    return <></>;
   }, [cooldown, submitted, userSolved]);
 
   const renderAnswerInputs = useMemo(() => {
@@ -186,6 +97,7 @@ export function ProblemDetailMain({
             <Button
               className="w-20"
               disabled={!solvable || cooldown > 0 || userSolved || loading}
+              loading={loading}
               onClick={handleCheckAnswer}
               label="Submit"
             />
@@ -203,27 +115,10 @@ export function ProblemDetailMain({
     ]
   );
 
-  const handleInitDefaultAnswer = useCallback(() => {
-    setUserAnswer(PROBLEM_ANSWER_DEFAULT_VALUES[type]);
-  }, [setUserAnswer, type]);
-
-  useEffect(() => {
-    handleInitDefaultAnswer();
-  }, [handleInitDefaultAnswer]);
-
-  const renderContent = useMemo(() => {
-    switch (tab) {
-      case "problem":
-        return (
-          <>
-            {renderMain}
-            {renderAnswer}
-          </>
-        );
-      case "discussion":
-        return <div>Discussion</div>;
-    }
-  }, [renderAnswer, renderMain, tab]);
-
-  return <Card className={className}>{renderContent}</Card>;
+  return (
+    <Card className={className}>
+      {renderMain}
+      {renderAnswer}
+    </Card>
+  );
 }

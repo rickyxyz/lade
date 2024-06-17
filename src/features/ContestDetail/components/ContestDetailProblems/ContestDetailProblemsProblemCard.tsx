@@ -1,10 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { ProblemAnswer } from "@/features";
 import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
-import { md, parseAnswer } from "@/utils";
-import { PROBLEM_ANSWER_DEFAULT_VALUES } from "@/consts";
 import { ContestSingleSubmissionType, ProblemDatabaseType } from "@/types";
-import { useAnswer } from "@/hooks/useAnswer";
 import { useContestAnswer } from "../../hooks/useContestAnswer";
 
 export interface ProblemCardProps {
@@ -58,15 +55,16 @@ export function ContestDetailProblemsProblemCard({
           Correct answer
         </Paragraph>
       );
-    if (submitted)
+
+    if (submitted && cooldown > 0 && Math.ceil(cooldown / 1000))
       return (
-        Boolean(cooldown > 0 && Math.ceil(cooldown / 1000)) && (
-          <Paragraph color="danger-5">
-            Incorrect answer. You can answer again in{" "}
-            {Math.ceil(cooldown / 1000)}s
-          </Paragraph>
-        )
+        <Paragraph color="danger-5">
+          Incorrect answer. You can answer again in {Math.ceil(cooldown / 1000)}
+          s
+        </Paragraph>
       );
+
+    return <></>;
   }, [cooldown, solved, submitted]);
 
   return (

@@ -69,14 +69,13 @@ export async function POST(req: NextRequest) {
     console.log(answer);
 
     if (user && verdict) {
-      console.log("Skipping creating record");
-      // await prisma.solved.create({
-      //   data: {
-      //     problemId: id as unknown as number,
-      //     userId: user.id,
-      //     answer: JSON.stringify(answer),
-      //   },
-      // });
+      await prisma.solved.create({
+        data: {
+          problemId: id as unknown as number,
+          userId: user.id,
+          answer: JSON.stringify(answer),
+        },
+      });
     }
 
     response = NextResponse.json({

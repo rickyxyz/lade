@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { ContestType } from "@/types";
 import { API } from "@/api";
+import { addToast } from "@/utils";
 
 export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
   const { id } = contest;
@@ -12,6 +13,38 @@ export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
   const stateAnswerLoading = useState<string | null>();
   const [answerLoading, setAnswerLoading] = stateAnswerLoading;
 
+  const handleAfterSubmitAnswer = useCallback(
+    (verdict: boolean) => {
+      const startCooldown = new Date().getTime();
+
+      console.log(verdict ? "Correct answer." : "Incorrect answer.");
+      addToast({
+        text: verdict ? "Correct answer." : "Incorrect answer.",
+      });
+
+      if (!verdict) {
+        setCooldown(1000 * 5);
+        if (cooldownIntv) clearInterval(cooldownIntv);
+
+        const interval = setInterval(() => {
+          const currentTime = new Date().getTime();
+          const unfreezeAt = startCooldown + 1000 * 5;
+          setCooldown(unfreezeAt - currentTime);
+          if (unfreezeAt - currentTime <= 0) {
+            clearInterval(cooldownIntv);
+          }
+        }, 100);
+
+        setSubmitted(startCooldown);
+        setCooldownIntv(interval);
+      } else {
+        setCooldown(0);
+      }
+      setAnswerLoading(null);
+    },
+    [cooldownIntv, setAnswerLoading]
+  );
+
   const handleCheckAnswer = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (problemId: string, answer: any) => {
@@ -22,12 +55,9 @@ export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
       }
 
       setSubmitted(submittedAt);
-      setCooldown(1000 * 5);
-
-      let verdict = false;
       setAnswerLoading(problemId);
 
-      await API(
+      return API(
         "post_contest_answer",
         {
           body: {
@@ -38,38 +68,17 @@ export function useContestAnswerSubmit({ contest }: { contest: ContestType }) {
         },
         {
           onSuccess(res) {
-            console.log("Verdict ", res.data.message);
-            if (res.data.message === "correct") {
-              verdict = true;
-            }
-            setAnswerLoading(null);
+            handleAfterSubmitAnswer(res.data.message === "correct");
           },
           onFail() {
-            setAnswerLoading(null);
+            handleAfterSubmitAnswer(false);
           },
         }
-      );
-
-      if (!verdict) {
-        if (cooldownIntv) clearInterval(cooldownIntv);
-
-        const interval = setInterval(() => {
-          const currentTime = new Date().getTime();
-          const unfreezeAt = submittedAt + 1000 * 5;
-          setCooldown(unfreezeAt - currentTime);
-          if (unfreezeAt - currentTime <= 0) {
-            clearInterval(cooldownIntv);
-          }
-        }, 100);
-
-        setSubmitted(submittedAt);
-        setCooldownIntv(interval);
-      } else {
-        setCooldown(0);
-      }
-      return verdict;
+      )
+        .then((res) => res.data.message === "correct")
+        .catch(() => false);
     },
-    [submitted, setAnswerLoading, id, cooldownIntv]
+    [submitted, setAnswerLoading, id, handleAfterSubmitAnswer]
   );
 
   return useMemo(
