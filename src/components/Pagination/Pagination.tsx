@@ -139,7 +139,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           order="first"
           orderDirection="row"
           icon={ChevronLeft}
-          disabled={page === 1}
+          disabled={page === 1 || count === 0}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}
           onClick={() => {
@@ -161,7 +161,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
           order="last"
           orderDirection="row"
           icon={ChevronRight}
-          disabled={page === maxPages}
+          disabled={page === maxPages || count === 0}
           size={device === "mobile" ? "s" : "m"}
           iconSize={device === "mobile" ? "s" : "m"}
           onClick={() => {
