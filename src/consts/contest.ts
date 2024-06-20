@@ -3,7 +3,7 @@ import { ContestType } from "@/types";
 export const CONTEST_DEFAULT: ContestType = {
   id: "",
   description: "",
-  title: "An Untitled Contest",
+  title: "",
   topicId: "calculus",
   subTopicId: "derivatives",
   problems: "[]",

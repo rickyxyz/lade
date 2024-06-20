@@ -3,7 +3,14 @@ import { useMemo, useEffect, useCallback, useState, ReactNode } from "react";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { API } from "@/api";
-import { ButtonIcon, IconText, Modal, Paragraph, Tooltip } from "@/components";
+import {
+  ButtonIcon,
+  IconText,
+  Illustration,
+  Modal,
+  Paragraph,
+  Tooltip,
+} from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { useDebounce, useDevice } from "@/hooks";
 import { checkPermission, api, addToast } from "@/utils";
@@ -31,6 +38,7 @@ import { ContestDetailTemplate } from "../components/ContestDetailTemplate";
 import { SubmissionData, useListenContestSubmission } from "../hooks";
 import { ContestDetailProblemsList } from "../components/ContestDetailProblems";
 import { useQueryParam } from "use-query-params";
+import { Empty } from "@/assets/Empty";
 
 interface ContestAction extends ButtonListEntry {
   permission?: ContentAccessType;
@@ -57,10 +65,17 @@ export function ContestDetailPage({
   const stateProblems = useState<ProblemContestType[]>([]);
   const [problems, setProblems] = stateProblems;
   const [contest, setContest] = stateContest;
-  const { title, authorId, createdAt = 0 } = contest;
+  const { authorId, createdAt = 0 } = contest;
 
-  const stateLoading = useState(true);
-  const [loading, setLoading] = stateLoading;
+  const [status, setStatus] = useState<
+    "unloaded" | "loading" | "loaded" | "error"
+  >("unloaded");
+
+  const title = useMemo(
+    () => (status === "error" ? "Unknown Contest" : contest.title),
+    [status, contest]
+  );
+
   const statePage = useQueryParam<ContestTabType>("tab");
   const [page, setPage] = statePage;
   const debounce = useDebounce();
@@ -156,9 +171,9 @@ export function ContestDetailPage({
   );
 
   const handleGetContest = useCallback(() => {
-    if (!loading) return;
+    if (status !== "unloaded") return;
 
-    setLoading(true);
+    setStatus("loading");
 
     API(
       "get_contest",
@@ -174,11 +189,14 @@ export function ContestDetailPage({
           const { problemsData = [] } = data;
           setContest(data);
           setProblems(problemsData.sort((pd1, pd2) => pd1.order - pd2.order));
-          setLoading(false);
+          setStatus("loaded");
+        },
+        onFail() {
+          setStatus("error");
         },
       }
     );
-  }, [loading, setLoading, contestId, setContest, setProblems]);
+  }, [contestId, setContest, setProblems, status]);
 
   useEffect(() => {
     handleGetContest();
@@ -193,7 +211,7 @@ export function ContestDetailPage({
 
   const renderContestMetadata = useCallback(
     (sideElement?: ReactNode) => {
-      if (loading) return renderSideLoading;
+      if (status !== "loaded") return renderSideLoading;
 
       return (
         <>
@@ -214,16 +232,17 @@ export function ContestDetailPage({
         </>
       );
     },
-    [contest, handleDeleteContest, loading, renderSideLoading, setPage, user]
+    [contest, handleDeleteContest, status, renderSideLoading, setPage, user]
   );
 
   const renderViewContest = useMemo(() => {
     const className = "flex-1";
-    const mainElement = loading ? (
-      renderMainLoading
-    ) : (
-      <ContestDetailMain className={className} contest={contest} />
-    );
+    const mainElement =
+      status !== "loaded" ? (
+        renderMainLoading
+      ) : (
+        <ContestDetailMain className={className} contest={contest} />
+      );
     const sideElement = renderContestMetadata();
 
     return (
@@ -231,18 +250,27 @@ export function ContestDetailPage({
         title={title}
         mainElement={mainElement}
         sideElement={sideElement}
+        errorElement={
+          <Illustration
+            source={Empty}
+            caption="This contest does not exist."
+            showGoBackButton
+          />
+        }
+        isError={status === "error"}
       />
     );
-  }, [contest, loading, renderContestMetadata, renderMainLoading, title]);
+  }, [contest, status, renderContestMetadata, renderMainLoading, title]);
 
   const renderEditContest = useMemo(() => {
-    const mainElement = loading ? (
-      renderMainLoading
-    ) : (
-      <ContestDetailMain className="flex-1" contest={contest} />
-    );
+    const mainElement =
+      status !== "loaded" ? (
+        renderMainLoading
+      ) : (
+        <ContestDetailMain className="flex-1" contest={contest} />
+      );
     const sideElement = renderContestMetadata();
-    if (loading)
+    if (status !== "loaded")
       return (
         <ContestDetailTemplate
           title={title}
@@ -264,7 +292,7 @@ export function ContestDetailPage({
     );
   }, [
     contest,
-    loading,
+    status,
     renderContestMetadata,
     renderMainLoading,
     setPage,
@@ -274,16 +302,17 @@ export function ContestDetailPage({
   ]);
 
   const renderContestProblems = useMemo(() => {
-    const mainElement = loading ? (
-      renderMainLoading
-    ) : (
-      <ContestProblemsPage
-        contest={contest}
-        userSubmissions={userSubmissionsObject}
-        problems={problems}
-        user={user}
-      />
-    );
+    const mainElement =
+      status !== "loaded" ? (
+        renderMainLoading
+      ) : (
+        <ContestProblemsPage
+          contest={contest}
+          userSubmissions={userSubmissionsObject}
+          problems={problems}
+          user={user}
+        />
+      );
     const sideElement = renderContestMetadata(
       <ContestDetailProblemsList
         problems={problems}
@@ -301,10 +330,10 @@ export function ContestDetailPage({
     );
   }, [
     contest,
-    loading,
     problems,
     renderContestMetadata,
     renderMainLoading,
+    status,
     title,
     user,
     userSubmissions,
@@ -312,16 +341,17 @@ export function ContestDetailPage({
   ]);
 
   const renderContestLeaderboard = useMemo(() => {
-    const mainElement = loading ? (
-      renderMainLoading
-    ) : (
-      <ContestLeaderboardPage
-        contest={contest}
-        problems={problems}
-        userSubmissions={userSubmissions}
-        loading={leaderboardLoading}
-      />
-    );
+    const mainElement =
+      status !== "loaded" ? (
+        renderMainLoading
+      ) : (
+        <ContestLeaderboardPage
+          contest={contest}
+          problems={problems}
+          userSubmissions={userSubmissions}
+          loading={leaderboardLoading}
+        />
+      );
     const sideElement = renderContestMetadata();
 
     return (
@@ -334,10 +364,10 @@ export function ContestDetailPage({
   }, [
     contest,
     leaderboardLoading,
-    loading,
     problems,
     renderContestMetadata,
     renderMainLoading,
+    status,
     title,
     userSubmissions,
   ]);

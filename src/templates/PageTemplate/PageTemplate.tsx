@@ -42,10 +42,10 @@ export function PageTemplate({
         >
           {leftTitle}
           <Paragraph size="m" weight="semibold">
-            {title}
+            {title}&nbsp;
           </Paragraph>
         </div>
-        <section className="flex flex-col overflow-x-hidden overflow-y-auto p-8">
+        <section className="flex flex-col overflow-x-hidden overflow-y-auto h-full p-8">
           {head}
           {children}
         </section>

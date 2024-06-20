@@ -16,6 +16,7 @@ import {
   Paragraph,
   Pagination,
   IconText,
+  Illustration,
 } from "@/components";
 import { useDebounce, useDevice } from "@/hooks";
 import {
@@ -32,6 +33,8 @@ import { PROBLEM_PAGINATION_COUNT } from "@/consts";
 import { validateProblemQuery } from "@/utils";
 import { NumberParam, StringParam, useQueryParams } from "use-query-params";
 import { useToast } from "@/hooks/useToast";
+import Image from "next/image";
+import { EmptySearch } from "@/assets";
 
 interface ProblemListProps {
   query?: ProblemQuery;
@@ -310,7 +313,12 @@ export function ProblemList({
   );
 
   const renderProblems = useMemo(
-    () => handleRenderProblems(problems as unknown as ProblemType[], loading),
+    () =>
+      loading || problems.length > 0 ? (
+        handleRenderProblems(problems as unknown as ProblemType[], loading)
+      ) : (
+        <Illustration source={EmptySearch} caption="No matching results." />
+      ),
     [handleRenderProblems, loading, problems]
   );
 

@@ -4,6 +4,7 @@ export * from "./Crumb";
 export * from "./Dropdown";
 export * from "./Icon";
 export * from "./Input";
+export * from "./Illustration";
 export * from "./Spinner";
 export * from "./Markdown";
 export * from "./Modal";

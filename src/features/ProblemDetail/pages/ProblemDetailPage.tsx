@@ -12,6 +12,7 @@ import {
   ButtonListEntry,
   Paragraph,
   Tooltip,
+  Illustration,
 } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { PageTemplate } from "@/templates";
@@ -33,6 +34,7 @@ import {
 import { MoreVert, West } from "@mui/icons-material";
 import { ProblemDetailData } from "../components";
 import { useAnswer } from "../hooks";
+import { Empty } from "@/assets/Empty";
 
 interface ProblemData {
   label: string;
@@ -79,7 +81,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     problem,
     user,
   });
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<
+    "unloaded" | "loading" | "loaded" | "error"
+  >("unloaded");
   // const stateUserAnswer = useState<any>();
   const setUserAnswer = stateUserAnswer[1];
   // const stateUserSolved = useState(false);
@@ -177,7 +181,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderQuestion = useMemo(() => {
     const className = "flex-1";
 
-    if (loading || !problem)
+    if (status !== "loaded" || !problem)
       return <ProblemDetailMainSkeleton className={className} />;
 
     return (
@@ -195,7 +199,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       />
     );
   }, [
-    loading,
+    status,
     problem,
     stateProblem,
     stateAccept,
@@ -211,7 +215,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderQuestionMetadata = useMemo(() => {
     const className = "flex-grow md:max-w-[320px] h-fit";
 
-    if (loading || !problem)
+    if (status !== "loaded" || !problem)
       return <ProblemDetailMainSkeleton className={className} />;
 
     return (
@@ -227,7 +231,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         }}
       />
     );
-  }, [handleDeleteProblem, loading, problem, setMode, user]);
+  }, [handleDeleteProblem, problem, status, user]);
 
   const handleGoBack = useCallback(() => {
     if (window.history?.length) {
@@ -238,9 +242,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   }, [router]);
 
   const handleGetProblems = useCallback(async () => {
-    if (!loading) return;
+    if (status !== "unloaded") return;
 
-    setLoading(true);
+    setStatus("loading");
 
     const result = await API("get_problem", {
       params: {
@@ -252,11 +256,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
 
         const { id } = data;
         setProblem(data);
-        setLoading(false);
+        setStatus("loaded");
 
         return id;
       })
-      .catch();
+      .catch(() => {
+        setStatus("error");
+      });
 
     if (result && user) {
       let existing: string | null;
@@ -286,7 +292,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     }
   }, [
     id,
-    loading,
     setAnswerLoading,
     setProblem,
     setSolvable,
@@ -294,6 +299,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     setUserAnswer,
     setUserSolved,
     solveCache,
+    status,
     user,
   ]);
 
@@ -302,15 +308,16 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   }, [handleGetProblems]);
 
   const renderNavigation = useMemo(
-    () => (
-      <ButtonIcon
-        icon={West}
-        size="xs"
-        variant="ghost"
-        onClick={handleGoBack}
-      />
-    ),
-    [handleGoBack]
+    () =>
+      status === "loaded" && (
+        <ButtonIcon
+          icon={West}
+          size="xs"
+          variant="ghost"
+          onClick={handleGoBack}
+        />
+      ),
+    [handleGoBack, status]
   );
 
   const renderHead = useMemo(
@@ -399,17 +406,25 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderViewProblem = useMemo(
     () => (
       <PageTemplate
-        title={title}
+        title={status === "error" ? title : "Unknown Problem"}
         leftTitle={renderNavigation}
         className="w-full"
       >
-        <div className="flex flex-row flex-wrap gap-8">
-          {renderQuestion}
-          {renderQuestionMetadata}
-        </div>
+        {status === "error" ? (
+          <Illustration
+            source={Empty}
+            caption="This problem does not exist."
+            showGoBackButton
+          />
+        ) : (
+          <div className="flex flex-row flex-wrap gap-8">
+            {renderQuestion}
+            {renderQuestionMetadata}
+          </div>
+        )}
       </PageTemplate>
     ),
-    [renderNavigation, renderQuestion, renderQuestionMetadata, title]
+    [renderNavigation, renderQuestion, renderQuestionMetadata, status, title]
   );
 
   const renderEditProblem = useMemo(

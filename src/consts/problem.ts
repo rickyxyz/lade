@@ -16,7 +16,7 @@ export const PROBLEM_BLANK: ProblemType = {
   id: "",
   description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a sem arcu. Nam nec consectetur nulla.",
-  title: "An Untitled Problem",
+  title: "",
   topicId: "calculus",
   subTopicId: "derivatives",
   type: "short_answer",
