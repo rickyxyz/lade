@@ -4,7 +4,7 @@ import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
 import { ContestSingleSubmissionType, ProblemDatabaseType } from "@/types";
 import { useContestAnswer } from "../../hooks/useContestAnswer";
 
-export interface ProblemCardProps {
+interface ProblemCardProps {
   problem: ProblemDatabaseType;
   submission?: ContestSingleSubmissionType;
   className?: string;

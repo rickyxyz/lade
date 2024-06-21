@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       take: 10,
     });
 
-    result = result.map((entry) => {
+    result = result.map((entry: any) => {
       return {
         ...entry,
         problem: {

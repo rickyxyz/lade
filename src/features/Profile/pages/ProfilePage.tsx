@@ -8,7 +8,7 @@ import { ProfileLastSolved } from "../components/ProfileLastSolved";
 
 interface ProfilePageProps {
   id: string;
-  self: UserType;
+  self?: UserType;
 }
 
 export function ProfilePage({ id, self }: ProfilePageProps) {

@@ -14,7 +14,7 @@ import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";
 import { CheckCircle, Person } from "@mui/icons-material";
 
-export interface ProblemCardProps {
+interface ProblemCardProps {
   problem: ProblemDatabaseType;
   className?: string;
   isLink?: boolean;

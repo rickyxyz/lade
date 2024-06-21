@@ -48,13 +48,13 @@ export async function POST() {
 
     await prisma.problem.createMany({
       data: PROBLEM_PLACEHOLDERS.map(
-        ({ answer, statement, subTopicId, title, topicId, type }) => {
+        ({ answer, description, subTopicId, title, topicId, type }) => {
           return {
             authorId: "admin",
             title,
             type,
             answer,
-            statement,
+            description,
             topicId,
             subTopicId,
             createdAt: new Date(),

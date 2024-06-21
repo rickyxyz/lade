@@ -31,7 +31,7 @@ async function PATCH({ req, res }: GenericAPIParams) {
 
     await prisma.problem.update({
       where: {
-        id: id as number,
+        id: id as any,
       },
       data: {
         title,

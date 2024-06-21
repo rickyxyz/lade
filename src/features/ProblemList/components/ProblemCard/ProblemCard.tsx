@@ -15,7 +15,7 @@ import { useAppSelector } from "@/libs/redux";
 import { CheckCircle, Person } from "@mui/icons-material";
 import clsx from "clsx";
 
-export interface ProblemCardProps {
+interface ProblemCardProps {
   problem: ProblemDatabaseType;
   className?: string;
   isLink?: boolean;
