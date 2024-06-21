@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import "@/styles/globals.css";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
@@ -68,16 +68,18 @@ export default function RootLayout({
         }
       `}</style>
       <body className={noto.className}>
-        <ProviderWrapper
-          layout={layout}
-          stateInitialized={stateInitialized}
-          stateToasts={stateToasts}
-        >
-          <>
-            {children}
-            <ToastList width={layout.width - 64} />
-          </>
-        </ProviderWrapper>
+        <Suspense>
+          <ProviderWrapper
+            layout={layout}
+            stateInitialized={stateInitialized}
+            stateToasts={stateToasts}
+          >
+            <>
+              {children}
+              <ToastList width={layout.width - 64} />
+            </>
+          </ProviderWrapper>
+        </Suspense>
       </body>
     </html>
   );
