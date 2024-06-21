@@ -47,6 +47,7 @@ export function ContestProblemsPage({
               problem={p.problem}
               onSubmit={handleCheckAnswer}
               cooldown={cooldown}
+              disabled={!!answerLoading}
               loading={answerLoading === p.problem.id}
               submission={submission}
             />

@@ -10,6 +10,7 @@ interface ProblemCardProps {
   className?: string;
   cooldown: number;
   loading: boolean;
+  disabled?: boolean;
   onClick?: () => void;
   onSubmit: (id: string, answer: any) => Promise<boolean | null>;
 }
@@ -20,6 +21,7 @@ export function ContestDetailProblemsProblemCard({
   className,
   cooldown,
   loading,
+  disabled,
   onClick,
   onSubmit,
 }: ProblemCardProps) {
@@ -82,7 +84,7 @@ export function ContestDetailProblemsProblemCard({
       <Button
         className="mt-4"
         onClick={handleAnswer}
-        disabled={cooldown > 0 || solved}
+        disabled={cooldown > 0 || solved || disabled}
         loading={loading}
       >
         Submit

@@ -289,6 +289,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       } else {
         setSolvable(true);
       }
+    } else {
+      setAnswerLoading(false);
+      setSolvable(false);
     }
   }, [
     id,
