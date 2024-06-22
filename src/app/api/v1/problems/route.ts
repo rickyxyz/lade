@@ -96,6 +96,7 @@ export async function GET(req: NextRequest) {
         ...topicQuery,
         ...subTopicQuery,
         ...searchQuery,
+        deletedAt: null,
       },
       orderBy: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

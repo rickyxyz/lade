@@ -70,7 +70,8 @@ export interface ProblemBaseType {
   solveds?: unknown[];
   views?: number;
   createdAt?: Date;
-  updateAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
   authorId: string;
   type: ProblemAnswerType;
   answer: string;

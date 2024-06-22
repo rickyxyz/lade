@@ -4,7 +4,7 @@ export interface UserType {
   name?: string;
   email: string;
   role?: string;
-  joinDate: string;
+  createdAt?: string;
 }
 
 export type UserMapType = Record<string, UserType>;

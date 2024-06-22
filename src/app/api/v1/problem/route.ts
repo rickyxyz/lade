@@ -244,9 +244,12 @@ export async function DELETE(req: NextRequest) {
         throw Error("unauthorized");
       }
 
-      await prisma.problem.delete({
+      await prisma.problem.update({
         where: {
           id: id as any,
+        },
+        data: {
+          deletedAt: new Date(),
         },
       });
 

@@ -13,6 +13,7 @@ export interface ContestBaseType {
   views?: number;
   createdAt?: number;
   updatedAt?: number;
+  deletedAt?: Date;
   startAt: number;
   endAt: number;
   authorId: string;
