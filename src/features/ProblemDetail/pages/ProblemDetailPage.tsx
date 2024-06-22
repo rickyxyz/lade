@@ -2,49 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMemo, useEffect, useCallback, useState } from "react";
-import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import { West } from "@mui/icons-material";
 import { API } from "@/api";
-import {
-  ButtonIcon,
-  Modal,
-  ButtonList,
-  ButtonListEntry,
-  Paragraph,
-  Tooltip,
-  Illustration,
-} from "@/components";
+import { Empty } from "@/assets";
+import { ButtonIcon, Illustration } from "@/components";
 import { useAppSelector } from "@/libs/redux";
 import { PageTemplate } from "@/templates";
-import { checkPermission, addToast } from "@/utils";
-import { useDevice } from "@/hooks";
+import { addToast } from "@/utils";
 import { PROBLEM_BLANK } from "@/consts";
-import {
-  ProblemType,
-  ContentViewType,
-  UserType,
-  ContentAccessType,
-} from "@/types";
+import { ProblemType, ContentViewType, UserType } from "@/types";
 import { ProblemEditPage } from "../../ProblemCreate";
-import {
-  ProblemDetailMain,
-  ProblemDetailMainSkeleton,
-  ProblemDetailTopics,
-} from "../components";
-import { MoreVert, West } from "@mui/icons-material";
+import { ProblemDetailMain, ProblemDetailMainSkeleton } from "../components";
 import { ProblemDetailData } from "../components";
 import { useAnswer } from "../hooks";
-import { Empty } from "@/assets/Empty";
-
-interface ProblemData {
-  label: string;
-  value?: string | number;
-  tooltip?: string;
-}
-
-interface ProblemAction extends ButtonListEntry {
-  permission?: ContentAccessType;
-}
 
 interface ProblemProps {
   id: string;
@@ -54,16 +25,7 @@ interface ProblemProps {
 export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateProblem = useState<ProblemType>(PROBLEM_BLANK);
   const [problem, setProblem] = stateProblem;
-  const {
-    title,
-    topicId,
-    subTopicId,
-    authorId,
-    solveds,
-    createdAt = 0,
-    topic,
-    subTopic,
-  } = problem;
+  const { title } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -93,44 +55,13 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   // const stateSolvable = useState(false);
   const setAnswerLoading = stateAnswerLoading[1];
   const setSolvable = stateSolvable[1];
-  const stateMobileAction = useState(false);
-  const setMobileAction = stateMobileAction[1];
 
   const router = useRouter();
   const allUserSolved = useAppSelector("solveds");
-  const { device } = useDevice();
 
   const solveCache = useMemo(
     () => allUserSolved && allUserSolved[id],
     [allUserSolved, id]
-  );
-
-  const permission = useMemo<ContentAccessType>(() => {
-    if (user && problem) {
-      if (problem.authorId === user.id) {
-        return "author";
-      }
-    }
-    return "viewer";
-  }, [problem, user]);
-
-  const problemData = useMemo<ProblemData[]>(
-    () => [
-      {
-        label: "Author",
-        value: authorId,
-      },
-      {
-        label: "Date",
-        value: new Date(createdAt).toLocaleDateString("en-GB"),
-        tooltip: `${new Date(createdAt).toLocaleString("en-GB")}`,
-      },
-      {
-        label: "Solved",
-        value: (solveds ?? []).length,
-      },
-    ],
-    [authorId, createdAt, solveds]
   );
 
   const handleDeleteProblem = useCallback(() => {
@@ -154,29 +85,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
       }
     );
   }, [id, router]);
-
-  const problemAction = useMemo<ProblemAction[]>(
-    () => [
-      {
-        label: "Edit",
-        handler: () => {
-          setMode("edit");
-        },
-        permission: "author",
-      },
-      {
-        label: "Delete",
-        handler: handleDeleteProblem,
-        permission: "author",
-      },
-      {
-        label: "Bookmark",
-        handler: () => 0,
-        permission: "viewer",
-      },
-    ],
-    [handleDeleteProblem, setMode]
-  );
 
   const renderQuestion = useMemo(() => {
     const className = "flex-1";
@@ -321,89 +229,6 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         />
       ),
     [handleGoBack, status]
-  );
-
-  const renderHead = useMemo(
-    () => (
-      <>
-        {renderNavigation}
-        <div className="flex justify-between mb-4">
-          <div className="flex-1">
-            <h1 className="mt-2 mb-4">{title}</h1>
-            {topic && subTopic && (
-              <ProblemDetailTopics
-                className="mb-8"
-                topic={topic.name}
-                subTopic={subTopic.name}
-              />
-            )}
-          </div>
-          {device === "mobile" && (
-            <ButtonIcon
-              variant="outline"
-              onClick={() => {
-                setMobileAction((prev) => !prev);
-              }}
-              icon={MoreVert}
-            />
-          )}
-        </div>
-      </>
-    ),
-    [device, renderNavigation, setMobileAction, subTopic, title, topic]
-  );
-
-  const renderProblemData = useMemo(
-    () => (
-      <ul className="md:w-48">
-        {problemData.map(({ label, value, tooltip }, idx) => (
-          <li
-            className={clsx("flex justify-between", idx > 0 && "mt-1")}
-            key={label}
-          >
-            <Paragraph color="secondary-5">{label}</Paragraph>
-            {tooltip ? (
-              <Tooltip
-                optionWidth={0}
-                triggerElement={<Paragraph>{value}</Paragraph>}
-                hiddenElement={
-                  <Paragraph className="whitespace-nowrap">{tooltip}</Paragraph>
-                }
-                classNameInner="w-fit px-4 py-2"
-                topOffset={32}
-                direction="left"
-                showOnHover
-              />
-            ) : (
-              <Paragraph>{value}</Paragraph>
-            )}
-          </li>
-        ))}
-      </ul>
-    ),
-    [problemData]
-  );
-
-  const renderProblemAction = useMemo(() => {
-    const actions = problemAction.filter(({ permission: perm }) =>
-      checkPermission(permission, perm)
-    );
-    return <ButtonList list={actions} className="w-48" />;
-  }, [permission, problemAction]);
-
-  const renderMobileAction = useMemo(
-    () => <Modal stateVisible={stateMobileAction}>{renderProblemAction}</Modal>,
-    [renderProblemAction, stateMobileAction]
-  );
-
-  const renderSide = useMemo(
-    () => (
-      <div className="flex flex-col gap-8">
-        {renderProblemData}
-        {device === "mobile" ? renderMobileAction : renderProblemAction}
-      </div>
-    ),
-    [device, renderMobileAction, renderProblemAction, renderProblemData]
   );
 
   const renderViewProblem = useMemo(

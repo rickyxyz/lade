@@ -1,48 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useEffect, useCallback, useState, ReactNode } from "react";
-import clsx from "clsx";
-import { usePathname, useRouter } from "next/navigation";
+import { useQueryParam } from "use-query-params";
+import { useRouter } from "next/navigation";
 import { API } from "@/api";
-import {
-  ButtonIcon,
-  IconText,
-  Illustration,
-  Modal,
-  Paragraph,
-  Tooltip,
-} from "@/components";
-import { useAppSelector } from "@/libs/redux";
-import { useDebounce, useDevice } from "@/hooks";
-import { checkPermission, api, addToast } from "@/utils";
+import { Illustration } from "@/components";
+import { Empty } from "@/assets";
+import { useDebounce } from "@/hooks";
+import { addToast } from "@/utils";
 import {
   ContestType,
   UserType,
   ProblemContestType,
-  ContentViewType,
-  ContentAccessType,
   ContestDatabaseType,
   ContestQuery,
   ContestTabType,
   ContestParticipantType,
 } from "@/types";
 import { CONTEST_DEFAULT } from "@/consts";
-import { PageTemplate } from "@/templates";
-import { ContestDetailMain, ContestDetailMainSkeleton } from "../components";
-import { ButtonList, ButtonListEntry } from "@/components/Button/ButtonList";
+import {
+  ContestDetailMain,
+  ContestDetailMainSkeleton,
+  ContestDetailTemplate,
+  ContestDetailData,
+  ContestDetailProblemsList,
+} from "../components";
+import { SubmissionData, useListenContestSubmission } from "../hooks";
 import { ContestEditPage } from "./ContestEditPage";
-import { MoreVert, West } from "@mui/icons-material";
-import { ContestDetailData } from "../components/ContestDetailData";
 import { ContestLeaderboardPage } from "./ContestLeaderboardPage";
 import { ContestProblemsPage } from "./ContestProblemsPage";
-import { ContestDetailTemplate } from "../components/ContestDetailTemplate";
-import { SubmissionData, useListenContestSubmission } from "../hooks";
-import { ContestDetailProblemsList } from "../components/ContestDetailProblems";
-import { useQueryParam } from "use-query-params";
-import { Empty } from "@/assets/Empty";
-
-interface ContestAction extends ButtonListEntry {
-  permission?: ContentAccessType;
-}
 
 interface ContestProps {
   contestId: string;
@@ -50,22 +35,14 @@ interface ContestProps {
   user?: UserType | null;
 }
 
-export function ContestDetailPage({
-  contestQuery,
-  contestId,
-  user,
-}: ContestProps) {
-  const pathname = usePathname();
+export function ContestDetailPage({ contestId, user }: ContestProps) {
   const router = useRouter();
-
-  const { tab: userPage } = contestQuery;
   const stateContest = useState<ContestType>(
     CONTEST_DEFAULT as unknown as ContestType
   );
   const stateProblems = useState<ProblemContestType[]>([]);
   const [problems, setProblems] = stateProblems;
   const [contest, setContest] = stateContest;
-  const { authorId, createdAt = 0 } = contest;
 
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
@@ -96,35 +73,10 @@ export function ContestDetailPage({
     [debounce]
   );
 
-  useEffect(() => {
-    console.log("leaderboard loading ", leaderboardLoading);
-  }, [leaderboardLoading]);
-
-  const { problemSubmissions, userSubmissions: userSubmissionsObject } =
-    useListenContestSubmission(
-      contest as unknown as ContestDatabaseType,
-      handleDebounceSubmissions
-    );
-
-  const stateMobileAction = useState(false);
-  const setMobileAction = stateMobileAction[1];
-
-  const allUserSolved = useAppSelector("solveds");
-  const { device } = useDevice();
-
-  const solveCache = useMemo(
-    () => allUserSolved && allUserSolved[contestId],
-    [allUserSolved, contestId]
+  const { userSubmissions: userSubmissionsObject } = useListenContestSubmission(
+    contest as unknown as ContestDatabaseType,
+    handleDebounceSubmissions
   );
-
-  const permission = useMemo<ContentAccessType>(() => {
-    if (user && contest) {
-      if (contest.authorId === user.id) {
-        return "author";
-      }
-    }
-    return "viewer";
-  }, [contest, user]);
 
   const handleDeleteContest = useCallback(() => {
     API(
@@ -146,29 +98,6 @@ export function ContestDetailPage({
       }
     );
   }, [contestId, router]);
-
-  const contestAction = useMemo<ContestAction[]>(
-    () => [
-      {
-        label: "Edit",
-        handler: () => {
-          setPage("edit");
-        },
-        permission: "author",
-      },
-      {
-        label: "Delete",
-        handler: handleDeleteContest,
-        permission: "author",
-      },
-      {
-        label: "Bookmark",
-        handler: () => 0,
-        permission: "viewer",
-      },
-    ],
-    [handleDeleteContest, setPage]
-  );
 
   const handleGetContest = useCallback(() => {
     if (status !== "unloaded") return;
