@@ -144,7 +144,7 @@ const ROUTES = {
     method: "POST",
   },
   post_problems: {
-    path: "/v2/problem",
+    path: "/v1/problems",
     method: "POST",
   },
   patch_problem: {
