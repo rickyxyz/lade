@@ -48,10 +48,11 @@ export function ContestDetailPage({ contestId, user }: ContestProps) {
     "unloaded" | "loading" | "loaded" | "error"
   >("unloaded");
 
-  const title = useMemo(
-    () => (status === "error" ? "Unknown Contest" : contest.title),
-    [status, contest]
-  );
+  const title = useMemo(() => {
+    if (status === "error") return "Unknown Contest";
+    if (status === "loaded") return contest.title;
+    return "";
+  }, [contest.title, status]);
 
   const statePage = useQueryParam<ContestTabType>("tab");
   const [page, setPage] = statePage;

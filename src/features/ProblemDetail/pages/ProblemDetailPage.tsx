@@ -25,11 +25,10 @@ interface ProblemProps {
 export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateProblem = useState<ProblemType>(PROBLEM_BLANK);
   const [problem, setProblem] = stateProblem;
-  const { title } = problem;
   const stateAccept = useState<unknown>({
     content: "",
   });
-  // const stateLoading = useState(true);
+
   const [mode, setMode] = useState<ContentViewType>("view");
   const {
     stateLoading: stateAnswerLoading,
@@ -46,13 +45,16 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
   >("unloaded");
-  // const stateUserAnswer = useState<any>();
+
+  const title = useMemo(() => {
+    if (status === "error") return "Unknown Problem";
+    if (status === "loaded") return problem.title;
+    return "";
+  }, [problem.title, status]);
+
   const setUserAnswer = stateUserAnswer[1];
-  // const stateUserSolved = useState(false);
   const setUserSolved = stateUserSolved[1];
-  // const stateSubmitted = useState<number>();
   const setSubmitted = stateSubmitted[1];
-  // const stateSolvable = useState(false);
   const setAnswerLoading = stateAnswerLoading[1];
   const setSolvable = stateSolvable[1];
 
@@ -234,7 +236,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
   const renderViewProblem = useMemo(
     () => (
       <PageTemplate
-        title={status === "error" ? title : "Unknown Problem"}
+        title={title}
         leftTitle={renderNavigation}
         className="w-full"
       >
