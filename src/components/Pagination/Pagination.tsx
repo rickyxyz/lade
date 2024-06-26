@@ -3,17 +3,22 @@ import clsx from "clsx";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useDevice } from "@/hooks";
 import { PROBLEM_PAGINATION_COUNT } from "@/consts";
-import { PaginationData } from "@/types";
+import { PaginationCalculatedData, PaginationData } from "@/types";
 import { ButtonIcon } from "../Button";
 import { Paragraph } from "../Paragraph";
 import { PaginationButton } from "./PaginationButton";
 
 interface PaginationProps {
-  pagination: PaginationData;
+  className?: string;
+  pagination: PaginationCalculatedData;
   onClick: (page: number) => void;
 }
 
-export function Pagination({ pagination, onClick }: PaginationProps) {
+export function Pagination({
+  className,
+  pagination,
+  onClick,
+}: PaginationProps) {
   const { device } = useDevice();
   const {
     visiblePages,
@@ -24,34 +29,7 @@ export function Pagination({ pagination, onClick }: PaginationProps) {
     page,
     maxPages,
     count,
-  } = useMemo(() => {
-    const { page, maxPages, count } = pagination;
-    const visiblePages = Math.min(5, maxPages);
-    const half = Math.floor(visiblePages / 2);
-
-    let newStyle = "first";
-    if (page + half >= maxPages) {
-      newStyle = "last";
-    } else if (page - half <= 1) {
-      newStyle = "first";
-    } else {
-      newStyle = "middle";
-    }
-
-    const from = (page - 1) * PROBLEM_PAGINATION_COUNT + 1;
-    const to = Math.min(page * PROBLEM_PAGINATION_COUNT, count);
-
-    return {
-      page,
-      maxPages,
-      count,
-      visiblePages,
-      half,
-      style: newStyle,
-      contentFrom: from,
-      contentTo: to,
-    };
-  }, [pagination]);
+  } = pagination;
 
   const renderPaginationFirst = useMemo(() => {
     return (

@@ -20,6 +20,17 @@ export interface PaginationData {
   initialized: boolean;
 }
 
+export interface PaginationCalculatedData {
+  page: number;
+  maxPages: number;
+  count: number;
+  visiblePages: number;
+  half: number;
+  style: "first" | "last" | "middle";
+  contentFrom: number;
+  contentTo: number;
+}
+
 export type ButtonVariantType = "solid" | "outline" | "outline-2" | "ghost";
 
 export type ButtonOrderType = "first" | "middle" | "last";

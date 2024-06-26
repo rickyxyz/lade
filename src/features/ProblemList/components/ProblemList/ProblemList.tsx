@@ -18,7 +18,7 @@ import {
   IconText,
   Illustration,
 } from "@/components";
-import { useDebounce, useDevice } from "@/hooks";
+import { useDebounce, useDevice, usePagination } from "@/hooks";
 import {
   ProblemDatabaseType,
   ProblemQuery,
@@ -75,13 +75,18 @@ export function ProblemList({
   const [search, setSearch] = useState(userSearch ?? "");
   const [advanced, setAdvanced] = stateAdvanced;
 
-  const [pagination, setPagination] = useState({
+  const [paginationBase, setPagination] = useState({
     page: userPage,
     maxPages: 1,
     count: 1,
     initialized: false,
   });
-  const { page } = pagination;
+
+  const pagination = usePagination({
+    pagination: paginationBase,
+  });
+
+  const { page } = paginationBase;
   const { device } = useDevice();
   const debounce = useDebounce();
   const lastQuery = useRef<ProblemQuery>();
@@ -298,14 +303,14 @@ export function ProblemList({
           </div>
           {renderAdvanced}
         </div>
-        {pagination.initialized && renderPagination}
+        {paginationBase.initialized && renderPagination}
       </>
     ),
     [
       search,
       loading,
       renderAdvanced,
-      pagination.initialized,
+      paginationBase.initialized,
       renderPagination,
       handleUpdateQuery,
       setAdvanced,
