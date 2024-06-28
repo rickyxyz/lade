@@ -7,6 +7,7 @@ import { Tooltip, TooltipBaseProps } from "../Tooltip";
 import { ExpandMore, HourglassEmpty } from "@mui/icons-material";
 import { useDevice } from "@/hooks";
 import { Loader } from "../Loader";
+import { Paragraph } from "../Paragraph";
 
 type SelectVariant = "basic" | "solid";
 
@@ -20,6 +21,7 @@ export interface SelectProps<X extends string, Y extends SelectOptionType<X>[]>
   allowClearSelection?: boolean;
   unselectedText?: string;
   loading?: boolean;
+  label?: string;
   onSelectOption: (option?: SelectOptionType<X>) => void;
 }
 
@@ -34,6 +36,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   unselectedText = "None",
   disabled,
   loading,
+  label,
   onSelectOption,
   onBlur,
 }: SelectProps<X, Y>) {
@@ -104,7 +107,9 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
                 setIndex(i);
               }}
               isSelected={selectedOption === option.id}
-              isHighlighted={index === i || (i == 0 && index === undefined && !optional)}
+              isHighlighted={
+                index === i || (i == 0 && index === undefined && !optional)
+              }
             />
           ))
         ) : (
@@ -112,7 +117,16 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         )}
       </>
     ),
-    [renderRemoveOption, options, selectedOption, index, optional, onSelectOption, onBlur, setVisible]
+    [
+      renderRemoveOption,
+      options,
+      selectedOption,
+      index,
+      optional,
+      onSelectOption,
+      onBlur,
+      setVisible,
+    ]
   );
 
   const renderTrigger = useMemo(
@@ -128,11 +142,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           inputClassName
         )}
       >
-        <span
-          className="truncate w-[calc(100%-2rem)]"
-        >
-          {currentOption}
-        </span>
+        <span className="truncate w-[calc(100%-2rem)]">{currentOption}</span>
         <Icon
           IconComponent={ExpandMore}
           className="absolute right-2"
@@ -144,39 +154,50 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
   );
 
   return (
-    <Tooltip
-      triggerElement={renderTrigger}
-      hiddenElement={loading ? <Loader /> : renderOptions}
-      className={className}
-      stateVisible={stateVisible}
-      disabled={disabled}
-      onKeyDown={(e) => {
-        if (e.key === "Tab") return;
+    <div className="w-full h-min">
+      <Paragraph
+        size="s"
+        color="secondary-5"
+        onClick={() => {
+          setVisible((prev) => !prev);
+        }}
+      >
+        {label}
+      </Paragraph>
+      <Tooltip
+        triggerElement={renderTrigger}
+        hiddenElement={loading ? <Loader /> : renderOptions}
+        className={className}
+        stateVisible={stateVisible}
+        disabled={disabled}
+        onKeyDown={(e) => {
+          if (e.key === "Tab") return;
 
-        e.preventDefault();
+          e.preventDefault();
 
-        setIndex((prev) => {
-          if (e.key === "ArrowUp") {
-            if (prev === 0 && !optional) return 0;
+          setIndex((prev) => {
+            if (e.key === "ArrowUp") {
+              if (prev === 0 && !optional) return 0;
 
-            if (!prev || (optional && prev === 0)) return undefined;
+              if (!prev || (optional && prev === 0)) return undefined;
 
-            return Math.max(0, prev - 1);
-          } else if (e.key === "ArrowDown") {
-            return prev !== undefined
-              ? Math.min(options.length - 1, prev + 1)
-              : 0;
+              return Math.max(0, prev - 1);
+            } else if (e.key === "ArrowDown") {
+              return prev !== undefined
+                ? Math.min(options.length - 1, prev + 1)
+                : 0;
+            }
+          });
+
+          if (e.key === "Enter") {
+            index !== undefined && onSelectOption(options[index]);
+            setIndex(index);
+            onBlur && onBlur();
+            setVisible(false);
           }
-        });
-
-        if (e.key === "Enter") {
-          index !== undefined && onSelectOption(options[index]);
-          setIndex(index);
-          onBlur && onBlur();
-          setVisible(false);
-        }
-      }}
-    />
+        }}
+      />
+    </div>
   );
 }
 

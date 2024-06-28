@@ -301,7 +301,45 @@ export function ProblemList({
               variant="outline"
             />
           </div>
-          {renderAdvanced}
+          <Modal stateVisible={stateAdvanced}>
+            <ProblemFilter
+              className="flex-col"
+              stateSortBy={stateSortBy}
+              stateSubTopic={stateSubtopic}
+              stateTopic={stateTopic}
+              wrapperClassName="flex-col w-80"
+              buttonElement={
+                <div className="flex gap-4">
+                  <Button
+                    className="mt-4 flex-1"
+                    onClick={() => {
+                      setAdvanced(false);
+                      handleUpdateQuery(1);
+                    }}
+                    disabled={loading}
+                    label="Apply"
+                  />
+                  <Button
+                    color="secondary"
+                    variant="outline"
+                    className="mt-4 flex-1"
+                    onClick={() => {
+                      setAdvanced(false);
+                      setTopic(undefined);
+                      setSubTopic(undefined);
+                      setSortBy("newest");
+                      handleUpdateQuery(1);
+                    }}
+                    disabled={loading}
+                    label="Reset"
+                  />
+                </div>
+              }
+              onClose={() => {
+                setAdvanced(false);
+              }}
+            />
+          </Modal>
         </div>
         {paginationBase.initialized && renderPagination}
       </>
