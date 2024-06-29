@@ -301,13 +301,18 @@ export function ProblemList({
               variant="outline"
             />
           </div>
-          <Modal stateVisible={stateAdvanced}>
+          <Modal
+            className={
+              device === "mobile" ? "self-end rounded-t-lg overflow-hidden" : ""
+            }
+            stateVisible={stateAdvanced}
+          >
             <ProblemFilter
               className="flex-col"
               stateSortBy={stateSortBy}
               stateSubTopic={stateSubtopic}
               stateTopic={stateTopic}
-              wrapperClassName="flex-col w-80"
+              wrapperClassName="flex-col w-screen md:w-80"
               buttonElement={
                 <div className="flex gap-4">
                   <Button

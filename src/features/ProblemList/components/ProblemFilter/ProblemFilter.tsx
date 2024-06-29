@@ -38,7 +38,7 @@ export function ProblemFilter({
   return (
     <div
       className={clsx(
-        "flex flex-col w-64 rounded-lg p-8 gap-4 bg-white border border-secondary-200",
+        "flex flex-col w-64 rounded-lg p-8 gap-4",
         wrapperClassName
       )}
     >
