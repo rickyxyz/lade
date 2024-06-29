@@ -17,11 +17,13 @@ export function Modal({ children, className, stateVisible }: ModalProps) {
   return visible ? (
     <div
       className={clsx(
-        "fixed left-0 top-0 w-screen h-screen z-30",
+        "fixed left-0 top-0 z-30",
         "flex items-center justify-center"
       )}
       style={{
         background: "rgba(0,0,0,0.5)",
+        width: "100dvw",
+        height: "100dvh",
       }}
       onClick={() => {
         setVisible(false);

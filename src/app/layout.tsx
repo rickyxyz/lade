@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import "@/styles/globals.css";
 import "@uiw/react-markdown-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
@@ -25,6 +25,7 @@ export default function RootLayout({
   const stateInitialized = useState(false);
   const stateToasts = useState<ToastInternalType[]>([]);
   const [toasts, setToasts] = stateToasts;
+  const initializedRef = useRef(0);
 
   const handleUpdateLayout = useCallback(() => {
     const { innerWidth: width, innerHeight: height } = window;
@@ -48,7 +49,11 @@ export default function RootLayout({
 
   useEffect(() => {
     handleInitialize();
-  }, [handleInitialize]);
+    if (!initializedRef.current) {
+      initializedRef.current = 1;
+      handleUpdateLayout();
+    }
+  }, [handleInitialize, handleUpdateLayout]);
 
   useEffect(() => {
     md.use(mathjax3);

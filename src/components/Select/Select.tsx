@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import { SelectOptionType } from "@/types";
 import { Icon } from "../Icon";
@@ -42,6 +42,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
 }: SelectProps<X, Y>) {
   const stateVisible = useState(false);
   const [visible, setVisible] = stateVisible;
+  const [focus, setFocus] = useState(false);
   const [currentOption, currentIndex] = useMemo(() => {
     let optionIndex: number | undefined;
     let optionText = unselectedText;
@@ -56,8 +57,8 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     return [optionText, optionIndex];
   }, [options, selectedOption, unselectedText]);
   const [index, setIndex] = useState<number | undefined>(currentIndex);
-
-  const desktop = useDevice();
+  const { device } = useDevice();
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   const renderRemoveOption = useMemo(() => {
     return (
@@ -129,19 +130,67 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
     ]
   );
 
+  const renderMobileTrigger = useMemo(
+    () => (
+      <select
+        className={clsx(
+          "opacity-0 absolute left-0 top-0 w-full h-full",
+          device !== "mobile" && "hidden"
+        )}
+        ref={selectRef}
+        onBlur={() => {
+          setFocus(false);
+        }}
+        onChange={(e) => {
+          const chosen = e.target.value;
+          if (chosen === "reset") {
+            onSelectOption(undefined);
+          } else {
+            const id = chosen.replace("choice_", "");
+            const selected = options.findIndex((option) => option.id === id);
+            if (selected != -1) {
+              onSelectOption(options[selected]);
+              setIndex(selected);
+            }
+          }
+          setFocus(false);
+        }}
+      >
+        {allowClearSelection && <option value="reset">Any</option>}
+        {options ? (
+          options.map((option) => (
+            <option key={option.id} value={`choice_${option.id}`}>
+              {option.text}
+            </option>
+          ))
+        ) : (
+          <></>
+        )}
+      </select>
+    ),
+    [allowClearSelection, device, onSelectOption, options]
+  );
+
   const renderTrigger = useMemo(
     () => (
       <div
         className={clsx(
           INPUT_BASE_STYLE,
-          visible && INPUT_FOCUS_STYLE,
+          (visible || focus) && INPUT_FOCUS_STYLE,
           variant === "basic" && INPUT_BASIC_STYLE,
           variant === "solid" && INPUT_SOLID_STYLE,
           disabled ? "bg-secondary-200" : "bg-white",
-          "text-ellipsis whitespace-nowrap overflow-hidden",
+          "relative text-ellipsis whitespace-nowrap overflow-hidden",
           inputClassName
         )}
+        onClick={() => {
+          if (device !== "desktop") {
+            selectRef.current?.focus();
+            setFocus(true);
+          }
+        }}
       >
+        {renderMobileTrigger}
         <span className="truncate w-[calc(100%-2rem)]">{currentOption}</span>
         <Icon
           IconComponent={ExpandMore}
@@ -150,7 +199,16 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         />
       </div>
     ),
-    [currentOption, disabled, inputClassName, variant, visible]
+    [
+      currentOption,
+      device,
+      disabled,
+      focus,
+      inputClassName,
+      renderMobileTrigger,
+      variant,
+      visible,
+    ]
   );
 
   return (
@@ -159,7 +217,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         size="s"
         color="secondary-5"
         onClick={() => {
-          setVisible((prev) => !prev);
+          if (!disabled && device === "desktop") setVisible((prev) => !prev);
         }}
       >
         {label}
@@ -169,7 +227,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
         hiddenElement={loading ? <Loader /> : renderOptions}
         className={className}
         stateVisible={stateVisible}
-        disabled={disabled}
+        disabled={disabled || device !== "desktop"}
         onKeyDown={(e) => {
           if (e.key === "Tab") return;
 
