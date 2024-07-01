@@ -1,64 +1,32 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import clsx from "clsx";
-import { DropdownOptionType } from "@/types";
-import { DropdownOption } from "./DropdownOption";
+import { useCallback } from "react";
+import { StateType } from "@/types";
 import { Tooltip, TooltipProps } from "../Tooltip";
 
-export interface DropdownProps
-  extends Omit<TooltipProps, "hiddenElement" | "ref"> {
+export interface DropdownProps extends Omit<TooltipProps, "ref"> {
   classNameOption?: string;
-  options: DropdownOptionType[];
+  stateVisible: StateType<boolean>;
 }
 
-export function Dropdown({
-  className,
-  classNameOption,
-  options,
-  disabled,
-  triggerElement,
-  onBlur,
-  ...rest
-}: DropdownProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const stateVisible = useState(false);
+export function Dropdown({ stateVisible, onBlur, ...rest }: DropdownProps) {
   const [visible, setVisible] = stateVisible;
 
-  const renderOptions = useMemo(
-    () =>
-      options.map(({ id, element, className: cls, onClick }) => (
-        <DropdownOption
-          className={clsx(classNameOption, cls)}
-          key={`Dropdown_${id}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick();
-            onBlur && onBlur();
-            setVisible(false);
-            if (ref.current) ref.current.blur();
+  const handleBlur = useCallback(() => {
+    setVisible(false);
+    onBlur && onBlur();
+  }, [onBlur, setVisible]);
+
+  return (
+    <>
+      <Tooltip stateVisible={stateVisible} {...rest} />
+      {visible && (
+        <div
+          className="fixed top-0 left-0 w-screen h-screen"
+          onClick={handleBlur}
+          style={{
+            zIndex: 9,
           }}
-        >
-          {element}
-        </DropdownOption>
-      )),
-    [classNameOption, onBlur, options, setVisible]
-  );
-
-  useEffect(() => {
-    if (visible && ref.current) ref.current.focus();
-  }, [visible]);
-
-  return options.length > 0 ? (
-    <Tooltip
-      {...rest}
-      triggerElement={triggerElement}
-      hiddenElement={renderOptions}
-      className={className}
-      stateVisible={stateVisible}
-      disabled={disabled}
-      ref={ref}
-    />
-  ) : (
-    <></>
+        />
+      )}
+    </>
   );
 }

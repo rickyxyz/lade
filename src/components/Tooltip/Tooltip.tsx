@@ -18,12 +18,13 @@ export interface TooltipBaseProps extends HTMLAttributes<HTMLDivElement> {
   ref?: RefObject<HTMLDivElement>;
   stateVisible?: StateType<boolean>;
   showOnHover?: boolean;
+  type?: "tooltip" | "menu";
   topOffset?: number;
   onBlur?: () => void;
 }
 
 export type TooltipProps = {
-  triggerElement: ReactNode;
+  triggerElement?: ReactNode;
   hiddenElement: ReactNode;
 } & TooltipBaseProps;
 
@@ -53,7 +54,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         <div
           className={clsx(
             "absolute h-fit flex flex-col",
-            "border border-secondary-100 bg-white shadow-md z-10 rounded-md overflow-hidden",
+            "border border-secondary-100 bg-white shadow-md z-10 rounded-md",
             classNameInner
           )}
           style={{
@@ -73,7 +74,6 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       <div
         className={clsx(
           "flex flex-row-reverse relative overflow-visible",
-          !disabled && "cursor-pointer",
           className
         )}
         onFocus={() => {
@@ -87,10 +87,10 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         onClick={() => {
           if (!visible && !disabled) setVisible(true);
         }}
-        onBlur={() => {
-          onBlur && onBlur();
-          setVisible(false);
-        }}
+        // onBlur={() => {
+        //   onBlur && onBlur();
+        //   setVisible(false);
+        // }}
         onMouseLeave={() => {
           if (showOnHover) {
             onBlur && onBlur();

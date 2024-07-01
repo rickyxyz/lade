@@ -8,7 +8,6 @@ export * from "./Illustration";
 export * from "./Spinner";
 export * from "./Markdown";
 export * from "./Modal";
-export * from "./More";
 export * from "./Pagination";
 export * from "./Paragraph";
 export * from "./Quote";

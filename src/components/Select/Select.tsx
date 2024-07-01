@@ -8,6 +8,7 @@ import { ExpandMore, HourglassEmpty } from "@mui/icons-material";
 import { useDevice } from "@/hooks";
 import { Loader } from "../Loader";
 import { Paragraph } from "../Paragraph";
+import { Dropdown } from "../Dropdown";
 
 type SelectVariant = "basic" | "solid";
 
@@ -222,7 +223,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       >
         {label}
       </Paragraph>
-      <Tooltip
+      <Dropdown
         triggerElement={renderTrigger}
         hiddenElement={loading ? <Loader /> : renderOptions}
         className={className}
@@ -255,6 +256,16 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           }
         }}
       />
+      {/* //<Tooltip />
+      {visible && (
+        <div
+          className="fixed w-screen h-screen top-0 left-0"
+          onClick={() => {
+            onBlur && onBlur();
+            setVisible(false);
+          }}
+        ></div>
+      )} */}
     </div>
   );
 }

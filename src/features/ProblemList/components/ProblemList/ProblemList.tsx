@@ -17,6 +17,7 @@ import {
   Pagination,
   IconText,
   Illustration,
+  Dropdown,
 } from "@/components";
 import { useDebounce, useDevice, usePagination } from "@/hooks";
 import {
@@ -205,55 +206,120 @@ export function ProblemList({
     [handleUpdateQuery, loading, pagination]
   );
 
+  const renderFilterButton = useMemo(
+    () => (
+      <ButtonIcon
+        className="!px-4 !w-10 bg-white"
+        onClick={() => {
+          setAdvanced((prev) => !prev);
+        }}
+        disabled={loading}
+        icon={FilterAlt}
+        variant="outline"
+      />
+    ),
+    [loading, setAdvanced]
+  );
+
   const renderAdvanced = useMemo(
     () =>
       device === "mobile" ? (
-        <Modal stateVisible={stateAdvanced}>
-          <ProblemFilter
-            className="flex-col"
-            stateSortBy={stateSortBy}
-            stateSubTopic={stateSubtopic}
-            stateTopic={stateTopic}
-            wrapperClassName="flex-col w-80"
-            buttonElement={
-              <Button
-                className="mt-4"
-                onClick={() => {
-                  setAdvanced(false);
-                  handleUpdateQuery(1);
-                }}
-                disabled={loading}
-                label="Apply"
-              />
-            }
-          />
-        </Modal>
-      ) : (
         <>
-          {advanced && (
+          <Modal stateVisible={stateAdvanced}>
             <ProblemFilter
+              className="flex-col"
               stateSortBy={stateSortBy}
               stateSubTopic={stateSubtopic}
               stateTopic={stateTopic}
-              wrapperClassName="flex-col"
+              wrapperClassName="flex-col w-screen md:w-80"
               buttonElement={
-                <Button
-                  className="mt-4 w-fit"
-                  onClick={() => handleUpdateQuery(1)}
-                  disabled={loading}
-                  label="Apply"
-                />
+                <div className="flex gap-4">
+                  <Button
+                    className="mt-4 flex-1"
+                    onClick={() => {
+                      setAdvanced(false);
+                      handleUpdateQuery(1);
+                    }}
+                    disabled={loading}
+                    label="Apply"
+                  />
+                  <Button
+                    color="secondary"
+                    variant="outline"
+                    className="mt-4 flex-1"
+                    onClick={() => {
+                      setAdvanced(false);
+                      setTopic(undefined);
+                      setSubTopic(undefined);
+                      setSortBy("newest");
+                      handleUpdateQuery(1);
+                    }}
+                    disabled={loading}
+                    label="Reset"
+                  />
+                </div>
               }
             />
-          )}
+          </Modal>
+          {renderFilterButton}
         </>
+      ) : (
+        <Dropdown
+          stateVisible={stateAdvanced}
+          direction="left"
+          triggerElement={renderFilterButton}
+          hiddenElement={
+            <>
+              <ProblemFilter
+                className="flex-col"
+                stateSortBy={stateSortBy}
+                stateSubTopic={stateSubtopic}
+                stateTopic={stateTopic}
+                wrapperClassName="flex-col w-screen md:w-80"
+                buttonElement={
+                  <div className="flex gap-4">
+                    <Button
+                      className="mt-4 flex-1"
+                      onClick={() => {
+                        setAdvanced(false);
+                        handleUpdateQuery(1);
+                      }}
+                      disabled={loading}
+                      label="Apply"
+                    />
+                    <Button
+                      color="secondary"
+                      variant="outline"
+                      className="mt-4 flex-1"
+                      onClick={() => {
+                        setAdvanced(false);
+                        setTopic(undefined);
+                        setSubTopic(undefined);
+                        setSortBy("newest");
+                        handleUpdateQuery(1);
+                      }}
+                      disabled={loading}
+                      label="Reset"
+                    />
+                  </div>
+                }
+                onClose={() => {
+                  setAdvanced(false);
+                }}
+              />
+            </>
+          }
+        />
       ),
     [
-      advanced,
       device,
       handleUpdateQuery,
       loading,
+      renderFilterButton,
       setAdvanced,
+      setSortBy,
+      setSubTopic,
+      setTopic,
       stateAdvanced,
       stateSortBy,
       stateSubtopic,
@@ -291,60 +357,8 @@ export function ProblemList({
                 variant="ghost"
               />
             </div>
-            <ButtonIcon
-              className="!px-4 !w-10 bg-white"
-              onClick={() => {
-                setAdvanced((prev) => !prev);
-              }}
-              disabled={loading}
-              icon={FilterAlt}
-              variant="outline"
-            />
+            {renderAdvanced}
           </div>
-          <Modal
-            className={
-              device === "mobile" ? "self-end rounded-t-lg overflow-hidden" : ""
-            }
-            stateVisible={stateAdvanced}
-          >
-            <ProblemFilter
-              className="flex-col"
-              stateSortBy={stateSortBy}
-              stateSubTopic={stateSubtopic}
-              stateTopic={stateTopic}
-              wrapperClassName="flex-col w-screen md:w-80"
-              buttonElement={
-                <div className="flex gap-4">
-                  <Button
-                    className="mt-4 flex-1"
-                    onClick={() => {
-                      setAdvanced(false);
-                      handleUpdateQuery(1);
-                    }}
-                    disabled={loading}
-                    label="Apply"
-                  />
-                  <Button
-                    color="secondary"
-                    variant="outline"
-                    className="mt-4 flex-1"
-                    onClick={() => {
-                      setAdvanced(false);
-                      setTopic(undefined);
-                      setSubTopic(undefined);
-                      setSortBy("newest");
-                      handleUpdateQuery(1);
-                    }}
-                    disabled={loading}
-                    label="Reset"
-                  />
-                </div>
-              }
-              onClose={() => {
-                setAdvanced(false);
-              }}
-            />
-          </Modal>
         </div>
         {paginationBase.initialized && renderPagination}
       </>
@@ -356,7 +370,6 @@ export function ProblemList({
       paginationBase.initialized,
       renderPagination,
       handleUpdateQuery,
-      setAdvanced,
     ]
   );
 
