@@ -136,7 +136,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
       <select
         className={clsx(
           "opacity-0 absolute left-0 top-0 w-full h-full",
-          device !== "mobile" && "hidden"
+          device === "desktop" && "hidden"
         )}
         ref={selectRef}
         onBlur={() => {

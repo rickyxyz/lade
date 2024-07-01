@@ -206,6 +206,41 @@ export function ProblemList({
     [handleUpdateQuery, loading, pagination]
   );
 
+  const renderFilter = useMemo(
+    () => (
+      <ProblemFilter
+        className="flex-col"
+        stateSortBy={stateSortBy}
+        stateSubTopic={stateSubtopic}
+        stateTopic={stateTopic}
+        wrapperClassName="flex-col w-screen md:w-80"
+        onApply={() => {
+          setAdvanced(false);
+          setTopic(undefined);
+          setSubTopic(undefined);
+          setSortBy("newest");
+          handleUpdateQuery(1);
+        }}
+        onReset={() => {
+          setAdvanced(false);
+        }}
+        onClose={() => {
+          setAdvanced(false);
+        }}
+      />
+    ),
+    [
+      handleUpdateQuery,
+      setAdvanced,
+      setSortBy,
+      setSubTopic,
+      setTopic,
+      stateSortBy,
+      stateSubtopic,
+      stateTopic,
+    ]
+  );
+
   const renderFilterButton = useMemo(
     () => (
       <ButtonIcon
@@ -223,44 +258,9 @@ export function ProblemList({
 
   const renderAdvanced = useMemo(
     () =>
-      device === "mobile" ? (
+      device !== "desktop" ? (
         <>
-          <Modal stateVisible={stateAdvanced}>
-            <ProblemFilter
-              className="flex-col"
-              stateSortBy={stateSortBy}
-              stateSubTopic={stateSubtopic}
-              stateTopic={stateTopic}
-              wrapperClassName="flex-col w-screen md:w-80"
-              buttonElement={
-                <div className="flex gap-4">
-                  <Button
-                    className="mt-4 flex-1"
-                    onClick={() => {
-                      setAdvanced(false);
-                      handleUpdateQuery(1);
-                    }}
-                    disabled={loading}
-                    label="Apply"
-                  />
-                  <Button
-                    color="secondary"
-                    variant="outline"
-                    className="mt-4 flex-1"
-                    onClick={() => {
-                      setAdvanced(false);
-                      setTopic(undefined);
-                      setSubTopic(undefined);
-                      setSortBy("newest");
-                      handleUpdateQuery(1);
-                    }}
-                    disabled={loading}
-                    label="Reset"
-                  />
-                </div>
-              }
-            />
-          </Modal>
+          <Modal stateVisible={stateAdvanced}>{renderFilter}</Modal>
           {renderFilterButton}
         </>
       ) : (
@@ -268,63 +268,10 @@ export function ProblemList({
           stateVisible={stateAdvanced}
           direction="left"
           triggerElement={renderFilterButton}
-          hiddenElement={
-            <>
-              <ProblemFilter
-                className="flex-col"
-                stateSortBy={stateSortBy}
-                stateSubTopic={stateSubtopic}
-                stateTopic={stateTopic}
-                wrapperClassName="flex-col w-screen md:w-80"
-                buttonElement={
-                  <div className="flex gap-4">
-                    <Button
-                      className="mt-4 flex-1"
-                      onClick={() => {
-                        setAdvanced(false);
-                        handleUpdateQuery(1);
-                      }}
-                      disabled={loading}
-                      label="Apply"
-                    />
-                    <Button
-                      color="secondary"
-                      variant="outline"
-                      className="mt-4 flex-1"
-                      onClick={() => {
-                        setAdvanced(false);
-                        setTopic(undefined);
-                        setSubTopic(undefined);
-                        setSortBy("newest");
-                        handleUpdateQuery(1);
-                      }}
-                      disabled={loading}
-                      label="Reset"
-                    />
-                  </div>
-                }
-                onClose={() => {
-                  setAdvanced(false);
-                }}
-              />
-            </>
-          }
+          hiddenElement={renderFilter}
         />
       ),
-    [
-      device,
-      handleUpdateQuery,
-      loading,
-      renderFilterButton,
-      setAdvanced,
-      setSortBy,
-      setSubTopic,
-      setTopic,
-      stateAdvanced,
-      stateSortBy,
-      stateSubtopic,
-      stateTopic,
-    ]
+    [device, renderFilter, renderFilterButton, stateAdvanced]
   );
 
   const renderHead = useMemo(

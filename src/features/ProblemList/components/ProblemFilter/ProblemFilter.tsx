@@ -18,16 +18,18 @@ interface ProblemFilterProps {
   stateSubTopic: StateType<ProblemSubtopicNameType | undefined>;
   stateSortBy: StateType<ProblemSortByType>;
   buttonElement?: ReactNode;
+  onApply?: () => void;
+  onReset?: () => void;
   onClose?: () => void;
 }
 
 export function ProblemFilter({
-  wrapperClassName,
   className,
   stateSubTopic,
   stateTopic,
   stateSortBy,
-  buttonElement,
+  onApply,
+  onReset,
   onClose,
 }: ProblemFilterProps) {
   const [topic, setTopic] = stateTopic;
@@ -37,22 +39,21 @@ export function ProblemFilter({
 
   return (
     <div
-      className={clsx(
-        "flex flex-col w-64 rounded-lg p-8 gap-4",
-        wrapperClassName
-      )}
+      className={clsx("flex flex-col rounded-lg p-8 gap-4", "w-screen md:w-80")}
     >
       <div className="flex justify-between">
         <Paragraph size="m" weight="semibold">
-          Filters
+          Filter
         </Paragraph>
-        <ButtonIcon
-          variant="ghost"
-          size="xs"
-          icon={Close}
-          color="secondary"
-          onClick={onClose}
-        />
+        {onClose && (
+          <ButtonIcon
+            variant="ghost"
+            size="xs"
+            icon={Close}
+            color="secondary"
+            onClick={onClose}
+          />
+        )}
       </div>
       <div className={clsx("flex flex-col gap-4", className)}>
         <Select
@@ -94,7 +95,22 @@ export function ProblemFilter({
           }}
         />
       </div>
-      {buttonElement}
+      <div className="flex gap-4">
+        <Button
+          className="mt-4 flex-1"
+          onClick={onApply}
+          disabled={loading}
+          label="Apply"
+        />
+        <Button
+          color="secondary"
+          variant="outline"
+          className="mt-4 flex-1"
+          onClick={onReset}
+          disabled={loading}
+          label="Reset"
+        />
+      </div>
     </div>
   );
 }
