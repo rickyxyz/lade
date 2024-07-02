@@ -6,10 +6,10 @@ import { Input, InputProps } from "@/components";
 interface AuthInputProps extends InputProps {
   name: string;
   type: HTMLInputTypeAttribute;
-  isRequired?: boolean;
+  loading?: boolean;
 }
 
-export function AuthInput(props: AuthInputProps) {
+export function AuthInput({ loading, ...props }: AuthInputProps) {
   const { name } = props;
 
   return (

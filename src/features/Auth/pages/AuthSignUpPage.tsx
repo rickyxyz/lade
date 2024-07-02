@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { signIn } from "next-auth/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
@@ -14,12 +14,14 @@ import { AuthInput } from "../components/AuthInput";
 
 export function AuthSignUpPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = useCallback(
     async (values: SignUpFormType, actions: FormikHelpers<SignUpFormType>) => {
       const now = new Date().toUTCString();
       const { name, email, username } = values;
 
+      setLoading(true);
       await signUp(values)
         .then((credential) => ({
           credential,
@@ -40,7 +42,7 @@ export function AuthSignUpPage() {
               name,
               uid,
               email,
-              joinDate: now,
+              createdAt: now,
             },
           })
         )
@@ -51,6 +53,7 @@ export function AuthSignUpPage() {
         .catch(() => {
           actions.setSubmitting(false);
           addToast({ text: "Could not sign up." });
+          setLoading(false);
         });
     },
     [router]
@@ -86,6 +89,7 @@ export function AuthSignUpPage() {
                 name="username"
                 type="text"
                 label="Username"
+                disabled={loading}
                 isRequired
               />
               <AuthInput name="name" type="text" label="Display Name" />
@@ -93,6 +97,7 @@ export function AuthSignUpPage() {
                 name="password"
                 type="password"
                 label="Password"
+                disabled={loading}
                 isRequired
               />
               <Button
@@ -106,7 +111,7 @@ export function AuthSignUpPage() {
         </Formik>
       </Card>
     ),
-    [handleSignUp]
+    [handleSignUp, loading]
   );
 
   return <PageTemplate title="Sign Up">{renderForm}</PageTemplate>;

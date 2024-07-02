@@ -58,7 +58,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) {
-    const { id } = rest;
+    const { id, disabled } = rest;
 
     return (
       <div className={externalWrapperClassName}>
@@ -88,6 +88,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className={clsx(
               INPUT_BASE_STYLE,
               INPUT_SIZE_STYLE[size],
+              disabled && "bg-secondary-200",
               variant === "basic" && INPUT_BASIC_STYLE,
               variant === "solid" && INPUT_SOLID_STYLE,
               className

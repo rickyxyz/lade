@@ -180,7 +180,7 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           (visible || focus) && INPUT_FOCUS_STYLE,
           variant === "basic" && INPUT_BASIC_STYLE,
           variant === "solid" && INPUT_SOLID_STYLE,
-          disabled ? "bg-secondary-200" : "bg-white",
+          disabled ? "bg-secondary-200" : "bg-white cursor-pointer",
           "relative text-ellipsis whitespace-nowrap overflow-hidden",
           inputClassName
         )}
@@ -256,16 +256,6 @@ export function Select<X extends string, Y extends SelectOptionType<X>[]>({
           }
         }}
       />
-      {/* //<Tooltip />
-      {visible && (
-        <div
-          className="fixed w-screen h-screen top-0 left-0"
-          onClick={() => {
-            onBlur && onBlur();
-            setVisible(false);
-          }}
-        ></div>
-      )} */}
     </div>
   );
 }
@@ -279,7 +269,7 @@ const INPUT_BASIC_STYLE = [
 ];
 
 const INPUT_FOCUS_STYLE = [
-  "outline border-primary-400 outline-4 outline-primary-200",
+  "outline !border-primary-400 outline-4 outline-primary-200",
 ];
 
 const INPUT_SOLID_STYLE = ["bg-secondary-100 focus:bg-secondary-200"];

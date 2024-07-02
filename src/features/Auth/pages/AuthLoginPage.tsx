@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { signIn } from "next-auth/react";
 import { Form, Formik, FormikHelpers } from "formik";
 import Link from "next/link";
@@ -16,9 +16,11 @@ import { AuthInput } from "../components/AuthInput";
 export function AuthLoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = useCallback(
     (values: LoginFormType, actions: FormikHelpers<LoginFormType>) => {
+      setLoading(true);
       login(values)
         .then((credential) => ({
           credential,
@@ -45,17 +47,14 @@ export function AuthLoginPage() {
           )
         )
         .then((user) => {
-          console.log("Fetched User: ");
-          console.log(user.data);
           dispatch("update_user", user.data);
           router.push("/");
           addToast({ text: "Logged in." });
         })
-        .catch((e) => {
-          console.log(e);
-          console.log("Login Error");
+        .catch(() => {
           actions.setSubmitting(false);
           addToast({ text: "Could not log in." });
+          setLoading(false);
         });
     },
     [dispatch, router]
@@ -82,28 +81,29 @@ export function AuthLoginPage() {
           validate={validateFormLogin}
           onSubmit={handleLogin}
         >
-          {({ isSubmitting }) => (
-            <Form>
-              <AuthInput name="email" type="email" label="Email" isRequired />
-              <AuthInput
-                name="password"
-                type="password"
-                label="Password"
-                isRequired
-              />
-              <Button
-                className="w-full mt-8"
-                type="submit"
-                loading={isSubmitting}
-              >
-                Login
-              </Button>
-            </Form>
-          )}
+          <Form>
+            <AuthInput
+              name="email"
+              type="email"
+              label="Email"
+              disabled={loading}
+              isRequired
+            />
+            <AuthInput
+              name="password"
+              type="password"
+              label="Password"
+              disabled={loading}
+              isRequired
+            />
+            <Button className="w-full mt-8" type="submit" loading={loading}>
+              Login
+            </Button>
+          </Form>
         </Formik>
       </Card>
     ),
-    [handleLogin]
+    [handleLogin, loading]
   );
 
   return <PageTemplate title="Login">{renderForm}</PageTemplate>;
