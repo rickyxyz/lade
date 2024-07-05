@@ -80,6 +80,7 @@ export async function GET(req: NextRequest) {
         ...topicQuery,
         ...subTopicQuery,
         ...searchQuery,
+        deletedAt: null,
       },
     });
     const maxPages = Math.ceil(problemCount / count);
