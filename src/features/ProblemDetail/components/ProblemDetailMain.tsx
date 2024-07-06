@@ -2,6 +2,9 @@ import { useMemo } from "react";
 import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
 import { ProblemType, StateType } from "@/types";
 import { ProblemAnswer } from "./ProblemAnswer";
+import { Comment } from "@/components/Comment";
+import { CommentType } from "@/types/comment";
+import { ProblemDetailComments } from "./ProblemDetailComments";
 
 export interface ProblemMainProps {
   stateProblem: StateType<ProblemType>;
@@ -13,6 +16,7 @@ export interface ProblemMainProps {
   stateSolvable: StateType<boolean>;
   stateLoading: StateType<boolean>;
   stateCooldown: StateType<number>;
+  stateComments: StateType<CommentType[]>;
   handleCheckAnswer: () => Promise<void>;
   className?: string;
 }
@@ -26,10 +30,11 @@ export function ProblemDetailMain({
   stateSolvable,
   stateLoading,
   stateCooldown,
+  stateComments,
   handleCheckAnswer,
 }: ProblemMainProps) {
   const problem = stateProblem[0];
-  const { description, type } = problem;
+  const { id, description, type } = problem;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userAnswer = stateUserAnswer[0];
@@ -38,6 +43,7 @@ export function ProblemDetailMain({
   const cooldown = stateCooldown[0];
   const loading = stateLoading[0];
   const solvable = stateSolvable[0];
+  const comments = stateComments[0];
 
   const renderMain = useMemo(
     () => <MarkdownPreview className="mb-8" markdown={description} />,
@@ -116,9 +122,12 @@ export function ProblemDetailMain({
   );
 
   return (
-    <Card className={className}>
-      {renderMain}
-      {renderAnswer}
-    </Card>
+    <div className="flex-1 flex flex-col gap-8">
+      <Card className={className}>
+        {renderMain}
+        {renderAnswer}
+      </Card>
+      <ProblemDetailComments problemId={id} />
+    </div>
   );
 }

@@ -16,6 +16,7 @@ import { ProblemEditPage } from "../../ProblemCreate";
 import { ProblemDetailMain, ProblemDetailMainSkeleton } from "../components";
 import { ProblemDetailData } from "../components";
 import { useAnswer } from "../hooks";
+import { CommentType } from "@/types/comment";
 
 interface ProblemProps {
   id: string;
@@ -25,6 +26,8 @@ interface ProblemProps {
 export function ProblemDetailPage({ id, user }: ProblemProps) {
   const stateProblem = useState<ProblemType>(PROBLEM_BLANK);
   const [problem, setProblem] = stateProblem;
+  const stateComments = useState<CommentType[]>([]);
+
   const stateAccept = useState<unknown>({
     content: "",
   });
@@ -43,6 +46,9 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     user,
   });
   const [status, setStatus] = useState<
+    "unloaded" | "loading" | "loaded" | "error"
+  >("unloaded");
+  const [commentStatus, setCommentStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
   >("unloaded");
 
@@ -104,6 +110,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         stateUserAnswer={stateUserAnswer}
         stateUserSolved={stateUserSolved}
         stateCooldown={stateCooldown}
+        stateComments={stateComments}
         handleCheckAnswer={handleCheckAnswer}
         stateLoading={stateAnswerLoading}
       />
@@ -118,6 +125,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
     stateUserAnswer,
     stateUserSolved,
     stateCooldown,
+    stateComments,
     handleCheckAnswer,
     stateAnswerLoading,
   ]);

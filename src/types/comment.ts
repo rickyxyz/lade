@@ -21,5 +21,10 @@ export type CommentDatabaseType = CommentBaseType & {
 };
 
 export type CommentType = CommentBaseType & {
+  authorId?: string;
+  author: {
+    id: string;
+    name?: string;
+  };
   replyCount: number;
 };

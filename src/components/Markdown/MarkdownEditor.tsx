@@ -10,6 +10,7 @@ import { MarkdownBase } from "./Markdown";
 import { Paragraph } from "../Paragraph";
 import { Loader } from "../Loader";
 import { MarkdownPreview } from "./MarkdownPreview";
+import { Button } from "../Button";
 
 export const MarkdownEditorRaw = dynamic(
   () => import("@uiw/react-markdown-editor").then((mod) => mod.default),
@@ -24,6 +25,8 @@ interface MarkdownEditorProps extends IMarkdownEditor {
   label?: string;
   maxLength?: number;
   caption?: ReactNode;
+  onSubmit?: () => void;
+  submitDisabled?: boolean;
 }
 
 export function MarkdownEditor({
@@ -33,6 +36,8 @@ export function MarkdownEditor({
   maxLength = 200,
   toolbars = ["bold", "italic", "strike", "ulist", "olist", FormulaToolbar],
   caption,
+  onSubmit,
+  submitDisabled,
   ...rest
 }: MarkdownEditorProps) {
   const { initialized, setInitialized } = useEditorInitialized();
@@ -44,7 +49,7 @@ export function MarkdownEditor({
   }, []);
 
   return (
-    <div>
+    <div className="w-full">
       {label && (
         <Paragraph className="w-40" color="secondary-5">
           {label}
@@ -72,10 +77,20 @@ export function MarkdownEditor({
           {...rest}
         />
         {initialized && (
-          <div className="py-1.5 px-4 bg-secondary-50 border-t border-secondary-4">
-            <Paragraph>
+          <div className="flex justify-between bg-secondary-50 border-t border-secondary-4">
+            <Paragraph className="my-auto py-1.5 px-4">
               {value?.length ?? 0} / {maxLength}
             </Paragraph>
+            {onSubmit && (
+              <Button
+                variant="ghost"
+                className="!rounded-none !border-l !border-secondary-5"
+                onClick={onSubmit}
+                disabled={submitDisabled}
+              >
+                Post
+              </Button>
+            )}
           </div>
         )}
       </div>

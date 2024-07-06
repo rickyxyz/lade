@@ -9,6 +9,7 @@ import {
   UserType,
 } from "@/types";
 import { Empty, ApiMessage, ApiPagination } from "@/types";
+import { CommentType } from "@/types/comment";
 import { api } from "@/utils";
 import { addToast } from "@/utils/toast";
 import { AxiosResponse } from "axios";
@@ -16,6 +17,9 @@ import { AxiosResponse } from "axios";
 interface ApiParams {
   get_problem: {
     id: number | string;
+  };
+  get_problem_comment: {
+    problemId: number | string;
   };
   get_problems: {
     topic?: string;
@@ -26,6 +30,7 @@ interface ApiParams {
     count?: number;
   };
   post_problem: Empty;
+  post_problem_comment: Empty;
   post_problems: Empty;
   patch_problem: Empty;
   delete_problem: {
@@ -68,8 +73,14 @@ interface ApiParams {
 
 interface ApiBody {
   get_problem: Empty;
+  get_problem_comment: Empty;
   get_problems: Empty;
   post_problem: ProblemType;
+  post_problem_comment: {
+    problemId: string;
+    commentId?: string;
+    comment: string;
+  };
   post_problems: ProblemType[];
   patch_problem: ProblemType;
   delete_problem: Empty;
@@ -98,12 +109,18 @@ interface ApiBody {
 
 interface ApiReturn {
   get_problem: ProblemType;
+  get_problem_comment: {
+    data: CommentType[];
+  };
   get_problems: {
     data: ProblemDatabaseType[];
     pagination: ApiPagination;
   };
   post_problem: ApiMessage & {
     id: string;
+  };
+  post_problem_comment: ApiMessage & {
+    data: CommentType;
   };
   post_problems: ApiMessage;
   patch_problem: ApiMessage;
@@ -135,12 +152,20 @@ const ROUTES = {
     path: "/v1/problem",
     method: "GET",
   },
+  get_problem_comment: {
+    path: "/v1/problem/comment",
+    method: "GET",
+  },
   get_problems: {
     path: "/v1/problems",
     method: "GET",
   },
   post_problem: {
     path: "/v1/problem",
+    method: "POST",
+  },
+  post_problem_comment: {
+    path: "/v1/problem/comment",
     method: "POST",
   },
   post_problems: {
@@ -238,7 +263,7 @@ export async function API<X extends keyof typeof ROUTES>(
       .catch((result) => {
         showFailMessage &&
           addToast({
-            text: "Failed to fetch data.",
+            text: JSON.stringify(result),
           });
         onFail && onFail(result);
         return result;

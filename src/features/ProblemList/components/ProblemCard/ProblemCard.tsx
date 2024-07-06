@@ -8,7 +8,7 @@ import {
 } from "react";
 import Link from "next/link";
 import { ProblemDetailStats, ProblemDetailTopics } from "@/features";
-import { Card, MarkdownPreview, More, Paragraph } from "@/components";
+import { Card, MarkdownPreview, Paragraph } from "@/components";
 import { getPermissionForContent, md } from "@/utils";
 import { ProblemDatabaseType } from "@/types";
 import { useAppSelector } from "@/libs/redux";

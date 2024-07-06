@@ -37,6 +37,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     })) as unknown as CommentDatabaseType[];
 
     const converted = comments.map((comment) => {
@@ -87,23 +90,49 @@ export async function POST(req: NextRequest) {
     if (!user) throw Error("not allowed");
 
     const body = await req.json();
-    const { problemId, commentId, comment, authorId } = body as unknown as {
-      authorId: string;
+    const { problemId, commentId, comment } = body as unknown as {
       problemId: string;
       commentId?: string;
       comment: string;
     };
+    console.log("USER: ", user.id);
 
-    await prisma.comment.create({
+    const result = await prisma.comment.create({
       data: {
-        problemId: problemId as any,
-        authorId: authorId,
+        problem: {
+          connect: {
+            id: problemId as any,
+          },
+        },
+        author: {
+          connect: {
+            id: user.id as any,
+          },
+        },
         description: comment,
-        ...(commentId ? { parentId: commentId as any } : {}),
+        ...(commentId
+          ? {
+              parent: {
+                connect: {
+                  id: commentId as any,
+                },
+              },
+            }
+          : {}),
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
-    response = NextResponse.json(JSON.parse(json({ message: "success" })));
+    response = NextResponse.json(
+      JSON.parse(json({ data: result, message: "success" }))
+    );
   } catch (e) {
     console.log(e);
     response = NextResponse.json(
