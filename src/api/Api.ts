@@ -20,6 +20,7 @@ interface ApiParams {
   };
   get_problem_comment: {
     problemId: number | string;
+    commentId?: number | string;
   };
   get_problems: {
     topic?: string;

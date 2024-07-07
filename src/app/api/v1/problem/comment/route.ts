@@ -20,11 +20,12 @@ export async function GET(req: NextRequest) {
 
   try {
     const problemId = searchParams.get("problemId");
+    const commentId = searchParams.get("commentId");
 
     const comments = (await prisma.comment.findMany({
       where: {
         problemId: problemId as any,
-        parentId: null,
+        parentId: commentId as any,
       },
       include: {
         _count: {

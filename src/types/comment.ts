@@ -26,5 +26,6 @@ export type CommentType = CommentBaseType & {
     id: string;
     name?: string;
   };
+  replies?: CommentType[];
   replyCount: number;
 };

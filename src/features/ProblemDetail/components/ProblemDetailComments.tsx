@@ -1,15 +1,13 @@
 import { API } from "@/api";
-import { Card, MarkdownEditor } from "@/components";
+import { Card, MarkdownEditor, Paragraph } from "@/components";
 import { Comment } from "@/components/Comment";
 import { CommentEditor } from "@/components/Comment/CommentEditor";
 import { CommentType } from "@/types/comment";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 export function ProblemDetailComments({ problemId }: { problemId: string }) {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [focus, setFocus] = useState<string>();
-  const stateComment = useState<string>("");
-  const [comment, setComment] = stateComment;
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
@@ -42,44 +40,96 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
     handleGetComments();
   }, [handleGetComments]);
 
-  const handlePostComment = useCallback(() => {
-    setLoading(true);
-    API(
-      "post_problem_comment",
-      {
-        body: {
-          problemId,
-          comment,
+  const handleGetReplies = useCallback(
+    (commentId?: string) => {
+      API(
+        "get_problem_comment",
+        {
+          params: {
+            problemId,
+            commentId,
+          },
         },
-      },
-      {
-        onSuccess({ data: { data } }) {
-          setLoading(false);
-          setComments((prev) => [data, ...prev]);
-        },
-        onFail() {
-          setLoading(false);
-        },
-      }
-    );
-  }, [comment, problemId]);
+        {
+          onSuccess: ({ data: { data } }) => {
+            setComments((prev) => {
+              const temp = [...prev];
+              return temp.map((comment) => {
+                if (comment.id !== commentId) return comment;
 
-  const renderEditor = useMemo(
-    () => (
+                return {
+                  ...comment,
+                  replies: data,
+                };
+              });
+            });
+          },
+          onFail: () => {},
+        }
+      );
+    },
+    [problemId]
+  );
+
+  const handlePostComment = useCallback(
+    (comment: string, parentId?: string) => {
+      setLoading(true);
+      API(
+        "post_problem_comment",
+        {
+          body: {
+            problemId,
+            commentId: parentId,
+            comment,
+          },
+        },
+        {
+          onSuccess({ data: { data } }) {
+            setLoading(false);
+            setComments((prev) => [data, ...prev]);
+          },
+          onFail() {
+            setLoading(false);
+          },
+        }
+      );
+    },
+    [problemId]
+  );
+
+  const renderEditor = useCallback(
+    (depth?: number, parentComment?: string) => (
       <CommentEditor
-        stateComment={stateComment}
+        parentComment={parentComment}
         onSubmit={handlePostComment}
-        submitDisabled={loading || comment.length === 0}
+        submitDisabled={loading}
+        style={{
+          paddingLeft: depth && "3rem",
+        }}
       />
     ),
-    [comment.length, handlePostComment, loading, stateComment]
+    [handlePostComment, loading]
   );
 
   return (
     <Card className="flex flex-col gap-4" data-color-mode="light">
-      {renderEditor}
+      <Paragraph tag="h2" weight="semibold">
+        Comments
+      </Paragraph>
+      {renderEditor()}
       {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} onViewReply={() => {}} />
+        <Fragment key={comment.id}>
+          <Comment
+            comment={comment}
+            onReply={() => {
+              setFocus(comment.id);
+            }}
+            onViewReply={() => {
+              handleGetReplies(comment.id);
+            }}
+          />
+          {focus === comment.id && renderEditor(1, comment.id)}
+        </Fragment>
       ))}
     </Card>
   );
