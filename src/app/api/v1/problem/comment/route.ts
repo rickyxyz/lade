@@ -98,6 +98,20 @@ export async function POST(req: NextRequest) {
     };
     console.log("USER: ", user.id);
 
+    const parent = await prisma.comment.findFirst({
+      where: {
+        children: {
+          some: {
+            id: commentId as any,
+          },
+        },
+      },
+    });
+
+    if (parent) {
+      throw Error("not allowed");
+    }
+
     const result = await prisma.comment.create({
       data: {
         problem: {
