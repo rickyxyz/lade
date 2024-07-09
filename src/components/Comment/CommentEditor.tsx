@@ -23,7 +23,15 @@ export function CommentEditor({
 
   return (
     <div className={clsx("flex gap-4", className)} style={style}>
-      <div className="w-8 h-8 rounded-full bg-red-700" />
+      <div
+        className="rounded-full bg-red-700"
+        style={{
+          minWidth: "32px",
+          maxWidth: "32px",
+          minHeight: "32px",
+          maxHeight: "32px",
+        }}
+      />
       <MarkdownEditor
         onSubmit={() => {
           onSubmit(comment, parentComment);

@@ -3,27 +3,33 @@ import { Paragraph } from "../Paragraph";
 import { getDateString } from "@/utils";
 import { MarkdownBase } from "../Markdown";
 import clsx from "clsx";
-import { CSSProperties, Fragment } from "react";
+import { CSSProperties, Fragment, ReactNode, useState } from "react";
 
 export function Comment({
   className,
-  comment: { author, createdAt, description, replies, replyCount },
-  focused,
+  comment: { id, author, createdAt, description, replies, replyCount },
+  focus,
   style,
+  depth,
+  renderEditor,
   onReply,
   onViewReply,
 }: {
   className?: string;
   comment: CommentType;
-  focused?: boolean;
+  focus?: string;
   style?: CSSProperties;
-  onReply: () => void;
-  onViewReply: () => void;
+  depth: number;
+  renderEditor: (depth?: number, parentComment?: string) => ReactNode;
+  onReply: (id: string) => void;
+  onViewReply: () => Promise<any>;
 }) {
+  const [replyFetched, setReplyFetched] = useState(false);
+
   return (
     <div className={clsx("flex gap-4", className)}>
       <div className="w-8 h-8 rounded-full bg-red-700" />
-      <div className="mt-1 flex flex-col gap-4">
+      <div className="mt-1 flex flex-1 flex-col gap-4">
         <div className="flex gap-4">
           <Paragraph weight="semibold" color="secondary-7">
             {author && (author.name ?? author.id)}
@@ -34,26 +40,39 @@ export function Comment({
         </div>
         <MarkdownBase markdown={description} />
         <div>
-          <Paragraph color="secondary-7" onClick={onReply}>
+          <Paragraph color="secondary-7" onClick={() => onReply(id)}>
             Reply
           </Paragraph>
         </div>
-        {replyCount ? (
-          <div className="bg-blue-100 rounded-lg p-2" onClick={onViewReply}>
+        {replyCount && !replyFetched ? (
+          <div
+            className="bg-blue-100 rounded-lg p-2 px-4 w-fit"
+            onClick={() => {
+              if (replyFetched) return;
+
+              onViewReply().then(() => {
+                setReplyFetched(true);
+              });
+            }}
+          >
             <Paragraph>View {replyCount} reply</Paragraph>
           </div>
         ) : (
           <></>
         )}
+
+        {focus === id && renderEditor(depth + 1, id)}
         {replies &&
           replies.map((comment) => (
-            <Fragment key={comment.id}>
-              <Comment
-                comment={comment}
-                onReply={() => {}}
-                onViewReply={() => {}}
-              />
-            </Fragment>
+            <Comment
+              key={comment.id}
+              comment={comment}
+              onReply={() => onReply(comment.id)}
+              onViewReply={async () => {}}
+              depth={depth + 1}
+              renderEditor={renderEditor}
+              focus={focus}
+            />
           ))}
       </div>
     </div>

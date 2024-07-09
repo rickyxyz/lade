@@ -41,7 +41,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   }, [handleGetComments]);
 
   const handleGetReplies = useCallback(
-    (commentId?: string) => {
+    (commentId?: string) =>
       API(
         "get_problem_comment",
         {
@@ -66,8 +66,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
           },
           onFail: () => {},
         }
-      );
-    },
+      ),
     [problemId]
   );
 
@@ -103,9 +102,6 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
         parentComment={parentComment}
         onSubmit={handlePostComment}
         submitDisabled={loading}
-        style={{
-          paddingLeft: depth && "3rem",
-        }}
       />
     ),
     [handlePostComment, loading]
@@ -120,15 +116,15 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
       {comments.map((comment) => (
         <Fragment key={comment.id}>
           <Comment
+            focus={focus}
             comment={comment}
-            onReply={() => {
-              setFocus(comment.id);
+            onReply={(id) => {
+              setFocus(id);
             }}
-            onViewReply={() => {
-              handleGetReplies(comment.id);
-            }}
+            onViewReply={async () => handleGetReplies(comment.id)}
+            renderEditor={renderEditor}
+            depth={0}
           />
-          {focus === comment.id && renderEditor(1, comment.id)}
         </Fragment>
       ))}
     </Card>
