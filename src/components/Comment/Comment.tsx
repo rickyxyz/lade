@@ -7,7 +7,7 @@ import { CSSProperties, Fragment, ReactNode, useState } from "react";
 
 export function Comment({
   className,
-  comment: { id, author, createdAt, description, replies, replyCount },
+  comment: selfComment,
   focus,
   style,
   depth,
@@ -17,13 +17,16 @@ export function Comment({
 }: {
   className?: string;
   comment: CommentType;
-  focus?: string;
+  focus?: CommentType;
   style?: CSSProperties;
   depth: number;
-  renderEditor: (depth?: number, parentComment?: string) => ReactNode;
-  onReply: (id: string) => void;
+  renderEditor: (parentComment?: string, defaultValue?: string) => ReactNode;
+  onReply: (comment: CommentType) => void;
   onViewReply: () => Promise<any>;
 }) {
+  const { id, author, createdAt, description, replies, replyCount } =
+    selfComment;
+
   const [replyFetched, setReplyFetched] = useState(false);
 
   return (
@@ -40,7 +43,7 @@ export function Comment({
         </div>
         <MarkdownBase markdown={description} />
         <div>
-          <Paragraph color="secondary-7" onClick={() => onReply(id)}>
+          <Paragraph color="secondary-7" onClick={() => onReply(selfComment)}>
             Reply
           </Paragraph>
         </div>
@@ -61,13 +64,13 @@ export function Comment({
           <></>
         )}
 
-        {focus === id && renderEditor(depth + 1, id)}
+        {focus && focus.id === id && renderEditor(id, `@${focus.author.id}`)}
         {replies &&
           replies.map((comment) => (
             <Comment
               key={comment.id}
               comment={comment}
-              onReply={() => onReply(comment.id)}
+              onReply={() => onReply(comment)}
               onViewReply={async () => {}}
               depth={depth + 1}
               renderEditor={renderEditor}

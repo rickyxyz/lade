@@ -7,7 +7,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 
 export function ProblemDetailComments({ problemId }: { problemId: string }) {
   const [comments, setComments] = useState<CommentType[]>([]);
-  const [focus, setFocus] = useState<string>();
+  const [focus, setFocus] = useState<CommentType>();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
@@ -73,7 +73,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   const handlePostComment = useCallback(
     (comment: string, parentId?: string) => {
       setLoading(true);
-      API(
+      return API(
         "post_problem_comment",
         {
           body: {
@@ -97,8 +97,9 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   );
 
   const renderEditor = useCallback(
-    (depth?: number, parentComment?: string) => (
+    (parentComment?: string, defaultValue?: string) => (
       <CommentEditor
+        defaultValue={defaultValue}
         parentComment={parentComment}
         onSubmit={handlePostComment}
         submitDisabled={loading}
@@ -112,7 +113,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
       <Paragraph tag="h2" weight="semibold">
         Comments
       </Paragraph>
-      {renderEditor()}
+      {renderEditor(undefined, "")}
       {comments.map((comment) => (
         <Fragment key={comment.id}>
           <Comment

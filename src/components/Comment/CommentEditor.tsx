@@ -9,16 +9,18 @@ export function CommentEditor({
   stateComment,
   submitDisabled,
   style,
+  defaultValue = "",
   onSubmit,
 }: {
   className?: string;
   parentComment?: string;
   stateComment?: StateType<string>;
-  onSubmit: (comment: string, parentCommentId?: string) => void;
+  defaultValue?: string;
+  onSubmit: (comment: string, parentCommentId?: string) => Promise<any>;
   submitDisabled?: boolean;
   style?: CSSProperties;
 }) {
-  const selfState = useState("");
+  const selfState = useState(defaultValue);
   const [comment, setComment] = stateComment ?? selfState;
 
   return (
@@ -34,9 +36,11 @@ export function CommentEditor({
       />
       <MarkdownEditor
         onSubmit={() => {
-          onSubmit(comment, parentComment);
+          onSubmit(comment, parentComment).then(() => {
+            setComment("");
+          });
         }}
-        placeholder="Enter the contest description here..."
+        placeholder="Comment here..."
         value={comment}
         onChange={(newValue) => {
           setComment(newValue);
