@@ -85,7 +85,22 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
         {
           onSuccess({ data: { data } }) {
             setLoading(false);
-            setComments((prev) => [data, ...prev]);
+            if (parentId) {
+              setComments((prev) => {
+                const temp = [...prev];
+
+                return temp.map((comment) =>
+                  comment.id === parentId
+                    ? {
+                        ...comment,
+                        replies: [data, ...(comment.replies ?? [])],
+                      }
+                    : comment
+                );
+              });
+            } else {
+              setComments((prev) => [data, ...prev]);
+            }
           },
           onFail() {
             setLoading(false);
@@ -118,6 +133,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
         <Fragment key={comment.id}>
           <Comment
             focus={focus}
+            ancestor={comment}
             comment={comment}
             onReply={(id) => {
               setFocus(id);

@@ -4,8 +4,10 @@ import { getDateString } from "@/utils";
 import { MarkdownBase } from "../Markdown";
 import clsx from "clsx";
 import { CSSProperties, Fragment, ReactNode, useState } from "react";
+import { Button } from "../Button";
 
 export function Comment({
+  ancestor,
   className,
   comment: selfComment,
   focus,
@@ -15,6 +17,7 @@ export function Comment({
   onReply,
   onViewReply,
 }: {
+  ancestor?: CommentType;
   className?: string;
   comment: CommentType;
   focus?: CommentType;
@@ -28,6 +31,7 @@ export function Comment({
     selfComment;
 
   const [replyFetched, setReplyFetched] = useState(false);
+  const [replyLoading, setReplyLoading] = useState(false);
 
   return (
     <div className={clsx("flex gap-4", className)}>
@@ -43,34 +47,46 @@ export function Comment({
         </div>
         <MarkdownBase markdown={description} />
         <div>
-          <Paragraph color="secondary-7" onClick={() => onReply(selfComment)}>
+          <Paragraph
+            color="secondary-7"
+            onClick={() => ancestor && onReply(ancestor)}
+          >
             Reply
           </Paragraph>
         </div>
         {replyCount && !replyFetched ? (
-          <div
+          <Button
+            variant="ghost"
             className="bg-blue-100 rounded-lg p-2 px-4 w-fit"
             onClick={() => {
-              if (replyFetched) return;
+              if (replyLoading) return;
 
+              setReplyLoading(true);
               onViewReply().then(() => {
                 setReplyFetched(true);
               });
             }}
-          >
-            <Paragraph>View {replyCount} reply</Paragraph>
-          </div>
+            label={`View ${replyCount} reply`}
+            disabled={replyFetched}
+            loading={replyLoading}
+          />
         ) : (
           <></>
         )}
 
-        {focus && focus.id === id && renderEditor(id, `@${focus.author.id}`)}
+        {focus &&
+          focus.id === id &&
+          ancestor &&
+          ancestor.id &&
+          renderEditor(ancestor?.id, `@${focus.author.id}`)}
         {replies &&
           replies.map((comment) => (
             <Comment
+              ancestor={ancestor}
               key={comment.id}
               comment={comment}
               onReply={() => onReply(comment)}
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onViewReply={async () => {}}
               depth={depth + 1}
               renderEditor={renderEditor}
