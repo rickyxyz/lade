@@ -47,6 +47,8 @@ export function ProblemCreateEditorMultiple({
   );
 
   return (
-    <div className="flex-grow grid grid-cols-1 gap-8">{renderProblems}</div>
+    <div className="flex-grow h-min grid grid-cols-1 gap-8">
+      {renderProblems}
+    </div>
   );
 }
