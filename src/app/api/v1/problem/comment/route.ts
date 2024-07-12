@@ -97,18 +97,24 @@ export async function POST(req: NextRequest) {
       comment: string;
     };
     console.log("USER: ", user.id);
+    console.log(body);
 
-    const parent = await prisma.comment.findFirst({
-      where: {
-        children: {
-          some: {
-            id: commentId as any,
+    let parentExists = false;
+    if (commentId) {
+      const parent = await prisma.comment.findFirst({
+        where: {
+          children: {
+            some: {
+              id: commentId as any,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (parent) {
+      parentExists = !!parent;
+    }
+
+    if (parentExists) {
       throw Error("not allowed");
     }
 
