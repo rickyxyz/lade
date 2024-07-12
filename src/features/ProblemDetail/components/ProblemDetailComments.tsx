@@ -78,7 +78,6 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
               });
             });
           },
-          onFail: () => {},
         }
       ),
     [problemId]
@@ -87,6 +86,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   const handlePostComment = useCallback(
     (comment: string, parentId?: string) => {
       setLoading(true);
+      console.log("Comment: ", parentId);
       return API(
         "post_problem_comment",
         {
@@ -149,8 +149,11 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
             focus={focus}
             ancestor={comment}
             comment={comment}
-            onReply={(id) => {
-              setFocus(id);
+            onReply={(toBeReplied) => {
+              setFocus((prev) => {
+                if (prev && toBeReplied.id === prev.id) return undefined;
+                return toBeReplied;
+              });
             }}
             onViewReply={async () => handleGetReplies(comment.id)}
             onHideReply={() => handleHideReplies(comment.id)}

@@ -1,18 +1,11 @@
 import { CommentType } from "@/types/comment";
 import { Paragraph } from "../Paragraph";
-import { getDateString } from "@/utils";
+import { getDateString, timeAgo } from "@/utils";
 import { MarkdownBase } from "../Markdown";
 import clsx from "clsx";
-import { CSSProperties, Fragment, ReactNode, useState } from "react";
-import { Button } from "../Button";
+import { CSSProperties, ReactNode, useState } from "react";
 import { CommentAction } from "./CommentAction";
-import {
-  ChatBubble,
-  ChatBubbleOutline,
-  QuestionAnswerOutlined,
-  Reply,
-  ReplyOutlined,
-} from "@mui/icons-material";
+import { ChatBubble, ReplyOutlined } from "@mui/icons-material";
 
 export function Comment({
   ancestor,
@@ -52,7 +45,7 @@ export function Comment({
             {author && (author.name ?? author.id)}
           </Paragraph>
           <Paragraph color="secondary-5">
-            {getDateString(new Date(createdAt))}
+            {timeAgo(new Date(createdAt))}
           </Paragraph>
         </div>
         <MarkdownBase markdown={description} />
