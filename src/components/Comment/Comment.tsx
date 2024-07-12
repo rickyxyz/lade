@@ -5,6 +5,14 @@ import { MarkdownBase } from "../Markdown";
 import clsx from "clsx";
 import { CSSProperties, Fragment, ReactNode, useState } from "react";
 import { Button } from "../Button";
+import { CommentAction } from "./CommentAction";
+import {
+  ChatBubble,
+  ChatBubbleOutline,
+  QuestionAnswerOutlined,
+  Reply,
+  ReplyOutlined,
+} from "@mui/icons-material";
 
 export function Comment({
   ancestor,
@@ -16,6 +24,7 @@ export function Comment({
   renderEditor,
   onReply,
   onViewReply,
+  onHideReply,
 }: {
   ancestor?: CommentType;
   className?: string;
@@ -25,7 +34,8 @@ export function Comment({
   depth: number;
   renderEditor: (parentComment?: string, defaultValue?: string) => ReactNode;
   onReply: (comment: CommentType) => void;
-  onViewReply: () => Promise<any>;
+  onViewReply?: () => Promise<any>;
+  onHideReply?: () => void;
 }) {
   const { id, author, createdAt, description, replies, replyCount } =
     selfComment;
@@ -46,34 +56,40 @@ export function Comment({
           </Paragraph>
         </div>
         <MarkdownBase markdown={description} />
-        <div>
-          <Paragraph
-            color="secondary-7"
+        <div className="flex gap-8">
+          {replyCount > 0 &&
+            (!replyFetched ? (
+              <CommentAction
+                icon={ChatBubble}
+                onClick={() => {
+                  if (replyLoading) return;
+
+                  setReplyLoading(true);
+                  onViewReply &&
+                    onViewReply().then(() => {
+                      setReplyFetched(true);
+                      setReplyLoading(false);
+                    });
+                }}
+                label={`View ${replyCount} reply`}
+                disabled={replyLoading}
+              />
+            ) : (
+              <CommentAction
+                icon={ChatBubble}
+                onClick={() => {
+                  onHideReply && onHideReply();
+                  setReplyFetched(false);
+                }}
+                label="Hide replies"
+              />
+            ))}
+          <CommentAction
+            icon={ReplyOutlined}
             onClick={() => ancestor && onReply(ancestor)}
-          >
-            Reply
-          </Paragraph>
-        </div>
-        {replyCount && !replyFetched ? (
-          <Button
-            variant="ghost"
-            className="bg-blue-100 rounded-lg p-2 px-4 w-fit"
-            onClick={() => {
-              if (replyLoading) return;
-
-              setReplyLoading(true);
-              onViewReply().then(() => {
-                setReplyFetched(true);
-              });
-            }}
-            label={`View ${replyCount} reply`}
-            disabled={replyFetched}
-            loading={replyLoading}
+            label="Reply"
           />
-        ) : (
-          <></>
-        )}
-
+        </div>
         {focus &&
           focus.id === id &&
           ancestor &&
@@ -87,7 +103,6 @@ export function Comment({
               comment={comment}
               onReply={() => onReply(comment)}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onViewReply={async () => {}}
               depth={depth + 1}
               renderEditor={renderEditor}
               focus={focus}

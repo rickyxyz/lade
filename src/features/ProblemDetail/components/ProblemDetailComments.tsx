@@ -40,6 +40,20 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
     handleGetComments();
   }, [handleGetComments]);
 
+  const handleHideReplies = useCallback((commentId?: string) => {
+    setComments((prev) => {
+      const temp = [...prev];
+      return temp.map((comment) => {
+        if (comment.id !== commentId) return comment;
+
+        return {
+          ...comment,
+          replies: [],
+        };
+      });
+    });
+  }, []);
+
   const handleGetReplies = useCallback(
     (commentId?: string) =>
       API(
@@ -139,6 +153,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
               setFocus(id);
             }}
             onViewReply={async () => handleGetReplies(comment.id)}
+            onHideReply={() => handleHideReplies(comment.id)}
             renderEditor={renderEditor}
             depth={0}
           />
