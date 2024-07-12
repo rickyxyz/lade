@@ -45,7 +45,7 @@ export function timeAgo(date: Date) {
   if (diffDays) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
 
   const diffHours = Math.floor(diff / HOUR);
-  if (diffHours) return `${diffHours} day${diffHours > 1 ? "s" : ""} ago`;
+  if (diffHours) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
 
   const diffMinutes = Math.floor(diff / MINUTE);
   return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
