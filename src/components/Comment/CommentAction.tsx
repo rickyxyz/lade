@@ -22,7 +22,7 @@ export function CommentAction({
     <button
       className={clsx(
         "flex items-center justify-center gap-2",
-        "text-secondary-700 hover:text-secondary-500 disabled:text-secondary-300 cursor-pointer",
+        "text-secondary-500 hover:text-secondary-400 disabled:text-secondary-300 cursor-pointer",
         className
       )}
       {...rest}

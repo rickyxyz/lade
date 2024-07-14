@@ -138,7 +138,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   );
 
   return (
-    <Card className="flex flex-col gap-4" data-color-mode="light">
+    <Card className="flex flex-col gap-8" data-color-mode="light">
       <Paragraph tag="h2" weight="semibold">
         Comments
       </Paragraph>
