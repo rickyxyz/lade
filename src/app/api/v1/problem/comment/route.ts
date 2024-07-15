@@ -21,6 +21,13 @@ export async function GET(req: NextRequest) {
   try {
     const problemId = searchParams.get("problemId");
     const commentId = searchParams.get("commentId");
+    let { sort, sortBy } = entryObject(searchParams, ["sort", "sortBy"]);
+
+    if (!sort) sort = "createdAt";
+    if (!sortBy) sortBy = "desc";
+
+    console.log("Sort: ", sort);
+    console.log("Sort: ", sortBy);
 
     const comments = (await prisma.comment.findMany({
       where: {
@@ -39,7 +46,7 @@ export async function GET(req: NextRequest) {
         },
       },
       orderBy: {
-        createdAt: "desc",
+        [sort]: sortBy,
       },
     })) as unknown as CommentDatabaseType[];
 
