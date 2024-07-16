@@ -21,7 +21,20 @@ export async function GET(req: NextRequest) {
   try {
     const problemId = searchParams.get("problemId");
     const commentId = searchParams.get("commentId");
+    const parPage = searchParams.get("page");
+    const parCount = searchParams.get("count");
     let { sort, sortBy } = entryObject(searchParams, ["sort", "sortBy"]);
+
+    let page = parPage as unknown as number;
+    page = Number(parPage);
+    if (isNaN(page)) page = 1;
+
+    let count = parCount as unknown as number;
+    count = Number(parCount);
+    if (isNaN(count)) count = 4;
+
+    if (count >= 10) count = 10;
+    else if (count <= 0) count = 2;
 
     if (!sort) sort = "createdAt";
     if (!sortBy) sortBy = "desc";
@@ -29,10 +42,21 @@ export async function GET(req: NextRequest) {
     console.log("Sort: ", sort);
     console.log("Sort: ", sortBy);
 
+    const commentCount = await prisma.problem.count({
+      where: {
+        deletedAt: null,
+      },
+    });
+    const maxPages = Math.ceil(commentCount / count);
+
+    if (page > maxPages) page = maxPages;
+    if (page < 1) page = 1;
+
     const comments = (await prisma.comment.findMany({
       where: {
         problemId: problemId as any,
         parentId: commentId as any,
+        deletedAt: null,
       },
       include: {
         _count: {
@@ -48,6 +72,8 @@ export async function GET(req: NextRequest) {
       orderBy: {
         [sort]: sortBy,
       },
+      skip: (Number(page) - 1) * Number(count),
+      take: Number(count),
     })) as unknown as CommentDatabaseType[];
 
     const converted = comments.map((comment) => {
