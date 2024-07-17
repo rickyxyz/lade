@@ -1,8 +1,8 @@
 export interface ApiPagination {
   total_records: number;
-  next_page: number;
+  next_page: number | null;
   current_page: number;
-  prev_page: number;
+  prev_page: number | null;
   total_pages: number;
 }
 

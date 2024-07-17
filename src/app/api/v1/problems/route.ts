@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from "@/libs/prisma";
 import { entryObject, json } from "@/utils/api";
-import { ProblemType } from "@/types";
+import { ApiPagination, ProblemType } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { API_FAIL_MESSAGE } from "@/consts/api";
@@ -14,13 +14,7 @@ export async function GET(req: NextRequest) {
   let result:
     | {
         data: ProblemType[];
-        pagination: {
-          total_records: number;
-          total_pages: number;
-          next_page: number | null;
-          current_page: number;
-          prev_page: number | null;
-        };
+        pagination: ApiPagination;
       }
     | undefined;
 

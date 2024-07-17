@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from "@/libs/prisma";
 import { entryObject, json } from "@/utils/api";
-import { ProblemType } from "@/types";
+import { ApiPagination, ProblemType } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { API_FAIL_MESSAGE } from "@/consts/api";
@@ -14,7 +14,8 @@ export async function GET(req: NextRequest) {
 
   let result:
     | {
-        data: any;
+        data: CommentType[];
+        pagination: ApiPagination;
       }
     | undefined;
 
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
     if (isNaN(count)) count = 4;
 
     if (count >= 10) count = 10;
-    else if (count <= 0) count = 2;
+    else if (count <= 0) count = 5;
 
     if (!sort) sort = "createdAt";
     if (!sortBy) sortBy = "desc";
@@ -42,8 +43,10 @@ export async function GET(req: NextRequest) {
     console.log("Sort: ", sort);
     console.log("Sort: ", sortBy);
 
-    const commentCount = await prisma.problem.count({
+    const commentCount = await prisma.comment.count({
       where: {
+        problemId: problemId as any,
+        parentId: commentId as any,
         deletedAt: null,
       },
     });
@@ -89,11 +92,16 @@ export async function GET(req: NextRequest) {
       };
     }) as CommentType[];
 
-    result = JSON.parse(
-      json({
-        data: converted,
-      })
-    );
+    result = {
+      data: JSON.parse(json(converted)),
+      pagination: {
+        total_records: commentCount,
+        next_page: page + 1 > maxPages ? null : page + 1,
+        current_page: page,
+        prev_page: page - 1 < 1 ? null : page - 1,
+        total_pages: maxPages,
+      },
+    };
 
     console.log("Returning");
   } catch (e) {

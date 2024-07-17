@@ -21,6 +21,10 @@ interface ApiParams {
   get_problem_comment: {
     problemId: number | string;
     commentId?: number | string;
+    sort?: string;
+    sortBy?: "asc" | "desc";
+    page?: number;
+    count?: number;
   };
   get_problems: {
     topic?: string;
@@ -112,6 +116,7 @@ interface ApiReturn {
   get_problem: ProblemType;
   get_problem_comment: {
     data: CommentType[];
+    pagination: ApiPagination;
   };
   get_problems: {
     data: ProblemDatabaseType[];
