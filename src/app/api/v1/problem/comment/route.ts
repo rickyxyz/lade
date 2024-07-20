@@ -210,3 +210,43 @@ export async function POST(req: NextRequest) {
   await prisma.$disconnect();
   return response;
 }
+
+export async function PATCH(req: NextRequest) {
+  let response: NextResponse | undefined;
+
+  try {
+    const user = await getAuthUserNext();
+    if (!user) throw Error("not allowed");
+
+    const body = await req.json();
+    const { commentId, comment } = body as unknown as {
+      commentId: string;
+      comment: string;
+    };
+
+    await prisma.comment.update({
+      where: {
+        id: commentId as any,
+        authorId: user.id,
+      },
+      data: {
+        description: comment,
+      },
+    });
+
+    response = NextResponse.json(JSON.parse(json({ message: "success" })));
+  } catch (e) {
+    console.log(e);
+    response = NextResponse.json(
+      {
+        message: API_FAIL_MESSAGE,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+
+  await prisma.$disconnect();
+  return response;
+}
