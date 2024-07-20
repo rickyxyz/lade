@@ -38,6 +38,7 @@ interface ApiParams {
   post_problem_comment: Empty;
   post_problems: Empty;
   patch_problem: Empty;
+  patch_problem_comment: Empty;
   delete_problem: {
     id: number | string;
   };
@@ -88,6 +89,10 @@ interface ApiBody {
   };
   post_problems: ProblemType[];
   patch_problem: ProblemType;
+  patch_problem_comment: {
+    commentId: string;
+    comment: string;
+  };
   delete_problem: Empty;
   get_solved: Empty;
   get_solveds: Empty;
@@ -130,6 +135,7 @@ interface ApiReturn {
   };
   post_problems: ApiMessage;
   patch_problem: ApiMessage;
+  patch_problem_comment: ApiMessage;
   delete_problem: ApiMessage;
   get_solved: SolvedType;
   get_solveds: SolvedPublicType[];
@@ -180,6 +186,10 @@ const ROUTES = {
   },
   patch_problem: {
     path: "/v1/problem",
+    method: "PATCH",
+  },
+  patch_problem_comment: {
+    path: "/v1/problem/comment",
     method: "PATCH",
   },
   delete_problem: {
