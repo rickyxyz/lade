@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Button, Card, MarkdownPreview, Paragraph } from "@/components";
-import { ProblemType, StateType } from "@/types";
+import { ProblemType, StateType, UserType } from "@/types";
 import { ProblemAnswer } from "./ProblemAnswer";
 import { Comment } from "@/components/Comment";
 import { CommentType } from "@/types/comment";
@@ -17,6 +17,7 @@ export interface ProblemMainProps {
   stateLoading: StateType<boolean>;
   stateCooldown: StateType<number>;
   stateComments: StateType<CommentType[]>;
+  user?: UserType | null;
   handleCheckAnswer: () => Promise<void>;
   className?: string;
 }
@@ -31,6 +32,7 @@ export function ProblemDetailMain({
   stateLoading,
   stateCooldown,
   stateComments,
+  user,
   handleCheckAnswer,
 }: ProblemMainProps) {
   const problem = stateProblem[0];
@@ -127,7 +129,7 @@ export function ProblemDetailMain({
         {renderMain}
         {renderAnswer}
       </Card>
-      <ProblemDetailComments problemId={id} />
+      <ProblemDetailComments problemId={id} userId={user?.id} />
     </div>
   );
 }

@@ -113,6 +113,7 @@ export function ProblemDetailPage({ id, user }: ProblemProps) {
         stateComments={stateComments}
         handleCheckAnswer={handleCheckAnswer}
         stateLoading={stateAnswerLoading}
+        user={user}
       />
     );
   }, [

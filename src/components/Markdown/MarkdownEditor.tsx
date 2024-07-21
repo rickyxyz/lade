@@ -25,6 +25,7 @@ interface MarkdownEditorProps extends IMarkdownEditor {
   label?: string;
   maxLength?: number;
   caption?: ReactNode;
+  onCancel?: () => void;
   onSubmit?: () => void;
   submitDisabled?: boolean;
 }
@@ -36,6 +37,7 @@ export function MarkdownEditor({
   maxLength = 200,
   toolbars = ["bold", "italic", "strike", "ulist", "olist", FormulaToolbar],
   caption,
+  onCancel,
   onSubmit,
   submitDisabled,
   ...rest
@@ -81,16 +83,28 @@ export function MarkdownEditor({
             <Paragraph className="my-auto py-1.5 px-4">
               {value?.length ?? 0} / {maxLength}
             </Paragraph>
-            {onSubmit && (
-              <Button
-                variant="ghost"
-                className="!rounded-none !border-l !border-secondary-5"
-                onClick={onSubmit}
-                disabled={submitDisabled}
-              >
-                Post
-              </Button>
-            )}
+            <div className="flex flex-row">
+              {onCancel && (
+                <Button
+                  variant="ghost"
+                  color="secondary"
+                  className="!rounded-none !border-l !border-secondary-5"
+                  onClick={onCancel}
+                >
+                  Cancel
+                </Button>
+              )}
+              {onSubmit && (
+                <Button
+                  variant="ghost"
+                  className="!rounded-none !border-l !border-secondary-5"
+                  onClick={onSubmit}
+                  disabled={submitDisabled}
+                >
+                  Post
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>

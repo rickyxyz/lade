@@ -5,16 +5,25 @@ import { MarkdownBase } from "../Markdown";
 import clsx from "clsx";
 import { CSSProperties, ReactNode, useMemo, useState } from "react";
 import { CommentAction } from "./CommentAction";
-import { ChatBubble, ReplyOutlined } from "@mui/icons-material";
+import {
+  ChatBubble,
+  ModeEditOutlineOutlined,
+  ReplyOutlined,
+} from "@mui/icons-material";
 
 export function Comment({
   ancestor,
   className,
   comment: selfComment,
   focus,
+  focusEditId,
   depth,
-  renderEditor,
+  userId,
+  renderPostEditor,
+  renderEditEditor,
   onReply,
+  onEdit,
+  onCancelEdit,
   onViewReply,
   onHideReply,
 }: {
@@ -22,9 +31,21 @@ export function Comment({
   className?: string;
   comment: CommentType;
   focus?: CommentType;
+  focusEditId?: string;
   depth: number;
-  renderEditor: (parentComment?: string, defaultValue?: string) => ReactNode;
+  userId?: string;
+  renderPostEditor: (
+    parentComment?: string,
+    defaultValue?: string
+  ) => ReactNode;
+  renderEditEditor: (
+    comment: CommentType,
+    onCancel: () => void,
+    parentId?: string
+  ) => ReactNode;
   onReply: (comment: CommentType) => void;
+  onEdit: (commentId: string) => void;
+  onCancelEdit: () => void;
   onViewReply?: () => Promise<any>;
   onHideReply?: () => void;
 }) {
@@ -33,6 +54,7 @@ export function Comment({
 
   const [replyFetched, setReplyFetched] = useState(false);
   const [replyLoading, setReplyLoading] = useState(false);
+  const [edit, setEdit] = useState(false);
 
   const renderCommentAuthor = useMemo(
     () => (
@@ -83,27 +105,40 @@ export function Comment({
           onClick={() => ancestor && onReply(ancestor)}
           label="Reply"
         />
+        {userId === author.id && (
+          <CommentAction
+            icon={ModeEditOutlineOutlined}
+            onClick={() => {
+              onEdit(id);
+            }}
+            label="Edit"
+          />
+        )}
       </div>
     ),
     [
       ancestor,
+      author.id,
+      id,
+      onEdit,
       onHideReply,
       onReply,
       onViewReply,
       replyCount,
       replyFetched,
       replyLoading,
+      userId,
     ]
   );
 
   const renderCommentReplyEditor = useMemo(
     () =>
       focus && focus.id === id && ancestor && ancestor.id ? (
-        renderEditor(ancestor?.id, `@${focus.author.id}`)
+        renderPostEditor(ancestor?.id, `@${focus.author.id}`)
       ) : (
         <></>
       ),
-    [ancestor, focus, id, renderEditor]
+    [ancestor, focus, id, renderPostEditor]
   );
 
   const renderCommentReplies = useMemo(
@@ -114,17 +149,32 @@ export function Comment({
             ancestor={ancestor}
             key={comment.id}
             comment={comment}
+            userId={userId}
             onReply={() => onReply(comment)}
+            onEdit={onEdit}
+            onCancelEdit={onCancelEdit}
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             depth={depth + 1}
-            renderEditor={renderEditor}
+            renderPostEditor={renderPostEditor}
+            renderEditEditor={renderEditEditor}
             focus={focus}
           />
         ))
       ) : (
         <></>
       ),
-    [ancestor, depth, focus, onReply, renderEditor, replies]
+    [
+      ancestor,
+      depth,
+      focus,
+      onCancelEdit,
+      onEdit,
+      onReply,
+      renderEditEditor,
+      renderPostEditor,
+      replies,
+      userId,
+    ]
   );
 
   const renderCommentChildren = useMemo(
@@ -139,18 +189,36 @@ export function Comment({
         {renderCommentReplies}
       </div>
     ),
-    [focus, id, renderCommentReplies, renderCommentReplyEditor, replies]
+    [focus, id, renderCommentReplies, renderCommentReplyEditor, replyFetched]
   );
 
+  // const renderMainElement = useMemo(() => (
+
+  // ), []);
+
   return (
-    <div className={clsx("flex gap-4", className)}>
-      <div className="w-8 h-8 rounded-full bg-red-700" />
-      <div className="mt-1 flex flex-1 flex-col gap-2">
-        {renderCommentAuthor}
-        <MarkdownBase markdown={description} />
-        {renderCommentActions}
-        {renderCommentChildren}
-      </div>
+    <div className={clsx("flex gap-4 w-full", className)}>
+      {focusEditId === id ? (
+        renderEditEditor(
+          selfComment,
+          () => {
+            onCancelEdit();
+          },
+          ancestor && ancestor.id === id ? undefined : ancestor?.id
+        )
+      ) : (
+        <>
+          <>
+            <div className="w-8 h-8 rounded-full bg-red-700" />
+            <div className="mt-1 flex flex-1 flex-col gap-2">
+              {renderCommentAuthor}
+              <MarkdownBase markdown={description} />
+              {renderCommentActions}
+              {renderCommentChildren}
+            </div>
+          </>
+        </>
+      )}
     </div>
   );
 }

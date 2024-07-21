@@ -5,18 +5,18 @@ import { CSSProperties, useState } from "react";
 
 export function CommentEditor({
   className,
-  parentComment,
   stateComment,
   submitDisabled,
   style,
   defaultValue = "",
   onSubmit,
+  onCancel,
 }: {
   className?: string;
-  parentComment?: string;
   stateComment?: StateType<string>;
   defaultValue?: string;
-  onSubmit: (comment: string, parentCommentId?: string) => Promise<any>;
+  onSubmit: (comment: string) => Promise<any>;
+  onCancel?: () => void;
   submitDisabled?: boolean;
   style?: CSSProperties;
 }) {
@@ -24,7 +24,7 @@ export function CommentEditor({
   const [comment, setComment] = stateComment ?? selfState;
 
   return (
-    <div className={clsx("flex gap-4", className)} style={style}>
+    <div className={clsx("flex gap-4 w-full", className)} style={style}>
       <div
         className="rounded-full bg-red-700"
         style={{
@@ -36,10 +36,11 @@ export function CommentEditor({
       />
       <MarkdownEditor
         onSubmit={() => {
-          onSubmit(comment, parentComment).then(() => {
+          onSubmit(comment).then(() => {
             setComment("");
           });
         }}
+        onCancel={onCancel}
         placeholder="Comment here..."
         value={comment}
         onChange={(newValue) => {

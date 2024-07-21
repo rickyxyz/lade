@@ -9,7 +9,13 @@ import { CommentType } from "@/types/comment";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { ProblemDetailCommentsSkeleton } from "./ProblemDetailCommentsSkeleton";
 
-export function ProblemDetailComments({ problemId }: { problemId: string }) {
+export function ProblemDetailComments({
+  problemId,
+  userId,
+}: {
+  problemId: string;
+  userId?: string;
+}) {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [paginationBase, setPagination] = useState({
     page: 1,
@@ -23,6 +29,7 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
   });
 
   const [focus, setFocus] = useState<CommentType>();
+  const [edit, setEdit] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
@@ -165,16 +172,82 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
     [problemId]
   );
 
-  const renderEditor = useCallback(
+  const handleEditComment = useCallback(
+    (comment: string, commentId: string, parentId?: string) => {
+      setLoading(true);
+      return API(
+        "patch_problem_comment",
+        {
+          body: {
+            commentId,
+            comment,
+          },
+        },
+        {
+          onSuccess() {
+            setLoading(false);
+            setEdit(undefined);
+            setComments((prev) => {
+              const temp = [...prev];
+
+              if (temp.some((cmt) => cmt.id === commentId)) {
+                return temp.map((cmt) =>
+                  cmt.id === commentId
+                    ? {
+                        ...cmt,
+                        description: comment,
+                      }
+                    : cmt
+                );
+              }
+
+              return temp.map((cmt) =>
+                cmt.id === parentId
+                  ? {
+                      ...cmt,
+                      replies: (cmt.replies ?? []).map((reply) =>
+                        reply.id === commentId
+                          ? {
+                              ...reply,
+                              description: comment,
+                            }
+                          : reply
+                      ),
+                    }
+                  : cmt
+              );
+            });
+          },
+          onFail() {
+            setLoading(false);
+          },
+        }
+      );
+    },
+    []
+  );
+
+  const renderPostEditor = useCallback(
     (parentComment?: string, defaultValue?: string) => (
       <CommentEditor
         defaultValue={defaultValue}
-        parentComment={parentComment}
-        onSubmit={handlePostComment}
+        onSubmit={(comment) => handlePostComment(comment, parentComment)}
         submitDisabled={loading}
       />
     ),
     [handlePostComment, loading]
+  );
+
+  const renderEditEditor = useCallback(
+    (comment: CommentType, onCancel: () => void, parentId?: string) => (
+      <CommentEditor
+        defaultValue={comment.description}
+        onSubmit={(cmt) => handleEditComment(cmt, comment.id, parentId)}
+        onCancel={onCancel}
+        submitDisabled={loading}
+      />
+    ),
+    [handleEditComment, loading]
   );
 
   return (
@@ -184,13 +257,20 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
       </Paragraph>
       {status === "loaded" ? (
         <>
-          {renderEditor(undefined, "")}
+          {renderPostEditor(undefined, "")}
           {comments.map((comment) => (
             <Fragment key={comment.id}>
               <Comment
                 focus={focus}
                 ancestor={comment}
                 comment={comment}
+                focusEditId={edit}
+                onEdit={(id) => {
+                  setEdit(id);
+                }}
+                onCancelEdit={() => {
+                  setEdit(undefined);
+                }}
                 onReply={(toBeReplied) => {
                   setFocus((prev) => {
                     if (prev && toBeReplied.id === prev.id) return undefined;
@@ -199,8 +279,10 @@ export function ProblemDetailComments({ problemId }: { problemId: string }) {
                 }}
                 onViewReply={async () => handleGetReplies(comment.id)}
                 onHideReply={() => handleHideReplies(comment.id)}
-                renderEditor={renderEditor}
+                renderPostEditor={renderPostEditor}
+                renderEditEditor={renderEditEditor}
                 depth={0}
+                userId={userId}
               />
             </Fragment>
           ))}
