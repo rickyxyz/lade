@@ -1,18 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { API_MESSAGE, ApiMessageCode } from "@/consts/api";
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
-  });
+import { NextResponse } from "next/server";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_PATH,
@@ -32,19 +21,6 @@ export const json = (param: unknown) => {
   );
 };
 
-export async function runMain(
-  main: (params: GenericAPIParams) => Promise<any>,
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
-  await main({
-    req,
-    prisma,
-    res,
-  });
-  await prisma.$disconnect();
-}
-
 export function entryObject<K extends string>(
   object: URLSearchParams,
   keys: K[]
@@ -56,4 +32,17 @@ export function entryObject<K extends string>(
     }),
     {}
   ) as Record<K, string>;
+}
+
+export function responseTemplate(status: number) {
+  const message = API_MESSAGE[status] ?? "";
+
+  return NextResponse.json(
+    {
+      message,
+    },
+    {
+      status,
+    }
+  );
 }
