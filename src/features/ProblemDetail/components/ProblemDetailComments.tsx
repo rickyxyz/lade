@@ -20,7 +20,7 @@ export function ProblemDetailComments({
   const [paginationBase, setPagination] = useState({
     page: 1,
     maxPages: 1,
-    count: 1,
+    count: 0,
     initialized: false,
   });
 

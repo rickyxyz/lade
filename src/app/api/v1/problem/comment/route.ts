@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from "@/libs/prisma";
-import { entryObject, json } from "@/utils/api";
-import { ApiPagination, ProblemType } from "@/types";
+import { entryObject, json, responseTemplate } from "@/utils/api";
+import { ApiPagination } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUserNext } from "@/libs/next-auth/helper";
 import { API_FAIL_MESSAGE } from "@/consts/api";
-import { validateFormProblem } from "@/utils";
+import { validateComment } from "@/utils";
 import { CommentDatabaseType, CommentType } from "@/types/comment";
 
 export async function GET(req: NextRequest) {
@@ -212,39 +212,73 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  let response: NextResponse | undefined;
+  let response = responseTemplate(500);
+
+  const user = await getAuthUserNext().catch(() => null);
+
+  if (!user) {
+    await prisma.$disconnect();
+    return responseTemplate(401);
+  }
 
   try {
-    const user = await getAuthUserNext();
-    if (!user) throw Error("not allowed");
-
     const body = await req.json();
     const { commentId, comment } = body as unknown as {
-      commentId: string;
-      comment: string;
+      commentId?: string;
+      comment?: string;
     };
 
-    await prisma.comment.update({
-      where: {
-        id: commentId as any,
-        authorId: user.id,
-      },
-      data: {
-        description: comment,
-      },
-    });
+    let code = 500;
+    let error = comment ? validateComment(comment) : null;
 
-    response = NextResponse.json(JSON.parse(json({ message: "success" })));
+    if (error) {
+      code = 400;
+    }
+
+    const results =
+      commentId && comment && error === null
+        ? await prisma.comment.updateMany({
+            where: {
+              id: commentId as any,
+              // authorId: user?.id,
+              description: {
+                not: comment,
+              },
+            },
+            data: {
+              description: comment,
+            },
+          })
+        : null;
+
+    if (error === null) {
+      if (results && results.count === 1) {
+        code = 201;
+      } else {
+        const existingComment = await prisma.comment.findUnique({
+          where: { id: commentId as any },
+        });
+        if (!existingComment) {
+          code = 404;
+        } else if (!user || existingComment.authorId !== user.id) {
+          code = 403;
+        } else if (existingComment.description === comment) {
+          code = 400;
+          error = "Comment is the same.";
+        }
+      }
+    }
+
+    response = responseTemplate(
+      code,
+      error
+        ? {
+            error,
+          }
+        : {}
+    );
   } catch (e) {
     console.log(e);
-    response = NextResponse.json(
-      {
-        message: API_FAIL_MESSAGE,
-      },
-      {
-        status: 500,
-      }
-    );
   }
 
   await prisma.$disconnect();

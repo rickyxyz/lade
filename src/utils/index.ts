@@ -1,6 +1,7 @@
 export * from "./answer";
 export * from "./api";
 export * from "./auth";
+export * from "./comment";
 export * from "./date";
 export * from "./markdown";
 export * from "./matrix";

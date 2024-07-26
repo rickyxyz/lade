@@ -186,7 +186,7 @@ export function validateProblemQuery(query: unknown): ProblemQuery {
   };
 }
 
-export function validateContestQuery({ tab }: ContestQuery): ContestQuery {
-  const validTabs = CONTEST_TAB.filter((t) => t !== "edit");
-  return validTabs.includes(tab) ? { tab } : { tab: "description" };
-}
+// export function validateContestQuery({ tab }: ContestQuery): ContestQuery {
+//   const validTabs = CONTEST_TAB.filter((t) => t !== "edit");
+//   return validTabs.includes(tab) ? { tab } : { tab: "description" };
+// }

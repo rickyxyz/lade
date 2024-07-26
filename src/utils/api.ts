@@ -1,4 +1,4 @@
-import { API_MESSAGE, ApiMessageCode } from "@/consts/api";
+import { API_MESSAGE } from "@/consts/api";
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
@@ -34,12 +34,21 @@ export function entryObject<K extends string>(
   ) as Record<K, string>;
 }
 
-export function responseTemplate(status: number) {
+export function responseTemplate(
+  status: number,
+  body?: Record<string, string>
+) {
   const message = API_MESSAGE[status] ?? "";
+
+  if (status === 204)
+    return new Response(null, {
+      status: 204,
+    });
 
   return NextResponse.json(
     {
       message,
+      ...body,
     },
     {
       status,
