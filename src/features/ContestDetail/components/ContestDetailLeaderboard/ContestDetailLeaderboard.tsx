@@ -64,7 +64,7 @@ export function ContestLeaderboard({
 
   return (
     <div className="relative flex flex-row flex-wrap gap-8">
-      <div className="table-container w-full">
+      <div className="relative table-container w-full overflow-x-scroll">
         <table className="table table-auto w-full">
           <thead>
             <tr>
