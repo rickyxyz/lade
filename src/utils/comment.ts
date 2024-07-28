@@ -6,6 +6,10 @@ export function validateComment(comment?: string) {
     comment.length >= COMMENT_LENGTH_MIN &&
     COMMENT_LENGTH_MAX >= comment.length;
 
+  if (!comment) {
+    return `Comment is required.`;
+  }
+
   return valid
     ? null
     : `Comment length must be ${COMMENT_LENGTH_MIN} - ${COMMENT_LENGTH_MAX}.`;

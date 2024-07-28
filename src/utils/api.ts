@@ -36,14 +36,9 @@ export function entryObject<K extends string>(
 
 export function responseTemplate(
   status: number,
-  body?: Record<string, string>
+  body?: Record<string, unknown>
 ) {
   const message = API_MESSAGE[status] ?? "";
-
-  if (status === 204)
-    return new Response(null, {
-      status: 204,
-    });
 
   return NextResponse.json(
     {

@@ -9,7 +9,6 @@ import { validateComment } from "@/utils";
 import { CommentDatabaseType, CommentType } from "@/types/comment";
 
 export async function GET(req: NextRequest) {
-  const user = await getAuthUserNext();
   const searchParams = req.nextUrl.searchParams;
 
   let result:
@@ -111,7 +110,7 @@ export async function GET(req: NextRequest) {
 
   console.log("API HIT CONFIRMED");
 
-  await prisma.$disconnect();
+  /** await prisma.$disconnect(); */
 
   if (result) {
     // res.status(200).json(result);
@@ -125,20 +124,41 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  let response: NextResponse | undefined;
+  let response = responseTemplate(500);
+
+  const user = await getAuthUserNext().catch(() => null);
+
+  if (!user) {
+    /** await prisma.$disconnect(); */
+    return responseTemplate(401);
+  }
 
   try {
-    const user = await getAuthUserNext();
-    if (!user) throw Error("not allowed");
-
     const body = await req.json();
     const { problemId, commentId, comment } = body as unknown as {
-      problemId: string;
+      problemId?: string;
       commentId?: string;
-      comment: string;
+      comment?: string;
     };
-    console.log("USER: ", user.id);
-    console.log(body);
+
+    const commentError = validateComment(comment);
+
+    if (!comment || !problemId) {
+      return responseTemplate(400, {
+        errors: {
+          ...(commentError
+            ? {
+                comment: commentError,
+              }
+            : {}),
+          ...(problemId
+            ? {}
+            : {
+                problemId: "Problem ID is required.",
+              }),
+        },
+      });
+    }
 
     let parentExists = false;
     if (commentId) {
@@ -156,7 +176,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (parentExists) {
-      throw Error("not allowed");
+      // throw Error("not allowed");
+      return responseTemplate(400, {
+        errors: {
+          commentId:
+            "Parent comment must not be a reply to another parent comment.",
+        },
+      });
     }
 
     const result = await prisma.comment.create({
@@ -192,22 +218,18 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    response = NextResponse.json(
-      JSON.parse(json({ data: result, message: "success" }))
-    );
+    response = responseTemplate(200, {
+      ...JSON.parse(json({ data: result })),
+    });
+    // response = NextResponse.json(
+    //   JSON.parse(json({ data: result, message: "success" }))
+    // );
   } catch (e) {
     console.log(e);
-    response = NextResponse.json(
-      {
-        message: API_FAIL_MESSAGE,
-      },
-      {
-        status: 500,
-      }
-    );
+    response = responseTemplate(500);
   }
 
-  await prisma.$disconnect();
+  /** await prisma.$disconnect(); */
   return response;
 }
 
@@ -217,7 +239,7 @@ export async function PATCH(req: NextRequest) {
   const user = await getAuthUserNext().catch(() => null);
 
   if (!user) {
-    await prisma.$disconnect();
+    /** await prisma.$disconnect(); */
     return responseTemplate(401);
   }
 
@@ -279,8 +301,9 @@ export async function PATCH(req: NextRequest) {
     );
   } catch (e) {
     console.log(e);
+    response = responseTemplate(500);
   }
 
-  await prisma.$disconnect();
+  /** await prisma.$disconnect(); */
   return response;
 }
