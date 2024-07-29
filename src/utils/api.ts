@@ -31,7 +31,7 @@ export function entryObject<K extends string>(
       [key]: object.get(key),
     }),
     {}
-  ) as Record<K, string>;
+  ) as Record<K, string | undefined>;
 }
 
 export function responseTemplate(

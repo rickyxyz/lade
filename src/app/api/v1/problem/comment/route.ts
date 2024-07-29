@@ -19,18 +19,18 @@ export async function GET(req: NextRequest) {
     | undefined;
 
   try {
-    const problemId = searchParams.get("problemId");
-    const commentId = searchParams.get("commentId");
-    const parPage = searchParams.get("page");
-    const parCount = searchParams.get("count");
+    const { parPage, parCount, parCommentId, parProblemId } = entryObject(
+      searchParams,
+      ["parPage", "parCount", "parProblemId", "parCommentId"]
+    );
+    const commentId = parCommentId ? BigInt(parCommentId) : undefined;
+    const problemId = parProblemId ? BigInt(parProblemId) : undefined;
     let { sort, sortBy } = entryObject(searchParams, ["sort", "sortBy"]);
 
-    let page = parPage as unknown as number;
-    page = Number(parPage);
+    let page = Number(parPage);
     if (isNaN(page)) page = 1;
 
-    let count = parCount as unknown as number;
-    count = Number(parCount);
+    let count = Number(parCount);
     if (isNaN(count)) count = 4;
 
     if (count >= 10) count = 10;
@@ -39,13 +39,10 @@ export async function GET(req: NextRequest) {
     if (!sort) sort = "createdAt";
     if (!sortBy) sortBy = "desc";
 
-    console.log("Sort: ", sort);
-    console.log("Sort: ", sortBy);
-
     const commentCount = await prisma.comment.count({
       where: {
-        problemId: problemId as any,
-        parentId: commentId as any,
+        problemId: problemId,
+        parentId: commentId,
         deletedAt: null,
       },
     });
@@ -56,8 +53,8 @@ export async function GET(req: NextRequest) {
 
     const comments = (await prisma.comment.findMany({
       where: {
-        problemId: problemId as any,
-        parentId: commentId as any,
+        problemId: problemId,
+        parentId: commentId,
         deletedAt: null,
       },
       include: {
@@ -143,7 +140,7 @@ export async function POST(req: NextRequest) {
 
     const commentError = validateComment(comment);
 
-    if (!comment || !problemId) {
+    if (!comment || !problemId || commentError) {
       return responseTemplate(400, {
         errors: {
           ...(commentError
@@ -166,7 +163,7 @@ export async function POST(req: NextRequest) {
         where: {
           children: {
             some: {
-              id: commentId as any,
+              id: BigInt(commentId),
             },
           },
         },
@@ -189,12 +186,12 @@ export async function POST(req: NextRequest) {
       data: {
         problem: {
           connect: {
-            id: problemId as any,
+            id: BigInt(problemId),
           },
         },
         author: {
           connect: {
-            id: user.id as any,
+            id: user.id,
           },
         },
         description: comment,
@@ -202,7 +199,7 @@ export async function POST(req: NextRequest) {
           ? {
               parent: {
                 connect: {
-                  id: commentId as any,
+                  id: BigInt(commentId),
                 },
               },
             }
@@ -240,7 +237,7 @@ export async function PATCH(req: NextRequest) {
 
   if (!user) {
     /** await prisma.$disconnect(); */
-    return responseTemplate(401);
+    // return responseTemplate(401);
   }
 
   try {
@@ -251,17 +248,30 @@ export async function PATCH(req: NextRequest) {
     };
 
     let code = 500;
-    let error = comment ? validateComment(comment) : null;
+    const error = comment ? validateComment(comment) : null;
 
-    if (error) {
-      code = 400;
+    if (!comment || !commentId) {
+      return responseTemplate(400, {
+        errors: {
+          ...(error
+            ? {
+                comment: error,
+              }
+            : {}),
+          ...(commentId
+            ? {}
+            : {
+                problemId: "Problem ID is required.",
+              }),
+        },
+      });
     }
 
     const results =
       commentId && comment && error === null
         ? await prisma.comment.updateMany({
             where: {
-              id: commentId as any,
+              id: BigInt(commentId),
               // authorId: user?.id,
               description: {
                 not: comment,
@@ -275,30 +285,24 @@ export async function PATCH(req: NextRequest) {
 
     if (error === null) {
       if (results && results.count === 1) {
-        code = 201;
+        code = 200;
       } else {
         const existingComment = await prisma.comment.findUnique({
-          where: { id: commentId as any },
+          where: { id: BigInt(commentId) },
         });
         if (!existingComment) {
           code = 404;
+        } else if (existingComment.description === comment) {
+          return responseTemplate(400, {
+            error: "Comment is the same.",
+          });
         } else if (!user || existingComment.authorId !== user.id) {
           code = 403;
-        } else if (existingComment.description === comment) {
-          code = 400;
-          error = "Comment is the same.";
         }
       }
     }
 
-    response = responseTemplate(
-      code,
-      error
-        ? {
-            error,
-          }
-        : {}
-    );
+    response = responseTemplate(code);
   } catch (e) {
     console.log(e);
     response = responseTemplate(500);
