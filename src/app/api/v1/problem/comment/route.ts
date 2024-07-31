@@ -19,12 +19,14 @@ export async function GET(req: NextRequest) {
     | undefined;
 
   try {
-    const { parPage, parCount, parCommentId, parProblemId } = entryObject(
-      searchParams,
-      ["parPage", "parCount", "parProblemId", "parCommentId"]
-    );
-    const commentId = parCommentId ? BigInt(parCommentId) : undefined;
-    const problemId = parProblemId ? BigInt(parProblemId) : undefined;
+    const {
+      page: parPage,
+      count: parCount,
+      commentId: parCommentId,
+      problemId: parProblemId,
+    } = entryObject(searchParams, ["page", "count", "problemId", "commentId"]);
+    const commentId = parCommentId ? BigInt(parCommentId) : null;
+    const problemId = parProblemId ? BigInt(parProblemId) : null;
     let { sort, sortBy } = entryObject(searchParams, ["sort", "sortBy"]);
 
     let page = Number(parPage);
