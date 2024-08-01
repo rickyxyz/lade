@@ -313,3 +313,58 @@ export async function PATCH(req: NextRequest) {
   /** await prisma.$disconnect(); */
   return response;
 }
+
+export async function DELETE(req: NextRequest) {
+  const user = await getAuthUserNext().catch(() => null);
+  // if (!user) return responseTemplate(401);
+
+  try {
+    const body = await req.json();
+    const { id } = body as unknown as {
+      id?: string;
+    };
+    // const role = user.role;
+
+    if (!id)
+      return responseTemplate(400, {
+        error: {
+          id: "Comment ID is required.",
+        },
+      });
+
+    const results = await prisma.comment.updateMany({
+      where: {
+        id: BigInt(id),
+        // authorId: role === "admin" ? undefined : user.id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    if (results.count === 1) {
+      return responseTemplate(200);
+    }
+
+    const existing = await prisma.comment.findUnique({
+      where: {
+        id: BigInt(id),
+      },
+    });
+
+    if (!existing) {
+      return responseTemplate(404);
+    }
+
+    if (user.role !== "admin" || existing.authorId !== id) {
+      return responseTemplate(403);
+    }
+
+    return responseTemplate(500);
+  } catch (e) {
+    console.log(e);
+  }
+
+  /** await prisma.$disconnect(); */
+  return responseTemplate(500);
+}
