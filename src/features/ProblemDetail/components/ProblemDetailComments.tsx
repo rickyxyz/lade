@@ -8,6 +8,7 @@ import { PaginationData } from "@/types";
 import { CommentType } from "@/types/comment";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { ProblemDetailCommentsSkeleton } from "./ProblemDetailCommentsSkeleton";
+import { addToast } from "@/utils";
 
 export function ProblemDetailComments({
   problemId,
@@ -30,7 +31,7 @@ export function ProblemDetailComments({
 
   const [focus, setFocus] = useState<CommentType>();
   const [edit, setEdit] = useState<string>();
-  const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const [status, setStatus] = useState<
     "unloaded" | "loading" | "loaded" | "error"
   >("unloaded");
@@ -102,8 +103,9 @@ export function ProblemDetailComments({
   }, []);
 
   const handleGetReplies = useCallback(
-    (commentId?: string) =>
-      API(
+    (commentId?: string) => {
+      setActionLoading(true);
+      return API(
         "get_problem_comment",
         {
           params: {
@@ -113,6 +115,7 @@ export function ProblemDetailComments({
         },
         {
           onSuccess: ({ data: { data } }) => {
+            setActionLoading(false);
             setComments((prev) => {
               const temp = [...prev];
               return temp.map((comment) => {
@@ -125,14 +128,18 @@ export function ProblemDetailComments({
               });
             });
           },
+          onFail: () => {
+            setActionLoading(false);
+          },
         }
-      ),
+      );
+    },
     [problemId]
   );
 
   const handlePostComment = useCallback(
     (comment: string, parentId?: string) => {
-      setLoading(true);
+      setActionLoading(true);
       console.log("Comment: ", parentId);
       return API(
         "post_problem_comment",
@@ -145,7 +152,7 @@ export function ProblemDetailComments({
         },
         {
           onSuccess({ data: { data } }) {
-            setLoading(false);
+            setActionLoading(false);
             if (parentId) {
               setComments((prev) => {
                 const temp = [...prev];
@@ -164,7 +171,7 @@ export function ProblemDetailComments({
             }
           },
           onFail() {
-            setLoading(false);
+            setActionLoading(false);
           },
         }
       );
@@ -174,7 +181,7 @@ export function ProblemDetailComments({
 
   const handleEditComment = useCallback(
     (comment: string, commentId: string, parentId?: string) => {
-      setLoading(true);
+      setActionLoading(true);
       return API(
         "patch_problem_comment",
         {
@@ -185,7 +192,7 @@ export function ProblemDetailComments({
         },
         {
           onSuccess() {
-            setLoading(false);
+            setActionLoading(false);
             setEdit(undefined);
             setComments((prev) => {
               const temp = [...prev];
@@ -219,12 +226,41 @@ export function ProblemDetailComments({
             });
           },
           onFail() {
-            setLoading(false);
+            setActionLoading(false);
           },
+          showFailMessage: false,
         }
       );
     },
     []
+  );
+
+  const handleDeleteComment = useCallback(
+    (commentId: string, parentId?: string) => {
+      setActionLoading(true);
+      return API(
+        "delete_problem_comment",
+        {
+          params: {
+            id: commentId,
+          },
+        },
+        {
+          onSuccess() {
+            addToast({
+              text: "Comment deleted.",
+            });
+            setActionLoading(false);
+            handleGetComments(1);
+          },
+          onFail() {
+            setActionLoading(false);
+          },
+          showFailMessage: false,
+        }
+      );
+    },
+    [handleGetComments]
   );
 
   const renderPostEditor = useCallback(
@@ -232,10 +268,10 @@ export function ProblemDetailComments({
       <CommentEditor
         defaultValue={defaultValue}
         onSubmit={(comment) => handlePostComment(comment, parentComment)}
-        submitDisabled={loading}
+        submitDisabled={actionLoading}
       />
     ),
-    [handlePostComment, loading]
+    [handlePostComment, actionLoading]
   );
 
   const renderEditEditor = useCallback(
@@ -244,10 +280,10 @@ export function ProblemDetailComments({
         defaultValue={comment.description}
         onSubmit={(cmt) => handleEditComment(cmt, comment.id, parentId)}
         onCancel={onCancel}
-        submitDisabled={loading}
+        submitDisabled={actionLoading}
       />
     ),
-    [handleEditComment, loading]
+    [handleEditComment, actionLoading]
   );
 
   return (
@@ -271,6 +307,7 @@ export function ProblemDetailComments({
                 onCancelEdit={() => {
                   setEdit(undefined);
                 }}
+                onDelete={handleDeleteComment}
                 onReply={(toBeReplied) => {
                   setFocus((prev) => {
                     if (prev && toBeReplied.id === prev.id) return undefined;
@@ -283,6 +320,7 @@ export function ProblemDetailComments({
                 renderEditEditor={renderEditEditor}
                 depth={0}
                 userId={userId}
+                actionLoading={actionLoading}
               />
             </Fragment>
           ))}

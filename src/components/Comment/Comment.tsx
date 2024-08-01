@@ -19,10 +19,12 @@ export function Comment({
   focusEditId,
   depth,
   userId,
+  actionLoading,
   renderPostEditor,
   renderEditEditor,
   onReply,
   onEdit,
+  onDelete,
   onCancelEdit,
   onViewReply,
   onHideReply,
@@ -34,6 +36,7 @@ export function Comment({
   focusEditId?: string;
   depth: number;
   userId?: string;
+  actionLoading?: boolean;
   renderPostEditor: (
     parentComment?: string,
     defaultValue?: string
@@ -45,6 +48,7 @@ export function Comment({
   ) => ReactNode;
   onReply: (comment: CommentType) => void;
   onEdit: (commentId: string) => void;
+  onDelete: (commentId: string, parentId?: string) => void;
   onCancelEdit: () => void;
   onViewReply?: () => Promise<any>;
   onHideReply?: () => void;
@@ -53,7 +57,6 @@ export function Comment({
     selfComment;
 
   const [replyFetched, setReplyFetched] = useState(false);
-  const [replyLoading, setReplyLoading] = useState(false);
   const [edit, setEdit] = useState(false);
 
   const renderCommentAuthor = useMemo(
@@ -78,17 +81,15 @@ export function Comment({
             <CommentAction
               icon={ChatBubble}
               onClick={() => {
-                if (replyLoading) return;
+                if (actionLoading) return;
 
-                setReplyLoading(true);
                 onViewReply &&
                   onViewReply().then(() => {
                     setReplyFetched(true);
-                    setReplyLoading(false);
                   });
               }}
               label={`View ${replyCount} reply`}
-              disabled={replyLoading}
+              disabled={actionLoading}
             />
           ) : (
             <CommentAction
@@ -98,12 +99,14 @@ export function Comment({
                 setReplyFetched(false);
               }}
               label="Hide replies"
+              disabled={actionLoading}
             />
           ))}
         <CommentAction
           icon={ReplyOutlined}
           onClick={() => ancestor && onReply(ancestor)}
           label="Reply"
+          disabled={actionLoading}
         />
         {userId === author.id && (
           <CommentAction
@@ -112,21 +115,39 @@ export function Comment({
               onEdit(id);
             }}
             label="Edit"
+            disabled={actionLoading}
+          />
+        )}
+        {userId === author.id && (
+          <CommentAction
+            icon={ModeEditOutlineOutlined}
+            onClick={() => {
+              if (actionLoading) return;
+
+              onDelete(
+                id,
+                ancestor && ancestor.id !== id ? ancestor.id : undefined
+              );
+            }}
+            danger
+            label="Delete"
+            disabled={actionLoading}
           />
         )}
       </div>
     ),
     [
+      actionLoading,
       ancestor,
       author.id,
       id,
+      onDelete,
       onEdit,
       onHideReply,
       onReply,
       onViewReply,
       replyCount,
       replyFetched,
-      replyLoading,
       userId,
     ]
   );
@@ -153,11 +174,12 @@ export function Comment({
             onReply={() => onReply(comment)}
             onEdit={onEdit}
             onCancelEdit={onCancelEdit}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onDelete={onDelete}
             depth={depth + 1}
             renderPostEditor={renderPostEditor}
             renderEditEditor={renderEditEditor}
             focus={focus}
+            actionLoading={actionLoading}
           />
         ))
       ) : (
@@ -168,6 +190,7 @@ export function Comment({
       depth,
       focus,
       onCancelEdit,
+      onDelete,
       onEdit,
       onReply,
       renderEditEditor,

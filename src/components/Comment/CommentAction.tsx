@@ -7,6 +7,7 @@ import { SvgIconComponent } from "@mui/icons-material";
 interface CommentActionBaseProps {
   icon: SvgIconComponent;
   label: string;
+  danger?: boolean;
 }
 
 type CommentActionBase = CommentActionBaseProps &
@@ -15,6 +16,7 @@ type CommentActionBase = CommentActionBaseProps &
 export function CommentAction({
   label,
   className,
+  danger = false,
   icon,
   ...rest
 }: CommentActionBase) {
@@ -22,7 +24,10 @@ export function CommentAction({
     <button
       className={clsx(
         "flex items-center justify-center gap-2",
-        "text-secondary-500 hover:text-secondary-400 disabled:text-secondary-300 cursor-pointer",
+        "disabled:text-secondary-300 cursor-pointer",
+        danger
+          ? "text-danger-500 hover:text-danger-600 cursor-pointer"
+          : "text-secondary-500 hover:text-secondary-600 dcursor-pointer",
         className
       )}
       {...rest}

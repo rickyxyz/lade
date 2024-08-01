@@ -61,7 +61,13 @@ export async function GET(req: NextRequest) {
       },
       include: {
         _count: {
-          select: { children: true },
+          select: {
+            children: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
         },
         author: {
           select: {
@@ -316,14 +322,12 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const user = await getAuthUserNext().catch(() => null);
-  // if (!user) return responseTemplate(401);
+  if (!user) return responseTemplate(401);
 
   try {
-    const body = await req.json();
-    const { id } = body as unknown as {
-      id?: string;
-    };
-    // const role = user.role;
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get("id");
+    const role = user.role;
 
     if (!id)
       return responseTemplate(400, {
@@ -335,7 +339,7 @@ export async function DELETE(req: NextRequest) {
     const results = await prisma.comment.updateMany({
       where: {
         id: BigInt(id),
-        // authorId: role === "admin" ? undefined : user.id,
+        authorId: role === "admin" ? undefined : user.id,
       },
       data: {
         deletedAt: new Date(),
