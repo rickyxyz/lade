@@ -63,35 +63,33 @@ export function ContestLeaderboard({
   );
 
   return (
-    <div className="relative flex flex-row flex-wrap gap-8">
-      <div className="relative table-container w-full overflow-x-scroll">
-        <table className="table table-auto w-full">
-          <thead>
-            <tr>
-              <th className="!text-center">
-                <Paragraph weight="semibold">Rank</Paragraph>
+    <div className="relative table-container flex-1 h-fit overflow-x-scroll">
+      <table className="table table-auto w-full bg-white">
+        <thead>
+          <tr>
+            <th className="!text-center">
+              <Paragraph weight="semibold">Rank</Paragraph>
+            </th>
+            <th className="!text-center">
+              <Paragraph weight="semibold">User</Paragraph>
+            </th>
+            <th className="!text-center">
+              <Paragraph weight="semibold">Score</Paragraph>
+            </th>
+            <th className="!text-center">
+              <Paragraph weight="semibold">Penalty</Paragraph>
+            </th>
+            {problems.map(({ problem }, idx) => (
+              <th className="!text-center" key={problem.id}>
+                <Paragraph weight="semibold">
+                  {String.fromCharCode(65 + idx)}
+                </Paragraph>
               </th>
-              <th className="!text-center">
-                <Paragraph weight="semibold">User</Paragraph>
-              </th>
-              <th className="!text-center">
-                <Paragraph weight="semibold">Score</Paragraph>
-              </th>
-              <th className="!text-center">
-                <Paragraph weight="semibold">Penalty</Paragraph>
-              </th>
-              {problems.map(({ problem }, idx) => (
-                <th className="!text-center" key={problem.id}>
-                  <Paragraph weight="semibold">
-                    {String.fromCharCode(65 + idx)}
-                  </Paragraph>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>{renderUserSubmission}</tbody>
-        </table>
-      </div>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{renderUserSubmission}</tbody>
+      </table>
     </div>
   );
 }
